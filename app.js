@@ -2613,10 +2613,18 @@ function wireLocalInteractions() {
     const input = $("#chatInput");
     const text = input.value.trim();
     if (!text) return;
+    const conversation = $("#activeConversationName")?.textContent || "Trip chat";
     appendMessage("You", text);
     input.value = "";
-    $("#messageStatus").textContent = "Message sent. Read receipts, notifications, and realtime sync are queued for this conversation.";
-    await saveSyncedEvent("message", { text, conversation: $("#activeConversationName")?.textContent || "Trip chat" });
+    addMessageNotification(conversation, "sent");
+    $("#messageStatus").textContent = "Order received. Message sent, user notifications queued, and realtime sync is active for this conversation.";
+    addAuditEntry("Message notification sent", `${conversation}: message notification queued for conversation members.`);
+    await saveSyncedEvent("message", { text, conversation });
+    await saveSyncedEvent("message_notification_sent", {
+      conversation,
+      delivery: ["in_app", "push_when_enabled"],
+      sensitiveContentHidden: true
+    });
   });
 
   $$("[data-message-tab]").forEach((button) => {
@@ -2950,6 +2958,36 @@ function addAuditEntry(title, detail) {
   list.prepend(entry);
 }
 
+function addInAppNotification(category, detail) {
+  const list = $("#notificationMiniList");
+  if (!list) return;
+
+  const notification = document.createElement("span");
+  notification.textContent = `${category}: ${detail}`;
+  list.prepend(notification);
+
+  while (list.children.length > 5) {
+    list.lastElementChild?.remove();
+  }
+}
+
+function addMessageNotification(conversation, direction = "received") {
+  const detail = direction === "sent"
+    ? `${conversation} message sent. Conversation members will be notified.`
+    : `${conversation} received a new message. Open chat to view it.`;
+  addInAppNotification("Messages", detail);
+
+  if ("Notification" in window && Notification.permission === "granted") {
+    new Notification(direction === "sent" ? "TravelDrip message sent" : "New TravelDrip message", {
+      body: direction === "sent"
+        ? `${conversation} message sent.`
+        : `${conversation} has a new message. Open TravelDrip to view details.`,
+      icon: "icons/icon-192.png",
+      tag: `traveldrip-message-${direction}-${conversation.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`
+    });
+  }
+}
+
 function describeControl(control) {
   return (control.getAttribute("aria-label") || control.textContent || control.id || control.tagName).trim().replace(/\s+/g, " ");
 }
@@ -3095,7 +3133,12 @@ function subscribeToLiveData() {
       filter: "trip_id=eq.dubai-weekend"
     }, ({ new: event }) => {
       if (event.user_id === state.session.user.id) return;
-      if (event.event_type === "message") appendMessage("Traveler", event.payload.text);
+      if (event.event_type === "message") {
+        const conversation = event.payload.conversation || "Trip chat";
+        appendMessage("Traveler", event.payload.text);
+        addMessageNotification(conversation, "received");
+        addAuditEntry("Message notification received", `${conversation}: incoming message notification displayed.`);
+      }
       if (event.event_type === "wallet") {
         const perPerson = Number(event.payload.perPerson);
         $("#deposit").value = String(perPerson);
