@@ -15,17 +15,20 @@ Traveldrip is a Vercel-ready PWA for group trip planning with Supabase auth, rea
 
 1. Create a free Supabase project.
 2. Open the SQL editor and run `supabase.sql`.
-3. The project URL is already set to `https://bfuiqmmbsgfcnyeneunv.supabase.co`; copy your publishable key into Vercel as `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
-4. Copy your service role key into Vercel as `SUPABASE_SERVICE_ROLE_KEY`. Never put this key in browser code.
-5. Add your admin email to `SUPABASE_ADMIN_EMAILS`.
-6. In Supabase Auth settings, add your Vercel URL to the allowed redirect URLs.
-7. In Supabase Auth providers, make sure Email is enabled. If Confirm email is on, new users must verify their inbox before logging in.
-8. Add these allowed redirect URLs in Supabase Auth URL Configuration:
+3. Run `supabase-backend.sql` to add the production backend foundation for trips, events, invitations, RSVP, schedules, wallet ledgers, receipts, role permissions, notifications, and audit logs.
+4. The project URL is already set to `https://bfuiqmmbsgfcnyeneunv.supabase.co`; copy your publishable key into Vercel as `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
+5. Copy your service role key into Vercel as `SUPABASE_SERVICE_ROLE_KEY`. Never put this key in browser code.
+6. Add your admin email to `SUPABASE_ADMIN_EMAILS`.
+7. In Supabase Auth settings, add your Vercel URL to the allowed redirect URLs.
+8. In Supabase Auth providers, make sure Email is enabled. If Confirm email is on, new users must verify their inbox before logging in.
+9. Add these allowed redirect URLs in Supabase Auth URL Configuration:
    - `https://YOUR-VERCEL-DOMAIN.vercel.app`
    - `https://YOUR-VERCEL-DOMAIN.vercel.app/login`
    - `https://YOUR-VERCEL-DOMAIN.vercel.app/register`
 
 For local static preview login, paste only the browser-safe publishable key into `public-config.js`. Do not put service-role or private notification keys in that file.
+
+See `BACKEND_ARCHITECTURE.md` for the full backend table, API, RLS, audit, and production integration notes.
 
 ## Push notification setup
 
