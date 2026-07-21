@@ -6,6 +6,7 @@ const state = {
   authMode: "signin",
   isAdmin: false,
   adminStatusCheckedFor: "",
+  hasEnteredApp: sessionStorage.getItem("traveldripEnteredApp") === "true",
   config: {
     supabaseUrl: "",
     supabaseAnonKey: "",
@@ -472,6 +473,11 @@ function updateAuthUi() {
   const openSignupButton = $("#openSignupButton");
   const signOutButton = $("#signOutButton");
   const authPanel = $("#authPanel");
+  if (signedIn && !state.hasEnteredApp) {
+    state.hasEnteredApp = true;
+    sessionStorage.setItem("traveldripEnteredApp", "true");
+  }
+  const showGate = !signedIn && !state.hasEnteredApp;
 
   if (openAuthButton) {
     openAuthButton.textContent = signedIn ? state.session.user.email : "Sign in";
@@ -481,9 +487,9 @@ function updateAuthUi() {
   if (openSignupButton) openSignupButton.hidden = signedIn;
   if (signOutButton) signOutButton.hidden = !signedIn;
   if (authPanel && location.pathname !== "/admin.html") {
-    authPanel.hidden = signedIn;
-    document.body.classList.toggle("auth-screen", !signedIn);
-    if (signedIn) authPanel.classList.remove("show-form");
+    authPanel.hidden = !showGate;
+    document.body.classList.toggle("auth-screen", showGate);
+    if (!showGate) authPanel.classList.remove("show-form");
   }
 
   if (location.pathname === "/admin.html") updateAdminUi();
@@ -557,6 +563,8 @@ function setAuthMode(mode, scrollIntoView = false) {
   const authMessage = $("#authMessage");
 
   state.authMode = isSignup ? "signup" : "signin";
+  state.hasEnteredApp = false;
+  sessionStorage.removeItem("traveldripEnteredApp");
   document.body.classList.add("auth-screen");
   if (authPanel) {
     authPanel.hidden = false;
@@ -592,6 +600,18 @@ function setAuthMode(mode, scrollIntoView = false) {
   if (scrollIntoView) authPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+function enterAppPreview() {
+  state.hasEnteredApp = true;
+  sessionStorage.setItem("traveldripEnteredApp", "true");
+  $("#authPanel")?.classList.remove("show-form");
+  if ($("#authPanel")) $("#authPanel").hidden = true;
+  document.body.classList.remove("auth-screen");
+  const appRoute = isFilePreview ? "index.html" : "/";
+  if (location.hash === "#login" || location.hash === "#register" || location.pathname === "/login" || location.pathname === "/register") {
+    history.replaceState(null, "", appRoute);
+  }
+}
+
 function showAuthSetupMessage() {
   $("#authMessage").textContent = state.config.supabaseUrl
     ? "Supabase URL is connected. Add NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in Vercel, or paste the publishable key into public-config.js for local preview login."
@@ -611,6 +631,7 @@ async function signIn(email, password) {
 
   const { error } = await state.supabase.auth.signInWithPassword({ email, password });
   $("#authMessage").textContent = error ? error.message : "Logged in. Your trip data is syncing now.";
+  if (!error) enterAppPreview();
 }
 
 async function signUp(fullName, email, password) {
@@ -635,6 +656,7 @@ async function signUp(fullName, email, password) {
 
   if (data.session) {
     $("#authMessage").textContent = "Account created. You are logged in and your trip data is syncing.";
+    enterAppPreview();
     return;
   }
 
@@ -657,8 +679,11 @@ async function sendMagicLink(email) {
 
 async function signOut() {
   if (state.supabase) await state.supabase.auth.signOut();
+  state.hasEnteredApp = false;
+  sessionStorage.removeItem("traveldripEnteredApp");
   state.isAdmin = false;
   state.adminStatusCheckedFor = "";
+  updateAuthUi();
 }
 
 function wireLocalInteractions() {
@@ -1205,6 +1230,7 @@ function wireLocalInteractions() {
   $("#formSignupButton")?.addEventListener("click", () => setAuthMode("signup"));
   $("#landingLoginButton")?.addEventListener("click", () => setAuthMode("signin"));
   $("#landingSignupButton")?.addEventListener("click", () => setAuthMode("signup"));
+  $("#enterAppButton")?.addEventListener("click", enterAppPreview);
   window.addEventListener("hashchange", () => {
     if (location.hash === "#register") setAuthMode("signup");
     if (location.hash === "#login") setAuthMode("signin");

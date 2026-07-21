@@ -459,6 +459,11 @@ body.auth-screen main {
   color: #edf8fb;
 }
 
+.auth-link-button.muted {
+  color: #9fb0b9;
+  font-size: 24px;
+}
+
 .auth-start-button {
   background: #08bdb8;
   color: #031015;
