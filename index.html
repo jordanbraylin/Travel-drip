@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=28">
+  <link rel="stylesheet" href="styles.css?v=29">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -1558,98 +1558,127 @@
           </section>
 
           <section class="panel split-bill-panel" id="splitBill">
-            <div class="section-heading compact">
+            <div class="section-heading compact split-bill-hero">
               <div>
                 <p class="eyebrow">Smart restaurant bill split</p>
-                <h2>Split dinner before anyone pays</h2>
+                <h2>Scan, claim, split, and settle dinner</h2>
+                <p>Every diner sees the exact food, shared items, tax, tip, fees, discounts, and final amount due before anyone pays.</p>
               </div>
-              <span class="compliance-badge">Live preview</span>
-            </div>
-            <div class="receipt-intake">
-              <button type="button" data-receipt-source="camera">Scan receipt</button>
-              <button type="button" data-receipt-source="photo">Upload photo</button>
-              <button type="button" data-receipt-source="pdf">Upload PDF</button>
-              <button type="button" data-receipt-source="manual">Enter manually</button>
-            </div>
-            <div class="receipt-summary">
-              <div>
-                <p class="eyebrow">AI receipt scanner</p>
-                <h3 id="receiptRestaurant">Marina Social Table</h3>
-                <span id="receiptMeta">Jul 20, 2026 • 8:42 PM • Table 12 • Server Lina</span>
-              </div>
-              <div>
-                <strong id="receiptExtractedTotal">$516.00</strong>
-                <span>Scanned receipt saved for review, edits, reimbursement, and trip history.</span>
+              <div class="bill-hero-total">
+                <span>Ready to split</span>
+                <strong id="billHeroTotal">$516.00</strong>
+                <small>Live preview</small>
               </div>
             </div>
-            <div class="bill-entry-grid">
-              <label>Total bill<input id="billSubtotal" type="number" min="0" step="0.01" value="420.00" inputmode="decimal"></label>
-              <label>Tax<input id="billTax" type="number" min="0" step="0.01" value="32.40" inputmode="decimal"></label>
-              <label>Tip %<input id="billTipPercent" type="number" min="0" step="1" value="18" inputmode="decimal"></label>
-              <label>Service fees<input id="billFees" type="number" min="0" step="0.01" value="8.00" inputmode="decimal"></label>
-              <label>Discounts / coupons<input id="billDiscount" type="number" min="0" step="0.01" value="20.00" inputmode="decimal"></label>
-              <label>Diners<input id="billDiners" type="number" min="1" max="24" step="1" value="6" inputmode="numeric"></label>
+            <div class="bill-flow-strip" aria-label="Bill split flow">
+              <div><strong>1</strong><span>Scan or enter receipt</span></div>
+              <div><strong>2</strong><span>Assign items</span></div>
+              <div><strong>3</strong><span>Review AI checks</span></div>
+              <div><strong>4</strong><span>Pay or mark settled</span></div>
             </div>
-            <div class="split-mode-tabs" role="tablist" aria-label="Bill split mode">
-              <button class="active" type="button" data-split-mode="equal">Equal</button>
-              <button type="button" data-split-mode="custom">Custom</button>
-              <button type="button" data-split-mode="percentage">Percentage</button>
-              <button type="button" data-split-mode="itemized">Itemized</button>
-            </div>
-            <div class="bill-total-grid">
-              <div><span>Final total</span><strong id="billFinalTotal">$516.00</strong></div>
-              <div><span>Each person</span><strong id="billEachTotal">$86.00</strong></div>
-              <div><span>Remaining balance</span><strong id="billRemaining">$516.00</strong></div>
-            </div>
-            <div class="split-preview" id="splitPreview" aria-label="Participant split preview"></div>
-            <div class="receipt-workspace">
-              <section class="receipt-items-panel">
-                <div class="section-heading compact">
+            <div class="bill-redesign-grid">
+              <div class="bill-main-column">
+                <div class="receipt-command-card">
                   <div>
-                    <p class="eyebrow">AI item recognition</p>
-                    <h3>Claim items from the receipt</h3>
+                    <p class="eyebrow">Receipt intake</p>
+                    <h3>Start from a scan, upload, PDF, or manual entry</h3>
                   </div>
-                  <button class="ghost-button" type="button" id="aiBillReviewButton">Run AI review</button>
+                  <div class="receipt-intake">
+                    <button type="button" data-receipt-source="camera">Scan receipt</button>
+                    <button type="button" data-receipt-source="photo">Upload photo</button>
+                    <button type="button" data-receipt-source="pdf">Upload PDF</button>
+                    <button type="button" data-receipt-source="manual">Enter manually</button>
+                  </div>
                 </div>
-                <div class="receipt-item-list" id="receiptItemList" aria-label="Recognized receipt items"></div>
-              </section>
-              <aside class="payment-status-panel">
-                <p class="eyebrow">Live group payment status</p>
-                <div class="receipt-status-list" id="receiptStatusList" aria-label="Live payment status"></div>
-                <p class="small" id="receiptReviewMessage">AI review checks missing diners, duplicate items, tax math, tip discrepancies, and uneven shared-item assignments.</p>
+                <div class="receipt-summary">
+                  <div>
+                    <p class="eyebrow">AI receipt scanner</p>
+                    <h3 id="receiptRestaurant">Marina Social Table</h3>
+                    <span id="receiptMeta">Jul 20, 2026 • 8:42 PM • Table 12 • Server Lina</span>
+                  </div>
+                  <div>
+                    <strong id="receiptExtractedTotal">$516.00</strong>
+                    <span>Scanned receipt saved for review, edits, reimbursement, and trip history.</span>
+                  </div>
+                </div>
+                <div class="bill-entry-card">
+                  <div>
+                    <p class="eyebrow">Bill details</p>
+                    <h3>Adjust totals before splitting</h3>
+                  </div>
+                  <div class="bill-entry-grid">
+                    <label>Total bill<input id="billSubtotal" type="number" min="0" step="0.01" value="420.00" inputmode="decimal"></label>
+                    <label>Tax<input id="billTax" type="number" min="0" step="0.01" value="32.40" inputmode="decimal"></label>
+                    <label>Tip %<input id="billTipPercent" type="number" min="0" step="1" value="18" inputmode="decimal"></label>
+                    <label>Service fees<input id="billFees" type="number" min="0" step="0.01" value="8.00" inputmode="decimal"></label>
+                    <label>Discounts / coupons<input id="billDiscount" type="number" min="0" step="0.01" value="20.00" inputmode="decimal"></label>
+                    <label>Diners<input id="billDiners" type="number" min="1" max="24" step="1" value="6" inputmode="numeric"></label>
+                  </div>
+                </div>
+                <div class="split-mode-tabs" role="tablist" aria-label="Bill split mode">
+                  <button class="active" type="button" data-split-mode="equal">Equal</button>
+                  <button type="button" data-split-mode="custom">Custom</button>
+                  <button type="button" data-split-mode="percentage">Percentage</button>
+                  <button type="button" data-split-mode="itemized">Itemized</button>
+                </div>
+                <div class="receipt-workspace">
+                  <section class="receipt-items-panel">
+                    <div class="section-heading compact">
+                      <div>
+                        <p class="eyebrow">AI item recognition</p>
+                        <h3>Claim items from the receipt</h3>
+                      </div>
+                      <button class="ghost-button" type="button" id="aiBillReviewButton">Run AI review</button>
+                    </div>
+                    <div class="receipt-item-list" id="receiptItemList" aria-label="Recognized receipt items"></div>
+                  </section>
+                  <aside class="payment-status-panel">
+                    <p class="eyebrow">Live group payment status</p>
+                    <div class="receipt-status-list" id="receiptStatusList" aria-label="Live payment status"></div>
+                    <p class="small" id="receiptReviewMessage">AI review checks missing diners, duplicate items, tax math, tip discrepancies, and uneven shared-item assignments.</p>
+                  </aside>
+                </div>
+              </div>
+              <aside class="bill-side-column">
+                <div class="bill-total-grid">
+                  <div><span>Final total</span><strong id="billFinalTotal">$516.00</strong></div>
+                  <div><span>Each person</span><strong id="billEachTotal">$86.00</strong></div>
+                  <div><span>Remaining balance</span><strong id="billRemaining">$516.00</strong></div>
+                </div>
+                <div class="split-preview" id="splitPreview" aria-label="Participant split preview"></div>
+                <div class="bill-tools-grid">
+                  <div>
+                    <h3>Receipt scanner</h3>
+                    <p>Scan or upload a receipt to detect menu items, tax, tip, service fees, discounts, and total before review.</p>
+                    <button class="ghost-button wide" type="button" id="scanReceiptButton">Simulate receipt scan</button>
+                  </div>
+                  <div>
+                    <h3>AI tip calculator</h3>
+                    <p id="tipAdvice">An 18% tip is customary for this restaurant based on group size and local dining norms.</p>
+                    <button class="ghost-button wide" type="button" id="tipAdviceButton">Recommend tip</button>
+                  </div>
+                </div>
+                <div class="payment-method-grid">
+                  <button type="button" data-bill-pay="TravelDrip Wallet">Pay from Wallet</button>
+                  <button type="button" data-bill-pay="Linked card">Linked card</button>
+                  <button type="button" data-bill-pay="Apple Pay">Apple Pay</button>
+                  <button type="button" data-bill-pay="Google Wallet">Google Wallet</button>
+                  <button type="button" data-bill-pay="Outside app">Mark paid outside app</button>
+                </div>
+                <p class="small" id="billMessage">Open from itinerary, restaurant reservation, group chat, wallet, or quick actions. Payments require processor integration for production settlement.</p>
+                <div class="receipt-history-panel">
+                  <div>
+                    <p class="eyebrow">Receipt history</p>
+                    <h3>Stored for expense tracking and reimbursement</h3>
+                  </div>
+                  <div id="receiptHistoryList" class="receipt-history-list"></div>
+                </div>
               </aside>
             </div>
-            <div class="bill-tools-grid">
-              <div>
-                <h3>Receipt scanner</h3>
-                <p>Scan or upload a receipt to detect menu items, tax, tip, service fees, discounts, and total before review.</p>
-                <button class="ghost-button wide" type="button" id="scanReceiptButton">Simulate receipt scan</button>
-              </div>
-              <div>
-                <h3>AI tip calculator</h3>
-                <p id="tipAdvice">An 18% tip is customary for this restaurant based on group size and local dining norms.</p>
-                <button class="ghost-button wide" type="button" id="tipAdviceButton">Recommend tip</button>
-              </div>
-            </div>
-            <div class="payment-method-grid">
-              <button type="button" data-bill-pay="TravelDrip Wallet">Pay from Wallet</button>
-              <button type="button" data-bill-pay="Linked card">Linked card</button>
-              <button type="button" data-bill-pay="Apple Pay">Apple Pay</button>
-              <button type="button" data-bill-pay="Google Wallet">Google Wallet</button>
-              <button type="button" data-bill-pay="Outside app">Mark paid outside app</button>
-            </div>
-            <p class="small" id="billMessage">Open from itinerary, restaurant reservation, group chat, wallet, or quick actions. Payments require processor integration for production settlement.</p>
             <div class="corporate-meal-rules">
               <div><strong>Traveler view</strong><span>Employees see their meal, location, schedule, company payment status, and their assigned portion only.</span></div>
               <div><strong>Finance view</strong><span>Finance admins can review total meal expense, departments, invoices, payment history, and budget impact.</span></div>
               <div><strong>Analytics</strong><span>Tracks restaurant spending, average meal cost, cost per traveler, dining history, and budget vs. actual.</span></div>
-            </div>
-            <div class="receipt-history-panel">
-              <div>
-                <p class="eyebrow">Receipt history</p>
-                <h3>Stored for expense tracking and reimbursement</h3>
-              </div>
-              <div id="receiptHistoryList" class="receipt-history-list"></div>
             </div>
           </section>
 

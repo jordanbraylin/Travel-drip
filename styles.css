@@ -5682,3 +5682,345 @@ main {
     grid-template-columns: 1fr;
   }
 }
+
+.split-bill-panel {
+  grid-column: 1 / -1;
+  gap: 18px;
+  overflow: visible;
+}
+
+.split-bill-hero {
+  min-height: 170px;
+  align-items: end;
+  border: 1px solid rgba(8, 127, 140, 0.16);
+  border-radius: 28px;
+  padding: 22px;
+  background:
+    linear-gradient(115deg, rgba(5, 47, 55, 0.88), rgba(8, 127, 140, 0.76)),
+    url("https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=1200&q=78") center/cover;
+  color: #fff;
+  box-shadow: var(--soft-shadow);
+}
+
+.split-bill-hero h2,
+.split-bill-hero p {
+  margin: 0;
+}
+
+.split-bill-hero h2 {
+  max-width: 720px;
+  color: #fff;
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1.03;
+}
+
+.split-bill-hero p:not(.eyebrow) {
+  max-width: 660px;
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.split-bill-hero .eyebrow {
+  color: var(--reef);
+}
+
+.bill-hero-total {
+  min-width: 170px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 24px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+  text-align: right;
+}
+
+.bill-hero-total span,
+.bill-hero-total small,
+.bill-hero-total strong {
+  display: block;
+}
+
+.bill-hero-total span,
+.bill-hero-total small {
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.bill-hero-total strong {
+  color: #fff;
+  font-size: 34px;
+  line-height: 1.1;
+}
+
+.bill-flow-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.bill-flow-strip div,
+.receipt-command-card,
+.bill-entry-card,
+.split-bill-panel .receipt-summary > div,
+.split-bill-panel .receipt-items-panel,
+.split-bill-panel .payment-status-panel,
+.split-bill-panel .receipt-history-panel,
+.split-bill-panel .bill-total-grid div,
+.split-bill-panel .bill-tools-grid > div,
+.split-bill-panel .corporate-meal-rules div,
+.split-bill-panel .split-preview div {
+  border: 1px solid rgba(8, 127, 140, 0.14);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: var(--soft-shadow);
+}
+
+.bill-flow-strip div {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+}
+
+.bill-flow-strip strong {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #dff7f5;
+  color: var(--sea-dark);
+}
+
+.bill-flow-strip span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 850;
+  line-height: 1.25;
+}
+
+.bill-redesign-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(330px, 0.78fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.bill-main-column,
+.bill-side-column,
+.receipt-command-card,
+.bill-entry-card {
+  display: grid;
+  gap: 14px;
+}
+
+.bill-side-column {
+  position: sticky;
+  top: 16px;
+}
+
+.receipt-command-card,
+.bill-entry-card {
+  padding: 16px;
+}
+
+.receipt-command-card {
+  grid-template-columns: minmax(0, 0.7fr) minmax(280px, 1fr);
+  align-items: center;
+}
+
+.receipt-command-card h3,
+.bill-entry-card h3 {
+  margin: 0;
+}
+
+.split-bill-panel .receipt-intake {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.split-bill-panel .receipt-intake button,
+.split-bill-panel .payment-method-grid button {
+  border-color: rgba(8, 127, 140, 0.16);
+  border-radius: 999px;
+  background: #fff;
+  color: #24555d;
+  box-shadow: 0 6px 16px rgba(31, 42, 51, 0.05);
+}
+
+.split-bill-panel .receipt-intake button:first-child,
+.split-bill-panel .payment-method-grid button:first-child {
+  background: var(--sea);
+  color: #fff;
+}
+
+.split-bill-panel .receipt-summary {
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 0.32fr);
+  gap: 10px;
+}
+
+.split-bill-panel .receipt-summary > div {
+  padding: 16px;
+}
+
+.split-bill-panel .receipt-summary strong {
+  font-size: 30px;
+}
+
+.split-bill-panel .bill-entry-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.split-bill-panel .bill-entry-grid label {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 10px;
+  background: #f7fbfa;
+}
+
+.split-bill-panel .bill-entry-grid input {
+  min-height: 42px;
+  border-radius: 14px;
+}
+
+.split-bill-panel .split-mode-tabs {
+  border-radius: 999px;
+  padding: 6px;
+  background: #eef7f5;
+}
+
+.split-bill-panel .split-mode-tabs button {
+  border-radius: 999px;
+}
+
+.split-bill-panel .bill-total-grid {
+  grid-template-columns: 1fr;
+}
+
+.split-bill-panel .bill-total-grid div {
+  padding: 14px;
+}
+
+.split-bill-panel .bill-total-grid strong {
+  font-size: 28px;
+}
+
+.split-bill-panel .split-preview {
+  max-height: 360px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.split-bill-panel .split-preview div {
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 12px;
+}
+
+.split-bill-panel .split-preview span,
+.split-bill-panel .split-preview small {
+  grid-column: 1 / -1;
+}
+
+.split-bill-panel .split-preview b {
+  font-size: 22px;
+}
+
+.split-bill-panel .receipt-workspace {
+  grid-template-columns: minmax(0, 1.08fr) minmax(260px, 0.74fr);
+  gap: 14px;
+}
+
+.split-bill-panel .receipt-items-panel,
+.split-bill-panel .payment-status-panel,
+.split-bill-panel .receipt-history-panel {
+  padding: 16px;
+}
+
+.split-bill-panel .receipt-item-list article {
+  grid-template-columns: minmax(150px, 0.55fr) minmax(0, 1fr);
+  border-radius: 18px;
+  background: #f7fbfa;
+}
+
+.split-bill-panel .receipt-claim-grid label {
+  border-radius: 999px;
+}
+
+.split-bill-panel .receipt-status-list div,
+.split-bill-panel .receipt-history-list div {
+  grid-template-columns: minmax(0, 1fr) auto;
+  border-radius: 18px;
+}
+
+.split-bill-panel .receipt-status-list span,
+.split-bill-panel .receipt-history-list span {
+  grid-column: 1 / -1;
+}
+
+.split-bill-panel .bill-tools-grid {
+  grid-template-columns: 1fr;
+}
+
+.split-bill-panel .bill-tools-grid > div {
+  padding: 16px;
+}
+
+.split-bill-panel .payment-method-grid {
+  grid-template-columns: 1fr;
+}
+
+.split-bill-panel #billMessage {
+  border: 1px solid rgba(8, 127, 140, 0.16);
+  border-radius: 18px;
+  padding: 12px;
+  background: #f7fbfa;
+}
+
+.split-bill-panel .corporate-meal-rules {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.split-bill-panel .corporate-meal-rules div {
+  padding: 16px;
+}
+
+@media (max-width: 1120px) {
+  .bill-redesign-grid,
+  .receipt-command-card,
+  .split-bill-panel .receipt-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .bill-side-column {
+    position: static;
+  }
+
+  .split-bill-panel .bill-total-grid,
+  .split-bill-panel .bill-tools-grid,
+  .split-bill-panel .payment-method-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .split-bill-hero,
+  .bill-flow-strip,
+  .split-bill-panel .receipt-intake,
+  .split-bill-panel .receipt-summary,
+  .split-bill-panel .bill-entry-grid,
+  .split-bill-panel .bill-total-grid,
+  .split-bill-panel .bill-tools-grid,
+  .split-bill-panel .payment-method-grid,
+  .split-bill-panel .corporate-meal-rules {
+    grid-template-columns: 1fr;
+  }
+
+  .bill-hero-total {
+    text-align: left;
+  }
+}

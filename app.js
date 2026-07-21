@@ -884,6 +884,7 @@ function renderBillSplit() {
   const each = bill.total / bill.diners;
 
   $("#billFinalTotal").textContent = currency(bill.total);
+  if ($("#billHeroTotal")) $("#billHeroTotal").textContent = currency(bill.total);
   $("#billEachTotal").textContent = currency(each);
   $("#billRemaining").textContent = currency(Math.max(0, bill.total - paid));
   $("#splitPreview").innerHTML = splits.map((person) => {
