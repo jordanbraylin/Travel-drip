@@ -367,6 +367,71 @@ create table if not exists public.group_banks (
   settings jsonb not null default '{}'::jsonb
 );
 
+create table if not exists public.trip_virtual_wallets (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  trip_id uuid not null unique references public.trips(id) on delete cascade,
+  group_bank_id uuid unique references public.group_banks(id) on delete cascade,
+  organization_id uuid references public.organizations(id) on delete set null,
+  wallet_identifier text not null unique,
+  wallet_type text not null default 'shared_trip' check (wallet_type in ('shared_trip','event','cruise','corporate')),
+  currency text not null default 'USD',
+  available_cents bigint not null default 0,
+  total_contributions_cents bigint not null default 0,
+  total_spent_cents bigint not null default 0,
+  reserved_cents bigint not null default 0,
+  pending_transaction_cents bigint not null default 0,
+  pending_refund_cents bigint not null default 0,
+  status text not null default 'active' check (status in ('active','frozen','closed','reconciliation','provider_required')),
+  provider text,
+  provider_wallet_ref text,
+  settings jsonb not null default '{}'::jsonb
+);
+
+drop trigger if exists set_trip_virtual_wallets_updated_at on public.trip_virtual_wallets;
+create trigger set_trip_virtual_wallets_updated_at
+before update on public.trip_virtual_wallets
+for each row execute function public.set_updated_at();
+
+create table if not exists public.trip_wallet_cards (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  trip_wallet_id uuid not null references public.trip_virtual_wallets(id) on delete cascade,
+  trip_id uuid not null references public.trips(id) on delete cascade,
+  card_status text not null default 'inactive' check (card_status in ('inactive','active','locked','frozen','closed','provider_required')),
+  masked_last_four text,
+  provider text,
+  provider_card_ref text,
+  tokenization_status text not null default 'not_started' check (tokenization_status in ('not_started','pending','provisioned','failed','revoked')),
+  spend_controls jsonb not null default '{}'::jsonb,
+  metadata jsonb not null default '{}'::jsonb,
+  unique (trip_wallet_id)
+);
+
+drop trigger if exists set_trip_wallet_cards_updated_at on public.trip_wallet_cards;
+create trigger set_trip_wallet_cards_updated_at
+before update on public.trip_wallet_cards
+for each row execute function public.set_updated_at();
+
+create table if not exists public.trip_wallet_contributions (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  trip_wallet_id uuid not null references public.trip_virtual_wallets(id) on delete cascade,
+  trip_id uuid not null references public.trips(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  transaction_id uuid references public.wallet_transactions(id) on delete set null,
+  amount_cents bigint not null check (amount_cents > 0),
+  currency text not null default 'USD',
+  payment_method text,
+  status text not null default 'pending' check (status in ('pending','processing','completed','failed','cancelled','refunded','review_required')),
+  refundable_cents bigint not null default 0,
+  idempotency_key text,
+  metadata jsonb not null default '{}'::jsonb,
+  unique (trip_wallet_id, idempotency_key)
+);
+
 create table if not exists public.wallet_transactions (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
@@ -579,6 +644,9 @@ create index if not exists idx_invitations_trip_status on public.invitations(tri
 create index if not exists idx_schedule_items_trip_time on public.schedule_items(trip_id, starts_at);
 create index if not exists idx_wallet_transactions_user on public.wallet_transactions(user_id, created_at desc);
 create index if not exists idx_wallet_transactions_trip on public.wallet_transactions(trip_id, created_at desc);
+create index if not exists idx_trip_virtual_wallets_trip on public.trip_virtual_wallets(trip_id, status);
+create index if not exists idx_trip_wallet_contributions_user on public.trip_wallet_contributions(user_id, created_at desc);
+create index if not exists idx_trip_wallet_contributions_trip on public.trip_wallet_contributions(trip_id, status);
 create index if not exists idx_audit_logs_trip on public.audit_logs(trip_id, created_at desc);
 create index if not exists idx_notifications_user on public.notifications(user_id, created_at desc);
 
@@ -603,6 +671,9 @@ alter table public.poll_options enable row level security;
 alter table public.poll_votes enable row level security;
 alter table public.wallets enable row level security;
 alter table public.group_banks enable row level security;
+alter table public.trip_virtual_wallets enable row level security;
+alter table public.trip_wallet_cards enable row level security;
+alter table public.trip_wallet_contributions enable row level security;
 alter table public.wallet_transactions enable row level security;
 alter table public.receipts enable row level security;
 alter table public.receipt_items enable row level security;
@@ -765,8 +836,61 @@ create policy "Users update own wallet security" on public.wallets
   for update to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
 
 drop policy if exists "Finance reads group banks" on public.group_banks;
-create policy "Finance reads group banks" on public.group_banks
-  for select to authenticated using (public.has_trip_role(trip_id, array['owner','admin','organizer','finance_admin']));
+drop policy if exists "Members read eligible group banks" on public.group_banks;
+create policy "Members read eligible group banks" on public.group_banks
+  for select to authenticated using (
+    public.has_trip_role(trip_id, array['owner','admin','organizer','finance_admin'])
+    or (
+      public.is_trip_member(trip_id)
+      and exists (
+        select 1 from public.trips t
+        where t.id = trip_id
+          and t.trip_type <> 'corporate_retreat'
+      )
+    )
+  );
+
+drop policy if exists "Members read eligible trip wallets" on public.trip_virtual_wallets;
+create policy "Members read eligible trip wallets" on public.trip_virtual_wallets
+  for select to authenticated using (
+    public.has_trip_role(trip_id, array['owner','admin','organizer','finance_admin'])
+    or (
+      public.is_trip_member(trip_id)
+      and exists (
+        select 1 from public.trips t
+        where t.id = trip_id
+          and t.trip_type <> 'corporate_retreat'
+      )
+    )
+  );
+
+drop policy if exists "Members read eligible trip wallet cards" on public.trip_wallet_cards;
+create policy "Members read eligible trip wallet cards" on public.trip_wallet_cards
+  for select to authenticated using (
+    public.has_trip_role(trip_id, array['owner','admin','organizer','finance_admin'])
+    or (
+      public.is_trip_member(trip_id)
+      and exists (
+        select 1 from public.trips t
+        where t.id = trip_id
+          and t.trip_type <> 'corporate_retreat'
+      )
+    )
+  );
+
+drop policy if exists "Users read own wallet contributions" on public.trip_wallet_contributions;
+create policy "Users read own wallet contributions" on public.trip_wallet_contributions
+  for select to authenticated using (
+    user_id = auth.uid()
+    or public.has_trip_role(trip_id, array['owner','admin','organizer','finance_admin'])
+  );
+
+drop policy if exists "Members add own wallet contributions" on public.trip_wallet_contributions;
+create policy "Members add own wallet contributions" on public.trip_wallet_contributions
+  for insert to authenticated with check (
+    user_id = auth.uid()
+    and public.is_trip_member(trip_id)
+  );
 
 drop policy if exists "Users read own transactions" on public.wallet_transactions;
 create policy "Users read own transactions" on public.wallet_transactions

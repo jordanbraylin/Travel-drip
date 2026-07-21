@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=43">
+  <link rel="stylesheet" href="styles.css?v=44">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -469,7 +469,7 @@
           <div class="section-heading compact">
             <div>
               <p class="eyebrow">My Contributions</p>
-              <h2>Personal wallet ledger</h2>
+              <h2>My share of the Trip Wallet</h2>
             </div>
             <button class="ghost-button" type="button" id="downloadReportButton">Download report</button>
           </div>
@@ -485,6 +485,7 @@
             <div><time>Jul 14, 2026 11:20 AM</time><strong>$420 allocated</strong><span>Flight purchase, non-refundable</span></div>
             <div><time>Jul 10, 2026 6:05 PM</time><strong>$950 deposited</strong><span>Original payment method</span></div>
           </div>
+          <p class="small">These records remain attached to Jordan even though the money is pooled into the shared Trip Virtual Wallet.</p>
         </section>
 
         <section class="panel rules-panel">
@@ -508,16 +509,16 @@
           <section class="panel" data-route-support="groupBank">
             <div class="section-heading compact">
               <div>
-                <p class="eyebrow">Group Bank Overview</p>
-                <h2>Transparent trip balance</h2>
+              <p class="eyebrow">Group Bank Overview</p>
+                <h2>Shared Trip Virtual Wallet</h2>
               </div>
               <label class="privacy-toggle"><input id="privacyToggle" type="checkbox" checked> Show member amounts</label>
             </div>
             <div class="bank-overview">
-              <article><span>Total collected</span><strong>$6,400</strong></article>
+              <article><span>Wallet ID</span><strong>TDW-MIA-4829</strong></article>
+              <article><span>Total collected</span><strong id="bankTotalCollected">$6,400</strong></article>
               <article><span>Outstanding expenses</span><strong>$1,850</strong></article>
               <article><span>Upcoming deadline</span><strong>Jul 24</strong></article>
-              <article><span>Pending refunds</span><strong>$380</strong></article>
             </div>
             <div class="member-table" id="memberTable" role="table" aria-label="Member contributions">
               <div role="row"><strong role="columnheader">Member</strong><strong role="columnheader">Deposited</strong><strong role="columnheader">Available</strong><strong role="columnheader">Status</strong></div>
@@ -1779,14 +1780,33 @@
           </section>
 
           <section class="panel" id="walletPanel">
-            <h2>Group wallet</h2>
-            <div class="wallet-total"><strong id="walletTotal">$6,400</strong><span>Protected deposits</span></div>
-            <p class="security-note">Payments require PIN confirmation. Demo PIN validation runs in the app; production payments should use a PCI-compliant processor such as Stripe and server-side verification.</p>
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Trip Virtual Wallet</p>
+                <h2>One shared wallet for Miami 2027</h2>
+              </div>
+              <span class="card-status active">Active</span>
+            </div>
+            <div class="trip-wallet-card">
+              <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=900&auto=format&fit=crop" alt="Miami beach trip wallet cover">
+              <div>
+                <span>Wallet ID</span>
+                <strong id="tripWalletId">TDW-MIA-4829</strong>
+                <small>Linked exclusively to this trip</small>
+              </div>
+              <div>
+                <span>Trip Wallet Card</span>
+                <strong>•••• 4829</strong>
+                <small>Masked credentials only</small>
+              </div>
+            </div>
+            <div class="wallet-total"><strong id="walletTotal">$6,400</strong><span>Confirmed shared balance</span></div>
+            <p class="security-note">One shared Trip Virtual Wallet is created for each eligible trip. Contributions combine into the trip balance while each member's personal contribution ledger remains separate, refundable, and auditable.</p>
             <div class="wallet-breakdown">
-              <div><span>Available funds</span><strong>$380</strong></div>
-              <div><span>Allocated expenses</span><strong>$420</strong></div>
-              <div><span>Pending refunds</span><strong>$380</strong></div>
-              <div><span>Completed refunds</span><strong>$120</strong></div>
+              <div><span>Total contributions</span><strong id="tripTotalContributions">$6,400</strong></div>
+              <div><span>Total spent</span><strong id="tripTotalSpent">$2,520</strong></div>
+              <div><span>Available balance</span><strong id="tripAvailableBalance">$3,880</strong></div>
+              <div><span>Pending transactions</span><strong id="tripPendingTransactions">$380</strong></div>
             </div>
             <label class="range-wrap" for="deposit">Per-person deposit: <strong id="depositValue">$800</strong><input id="deposit" type="range" min="500" max="1200" step="50" value="800"></label>
             <form class="funds-form" id="fundsForm">
@@ -1796,6 +1816,11 @@
               <button class="primary-button wide" type="submit">Continue to PIN</button>
             </form>
             <p class="small" id="walletMessage">No wallet payment has been submitted in this session.</p>
+            <div class="shared-wallet-ledger" id="sharedWalletLedger" aria-label="Shared trip wallet ledger">
+              <div><time>Jul 20, 2026 9:42 AM</time><strong>Jordan contribution</strong><span>+$100 completed • Debit card • Refundable</span></div>
+              <div><time>Jul 19, 2026 6:15 PM</time><strong>Hotel deposit allocation</strong><span>-$1,200 approved • Organizer • Non-refundable hold</span></div>
+              <div><time>Jul 18, 2026 3:05 PM</time><strong>Shared activity payment</strong><span>-$840 completed • Wallet card • Audit logged</span></div>
+            </div>
             <div class="budget-line"><span>Flights</span><strong>$3,200</strong></div><div class="bar"><i style="--w:50%"></i></div>
             <div class="budget-line"><span>Stay</span><strong>$2,100</strong></div><div class="bar"><i style="--w:33%"></i></div>
             <div class="budget-line"><span>Food and events</span><strong>$1,100</strong></div><div class="bar"><i style="--w:17%"></i></div>
@@ -1810,10 +1835,10 @@
               <span class="card-status" id="cardStatus">Locked</span>
             </div>
             <div class="virtual-card">
-              <div class="card-top"><span>TravelDrip</span><strong>Wallet Card</strong></div>
+              <div class="card-top"><span>Miami 2027</span><strong>Trip Wallet Card</strong></div>
               <div class="card-number" id="cardNumber">•••• •••• •••• 4829</div>
               <div class="card-meta">
-                <span><small>Cardholder</small><strong>Jordan Taylor</strong></span>
+                <span><small>Wallet</small><strong>TDW-MIA-4829</strong></span>
                 <span><small>Exp</small><strong id="cardExp">08/29</strong></span>
                 <span><small>CVV</small><strong id="cardCvv">•••</strong></span>
               </div>
@@ -1823,7 +1848,7 @@
               <div><span>Daily limit</span><strong id="dailyLimitValue">$250</strong></div>
               <div><span>Per purchase</span><strong id="purchaseLimitValue">$125</strong></div>
             </div>
-            <p class="security-note">Only available wallet funds can be spent. Reserved, pending, refund-review, restricted, or frozen balances cannot be used by the card.</p>
+            <p class="security-note">Only available shared trip-wallet funds can be spent. Reserved, pending, refund-review, restricted, or frozen balances cannot be used by the card.</p>
             <div class="button-row">
               <button class="primary-button" type="button" id="activateCardButton">Activate card</button>
               <button class="ghost-button" type="button" id="lockCardButton">Unlock card</button>
@@ -2675,6 +2700,6 @@
   </dialog>
 
   <script src="public-config.js?v=1"></script>
-  <script defer src="app.js?v=36"></script>
+  <script defer src="app.js?v=37"></script>
 </body>
 </html>

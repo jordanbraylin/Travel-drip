@@ -83,6 +83,21 @@ function normalizeTripType(value) {
   return allowedTripTypes.has(tripType) ? tripType : "group_trip";
 }
 
+function tripUsesSharedWallet(tripType) {
+  return tripType !== "solo_trip";
+}
+
+function walletTypeForTrip(tripType) {
+  if (tripType === "corporate_retreat" || tripType === "business_event" || tripType === "conference") return "corporate";
+  if (tripType === "cruise_vacation") return "cruise";
+  if (tripType === "special_event" || tripType === "wedding" || tripType === "birthday" || tripType === "family_reunion") return "event";
+  return "shared_trip";
+}
+
+function makeWalletIdentifier(tripId) {
+  return `TDW-${String(tripId).replace(/-/g, "").slice(0, 12).toUpperCase()}`;
+}
+
 async function listTrips(request, response, supabase, user) {
   const { searchParams } = new URL(request.url, "https://traveldrip.local");
   const status = sanitizeText(searchParams.get("status"), "", 40);
@@ -170,6 +185,80 @@ async function createTrip(response, supabase, user, body) {
     sort_order: index + 1
   })));
 
+  let tripWallet = null;
+  let tripWalletCard = null;
+  if (tripUsesSharedWallet(tripType)) {
+    const walletIdentifier = makeWalletIdentifier(trip.id);
+    const { data: groupBank, error: groupBankError } = await supabase
+      .from("group_banks")
+      .insert({
+        trip_id: trip.id,
+        currency: sanitizeText(body.currency, "USD", 12),
+        settings: {
+          walletIdentifier,
+          createdAutomatically: true,
+          corporateFundsSeparate: tripType === "corporate_retreat"
+        }
+      })
+      .select("*")
+      .single();
+
+    if (groupBankError) {
+      response.status(500).json({ error: groupBankError.message });
+      return;
+    }
+
+    const { data: wallet, error: walletError } = await supabase
+      .from("trip_virtual_wallets")
+      .insert({
+        trip_id: trip.id,
+        group_bank_id: groupBank.id,
+        organization_id: trip.organization_id,
+        wallet_identifier: walletIdentifier,
+        wallet_type: walletTypeForTrip(tripType),
+        currency: groupBank.currency,
+        status: "active",
+        settings: {
+          oneWalletPerTrip: true,
+          memberContributionLedger: true,
+          duplicatePaymentProtection: true,
+          companyFundsSeparate: tripType === "corporate_retreat"
+        }
+      })
+      .select("*")
+      .single();
+
+    if (walletError) {
+      response.status(500).json({ error: walletError.message });
+      return;
+    }
+
+    const { data: card, error: cardError } = await supabase
+      .from("trip_wallet_cards")
+      .insert({
+        trip_wallet_id: wallet.id,
+        trip_id: trip.id,
+        card_status: "provider_required",
+        masked_last_four: walletIdentifier.slice(-4),
+        tokenization_status: "not_started",
+        spend_controls: {
+          availableBalanceOnly: true,
+          blockReservedFunds: true,
+          requirePinForSensitiveActions: true
+        }
+      })
+      .select("*")
+      .single();
+
+    if (cardError) {
+      response.status(500).json({ error: cardError.message });
+      return;
+    }
+
+    tripWallet = wallet;
+    tripWalletCard = card;
+  }
+
   await supabase.from("ai_sessions").insert({
     trip_id: trip.id,
     user_id: user.id,
@@ -190,10 +279,17 @@ async function createTrip(response, supabase, user, body) {
     action: "trip.created",
     entityType: "trip",
     entityId: trip.id,
-    metadata: { tripType, modules, featureFlags }
+    metadata: {
+      tripType,
+      modules,
+      featureFlags,
+      tripWalletCreated: Boolean(tripWallet),
+      tripWalletId: tripWallet?.id || null,
+      walletIdentifier: tripWallet?.wallet_identifier || null
+    }
   });
 
-  response.status(201).json({ trip, modules, featureFlags });
+  response.status(201).json({ trip, modules, featureFlags, tripWallet, tripWalletCard });
 }
 
 async function updateTrip(response, supabase, user, body) {

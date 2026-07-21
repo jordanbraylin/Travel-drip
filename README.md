@@ -55,9 +55,11 @@ Do not store raw access codes or employee IDs in browser storage, logs, analytic
 
 ## Wallet and payment security
 
-The current wallet UI includes the Group Bank dashboard, personal contribution ledger, refundable balance rules, admin controls, refund requests, leave-trip review, and permanent audit log surfaces. Adding funds, requesting refunds, and leaving-trip refund review require a 4-digit PIN confirmation in the mock UI. This confirms the intended user flow, but it is not a production payment processor.
+The current wallet UI includes the shared Trip Virtual Wallet, Group Bank dashboard, personal contribution ledger, refundable balance rules, admin controls, refund requests, leave-trip review, and permanent audit log surfaces. Adding funds, requesting refunds, and leaving-trip refund review require a 4-digit PIN confirmation in the mock UI. This confirms the intended user flow, but it is not a production payment processor.
 
-For a real secured wallet, connect the Add funds action to Stripe Checkout, Stripe Payment Intents, or another PCI-compliant provider. Keep card data out of Traveldrip, verify PIN/payment state on a serverless API route, store only provider transaction IDs, and use Supabase Row Level Security for wallet records.
+Every eligible group trip, event, cruise, or corporate retreat should have one shared trip wallet, one unique wallet identifier, one masked trip wallet card, one transaction ledger, one contribution ledger, and one audit trail. Member contributions are pooled into the trip wallet balance while each user's contribution history, refundable balance, and refund activity remain separately tracked.
+
+For a real secured wallet, connect the Add funds action to Stripe Checkout, Stripe Payment Intents, or another PCI-compliant provider. Keep card data out of Traveldrip, verify PIN/payment state on a serverless API route, store only provider transaction IDs/idempotency keys, and use Supabase Row Level Security for trip wallet and contribution records.
 
 Core rule: users always see their own contributions, and money not committed to deposits, reservations, flights, hotels, activities, or group purchases remains refundable to the original contributor.
 

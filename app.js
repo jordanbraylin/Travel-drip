@@ -2451,6 +2451,8 @@ function wireLocalInteractions() {
     $("#depositMetric").textContent = `$${perPerson.toLocaleString()} each`;
     $("#walletTotal").textContent = `$${(perPerson * 8).toLocaleString()}`;
     $("#walletMetric").textContent = `$${(perPerson * 8).toLocaleString()}`;
+    $("#tripTotalContributions").textContent = `$${(perPerson * 8).toLocaleString()}`;
+    $("#bankTotalCollected").textContent = `$${(perPerson * 8).toLocaleString()}`;
     await saveSyncedEvent("wallet", { perPerson });
   });
 
@@ -2488,12 +2490,18 @@ function wireLocalInteractions() {
     if (action?.type === "add_funds" && amount) {
       const currentWallet = Number($("#walletTotal").textContent.replace(/[^0-9.]/g, ""));
       const nextWallet = currentWallet + amount;
+      const currentContributions = Number($("#tripTotalContributions")?.textContent.replace(/[^0-9.]/g, "") || currentWallet);
+      const currentAvailable = Number($("#tripAvailableBalance")?.textContent.replace(/[^0-9.]/g, "") || 0);
       $("#walletTotal").textContent = `$${nextWallet.toLocaleString()}`;
       $("#walletMetric").textContent = `$${nextWallet.toLocaleString()}`;
+      $("#tripTotalContributions").textContent = `$${(currentContributions + amount).toLocaleString()}`;
+      $("#bankTotalCollected").textContent = `$${(currentContributions + amount).toLocaleString()}`;
+      $("#tripAvailableBalance").textContent = `$${(currentAvailable + amount).toLocaleString()}`;
       $("#walletMessage").textContent = `Confirmed: $${amount.toLocaleString()} was added after PIN verification.`;
       $("#myDeposited").textContent = `$${(1050 + amount).toLocaleString()}`;
+      $("#sharedWalletLedger")?.insertAdjacentHTML("afterbegin", `<div><time>${new Date().toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}</time><strong>Jordan contribution</strong><span>+$${amount.toLocaleString()} completed • PIN verified • Refundable until allocated</span></div>`);
       addAuditEntry("Funds deposited", `You added $${amount.toLocaleString()} after Wallet PIN confirmation.`);
-      await saveSyncedEvent("wallet_payment", { amount, confirmedWithPin: true });
+      await saveSyncedEvent("wallet_payment", { amount, tripWalletId: "TDW-MIA-4829", confirmedWithPin: true, idempotencyProtected: true });
     }
 
     if (action?.type === "refund") {
