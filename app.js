@@ -55,6 +55,25 @@ const splitParticipants = [
   { name: "Noah", custom: 66, percent: 0, items: ["Appetizer"] }
 ];
 
+const receiptItems = [
+  { item: "Ribeye Steak", price: 42, diners: ["Sarah"], editable: true },
+  { item: "Caesar Salad", price: 14, diners: ["Alex"], editable: true },
+  { item: "Sushi Roll", price: 18, diners: ["Alex"], editable: true },
+  { item: "Pasta Alfredo", price: 24, diners: ["Mike"], editable: true },
+  { item: "Margarita", price: 16, diners: ["Sarah"], editable: true },
+  { item: "Shared Appetizer", price: 22, diners: ["Sarah", "Mike", "Alex"], editable: true },
+  { item: "Dessert Platter", price: 18, diners: ["Mike"], editable: true }
+];
+
+const receiptPaymentStatus = {
+  Jordan: "Pending",
+  Sarah: "Paid",
+  Mike: "Pending",
+  Alex: "Paid",
+  Priya: "Not dining",
+  Noah: "Not dining"
+};
+
 const rideProvidersByDestination = {
   "United States": ["Uber", "Lyft"],
   "Canada": ["Uber", "Lyft"],
@@ -191,6 +210,86 @@ function renderBillSplit() {
       </div>
     `;
   }).join("");
+  renderReceiptScanner(bill);
+}
+
+function getReceiptSplits(bill) {
+  const diners = splitParticipants.slice(0, bill.diners);
+  const names = diners.map((person) => person.name);
+  const itemTotals = Object.fromEntries(names.map((name) => [name, { food: 0, shared: 0 }]));
+
+  receiptItems.forEach((receiptItem) => {
+    const assigned = receiptItem.diners.filter((name) => names.includes(name));
+    if (!assigned.length) return;
+    const share = receiptItem.price / assigned.length;
+    assigned.forEach((name) => {
+      if (assigned.length > 1) itemTotals[name].shared += share;
+      else itemTotals[name].food += share;
+    });
+  });
+
+  const itemSubtotal = diners.reduce((sum, person) => sum + itemTotals[person.name].food + itemTotals[person.name].shared, 0) || 1;
+  return diners.map((person) => {
+    const food = itemTotals[person.name].food;
+    const shared = itemTotals[person.name].shared;
+    const weight = (food + shared) / itemSubtotal;
+    const tax = bill.tax * weight;
+    const tip = bill.tip * weight;
+    const fees = bill.fees * weight;
+    const discount = bill.discount * weight;
+    const total = Math.max(0, food + shared + tax + tip + fees - discount);
+    return { ...person, food, shared, tax, tip, fees, discount, total, status: receiptPaymentStatus[person.name] || "Pending" };
+  });
+}
+
+function renderReceiptScanner(bill = getBillInputs()) {
+  if (!$("#receiptItemList")) return;
+  const receiptSplits = getReceiptSplits(bill);
+  const receiptTotal = receiptSplits.reduce((sum, split) => sum + split.total, 0);
+  const paidTotal = receiptSplits.filter((split) => split.status === "Paid").reduce((sum, split) => sum + split.total, 0);
+
+  $("#receiptExtractedTotal").textContent = currency(bill.total);
+  $("#receiptItemList").innerHTML = receiptItems.map((receiptItem, itemIndex) => `
+    <article>
+      <div>
+        <strong>${escapeHtml(receiptItem.item)}</strong>
+        <span>${currency(receiptItem.price)} • ${receiptItem.diners.length > 1 ? "Shared item" : "Individual item"}</span>
+      </div>
+      <div class="receipt-claim-grid">
+        ${splitParticipants.slice(0, bill.diners).map((person) => `
+          <label>
+            <input type="checkbox" data-receipt-item="${itemIndex}" data-receipt-diner="${escapeHtml(person.name)}" ${receiptItem.diners.includes(person.name) ? "checked" : ""}>
+            ${escapeHtml(person.name)}
+          </label>
+        `).join("")}
+      </div>
+    </article>
+  `).join("");
+
+  $("#receiptStatusList").innerHTML = receiptSplits.map((split) => `
+    <div>
+      <strong>${escapeHtml(split.name)}</strong>
+      <span>Food ${currency(split.food)} • Shared ${currency(split.shared)} • Tax ${currency(split.tax)} • Tip ${currency(split.tip)}</span>
+      <b>${currency(split.total)}</b>
+      <em>${escapeHtml(split.status)}</em>
+    </div>
+  `).join("");
+
+  $("#receiptHistoryList").innerHTML = `
+    <div><strong>Marina Social Table</strong><span>Dubai long weekend • ${splitParticipants.slice(0, bill.diners).map((person) => person.name).join(", ")}</span><b>${currency(receiptTotal)}</b></div>
+    <div><strong>Payment status</strong><span>${currency(paidTotal)} paid • ${currency(Math.max(0, receiptTotal - paidTotal))} pending • downloadable receipt ready</span><b>Stored</b></div>
+  `;
+
+  $$("[data-receipt-item]").forEach((checkbox) => {
+    checkbox.addEventListener("change", (event) => {
+      const item = receiptItems[Number(event.target.dataset.receiptItem)];
+      const diner = event.target.dataset.receiptDiner;
+      if (event.target.checked && !item.diners.includes(diner)) item.diners.push(diner);
+      if (!event.target.checked) item.diners = item.diners.filter((name) => name !== diner);
+      renderReceiptScanner(getBillInputs());
+      $("#billMessage").textContent = `${item.item} assignment updated. Shared items divide evenly across selected travelers.`;
+    });
+  });
 }
 
 function getRideInputs() {
@@ -749,6 +848,21 @@ function wireLocalInteractions() {
     });
   });
 
+  $$("[data-receipt-source]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const sourceLabels = {
+        camera: "Camera receipt scan started",
+        photo: "Receipt photo uploaded for AI extraction",
+        pdf: "PDF receipt uploaded for AI extraction",
+        manual: "Manual receipt entry enabled"
+      };
+      $("#billMessage").textContent = `${sourceLabels[button.dataset.receiptSource]}. Restaurant name, date, table, server, items, taxes, fees, gratuity, discounts, and total remain editable before payment.`;
+      $("#receiptReviewMessage").textContent = "Receipt is stored in trip history after organizer review and settlement.";
+      renderReceiptScanner();
+      addAuditEntry("Receipt intake selected", sourceLabels[button.dataset.receiptSource]);
+    });
+  });
+
   $("#scanReceiptButton")?.addEventListener("click", () => {
     $("#billSubtotal").value = "438.75";
     $("#billTax").value = "34.66";
@@ -759,6 +873,22 @@ function wireLocalInteractions() {
     renderBillSplit();
     $("#billMessage").textContent = "Receipt scan detected menu items, tax, service fee, discount, and total for review.";
     addAuditEntry("Restaurant bill scanned", "Receipt data pre-populated the Smart Bill Split calculator.");
+  });
+
+  $("#aiBillReviewButton")?.addEventListener("click", () => {
+    const bill = getBillInputs();
+    const receiptSplits = getReceiptSplits(bill);
+    const missing = receiptSplits.filter((split) => split.food + split.shared === 0).map((split) => split.name);
+    const duplicateCount = receiptItems.length - new Set(receiptItems.map((item) => item.item.toLowerCase())).size;
+    const unassigned = receiptItems.filter((item) => item.diners.length === 0).map((item) => item.item);
+    const issues = [];
+    if (missing.length) issues.push(`Missing diners: ${missing.join(", ")}`);
+    if (duplicateCount) issues.push(`${duplicateCount} duplicate item may need review`);
+    if (unassigned.length) issues.push(`Unassigned items: ${unassigned.join(", ")}`);
+    if (bill.tipPercent > 25) issues.push("Tip is above the usual range for this group");
+    if (!issues.length) issues.push("No duplicate items, missing diners, tax discrepancy, or shared-item imbalance detected");
+    $("#receiptReviewMessage").textContent = `AI bill review: ${issues.join(". ")}.`;
+    addAuditEntry("AI bill review completed", issues.join("; "));
   });
 
   $("#tipAdviceButton")?.addEventListener("click", () => {

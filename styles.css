@@ -1035,9 +1035,63 @@ body.auth-screen main {
 .bill-total-grid,
 .bill-tools-grid,
 .payment-method-grid,
-.corporate-meal-rules {
+.corporate-meal-rules,
+.receipt-intake,
+.receipt-summary,
+.receipt-workspace,
+.receipt-status-list,
+.receipt-history-list {
   display: grid;
   gap: 8px;
+}
+
+.receipt-intake {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.receipt-intake button {
+  min-height: 46px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.receipt-summary {
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.35fr);
+  align-items: stretch;
+}
+
+.receipt-summary > div,
+.receipt-items-panel,
+.payment-status-panel,
+.receipt-history-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: #fff;
+}
+
+.receipt-summary h3,
+.receipt-history-panel h3 {
+  margin: 0;
+}
+
+.receipt-summary span,
+.receipt-history-list span,
+.receipt-status-list span,
+.receipt-item-list span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.receipt-summary strong {
+  display: block;
+  color: var(--ink);
+  font-size: 24px;
 }
 
 .bill-entry-grid {
@@ -1137,6 +1191,81 @@ body.auth-screen main {
 
 .bill-tools-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.receipt-workspace {
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  align-items: start;
+}
+
+.receipt-items-panel,
+.payment-status-panel,
+.receipt-history-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.receipt-item-list {
+  display: grid;
+  gap: 8px;
+}
+
+.receipt-item-list article {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.55fr) minmax(260px, 1fr);
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: #f8fbfa;
+}
+
+.receipt-claim-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.receipt-claim-grid label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 8px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.receipt-status-list div,
+.receipt-history-list div {
+  display: grid;
+  grid-template-columns: minmax(80px, 0.65fr) minmax(140px, 1fr) auto auto;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: #f8fbfa;
+}
+
+.receipt-status-list b,
+.receipt-history-list b {
+  color: var(--ink);
+}
+
+.receipt-status-list em {
+  border-radius: 999px;
+  padding: 5px 8px;
+  background: #e9f7f3;
+  color: var(--sea-dark);
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 900;
 }
 
 .bill-tools-grid h3,
@@ -2538,6 +2667,12 @@ code {
   .card-balance-grid,
   .wallet-provisioning,
   .control-grid,
+  .receipt-intake,
+  .receipt-summary,
+  .receipt-workspace,
+  .receipt-item-list article,
+  .receipt-status-list div,
+  .receipt-history-list div,
   .bill-entry-grid,
   .split-mode-tabs,
   .bill-total-grid,
@@ -2587,6 +2722,10 @@ code {
 
   .split-preview div {
     grid-template-columns: 1fr;
+  }
+
+  .receipt-claim-grid {
+    grid-template-columns: 1fr 1fr;
   }
 
   .split-preview b {

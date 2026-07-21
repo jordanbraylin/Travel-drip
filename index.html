@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=17">
+  <link rel="stylesheet" href="styles.css?v=18">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -767,6 +767,23 @@
               </div>
               <span class="compliance-badge">Live preview</span>
             </div>
+            <div class="receipt-intake">
+              <button type="button" data-receipt-source="camera">Scan receipt</button>
+              <button type="button" data-receipt-source="photo">Upload photo</button>
+              <button type="button" data-receipt-source="pdf">Upload PDF</button>
+              <button type="button" data-receipt-source="manual">Enter manually</button>
+            </div>
+            <div class="receipt-summary">
+              <div>
+                <p class="eyebrow">AI receipt scanner</p>
+                <h3 id="receiptRestaurant">Marina Social Table</h3>
+                <span id="receiptMeta">Jul 20, 2026 • 8:42 PM • Table 12 • Server Lina</span>
+              </div>
+              <div>
+                <strong id="receiptExtractedTotal">$516.00</strong>
+                <span>Scanned receipt saved for review, edits, reimbursement, and trip history.</span>
+              </div>
+            </div>
             <div class="bill-entry-grid">
               <label>Total bill<input id="billSubtotal" type="number" min="0" step="0.01" value="420.00" inputmode="decimal"></label>
               <label>Tax<input id="billTax" type="number" min="0" step="0.01" value="32.40" inputmode="decimal"></label>
@@ -787,6 +804,23 @@
               <div><span>Remaining balance</span><strong id="billRemaining">$516.00</strong></div>
             </div>
             <div class="split-preview" id="splitPreview" aria-label="Participant split preview"></div>
+            <div class="receipt-workspace">
+              <section class="receipt-items-panel">
+                <div class="section-heading compact">
+                  <div>
+                    <p class="eyebrow">AI item recognition</p>
+                    <h3>Claim items from the receipt</h3>
+                  </div>
+                  <button class="ghost-button" type="button" id="aiBillReviewButton">Run AI review</button>
+                </div>
+                <div class="receipt-item-list" id="receiptItemList" aria-label="Recognized receipt items"></div>
+              </section>
+              <aside class="payment-status-panel">
+                <p class="eyebrow">Live group payment status</p>
+                <div class="receipt-status-list" id="receiptStatusList" aria-label="Live payment status"></div>
+                <p class="small" id="receiptReviewMessage">AI review checks missing diners, duplicate items, tax math, tip discrepancies, and uneven shared-item assignments.</p>
+              </aside>
+            </div>
             <div class="bill-tools-grid">
               <div>
                 <h3>Receipt scanner</h3>
@@ -811,6 +845,13 @@
               <div><strong>Traveler view</strong><span>Employees see their meal, location, schedule, company payment status, and their assigned portion only.</span></div>
               <div><strong>Finance view</strong><span>Finance admins can review total meal expense, departments, invoices, payment history, and budget impact.</span></div>
               <div><strong>Analytics</strong><span>Tracks restaurant spending, average meal cost, cost per traveler, dining history, and budget vs. actual.</span></div>
+            </div>
+            <div class="receipt-history-panel">
+              <div>
+                <p class="eyebrow">Receipt history</p>
+                <h3>Stored for expense tracking and reimbursement</h3>
+              </div>
+              <div id="receiptHistoryList" class="receipt-history-list"></div>
             </div>
           </section>
 
@@ -1043,6 +1084,6 @@
   </dialog>
 
   <script src="public-config.js?v=1"></script>
-  <script defer src="app.js?v=22"></script>
+  <script defer src="app.js?v=23"></script>
 </body>
 </html>
