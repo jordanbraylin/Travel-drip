@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#11222b">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css?v=17">
+  <title>Traveldrip Admin</title>
+</head>
+<body>
+  <div class="loader" id="loader" aria-live="polite">
+    <div class="loader-card">
+      <div class="brand-mark pulse" aria-hidden="true"></div>
+      <h1>Admin</h1>
+      <p>Checking permissions...</p>
+      <div class="loader-bar"><span></span></div>
+    </div>
+  </div>
+
+  <main class="admin-page">
+    <a class="brand admin-brand" href="index.html">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span><strong>Traveldrip</strong><small>Admin console</small></span>
+    </a>
+
+    <section class="auth-panel" id="authPanel">
+      <div>
+        <p class="eyebrow">Admin login</p>
+        <h1>Send trip notifications</h1>
+        <p>Only emails listed in <code>SUPABASE_ADMIN_EMAILS</code> can use this page after Supabase login.</p>
+      </div>
+      <form class="auth-form" id="authForm">
+        <input id="emailInput" type="email" autocomplete="email" placeholder="admin@example.com" required>
+        <button class="primary-button" type="submit">Send magic link</button>
+      </form>
+      <p class="small" id="authMessage">Sign in first, then return here.</p>
+    </section>
+
+    <section class="panel admin-panel" id="adminPanel" hidden>
+      <div class="section-heading compact">
+        <div>
+          <p class="eyebrow">Confirmed admin page</p>
+          <h1>Push notification sender</h1>
+        </div>
+        <button class="ghost-button" type="button" id="signOutButton">Sign out</button>
+      </div>
+      <form class="admin-form" id="notifyForm">
+        <label>Title<input id="notifyTitle" maxlength="80" value="Traveldrip update" required></label>
+        <label>Message<textarea id="notifyBody" maxlength="180" required>Dubai vote closes in 18 hours.</textarea></label>
+        <label>Link<input id="notifyUrl" value="/" required></label>
+        <button class="primary-button" type="submit">Send notification</button>
+      </form>
+      <p class="small" id="adminMessage">Notifications go to users who opted in from the app.</p>
+    </section>
+  </main>
+
+  <script src="public-config.js?v=1"></script>
+  <script defer src="app.js?v=22"></script>
+</body>
+</html>

@@ -1,0 +1,1048 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#11222b">
+  <meta name="description" content="Traveldrip helps groups plan trips, split budgets, vote on plans, and stay synced.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css?v=17">
+  <title>Traveldrip</title>
+</head>
+<body>
+  <div class="loader" id="loader" aria-live="polite">
+    <div class="loader-card">
+      <div class="brand-mark pulse" aria-hidden="true"></div>
+      <h1>Traveldrip</h1>
+      <p>Syncing your group trip...</p>
+      <div class="loader-bar"><span></span></div>
+    </div>
+  </div>
+
+  <div class="shell">
+    <aside class="sidebar" aria-label="Primary">
+      <a class="brand" href="index.html" aria-label="Traveldrip home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span><strong>Traveldrip</strong><small>Group trips, synced</small></span>
+      </a>
+      <nav class="nav">
+        <button class="active" type="button" data-target="dashboardHome">Dashboard</button>
+        <button type="button" data-target="exploreDrops">Explore</button>
+        <button type="button" data-target="tripsPanel">Trips</button>
+        <button type="button" data-target="walletPanel">Wallet</button>
+        <button type="button" data-target="rideShareHub">Transportation</button>
+        <button type="button" data-target="splitBill">Split Bill</button>
+        <button type="button" data-target="itineraryAlerts">Alerts</button>
+        <button type="button" data-target="socialHub">Social Hub</button>
+        <button type="button" data-target="enterpriseRbac">Enterprise</button>
+        <button type="button" data-target="importantInfo">Important Info</button>
+        <a href="admin.html">Admin</a>
+      </nav>
+      <div class="install-card">
+        <strong>Add Traveldrip to your phone</strong>
+        <span>Tap install when prompted, or use your browser share menu and choose Add to Home Screen.</span>
+        <button class="light-button" type="button" id="installButton" hidden>Install app</button>
+      </div>
+      <div class="status-card">
+        <span>Live sync</span>
+        <strong id="syncStatus">Connecting</strong>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <label class="search">
+          <span aria-hidden="true">Search</span>
+          <input type="search" placeholder="Cities, stays, restaurants, friends">
+        </label>
+        <div class="top-actions">
+          <button class="icon-button" type="button" id="notifyButton" aria-label="Enable notifications">Notify</button>
+          <button class="ghost-button" type="button" id="signOutButton" hidden>Sign out</button>
+          <button class="primary-button" type="button" id="openAuthButton">Sign in</button>
+          <button class="ghost-button" type="button" id="openSignupButton">Sign Up</button>
+        </div>
+      </header>
+
+      <section class="auth-panel auth-landing" id="authPanel" hidden>
+        <header class="auth-landing-nav">
+          <a class="auth-brand" href="index.html" aria-label="Traveldrip home">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <strong>Traveldrip</strong>
+          </a>
+          <div class="auth-nav-actions">
+            <button class="auth-link-button" type="button" id="showLoginButton" role="tab" aria-controls="authForm" aria-selected="true">Log in</button>
+            <button class="auth-start-button" type="button" id="showSignupButton" role="tab" aria-controls="signupForm" aria-selected="false">Get started</button>
+          </div>
+        </header>
+
+        <div class="auth-landing-grid">
+          <div class="auth-landing-copy">
+            <p class="auth-pill">Travel, minus the guesswork</p>
+            <h1>Plan your trips and stay in the loop with live updates.</h1>
+            <p id="authCopy">Traveldrip keeps your itinerary organized and pings you the moment something changes - right on your device, wherever you are.</p>
+            <div class="auth-landing-actions">
+              <button class="auth-start-button" type="button" id="landingSignupButton">Create your account</button>
+              <button class="auth-link-button" type="button" id="landingLoginButton">I already have an account</button>
+            </div>
+          </div>
+          <figure class="auth-landing-media">
+            <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop" alt="A winding coastal road beside turquoise water">
+          </figure>
+        </div>
+
+        <div class="auth-card" aria-live="polite">
+          <div>
+            <p class="eyebrow">Live account</p>
+            <h2 id="authTitle">Sign in to sync your trip data</h2>
+          </div>
+          <div class="auth-switch" role="tablist" aria-label="Account access">
+            <button class="active" type="button" id="formLoginButton" role="tab" aria-controls="authForm" aria-selected="true">Sign in</button>
+            <button type="button" id="formSignupButton" role="tab" aria-controls="signupForm" aria-selected="false">Sign Up</button>
+          </div>
+          <form class="auth-form" id="authForm">
+            <label>Email address<input id="emailInput" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+            <label>Password<input id="passwordInput" type="password" autocomplete="current-password" placeholder="Your password" required minlength="6"></label>
+            <button class="primary-button" type="submit">Log in</button>
+          </form>
+          <form class="auth-form" id="signupForm" hidden>
+            <label>Full name<input id="signupNameInput" type="text" autocomplete="name" placeholder="Jordan Taylor" required></label>
+            <label>Email address<input id="signupEmailInput" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+            <label>Password<input id="signupPasswordInput" type="password" autocomplete="new-password" placeholder="Create a password" required minlength="6"></label>
+            <button class="primary-button" type="submit">Create account</button>
+          </form>
+          <p class="small" id="authMessage">Create an account or log in to enable live sync.</p>
+        </div>
+      </section>
+
+      <section class="pwa-panel">
+        <div>
+          <p class="eyebrow">Progressive Web App</p>
+          <h2>Install Traveldrip for trip alerts</h2>
+          <p>Android: tap Install app when prompted. iPhone: open Share, choose Add to Home Screen, then enable notifications inside the app.</p>
+        </div>
+        <button class="ghost-button" type="button" id="inlineInstallButton" hidden>Install app</button>
+      </section>
+
+      <section class="hero" id="dashboardHome">
+        <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1600&auto=format&fit=crop" alt="Dubai skyline at sunset">
+        <div class="hero-copy">
+          <p class="eyebrow">Live group plan</p>
+          <h1>Dubai long weekend</h1>
+          <p>Rooftop dinners, desert rides, beach clubs, and a shared wallet that keeps everyone even.</p>
+          <div class="hero-actions">
+            <button class="primary-button glass" type="button">Open plan</button>
+            <button class="ghost-button glass" type="button">Share board</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="Trip metrics">
+        <article><span>Travelers</span><strong id="travelerMetric">8</strong><small>6 confirmed</small></article>
+        <article><span>Group bank</span><strong id="walletMetric">$6,400</strong><small id="depositMetric">$800 each</small></article>
+        <article><span>Votes open</span><strong>4</strong><small>2 close today</small></article>
+        <article><span>Target spend</span><strong>$1,250</strong><small>per person</small></article>
+      </section>
+
+      <section class="bank-grid" id="groupBank">
+        <section class="panel contribution-panel">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">My Contributions</p>
+              <h2>Personal wallet ledger</h2>
+            </div>
+            <button class="ghost-button" type="button" id="downloadReportButton">Download report</button>
+          </div>
+          <div class="ledger-stats">
+            <article><span>Total deposited</span><strong id="myDeposited">$1,050</strong></article>
+            <article><span>Amount spent</span><strong>$420</strong></article>
+            <article><span>Reserved</span><strong>$250</strong></article>
+            <article><span>Refundable</span><strong id="refundableBalance">$380</strong></article>
+          </div>
+          <div class="ledger-list" aria-label="Deposit history">
+            <div><time>Jul 20, 2026 9:42 AM</time><strong>$100 added</strong><span>Available funds</span></div>
+            <div><time>Jul 18, 2026 2:15 PM</time><strong>$250 reserved</strong><span>Hotel deposit hold</span></div>
+            <div><time>Jul 14, 2026 11:20 AM</time><strong>$420 allocated</strong><span>Flight purchase, non-refundable</span></div>
+            <div><time>Jul 10, 2026 6:05 PM</time><strong>$950 deposited</strong><span>Original payment method</span></div>
+          </div>
+        </section>
+
+        <section class="panel rules-panel">
+          <p class="eyebrow">Fund protection rules</p>
+          <h2>Refundable funds stay tied to the contributor</h2>
+          <div class="rule-list">
+            <div><strong>Available funds refund</strong><span>Money not applied to deposits, reservations, flights, hotels, activities, or group purchases remains refundable.</span></div>
+            <div><strong>User leaves trip</strong><span>Unused funds are calculated automatically. Committed non-refundable booking funds stay tied to the booking.</span></div>
+            <div><strong>Admin removes user</strong><span>Unused/unallocated funds are reviewed, refunded immediately, and logged for both the removed user and admins.</span></div>
+          </div>
+          <div class="button-row">
+            <button class="primary-button" type="button" id="requestRefundButton">Request refund</button>
+            <button class="ghost-button" type="button" id="leaveTripButton">Leave trip review</button>
+          </div>
+          <p class="small" id="refundMessage">Refund actions require Wallet PIN confirmation.</p>
+        </section>
+      </section>
+
+      <section class="content-grid">
+        <div class="main-stack">
+          <section class="panel">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Group Bank Overview</p>
+                <h2>Transparent trip balance</h2>
+              </div>
+              <label class="privacy-toggle"><input id="privacyToggle" type="checkbox" checked> Show member amounts</label>
+            </div>
+            <div class="bank-overview">
+              <article><span>Total collected</span><strong>$6,400</strong></article>
+              <article><span>Outstanding expenses</span><strong>$1,850</strong></article>
+              <article><span>Upcoming deadline</span><strong>Jul 24</strong></article>
+              <article><span>Pending refunds</span><strong>$380</strong></article>
+            </div>
+            <div class="member-table" id="memberTable" role="table" aria-label="Member contributions">
+              <div role="row"><strong role="columnheader">Member</strong><strong role="columnheader">Deposited</strong><strong role="columnheader">Available</strong><strong role="columnheader">Status</strong></div>
+              <div role="row"><span>Jordan</span><span data-private>$1,050</span><span data-private>$380</span><span>Current</span></div>
+              <div role="row"><span>Alex</span><span data-private>$900</span><span data-private>$150</span><span>Current</span></div>
+              <div role="row"><span>Sarah</span><span data-private>$800</span><span data-private>$0</span><span>Reserved</span></div>
+              <div role="row"><span>Mike</span><span data-private>$650</span><span data-private>$250</span><span>Refund review</span></div>
+            </div>
+          </section>
+
+          <section class="panel admin-bank-panel">
+            <div>
+              <p class="eyebrow">Admin Controls</p>
+              <h2>Organizer financial tools</h2>
+              <p>Trip organizers can request contributions, set deadlines, allocate funds, approve or deny refund requests, remove participants, and view the full audit log.</p>
+            </div>
+            <div class="admin-actions">
+              <button class="ghost-button" type="button" data-admin-action="Contribution request queued">Request contribution</button>
+              <button class="ghost-button" type="button" data-admin-action="Payment deadline set for Jul 24">Set deadline</button>
+              <button class="ghost-button" type="button" data-admin-action="Funds allocated toward hotel deposit">Allocate funds</button>
+              <button class="ghost-button" type="button" data-admin-action="Refund request approved">Approve refund</button>
+              <button class="ghost-button" type="button" data-admin-action="Participant removal review started">Remove participant</button>
+            </div>
+          </section>
+
+          <div class="section-heading">
+            <h2>Explore drops</h2>
+            <div class="chips" aria-label="Filters">
+              <button class="chip active" type="button">Trending</button>
+              <button class="chip" type="button">Food</button>
+              <button class="chip" type="button">Nightlife</button>
+              <button class="chip" type="button">Under $900</button>
+            </div>
+          </div>
+
+          <section class="destinations" id="exploreDrops">
+            <article class="destination-card">
+              <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=900&auto=format&fit=crop" alt="Bali coast">
+              <div><h3>Bali surf reset</h3><p>Villa stays, sunrise hikes, and low-key beach dinners for six.</p><span>76% match</span></div>
+            </article>
+            <article class="destination-card">
+              <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=900&auto=format&fit=crop" alt="Tokyo at night">
+              <div><h3>Tokyo nights</h3><p>Sushi counters, listening bars, vintage shops, and late trains.</p><span>91% match</span></div>
+            </article>
+            <article class="destination-card">
+              <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=900&auto=format&fit=crop" alt="Greek island coastline">
+              <div><h3>Paros island hop</h3><p>Ferries, clear coves, family-run tavernas, and sunset rooms.</p><span>84% match</span></div>
+            </article>
+          </section>
+
+          <section class="panel" id="tripsPanel">
+            <div class="section-heading compact"><h2>Memory roll</h2><button class="ghost-button" type="button">Export</button></div>
+            <p>Shared photos are grouped by location, restaurant, and activity so the recap is ready before everyone gets home.</p>
+            <div class="memory-grid">
+              <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?q=80&w=500&auto=format&fit=crop" alt="Beach view">
+              <img src="https://images.unsplash.com/photo-1493558103817-58b2924bce98?q=80&w=500&auto=format&fit=crop" alt="Coastal road">
+              <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=500&auto=format&fit=crop" alt="Outdoor table">
+              <img src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?q=80&w=500&auto=format&fit=crop" alt="Travelers walking">
+            </div>
+          </section>
+
+          <section class="panel social-hub" id="socialHub">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Social Media Hub</p>
+                <h2>Smart sharing system</h2>
+              </div>
+              <button class="primary-button" type="button" id="generateCaptionButton">Generate caption</button>
+            </div>
+
+            <div class="social-grid">
+              <section class="social-card">
+                <h3>Connected accounts</h3>
+                <div class="connection-list" id="connectionList">
+                  <div><span class="avatar">IG</span><strong>Instagram</strong><small>@traveldrip_jordan</small><button type="button" data-connection>Connected</button></div>
+                  <div><span class="avatar">TT</span><strong>TikTok</strong><small>Needs reauthorization</small><button type="button" data-connection>Reauthorize</button></div>
+                  <div><span class="avatar">YT</span><strong>YouTube</strong><small>Not connected</small><button type="button" data-connection>Connect</button></div>
+                  <div><span class="avatar">IN</span><strong>LinkedIn</strong><small>Corporate sharing ready</small><button type="button" data-connection>Manage</button></div>
+                </div>
+              </section>
+
+              <section class="social-card">
+                <h3>Share destinations</h3>
+                <div class="share-options">
+                  <label><input type="checkbox" checked> TravelDrip Only</label>
+                  <label><input type="checkbox"> Instagram Feed</label>
+                  <label><input type="checkbox"> Instagram Story</label>
+                  <label><input type="checkbox"> Facebook Post</label>
+                  <label><input type="checkbox"> TikTok</label>
+                  <label><input type="checkbox"> Snapchat</label>
+                  <label><input type="checkbox"> Threads</label>
+                  <label><input type="checkbox"> X</label>
+                  <label><input type="checkbox"> LinkedIn</label>
+                  <label><input type="checkbox"> Pinterest</label>
+                  <label><input type="checkbox"> YouTube Shorts</label>
+                  <label class="share-all"><input type="checkbox" id="shareEverywhere"> Share Everywhere</label>
+                </div>
+              </section>
+            </div>
+
+            <div class="caption-studio">
+              <div>
+                <h3>AI caption generator</h3>
+                <textarea id="captionText">Watching the sunset over Santorini was unforgettable. #TravelDrip #Santorini #TravelGoals</textarea>
+                <div class="button-row">
+                  <button class="ghost-button" type="button" id="regenerateCaptionButton">Regenerate caption</button>
+                  <button class="ghost-button" type="button">Edit caption</button>
+                </div>
+              </div>
+              <div>
+                <h3>AI hashtags</h3>
+                <div class="hashtag-list" id="hashtagList">
+                  <span>#TravelDrip</span><span>#Miami</span><span>#VacationMode</span><span>#TravelTogether</span><span>#BeachLife</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="story-grid">
+              <section class="social-card">
+                <div class="section-heading compact">
+                  <h3>Miami 2027 shared story</h3>
+                  <select id="storyVisibility" aria-label="Group story visibility">
+                    <option>Private</option>
+                    <option>Friends</option>
+                    <option>Public</option>
+                  </select>
+                </div>
+                <div class="story-feed">
+                  <div><strong>Sarah</strong><span>Sunset photo added</span></div>
+                  <div><strong>Alex</strong><span>Yacht video uploaded</span></div>
+                  <div><strong>Mike</strong><span>Restaurant picture shared</span></div>
+                  <div><strong>Group poll</strong><span>Beach club or rooftop?</span></div>
+                </div>
+              </section>
+
+              <section class="social-card">
+                <h3>AI travel reel generator</h3>
+                <p>Build recap reels from photos, videos, maps, music, trip timeline, and top memories.</p>
+                <div class="reel-actions">
+                  <button class="ghost-button" type="button">Preview Reel</button>
+                  <button class="ghost-button" type="button">Edit Reel</button>
+                  <button class="ghost-button" type="button">Download Reel</button>
+                  <button class="primary-button" type="button">Share Reel</button>
+                </div>
+                <label class="privacy-toggle"><input type="checkbox" checked> Add “Created with TravelDrip” branding</label>
+              </section>
+            </div>
+
+            <div class="creator-grid">
+              <section class="social-card">
+                <h3>Public travel profile</h3>
+                <div class="profile-controls">
+                  <label><input type="radio" name="profileVisibility"> Private Profile</label>
+                  <label><input type="radio" name="profileVisibility" checked> Friends Only</label>
+                  <label><input type="radio" name="profileVisibility"> Public Profile</label>
+                </div>
+                <p>Showcase photos, reels, travel journals, saved destinations, travel stats, guides, itineraries, recommendations, local tips, and templates.</p>
+              </section>
+
+              <section class="social-card">
+                <h3>Corporate retreat sharing</h3>
+                <p>Generate branded retreat highlight reels for team activities, workshops, awards, group photos, recruiting campaigns, company pages, and internal portals.</p>
+                <div class="notification-list"><span>LinkedIn</span><span>Company pages</span><span>Internal portals</span><span>Recruiting</span></div>
+              </section>
+            </div>
+
+            <section class="social-card analytics-panel">
+              <div class="section-heading compact">
+                <h3>Creator analytics</h3>
+                <p class="small">No content is shared automatically without user authorization.</p>
+              </div>
+              <div class="analytics-grid">
+                <article><span>Views</span><strong>18.4K</strong></article>
+                <article><span>Likes</span><strong>2.1K</strong></article>
+                <article><span>Shares</span><strong>684</strong></article>
+                <article><span>Comments</span><strong>193</strong></article>
+                <article><span>Saves</span><strong>512</strong></article>
+                <article><span>Followers gained</span><strong>247</strong></article>
+                <article><span>Trips from shares</span><strong>31</strong></article>
+                <article><span>LinkedIn shares</span><strong>42</strong></article>
+              </div>
+            </section>
+          </section>
+
+          <section class="panel enterprise-rbac" id="enterpriseRbac">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Corporate Retreat RBAC</p>
+                <h2>Enterprise permissions and financial privacy</h2>
+              </div>
+              <label class="role-picker">Preview role
+                <select id="rolePreview">
+                  <option value="owner">Company Owner</option>
+                  <option value="finance">Finance Admin</option>
+                  <option value="organizer">Retreat Organizer</option>
+                  <option value="manager">Team Leader</option>
+                  <option value="employee" selected>Employee</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="retreat-type-grid" aria-label="Corporate retreat types">
+              <span>Company Retreat</span>
+              <span>Team Building Event</span>
+              <span>Leadership Summit</span>
+              <span>Conference Trip</span>
+              <span>Incentive Trip</span>
+              <span>Employee Celebration</span>
+            </div>
+
+            <div class="permission-grid">
+              <section class="permission-card role-owner" data-visible-roles="owner">
+                <h3>Company Owner / Executive Admin</h3>
+                <p>Full access to budgets, vendor contracts, attendee operations, reports, payment approvals, retreat settings, and admin permissions.</p>
+              </section>
+              <section class="permission-card role-finance" data-visible-roles="owner finance">
+                <h3>Finance Admin</h3>
+                <p>Financial-only access to budgets, expenses, invoices, payments, refunds, reimbursements, and transaction history.</p>
+              </section>
+              <section class="permission-card role-organizer" data-visible-roles="owner organizer">
+                <h3>Retreat Organizer / Event Manager</h3>
+                <p>Operations access for guest lists, RSVP status, flights, hotels, transportation, schedules, workshops, activities, and meeting rooms.</p>
+              </section>
+              <section class="permission-card role-manager" data-visible-roles="owner organizer manager">
+                <h3>Team Leader / Manager</h3>
+                <p>Limited access to assigned team members, team schedules, activities, meeting locations, and transportation details.</p>
+              </section>
+              <section class="permission-card role-employee" data-visible-roles="owner finance organizer manager employee">
+                <h3>Employee / Attendee</h3>
+                <p>Participant access only: personal travel information, event agenda, activities, RSVP status, and team communication.</p>
+              </section>
+            </div>
+
+            <div class="employee-dashboard">
+              <section class="social-card">
+                <h3>Attendee dashboard</h3>
+                <div class="travel-info-list">
+                  <div><strong>Flight details</strong><span>Delta DL 241, JFK to DXB, confirmed, confirmation TD9K42.</span></div>
+                  <div><strong>Hotel details</strong><span>Marina Grand, check-in Jul 24, room assigned on arrival.</span></div>
+                  <div><strong>Transportation</strong><span>Airport pickup Zone B, shuttle every 20 minutes, driver contact hidden until arrival.</span></div>
+                  <div><strong>Event schedule</strong><span>Opening dinner 7:30 PM, workshops and break sessions synced to agenda.</span></div>
+                  <div><strong>Activities</strong><span>Desert tour RSVP confirmed. Dress: comfortable outdoor clothing.</span></div>
+                </div>
+              </section>
+
+              <section class="social-card financial-privacy-panel" data-financial-panel>
+                <h3>Corporate budget dashboard</h3>
+                <div class="finance-metrics">
+                  <article><span>Total budget</span><strong>$184,000</strong></article>
+                  <article><span>Spent</span><strong>$126,400</strong></article>
+                  <article><span>Remaining</span><strong>$57,600</strong></article>
+                  <article><span>Pending payments</span><strong>$18,900</strong></article>
+                </div>
+                <div class="expense-bars">
+                  <div><span>Flights</span><i style="--w:72%"></i></div>
+                  <div><span>Hotels</span><i style="--w:64%"></i></div>
+                  <div><span>Transportation</span><i style="--w:38%"></i></div>
+                  <div><span>Activities</span><i style="--w:51%"></i></div>
+                  <div><span>Meals and vendors</span><i style="--w:45%"></i></div>
+                </div>
+              </section>
+
+              <section class="social-card restricted-panel" id="restrictedFinancePanel">
+                <h3>Financial privacy enforced</h3>
+                <p>Employees never see company retreat budget, total trip cost, vendor pricing, employee travel costs, hotel rates, flight costs, group wallet balance, company payments, or expense reports.</p>
+                <p class="ai-denial">AI response: You do not have permission to access financial information for this retreat.</p>
+              </section>
+            </div>
+
+            <div class="approval-comm-grid">
+              <section class="social-card">
+                <h3>Approval workflow</h3>
+                <div class="approval-flow">
+                  <div><strong>Event Manager</strong><span>Requests additional transportation budget.</span></div>
+                  <div><strong>Finance Admin</strong><span>Approves or rejects with audit record.</span></div>
+                  <div><strong>Payment Controls</strong><span>Vendor payments, budget increases, refunds, and contract payments require admin approval.</span></div>
+                </div>
+              </section>
+              <section class="social-card">
+                <h3>Corporate communication</h3>
+                <div class="channel-list">
+                  <span>Company announcements</span>
+                  <span>Team channels</span>
+                  <span>Admin channel</span>
+                  <span>Vendor planning</span>
+                </div>
+              </section>
+            </div>
+
+            <div class="enterprise-security-grid">
+              <section class="social-card">
+                <h3>Employee privacy controls</h3>
+                <div class="profile-controls">
+                  <label><input type="checkbox" checked> Profile photo</label>
+                  <label><input type="checkbox" checked> Travel preferences</label>
+                  <label><input type="checkbox"> Emergency contacts</label>
+                  <label><input type="checkbox" checked> Team-only social sharing</label>
+                </div>
+              </section>
+              <section class="social-card">
+                <h3>Enterprise security requirements</h3>
+                <div class="notification-list">
+                  <span>Role-based permissions</span>
+                  <span>Data encryption</span>
+                  <span>Secure authentication</span>
+                  <span>Two-factor authentication</span>
+                  <span>Admin approvals</span>
+                  <span>Audit reporting</span>
+                  <span>Access history</span>
+                </div>
+              </section>
+            </div>
+
+            <section class="social-card">
+              <div class="section-heading compact">
+                <h3>Permission audit log</h3>
+                <span class="compliance-badge">Access history enabled</span>
+              </div>
+              <div class="audit-list" id="enterpriseAuditList">
+                <div><time>Jul 20, 2026 10:11 AM</time><strong>Financial access blocked</strong><span>Employee role attempted budget request. AI returned permission denial.</span></div>
+                <div><time>Jul 20, 2026 9:58 AM</time><strong>Payment approval</strong><span>Finance Admin approved vendor deposit after 2FA.</span></div>
+                <div><time>Jul 19, 2026 4:22 PM</time><strong>Permission change</strong><span>Executive Admin granted Organizer operations access.</span></div>
+              </div>
+            </section>
+          </section>
+
+          <section class="panel important-info" id="importantInfo">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Important Information</p>
+                <h2>Trip source of truth</h2>
+              </div>
+              <label class="info-search">Search
+                <input id="infoSearch" type="search" placeholder="documents, emergency, packing">
+              </label>
+            </div>
+
+            <div class="info-status-grid">
+              <article><span>Checklist complete</span><strong id="checklistProgress">2 / 6</strong></article>
+              <article><span>Documents due</span><strong>3</strong></article>
+              <article><span>Pinned updates</span><strong>2</strong></article>
+              <article><span>Policy status</span><strong id="policyStatus">Needs acknowledgment</strong></article>
+            </div>
+
+            <div class="info-accordion" id="infoAccordion">
+              <details class="info-section" open>
+                <summary>Required Travel Documents</summary>
+                <div class="document-list">
+                  <div><strong>Passport</strong><span>Uploaded and valid 6+ months after return.</span><time>Due Jul 22</time><em class="ok">Complete</em></div>
+                  <div><strong>Flight confirmation</strong><span>Confirmation received for Delta DL 241.</span><time>Due Jul 22</time><em class="ok">Complete</em></div>
+                  <div><strong>Travel insurance</strong><span>Policy upload still required before departure.</span><time>Due Jul 23</time><em class="warn">Needed</em></div>
+                  <div><strong>Company credentials</strong><span>Bring company ID badge for workshop check-in.</span><time>Due Jul 24</time><em class="warn">Needed</em></div>
+                </div>
+              </details>
+
+              <details class="info-section">
+                <summary>Trip Rules & Expectations</summary>
+                <div class="rules-columns">
+                  <div><h3>Allowed</h3><ul><li>Casual attire</li><li>Personal cameras</li><li>Free time during designated hours</li><li>Alcohol where permitted</li></ul></div>
+                  <div><h3>Not Allowed</h3><ul><li>Unauthorized guests</li><li>Smoking in hotel rooms</li><li>Weapons or illegal substances</li><li>Dangerous activities outside the itinerary</li></ul></div>
+                </div>
+              </details>
+
+              <details class="info-section">
+                <summary>Corporate Policies</summary>
+                <div class="policy-list">
+                  <span>Business casual dress code</span>
+                  <span>Required workshop attendance</span>
+                  <span>Code of conduct</span>
+                  <span>Confidentiality requirements</span>
+                  <span>Social media policy</span>
+                  <span>Expense reimbursement policy</span>
+                  <span>Emergency reporting procedures</span>
+                </div>
+              </details>
+
+              <details class="info-section">
+                <summary>Destination Information</summary>
+                <div class="destination-info-grid">
+                  <div><strong>Currency</strong><span>AED, cards widely accepted</span></div>
+                  <div><strong>Language</strong><span>Arabic and English</span></div>
+                  <div><strong>Time zone</strong><span>GST, UTC+4</span></div>
+                  <div><strong>Emergency</strong><span>Police 999, ambulance 998</span></div>
+                  <div><strong>Weather</strong><span>Hot, light layers indoors</span></div>
+                  <div><strong>Power</strong><span>Type G outlets</span></div>
+                </div>
+              </details>
+
+              <details class="info-section">
+                <summary>Packing List & Trip Checklist</summary>
+                <div class="checklist-grid">
+                  <label><input type="checkbox" class="trip-check" checked> Passport uploaded</label>
+                  <label><input type="checkbox" class="trip-check" checked> Flight confirmed</label>
+                  <label><input type="checkbox" class="trip-check"> Hotel confirmed</label>
+                  <label><input type="checkbox" class="trip-check"> Wallet funded</label>
+                  <label><input type="checkbox" class="trip-check"> Emergency contact completed</label>
+                  <label><input type="checkbox" class="trip-check"> Packing complete</label>
+                </div>
+                <div class="packing-tags">
+                  <span>Business attire</span><span>Laptop</span><span>Charger</span><span>Company ID badge</span><span>Sunglasses</span><span>Sunscreen</span>
+                </div>
+              </details>
+
+              <details class="info-section">
+                <summary>Emergency Information</summary>
+                <div class="emergency-grid">
+                  <div><strong>Nearest hospital</strong><span>Mediclinic City Hospital, +971 4 435 9999</span></div>
+                  <div><strong>Hotel front desk</strong><span>Marina Grand, ext. 0</span></div>
+                  <div><strong>Trip organizer</strong><span>Sarah Lee, +1 555 0142</span></div>
+                  <div><strong>Company emergency</strong><span>Travel desk, +1 555 0199</span></div>
+                </div>
+              </details>
+
+              <details class="info-section">
+                <summary>Meeting Points</summary>
+                <div class="meeting-list">
+                  <div><strong>Airport arrival</strong><span>Terminal 3, Zone B shuttle pickup, 12:30 PM.</span><a href="https://maps.google.com" target="_blank" rel="noreferrer">GPS link</a></div>
+                  <div><strong>Hotel lobby</strong><span>Meet by concierge desk each morning at 8:45 AM.</span><a href="https://maps.google.com" target="_blank" rel="noreferrer">GPS link</a></div>
+                  <div><strong>Workshop room</strong><span>Palm Conference Room, Level 2.</span><a href="https://maps.google.com" target="_blank" rel="noreferrer">GPS link</a></div>
+                </div>
+              </details>
+
+              <details class="info-section">
+                <summary>Downloads & Attachments</summary>
+                <div class="attachment-list">
+                  <a href="#" download>Retreat agenda PDF</a>
+                  <a href="#" download>Transportation guide</a>
+                  <a href="#" download>Hotel information sheet</a>
+                  <a href="#" download>Activity waiver</a>
+                </div>
+              </details>
+
+              <details class="info-section">
+                <summary>FAQ</summary>
+                <div class="faq-list">
+                  <div><strong>What time is hotel check-in?</strong><span>3:00 PM. Early bags can be held by the front desk.</span></div>
+                  <div><strong>Are meals provided?</strong><span>Breakfast and official group dinners are included.</span></div>
+                  <div><strong>What happens if my flight is delayed?</strong><span>Update your flight status in TravelDrip and contact transportation support.</span></div>
+                </div>
+              </details>
+
+              <details class="info-section" open>
+                <summary>Announcements</summary>
+                <div class="announcement-list" id="announcementList">
+                  <div><strong>Pinned: Welcome briefing moved to 7:30 PM</strong><span>Push notification sent to all travelers.</span></div>
+                  <div><strong>Weather alert</strong><span>Outdoor activity moved one hour earlier due to heat.</span></div>
+                </div>
+              </details>
+            </div>
+
+            <section class="read-confirmation">
+              <label><input id="policyAck" type="checkbox"> I have read and agree to the trip rules and critical information.</label>
+              <p class="small" id="ackRecord">Acknowledgment records user, date, time, and content version.</p>
+            </section>
+          </section>
+        </div>
+
+        <aside class="right-stack">
+          <section class="panel">
+            <div class="section-heading compact"><h2>Your trips</h2><button class="icon-button" type="button" aria-label="Add trip">Add</button></div>
+            <div class="trip-row"><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=500&auto=format&fit=crop" alt="Miami beach"><span><strong>Miami 2027</strong><small>8 travelers, 5 decisions left</small></span></div>
+            <div class="trip-row"><img src="https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?q=80&w=500&auto=format&fit=crop" alt="Venice canal"><span><strong>Venice food map</strong><small>3 travelers, draft mode</small></span></div>
+          </section>
+
+          <section class="panel">
+            <h2>AI itinerary builder</h2>
+            <p id="builderCopy">Balanced pace with one anchor activity each day.</p>
+            <div class="tabs" role="tablist" aria-label="Itinerary days">
+              <button class="tab active" type="button" data-day="0">Day 1</button>
+              <button class="tab" type="button" data-day="1">Day 2</button>
+              <button class="tab" type="button" data-day="2">Day 3</button>
+            </div>
+            <div class="itinerary" id="itinerary"></div>
+            <button class="primary-button wide" type="button">Generate refresh</button>
+          </section>
+
+          <section class="panel" id="walletPanel">
+            <h2>Group wallet</h2>
+            <div class="wallet-total"><strong id="walletTotal">$6,400</strong><span>Protected deposits</span></div>
+            <p class="security-note">Payments require PIN confirmation. Demo PIN validation runs in the app; production payments should use a PCI-compliant processor such as Stripe and server-side verification.</p>
+            <div class="wallet-breakdown">
+              <div><span>Available funds</span><strong>$380</strong></div>
+              <div><span>Allocated expenses</span><strong>$420</strong></div>
+              <div><span>Pending refunds</span><strong>$380</strong></div>
+              <div><span>Completed refunds</span><strong>$120</strong></div>
+            </div>
+            <label class="range-wrap" for="deposit">Per-person deposit: <strong id="depositValue">$800</strong><input id="deposit" type="range" min="500" max="1200" step="50" value="800"></label>
+            <form class="funds-form" id="fundsForm">
+              <label>Add funds
+                <input id="fundAmount" type="number" min="10" max="5000" step="10" value="100" inputmode="decimal" required>
+              </label>
+              <button class="primary-button wide" type="submit">Continue to PIN</button>
+            </form>
+            <p class="small" id="walletMessage">No wallet payment has been submitted in this session.</p>
+            <div class="budget-line"><span>Flights</span><strong>$3,200</strong></div><div class="bar"><i style="--w:50%"></i></div>
+            <div class="budget-line"><span>Stay</span><strong>$2,100</strong></div><div class="bar"><i style="--w:33%"></i></div>
+            <div class="budget-line"><span>Food and events</span><strong>$1,100</strong></div><div class="bar"><i style="--w:17%"></i></div>
+          </section>
+
+          <section class="panel virtual-card-panel" id="virtualCard">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Virtual wallet card</p>
+                <h2>TravelDrip card access</h2>
+              </div>
+              <span class="card-status" id="cardStatus">Locked</span>
+            </div>
+            <div class="virtual-card">
+              <div class="card-top"><span>TravelDrip</span><strong>Wallet Card</strong></div>
+              <div class="card-number" id="cardNumber">•••• •••• •••• 4829</div>
+              <div class="card-meta">
+                <span><small>Cardholder</small><strong>Jordan Taylor</strong></span>
+                <span><small>Exp</small><strong id="cardExp">08/29</strong></span>
+                <span><small>CVV</small><strong id="cardCvv">•••</strong></span>
+              </div>
+            </div>
+            <div class="card-balance-grid">
+              <div><span>Spendable balance</span><strong id="cardSpendable">$380</strong></div>
+              <div><span>Daily limit</span><strong id="dailyLimitValue">$250</strong></div>
+              <div><span>Per purchase</span><strong id="purchaseLimitValue">$125</strong></div>
+            </div>
+            <p class="security-note">Only available wallet funds can be spent. Reserved, pending, refund-review, restricted, or frozen balances cannot be used by the card.</p>
+            <div class="button-row">
+              <button class="primary-button" type="button" id="activateCardButton">Activate card</button>
+              <button class="ghost-button" type="button" id="lockCardButton">Unlock card</button>
+              <button class="ghost-button" type="button" id="revealCardButton">View details</button>
+              <button class="ghost-button" type="button" id="replaceCardButton">Report compromised</button>
+            </div>
+            <div class="wallet-provisioning">
+              <button type="button" id="appleWalletButton">Add to Apple Wallet</button>
+              <button type="button" id="googleWalletButton">Add to Google Wallet</button>
+              <button type="button" id="samsungWalletButton">Samsung Wallet</button>
+            </div>
+            <p class="small" id="cardMessage">Wallet provisioning requires identity verification, Wallet PIN, and an issuing bank/card processor integration.</p>
+            <div class="spending-controls">
+              <label>Daily spending limit <input id="dailyLimit" type="range" min="50" max="1000" step="25" value="250"></label>
+              <label>Per-transaction limit <input id="purchaseLimit" type="range" min="25" max="500" step="25" value="125"></label>
+            </div>
+            <div class="control-grid">
+              <label><input type="checkbox" checked> Restaurants</label>
+              <label><input type="checkbox" checked> Transportation</label>
+              <label><input type="checkbox" checked> Activities</label>
+              <label><input type="checkbox"> International purchases</label>
+              <label><input type="checkbox" checked> Online purchases</label>
+              <label><input type="checkbox" checked> Contactless payments</label>
+              <label><input type="checkbox"> ATM withdrawals</label>
+              <label><input type="checkbox" checked> Emergency travel</label>
+            </div>
+            <div class="card-rules">
+              <div><strong>Tap to Pay as customer</strong><span>Use Apple Pay, Google Wallet, or Samsung Wallet at compatible NFC terminals after wallet provisioning.</span></div>
+              <div><strong>Merchant Tap to Pay separate</strong><span>Accepting payments on a phone would require a separate merchant account and processor setup.</span></div>
+              <div><strong>Corporate cards</strong><span>Admins can assign allowances, trip dates, categories, and freezes without exposing the full company retreat budget to attendees.</span></div>
+            </div>
+            <div class="card-ledger" id="cardLedger">
+              <div><time>Jul 20, 2026 12:18 PM</time><strong>Marina Cafe</strong><span>-$42.80 pending • Dubai weekend • $337.20 left</span></div>
+              <div><time>Jul 19, 2026 7:04 PM</time><strong>Metro Day Pass</strong><span>-$18.00 completed • Dubai weekend • $380.00 left</span></div>
+              <div><time>Jul 18, 2026 4:22 PM</time><strong>Activity refund</strong><span>+$60.00 pending settlement • refund notification queued</span></div>
+            </div>
+          </section>
+
+          <section class="panel split-bill-panel" id="splitBill">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Smart restaurant bill split</p>
+                <h2>Split dinner before anyone pays</h2>
+              </div>
+              <span class="compliance-badge">Live preview</span>
+            </div>
+            <div class="bill-entry-grid">
+              <label>Total bill<input id="billSubtotal" type="number" min="0" step="0.01" value="420.00" inputmode="decimal"></label>
+              <label>Tax<input id="billTax" type="number" min="0" step="0.01" value="32.40" inputmode="decimal"></label>
+              <label>Tip %<input id="billTipPercent" type="number" min="0" step="1" value="18" inputmode="decimal"></label>
+              <label>Service fees<input id="billFees" type="number" min="0" step="0.01" value="8.00" inputmode="decimal"></label>
+              <label>Discounts / coupons<input id="billDiscount" type="number" min="0" step="0.01" value="20.00" inputmode="decimal"></label>
+              <label>Diners<input id="billDiners" type="number" min="1" max="24" step="1" value="6" inputmode="numeric"></label>
+            </div>
+            <div class="split-mode-tabs" role="tablist" aria-label="Bill split mode">
+              <button class="active" type="button" data-split-mode="equal">Equal</button>
+              <button type="button" data-split-mode="custom">Custom</button>
+              <button type="button" data-split-mode="percentage">Percentage</button>
+              <button type="button" data-split-mode="itemized">Itemized</button>
+            </div>
+            <div class="bill-total-grid">
+              <div><span>Final total</span><strong id="billFinalTotal">$516.00</strong></div>
+              <div><span>Each person</span><strong id="billEachTotal">$86.00</strong></div>
+              <div><span>Remaining balance</span><strong id="billRemaining">$516.00</strong></div>
+            </div>
+            <div class="split-preview" id="splitPreview" aria-label="Participant split preview"></div>
+            <div class="bill-tools-grid">
+              <div>
+                <h3>Receipt scanner</h3>
+                <p>Scan or upload a receipt to detect menu items, tax, tip, service fees, discounts, and total before review.</p>
+                <button class="ghost-button wide" type="button" id="scanReceiptButton">Simulate receipt scan</button>
+              </div>
+              <div>
+                <h3>AI tip calculator</h3>
+                <p id="tipAdvice">An 18% tip is customary for this restaurant based on group size and local dining norms.</p>
+                <button class="ghost-button wide" type="button" id="tipAdviceButton">Recommend tip</button>
+              </div>
+            </div>
+            <div class="payment-method-grid">
+              <button type="button" data-bill-pay="TravelDrip Wallet">Pay from Wallet</button>
+              <button type="button" data-bill-pay="Linked card">Linked card</button>
+              <button type="button" data-bill-pay="Apple Pay">Apple Pay</button>
+              <button type="button" data-bill-pay="Google Wallet">Google Wallet</button>
+              <button type="button" data-bill-pay="Outside app">Mark paid outside app</button>
+            </div>
+            <p class="small" id="billMessage">Open from itinerary, restaurant reservation, group chat, wallet, or quick actions. Payments require processor integration for production settlement.</p>
+            <div class="corporate-meal-rules">
+              <div><strong>Traveler view</strong><span>Employees see their meal, location, schedule, company payment status, and their assigned portion only.</span></div>
+              <div><strong>Finance view</strong><span>Finance admins can review total meal expense, departments, invoices, payment history, and budget impact.</span></div>
+              <div><strong>Analytics</strong><span>Tracks restaurant spending, average meal cost, cost per traveler, dining history, and budget vs. actual.</span></div>
+            </div>
+          </section>
+
+          <section class="panel ride-share-panel" id="rideShareHub">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Smart ride share hub</p>
+                <h2>Transportation and fare split</h2>
+              </div>
+              <span class="compliance-badge">Destination aware</span>
+            </div>
+            <div class="ride-destination-row">
+              <label>Destination
+                <select id="rideDestination">
+                  <option value="United Arab Emirates" selected>United Arab Emirates</option>
+                  <option value="United States">United States</option>
+                  <option value="Canada">Canada</option>
+                  <option value="United Kingdom">United Kingdom</option>
+                  <option value="Mexico">Mexico</option>
+                  <option value="Brazil">Brazil</option>
+                  <option value="Japan">Japan</option>
+                  <option value="Singapore">Singapore</option>
+                  <option value="Malaysia">Malaysia</option>
+                  <option value="Thailand">Thailand</option>
+                  <option value="Indonesia">Indonesia</option>
+                  <option value="India">India</option>
+                </select>
+              </label>
+              <div id="rideProviderList" class="ride-provider-list" aria-label="Recommended ride-share providers"></div>
+            </div>
+            <div class="ride-location-grid">
+              <label>Favorite pickup<input id="ridePickup" value="JBR Hotel Lobby"></label>
+              <label>Drop-off<input id="rideDropoff" value="Dubai Marina Dinner"></label>
+              <label>Passengers<input id="ridePassengers" type="number" min="1" max="8" value="4" inputmode="numeric"></label>
+            </div>
+            <div class="ride-estimate-grid">
+              <div><span>Recommended</span><strong id="rideRecommended">Careem</strong></div>
+              <div><span>Wait time</span><strong id="rideWait">8 min</strong></div>
+              <div><span>Estimate</span><strong id="rideEstimate">$18-$22</strong></div>
+            </div>
+            <div class="button-row">
+              <button class="primary-button" type="button" id="shareRideButton">Share ride</button>
+              <button class="ghost-button" type="button" id="importRideReceiptButton">Import receipt</button>
+              <button class="ghost-button" type="button" id="rideAdviceButton">AI ride advice</button>
+            </div>
+            <div class="ride-entry-grid">
+              <label>Total fare<input id="rideFare" type="number" min="0" step="0.01" value="48.00" inputmode="decimal"></label>
+              <label>Taxes<input id="rideTax" type="number" min="0" step="0.01" value="2.80" inputmode="decimal"></label>
+              <label>Tolls<input id="rideTolls" type="number" min="0" step="0.01" value="4.25" inputmode="decimal"></label>
+              <label>Booking fees<input id="rideFees" type="number" min="0" step="0.01" value="3.00" inputmode="decimal"></label>
+              <label>Tip<input id="rideTip" type="number" min="0" step="0.01" value="5.00" inputmode="decimal"></label>
+            </div>
+            <div class="split-mode-tabs ride-tabs" role="tablist" aria-label="Ride split mode">
+              <button class="active" type="button" data-ride-mode="equal">Equal</button>
+              <button type="button" data-ride-mode="custom">Custom</button>
+              <button type="button" data-ride-mode="percentage">Percentage</button>
+            </div>
+            <div class="bill-total-grid">
+              <div><span>Final fare</span><strong id="rideFinalTotal">$63.05</strong></div>
+              <div><span>Each passenger</span><strong id="rideEachTotal">$15.76</strong></div>
+              <div><span>Remaining</span><strong id="rideRemaining">$63.05</strong></div>
+            </div>
+            <div class="split-preview" id="rideSplitPreview" aria-label="Ride split preview"></div>
+            <div class="payment-method-grid">
+              <button type="button" data-ride-pay="TravelDrip Wallet">Wallet</button>
+              <button type="button" data-ride-pay="TravelDrip Virtual Card">Virtual Card</button>
+              <button type="button" data-ride-pay="Apple Pay">Apple Pay</button>
+              <button type="button" data-ride-pay="Google Wallet">Google Wallet</button>
+              <button type="button" data-ride-pay="Linked payment method">Linked payment</button>
+            </div>
+            <p class="small" id="rideMessage">Launch a provider, share ride details with the group, then split the final receipt after completion.</p>
+            <div class="corporate-meal-rules">
+              <div><strong>Traveler transportation view</strong><span>Employees see pickup time, driver info when available, pickup/drop-off, and assigned transportation.</span></div>
+              <div><strong>Admin transportation view</strong><span>Finance and event admins can review costs, vehicle assignments, invoices, departments, and budget utilization.</span></div>
+              <div><strong>Private employee details</strong><span>Employees cannot see company transportation budget, total expenses, or other employees' payment details.</span></div>
+            </div>
+          </section>
+
+          <section class="panel itinerary-alerts-panel" id="itineraryAlerts">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Smart itinerary notifications</p>
+                <h2>Stay on schedule when plans change</h2>
+              </div>
+              <span class="compliance-badge">Real-time ready</span>
+            </div>
+            <p class="security-note">TravelDrip keeps every traveler informed across friends, family, and corporate retreat trips with push, email, SMS where available, and in-app alerts.</p>
+            <div class="alert-category-grid">
+              <label><input type="checkbox" data-alert-category="Flights" checked> Flight delays, cancellations, gate changes, check-in reminders</label>
+              <label><input type="checkbox" data-alert-category="Hotels" checked> Hotel check-in/out reminders and reservation updates</label>
+              <label><input type="checkbox" data-alert-category="Transportation" checked> Transportation schedule changes and pickup notifications</label>
+              <label><input type="checkbox" data-alert-category="Itinerary" checked> Organizer and group-member itinerary updates</label>
+              <label><input type="checkbox" data-alert-category="Activities" checked> Activity confirmations, cancellations, and time changes</label>
+              <label><input type="checkbox" data-alert-category="Wallet" checked> Payment deadlines and wallet activity</label>
+              <label><input type="checkbox" data-alert-category="Meeting points" checked> Meeting point reminders and event start times</label>
+              <label><input type="checkbox" data-alert-category="Weather" checked> Destination weather alerts that may impact plans</label>
+              <label><input type="checkbox" data-alert-category="Emergency" checked> Emergency announcements and important travel updates</label>
+            </div>
+            <div class="delivery-preferences">
+              <label><input type="checkbox" data-alert-channel="Push" checked> Push</label>
+              <label><input type="checkbox" data-alert-channel="Email" checked> Email</label>
+              <label><input type="checkbox" data-alert-channel="SMS"> SMS</label>
+              <label><input type="checkbox" data-alert-channel="In-app" checked> In-app</label>
+            </div>
+            <div class="alert-preview-list" id="alertPreviewList">
+              <div><strong>Flight update</strong><span>DXB gate changed to B18. Check-in reminder sent 24 hours before departure.</span></div>
+              <div><strong>Hotel reminder</strong><span>Check-in opens at 3:00 PM. Reservation note updated by organizer.</span></div>
+              <div><strong>Weather impact</strong><span>High wind advisory may affect tomorrow's marina activity.</span></div>
+              <div><strong>Emergency announcement</strong><span>Organizer marked this update as critical for all travelers.</span></div>
+            </div>
+            <div class="button-row">
+              <button class="primary-button" type="button" id="saveAlertPrefsButton">Save alert preferences</button>
+              <button class="ghost-button" type="button" id="simulateAlertButton">Simulate itinerary update</button>
+            </div>
+            <p class="small" id="alertMessage">All critical emergency announcements stay enabled for traveler safety.</p>
+          </section>
+
+          <section class="panel">
+            <p class="eyebrow">Security Features</p>
+            <h2>Wallet approval controls</h2>
+            <div class="security-list">
+              <div><strong>Wallet PIN</strong><span>Required for adding funds, refund requests, transfers, approving trip payments, revealing card details, and mobile wallet provisioning.</span></div>
+              <div><strong>Biometric-ready</strong><span>Face ID, Touch ID, or fingerprint can be layered on supported devices after production auth and issuing partner controls are connected.</span></div>
+              <div><strong>Fraud monitoring</strong><span>Suspicious card purchases, refund behavior, and high-value approvals are flagged before funds move.</span></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <p class="eyebrow">Automated Notifications</p>
+            <h2>Money movement alerts</h2>
+            <div class="notification-list">
+              <span>Funds deposited</span>
+              <span>Funds allocated to booking</span>
+              <span>Refund requested</span>
+              <span>Refund approved or denied</span>
+              <span>Participant left trip</span>
+              <span>Participant removed</span>
+              <span>Funds returned to payment method</span>
+              <span>Virtual card activated</span>
+              <span>Card added to mobile wallet</span>
+              <span>Purchase approved or declined</span>
+              <span>Spending limit reached</span>
+              <span>Suspicious card activity</span>
+              <span>Bill created</span>
+              <span>Portion ready</span>
+              <span>Bill settled</span>
+              <span>Payment overdue</span>
+              <span>Ride shared</span>
+              <span>Ride portion ready</span>
+              <span>Ride reimbursement completed</span>
+              <span>Transportation changed</span>
+              <span>Flight status changed</span>
+              <span>Hotel reservation updated</span>
+              <span>Meeting point reminder</span>
+              <span>Weather alert</span>
+              <span>Emergency announcement</span>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2>Trip vote</h2>
+            <p>Should the Dubai group book the desert dinner for Saturday?</p>
+            <div class="poll" id="poll">
+              <button type="button" data-choice="yes"><span>Yes, reserve it</span><strong>5</strong></button>
+              <button type="button" data-choice="skip"><span>Skip it</span><strong>1</strong></button>
+              <button type="button" data-choice="details"><span>Need more details</span><strong>2</strong></button>
+            </div>
+            <div class="messages" id="messages">
+              <div class="msg"><strong>Alex:</strong> Can we keep Saturday open after 10?</div>
+              <div class="msg"><strong>Sarah:</strong> I like the late seating if the shuttle is included.</div>
+              <div class="msg"><strong>Traveldrip:</strong> Poll closes in 18 hours.</div>
+            </div>
+            <form class="chat-form" id="chatForm">
+              <input id="chatInput" placeholder="Message the group" aria-label="Message the group">
+              <button type="submit" aria-label="Send">Send</button>
+            </form>
+          </section>
+
+          <section class="panel map-panel">
+            <div class="map" aria-label="Trip route map"><span class="pin one">1</span><span class="pin two">2</span><span class="pin three">3</span></div>
+            <h2>Smart route</h2>
+            <p>Three stops are clustered to save 42 minutes of transit on Friday.</p>
+          </section>
+
+          <section class="panel audit-panel">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Audit & Compliance</p>
+                <h2>Permanent transaction trail</h2>
+              </div>
+              <span class="compliance-badge">PCI processor required</span>
+            </div>
+            <div class="audit-list" id="auditList">
+              <div><time>Jul 20, 2026 9:42 AM</time><strong>Funds deposited</strong><span>Jordan added $100 after PIN confirmation.</span></div>
+              <div><time>Jul 18, 2026 2:15 PM</time><strong>Funds reserved</strong><span>$250 held for hotel deposit.</span></div>
+              <div><time>Jul 14, 2026 11:20 AM</time><strong>Booking allocation</strong><span>$420 applied to non-refundable flight booking.</span></div>
+            </div>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <nav class="mobile-nav" aria-label="Mobile navigation">
+    <button class="active" type="button" data-target="dashboardHome">Home</button>
+    <button type="button" data-target="exploreDrops">Explore</button>
+    <button type="button" data-target="tripsPanel">Trips</button>
+    <button type="button" data-target="walletPanel">Wallet</button>
+    <button type="button" data-target="rideShareHub">Ride</button>
+    <button type="button" data-target="splitBill">Split</button>
+    <button type="button" data-target="itineraryAlerts">Alerts</button>
+    <button type="button" data-target="socialHub">Social</button>
+    <button type="button" data-target="enterpriseRbac">Corp</button>
+    <button type="button" data-target="importantInfo">Info</button>
+  </nav>
+
+  <dialog class="pin-dialog" id="pinDialog" aria-labelledby="pinTitle">
+    <form method="dialog" class="pin-card" id="pinForm">
+      <p class="eyebrow">Secure confirmation</p>
+      <h2 id="pinTitle">Confirm wallet payment</h2>
+      <p id="pinSummary">Enter your 4-digit trip wallet PIN to add funds.</p>
+      <label for="walletPin">Wallet PIN</label>
+      <input id="walletPin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="one-time-code" placeholder="4-digit PIN" required>
+      <p class="small">For this mock, any 4-digit PIN confirms the payment. In production, PIN checks must happen on the server and card data must never touch this app.</p>
+      <div class="dialog-actions">
+        <button class="ghost-button" value="cancel" type="button" id="cancelPinButton">Cancel</button>
+        <button class="primary-button" value="confirm" type="submit">Confirm payment</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="public-config.js?v=1"></script>
+  <script defer src="app.js?v=22"></script>
+</body>
+</html>
