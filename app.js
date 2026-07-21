@@ -639,7 +639,9 @@ function renderExplore(categoryKey = getActiveExploreCategory()) {
   $("#exploreSubfilters").innerHTML = category.filters.map((filter) => `<button type="button" data-explore-subfilter="${escapeHtml(filter)}">${escapeHtml(filter)}</button>`).join("");
   $("#exploreResultsSummary").textContent = `${category.label} results for ${destination} ${tripType.toLowerCase()}`;
   $("#exploreEmptyState").hidden = items.length > 0;
-  $("#exploreResultsGrid").innerHTML = items.map((item) => `
+  $("#exploreResultsGrid").innerHTML = items.map((item) => {
+    const primaryActions = item.actions.filter((action) => ["Save", "Add to Trip", "Add to Itinerary", "Create This Trip"].includes(action)).slice(0, 2);
+    return `
     <article class="explore-card" data-explore-card="${escapeHtml(item.id)}">
       <button class="explore-card-main" type="button" data-explore-detail="${escapeHtml(item.id)}">
         <img src="${item.image}" alt="${escapeHtml(item.title)}">
@@ -654,10 +656,11 @@ function renderExplore(categoryKey = getActiveExploreCategory()) {
         </div>
       </button>
       <div class="explore-card-actions">
-        ${item.actions.map((action) => `<button type="button" data-explore-action="${escapeHtml(action)}" data-explore-item="${escapeHtml(item.id)}">${escapeHtml(action)}</button>`).join("")}
+        ${primaryActions.map((action) => `<button type="button" data-explore-action="${escapeHtml(action)}" data-explore-item="${escapeHtml(item.id)}">${escapeHtml(action)}</button>`).join("")}
       </div>
     </article>
-  `).join("");
+  `;
+  }).join("");
 }
 
 function findExploreItem(itemId) {
@@ -2101,7 +2104,7 @@ function wireLocalInteractions() {
       const targetSection = $(`#${target}`);
       if (!targetSection) return;
 
-      $$(".nav button, .mobile-nav button").forEach((navButton) => {
+      $$(".nav button, .mobile-nav button, .trip-tab-bar button").forEach((navButton) => {
         navButton.classList.remove("active");
       });
       button.classList.add("active");

@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=22">
+  <link rel="stylesheet" href="styles.css?v=23">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -256,6 +256,17 @@
           </div>
         </div>
       </section>
+
+      <nav class="trip-tab-bar" aria-label="Selected trip sections">
+        <button class="active" type="button" data-target="dashboardHome">Overview</button>
+        <button type="button" data-target="itineraryAlerts">Itinerary</button>
+        <button type="button" data-target="socialHub">Chat</button>
+        <button type="button" data-target="rideShareHub">Travel</button>
+        <button type="button" data-target="walletPanel">Wallet</button>
+        <button type="button" data-target="importantInfo">Important Info</button>
+        <button type="button" data-target="socialHub">Memories</button>
+        <button type="button" data-target="securityCenter">Settings</button>
+      </nav>
 
       <section class="panel destination-insights" aria-label="Destination highlights">
         <div class="section-heading compact">
@@ -1652,15 +1663,8 @@
     <button class="active" type="button" data-target="dashboardHome">Home</button>
     <button type="button" data-target="exploreDrops">Explore</button>
     <button type="button" data-target="tripsPanel">Trips</button>
-    <button type="button" data-target="walletPanel">Wallet</button>
-    <button type="button" data-target="rideShareHub">Ride</button>
-    <button type="button" data-target="splitBill">Split</button>
-    <button type="button" data-target="itineraryAlerts">Alerts</button>
-    <button type="button" data-target="socialHub">Social</button>
-    <button type="button" data-target="enterpriseRbac">Corp</button>
-    <button type="button" data-target="importantInfo">Info</button>
-    <button type="button" data-target="securityCenter">Security</button>
-    <button type="button" data-target="copyrightPolicy">Copyright</button>
+    <button type="button" data-target="socialHub">Chat</button>
+    <button type="button" data-target="securityCenter">Profile</button>
   </nav>
 
   <dialog class="pin-dialog" id="pinDialog" aria-labelledby="pinTitle">
