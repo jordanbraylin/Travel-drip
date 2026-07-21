@@ -2073,6 +2073,102 @@ body.auth-screen main {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.private-driver-panel {
+  display: grid;
+  gap: 12px;
+  border: 1px solid rgba(8, 127, 140, 0.16);
+  border-radius: 22px;
+  padding: 16px;
+  background:
+    linear-gradient(135deg, rgba(223, 247, 245, 0.72), rgba(255, 255, 255, 0.96)),
+    #fff;
+  box-shadow: var(--soft-shadow);
+}
+
+.private-driver-panel h3 {
+  margin: 0;
+}
+
+.private-driver-search,
+.private-driver-list {
+  display: grid;
+  gap: 10px;
+}
+
+.private-driver-search {
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 0.45fr) minmax(170px, 0.55fr);
+}
+
+.private-driver-search label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.private-driver-search input,
+.private-driver-search select {
+  min-width: 0;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0 11px;
+  background: #fff;
+  color: var(--ink);
+}
+
+.private-driver-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.private-driver-list article,
+.private-driver-empty {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px;
+  background: #fff;
+}
+
+.private-driver-list article span,
+.private-driver-list article small,
+.private-driver-empty span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.private-driver-list article > b {
+  color: var(--ink);
+  font-size: 20px;
+}
+
+.private-driver-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.private-driver-actions button {
+  min-height: 34px;
+  border: 1px solid rgba(8, 127, 140, 0.16);
+  border-radius: 999px;
+  padding: 0 10px;
+  background: #fff;
+  color: #24555d;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.private-driver-actions button:first-child {
+  background: var(--sea);
+  color: #fff;
+}
+
 .ride-estimate-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -6083,5 +6179,12 @@ main {
 
   .bill-hero-total {
     text-align: left;
+  }
+}
+
+@media (max-width: 980px) {
+  .private-driver-search,
+  .private-driver-list {
+    grid-template-columns: 1fr;
   }
 }

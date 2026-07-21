@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=30">
+  <link rel="stylesheet" href="styles.css?v=31">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -1731,6 +1731,40 @@
               <div><span>Wait time</span><strong id="rideWait">8 min</strong></div>
               <div><span>Estimate</span><strong id="rideEstimate">$18-$22</strong></div>
             </div>
+            <section class="private-driver-panel">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Private driver booking</p>
+                  <h3>Search chauffeur and private driver companies</h3>
+                </div>
+                <button class="ghost-button" type="button" id="searchPrivateDriversButton">Search companies</button>
+              </div>
+              <div class="private-driver-search">
+                <label>Company or service
+                  <input id="privateDriverSearchInput" type="search" placeholder="Search chauffeur, limo, transfer, private driver">
+                </label>
+                <label>Vehicle type
+                  <select id="privateDriverVehicle">
+                    <option>Any vehicle</option>
+                    <option>Business sedan</option>
+                    <option>SUV</option>
+                    <option>Van / Sprinter</option>
+                    <option>Luxury car</option>
+                  </select>
+                </label>
+                <label>Booking type
+                  <select id="privateDriverBookingType">
+                    <option>Point-to-point</option>
+                    <option>Airport transfer</option>
+                    <option>Hourly driver</option>
+                    <option>Full-day hire</option>
+                    <option>Corporate shuttle</option>
+                  </select>
+                </label>
+              </div>
+              <div id="privateDriverList" class="private-driver-list" aria-label="Private driver companies"></div>
+              <p class="small" id="privateDriverMessage">Private driver companies update based on the selected destination. Booking requires provider confirmation.</p>
+            </section>
             <div class="button-row">
               <button class="primary-button" type="button" id="launchRideButton">Launch provider</button>
               <button class="primary-button" type="button" id="shareRideButton">Share ride</button>

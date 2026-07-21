@@ -105,6 +105,59 @@ const rideProvidersByDestination = {
   "United Arab Emirates": ["Careem", "Uber"]
 };
 
+const privateDriverCompaniesByDestination = {
+  "United Arab Emirates": [
+    { name: "Blacklane Dubai", type: "Chauffeur service", estimate: "$72-$110", eta: "45 min notice", rating: "4.8", vehicles: "Sedan, SUV, van" },
+    { name: "Careem Chauffeur", type: "Private driver", estimate: "$58-$96", eta: "30 min notice", rating: "4.7", vehicles: "Business sedan, XL" },
+    { name: "Dubai Private Driver", type: "Hourly hire", estimate: "$95/hr", eta: "2 hr minimum", rating: "4.6", vehicles: "Luxury sedan, sprinter" }
+  ],
+  "United States": [
+    { name: "Blacklane", type: "Chauffeur service", estimate: "$85-$140", eta: "60 min notice", rating: "4.8", vehicles: "Sedan, SUV, van" },
+    { name: "Alto", type: "Private rides", estimate: "$45-$90", eta: "Select cities", rating: "4.7", vehicles: "Premium SUV" },
+    { name: "Dryver", type: "Personal driver", estimate: "$38/hr", eta: "Advance booking", rating: "4.5", vehicles: "Your car or hired car" }
+  ],
+  "Canada": [
+    { name: "Blacklane Canada", type: "Chauffeur service", estimate: "$90-$150", eta: "60 min notice", rating: "4.8", vehicles: "Sedan, SUV" },
+    { name: "DriverSeat", type: "Designated driver", estimate: "$42/hr", eta: "Advance booking", rating: "4.5", vehicles: "Hourly driver" }
+  ],
+  "United Kingdom": [
+    { name: "Addison Lee", type: "Executive car", estimate: "£45-£95", eta: "30 min notice", rating: "4.6", vehicles: "Exec car, people carrier" },
+    { name: "Blacklane London", type: "Chauffeur service", estimate: "£75-£140", eta: "60 min notice", rating: "4.8", vehicles: "Business sedan, van" }
+  ],
+  "Mexico": [
+    { name: "Blacklane Mexico City", type: "Chauffeur service", estimate: "$55-$105", eta: "60 min notice", rating: "4.7", vehicles: "Sedan, SUV" },
+    { name: "Mexico Private Driver", type: "Tour driver", estimate: "$45/hr", eta: "Advance booking", rating: "4.6", vehicles: "Sedan, van" }
+  ],
+  "Brazil": [
+    { name: "Blacklane Sao Paulo", type: "Chauffeur service", estimate: "$65-$120", eta: "60 min notice", rating: "4.7", vehicles: "Sedan, SUV" },
+    { name: "Brazil Executive Transfers", type: "Private transfer", estimate: "$40-$85", eta: "Advance booking", rating: "4.5", vehicles: "Sedan, van" }
+  ],
+  "Japan": [
+    { name: "Tokyo Chauffeur Service", type: "Private driver", estimate: "¥12,000-¥28,000", eta: "Advance booking", rating: "4.8", vehicles: "Sedan, van" },
+    { name: "MK Taxi Hire", type: "Hire car", estimate: "¥8,000/hr", eta: "2 hr minimum", rating: "4.7", vehicles: "Premium taxi, van" }
+  ],
+  "Singapore": [
+    { name: "GrabRentals Chauffeur", type: "Private driver", estimate: "S$65-S$120", eta: "Advance booking", rating: "4.7", vehicles: "Sedan, MPV" },
+    { name: "Singapore Limousine", type: "Airport and hourly", estimate: "S$75/hr", eta: "2 hr minimum", rating: "4.6", vehicles: "Luxury sedan, van" }
+  ],
+  "Malaysia": [
+    { name: "Kuala Lumpur Chauffeur", type: "Private driver", estimate: "RM180-RM420", eta: "Advance booking", rating: "4.6", vehicles: "Sedan, MPV" },
+    { name: "Blacklane KL", type: "Chauffeur service", estimate: "RM260-RM520", eta: "60 min notice", rating: "4.8", vehicles: "Business sedan, van" }
+  ],
+  "Thailand": [
+    { name: "Bangkok Private Driver", type: "Hourly driver", estimate: "฿1,200-฿3,200", eta: "Advance booking", rating: "4.6", vehicles: "Sedan, van" },
+    { name: "Blacklane Bangkok", type: "Chauffeur service", estimate: "฿2,400-฿5,200", eta: "60 min notice", rating: "4.8", vehicles: "Business sedan, SUV" }
+  ],
+  "Indonesia": [
+    { name: "Bali Private Driver", type: "Day hire", estimate: "Rp650k-Rp1.2m", eta: "Advance booking", rating: "4.8", vehicles: "SUV, van" },
+    { name: "Jakarta Executive Driver", type: "Chauffeur service", estimate: "Rp500k-Rp1.1m", eta: "Advance booking", rating: "4.6", vehicles: "Sedan, MPV" }
+  ],
+  "India": [
+    { name: "Savaari Chauffeur", type: "Outstation and hourly", estimate: "₹1,800-₹4,500", eta: "Advance booking", rating: "4.6", vehicles: "Sedan, SUV" },
+    { name: "Blacklane India", type: "Chauffeur service", estimate: "₹3,500-₹8,000", eta: "60 min notice", rating: "4.8", vehicles: "Business sedan, van" }
+  ]
+};
+
 const rideParticipants = [
   { name: "Jordan", custom: 14, percent: 25, note: "Full route" },
   { name: "Sarah", custom: 18, percent: 40, note: "Extra stop" },
@@ -1072,6 +1125,43 @@ function renderRideProviders() {
   $("#rideWait").textContent = state.selectedRideProvider === "Careem" || state.selectedRideProvider === "Grab" ? "8 min" : "12 min";
   $("#rideEstimate").textContent = destination === "United Arab Emirates" ? "$18-$22" : "$16-$28";
   renderRideAccount();
+  renderPrivateDrivers();
+}
+
+function renderPrivateDrivers() {
+  if (!$("#privateDriverList")) return;
+  const destination = $("#rideDestination")?.value || "United Arab Emirates";
+  const query = $("#privateDriverSearchInput")?.value.trim().toLowerCase() || "";
+  const companies = privateDriverCompaniesByDestination[destination] || [
+    { name: "Local Executive Transfers", type: "Private driver", estimate: "$60-$120", eta: "Advance booking", rating: "4.5", vehicles: "Sedan, SUV, van" },
+    { name: "Hotel Chauffeur Desk", type: "Hotel-arranged driver", estimate: "$75-$160", eta: "Concierge confirmation", rating: "4.6", vehicles: "Sedan, luxury van" }
+  ];
+  const filtered = companies.filter((company) => {
+    const text = `${company.name} ${company.type} ${company.vehicles}`.toLowerCase();
+    return !query || text.includes(query);
+  });
+
+  $("#privateDriverList").innerHTML = filtered.length ? filtered.map((company, index) => `
+    <article>
+      <div>
+        <span>${escapeHtml(company.type)}</span>
+        <strong>${escapeHtml(company.name)}</strong>
+        <small>${escapeHtml(company.vehicles)} • Rating ${escapeHtml(company.rating)} • ${escapeHtml(company.eta)}</small>
+      </div>
+      <b>${escapeHtml(company.estimate)}</b>
+      <div class="private-driver-actions">
+        <button type="button" data-private-driver-book="${index}">Book driver</button>
+        <button type="button" data-private-driver-quote="${index}">Request quote</button>
+      </div>
+    </article>
+  `).join("") : `
+    <div class="private-driver-empty">
+      <strong>No exact private driver matches</strong>
+      <span>Try chauffeur, limo, transfer, SUV, van, airport, or clear the search.</span>
+    </div>
+  `;
+
+  $("#privateDriverMessage").textContent = `${filtered.length} private driver ${filtered.length === 1 ? "company" : "companies"} found in ${destination}.`;
 }
 
 function renderRideAccount() {
@@ -1883,7 +1973,52 @@ function wireLocalInteractions() {
 
   $("#rideDestination")?.addEventListener("change", () => {
     renderRideSplit();
-    $("#rideMessage").textContent = `Recommended providers updated for ${$("#rideDestination").value}.`;
+    $("#rideMessage").textContent = `Recommended ride-share providers and private driver companies updated for ${$("#rideDestination").value}.`;
+  });
+
+  $("#privateDriverSearchInput")?.addEventListener("input", renderPrivateDrivers);
+  $("#privateDriverVehicle")?.addEventListener("change", () => {
+    $("#privateDriverMessage").textContent = `${$("#privateDriverVehicle").value} preference saved for private driver searches.`;
+  });
+  $("#privateDriverBookingType")?.addEventListener("change", () => {
+    $("#privateDriverMessage").textContent = `${$("#privateDriverBookingType").value} selected. Companies that support this booking type are prioritized in production search.`;
+  });
+
+  $("#searchPrivateDriversButton")?.addEventListener("click", async () => {
+    renderPrivateDrivers();
+    const destination = $("#rideDestination").value;
+    const query = $("#privateDriverSearchInput").value.trim() || "all private driver companies";
+    $("#rideMessage").textContent = `Searched ${query} in ${destination}. Results can be booked, quoted, or added to the transportation split.`;
+    addAuditEntry("Private driver search", `${query} searched in ${destination}.`);
+    await saveSyncedEvent("private_driver_search", { destination, query });
+  });
+
+  $("#privateDriverList")?.addEventListener("click", async (event) => {
+    const bookButton = event.target.closest("[data-private-driver-book]");
+    const quoteButton = event.target.closest("[data-private-driver-quote]");
+    if (!bookButton && !quoteButton) return;
+    const card = event.target.closest("article");
+    const company = card?.querySelector("strong")?.textContent || "Private driver company";
+    const destination = $("#rideDestination").value;
+    const payload = {
+      company,
+      destination,
+      pickup: $("#ridePickup").value.trim(),
+      dropoff: $("#rideDropoff").value.trim(),
+      passengers: Number($("#ridePassengers").value || 1),
+      vehicle: $("#privateDriverVehicle").value,
+      bookingType: $("#privateDriverBookingType").value
+    };
+    if (bookButton) {
+      $("#privateDriverMessage").textContent = `${company} booking request prepared for ${payload.bookingType} in ${destination}. Provider confirmation is required before payment.`;
+      $("#rideMessage").textContent = `${company} private driver booking prepared from ${payload.pickup} to ${payload.dropoff}.`;
+      addAuditEntry("Private driver booking prepared", `${company} selected for ${destination}.`);
+      await saveSyncedEvent("private_driver_booking_prepared", payload);
+    } else {
+      $("#privateDriverMessage").textContent = `Quote requested from ${company}. TravelDrip will attach pickup, drop-off, passengers, vehicle type, and booking type.`;
+      addAuditEntry("Private driver quote requested", `${company} quote requested for ${destination}.`);
+      await saveSyncedEvent("private_driver_quote_requested", payload);
+    }
   });
 
   ["#rideFare", "#rideTax", "#rideTolls", "#rideFees", "#rideTip", "#ridePassengers"].forEach((selector) => {
