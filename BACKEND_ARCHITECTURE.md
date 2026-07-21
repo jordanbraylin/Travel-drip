@@ -19,6 +19,7 @@ The backend schema adds:
 - Corporate guest access codes, employee/attendee ID verification, temporary guest sessions, and guest access audit events
 - Schedule, flights, hotels, transportation, ride-share connections, chat, polls, and votes
 - Cruise bookings, cabin assignments, port schedules, shore excursions, onboard activities, and dining reservations
+- Daily memory reminder preferences, end-of-day prompt events, and organized memory items by trip/day/itinerary
 - Wallets, group banks, wallet transactions, receipt scanning records, item claims, ride split participants, and refund-ready audit data
 - Important information, acknowledgments, documents, media, social connections, AI sessions, notifications, background jobs, saved places, and audit logs
 

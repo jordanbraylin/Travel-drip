@@ -4841,3 +4841,192 @@ main {
     grid-template-columns: 1fr;
   }
 }
+
+.daily-memory-panel {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.memory-reminder-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 122, 92, 0.20);
+  border-radius: 24px;
+  padding: 18px;
+  background:
+    linear-gradient(135deg, rgba(255, 122, 92, 0.12), rgba(8, 127, 140, 0.08)),
+    #fff;
+  box-shadow: var(--soft-shadow);
+}
+
+.memory-reminder-hero h3,
+.memory-reminder-hero p,
+.daily-memory-grid h3,
+.daily-memory-grid p {
+  margin: 0;
+}
+
+.memory-reminder-hero h3 {
+  font-size: clamp(24px, 3vw, 36px);
+}
+
+.memory-reminder-hero p {
+  margin-top: 8px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.daily-memory-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.daily-memory-grid article,
+.memory-organization-strip {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 16px;
+  background: #fff;
+  box-shadow: var(--soft-shadow);
+}
+
+.daily-memory-grid article > span,
+.memory-organization-strip strong {
+  color: var(--sea);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.completed-activity-list,
+.memory-action-grid,
+.memory-settings-grid,
+.memory-organization-strip {
+  display: grid;
+  gap: 8px;
+}
+
+.completed-activity-list {
+  margin-top: 12px;
+}
+
+.completed-activity-list div {
+  position: relative;
+  border-radius: 16px;
+  padding: 10px 10px 10px 34px;
+  background: #f7fbfa;
+}
+
+.completed-activity-list div::before {
+  content: "✓";
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--mint);
+  color: #1f6a48;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.completed-activity-list strong,
+.completed-activity-list small,
+.memory-organization-strip span {
+  display: block;
+}
+
+.completed-activity-list small,
+.memory-organization-strip span {
+  margin-top: 3px;
+  color: var(--muted);
+}
+
+.memory-action-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 12px 0;
+}
+
+.memory-action-grid button {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 12px;
+  background: #fff;
+  color: #24555d;
+  font-weight: 850;
+}
+
+.memory-upload-card label,
+.memory-settings-grid label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.memory-upload-card select,
+.memory-settings-grid input[type="time"] {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0 10px;
+  background: #fff;
+  color: var(--ink);
+}
+
+.memory-settings-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 12px;
+}
+
+.memory-settings-grid label:not(:first-child) {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 16px;
+  padding: 8px 10px;
+  background: #f7fbfa;
+}
+
+.memory-ai-card {
+  background:
+    linear-gradient(135deg, rgba(223, 247, 245, 0.74), rgba(247, 234, 214, 0.72)),
+    #fff !important;
+}
+
+.memory-ai-card p {
+  margin-top: 8px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.memory-organization-strip {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  .memory-reminder-hero,
+  .daily-memory-grid,
+  .memory-organization-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .memory-action-grid,
+  .memory-settings-grid {
+    grid-template-columns: 1fr;
+  }
+}

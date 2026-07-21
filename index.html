@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=24">
+  <link rel="stylesheet" href="styles.css?v=25">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -852,10 +852,84 @@
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Social Media Hub</p>
-                <h2>Smart sharing system</h2>
+                <h2>Memories and smart sharing</h2>
               </div>
               <button class="primary-button" type="button" id="generateCaptionButton">Generate caption</button>
             </div>
+
+            <section class="daily-memory-panel">
+              <div class="memory-reminder-hero">
+                <div>
+                  <p class="eyebrow">Daily Memory Reminder</p>
+                  <h3>You've completed today's itinerary.</h3>
+                  <p id="memoryReminderCopy">Would you like to upload photos or videos from today's adventures?</p>
+                </div>
+                <button class="primary-button" type="button" id="openDailyMemoryButton">Add Today's Memories</button>
+              </div>
+              <div class="daily-memory-grid">
+                <article class="daily-itinerary-card">
+                  <span>Day 3 - Santorini</span>
+                  <h3>Completed today</h3>
+                  <div class="completed-activity-list">
+                    <div><strong>Breakfast at Blue Cafe</strong><small>8:30 AM • Oia</small></div>
+                    <div><strong>Catamaran Cruise</strong><small>11:00 AM • Caldera</small></div>
+                    <div><strong>Winery Tour</strong><small>3:30 PM • Pyrgos</small></div>
+                    <div><strong>Sunset Dinner</strong><small>7:45 PM • Ammoudi Bay</small></div>
+                  </div>
+                </article>
+                <article class="memory-upload-card" id="dailyMemoryScreen">
+                  <span>Add Today's Memories</span>
+                  <h3>Organize while it is fresh</h3>
+                  <div class="memory-action-grid">
+                    <button type="button" data-memory-action="Upload Photos">Upload Photos</button>
+                    <button type="button" data-memory-action="Upload Videos">Upload Videos</button>
+                    <button type="button" data-memory-action="Take a Photo">Take a Photo</button>
+                    <button type="button" data-memory-action="Record a Video">Record a Video</button>
+                    <button type="button" data-memory-action="Add Notes or Journal Entry">Add Notes or Journal</button>
+                    <button type="button" data-memory-action="Skip for Now">Skip for Now</button>
+                  </div>
+                  <label>Visibility
+                    <select id="memoryVisibility">
+                      <option>Private (Only Me)</option>
+                      <option>Trip Members</option>
+                      <option>Friends</option>
+                      <option>Shared Album</option>
+                      <option>Company Only</option>
+                      <option>Public Profile</option>
+                    </select>
+                  </label>
+                  <p class="small" id="dailyMemoryMessage">No photos or videos are shared automatically. Choose visibility before uploading.</p>
+                </article>
+                <article class="memory-ai-card">
+                  <span>AI Memory Assistant</span>
+                  <h3>Today's highlight</h3>
+                  <p id="memoryAiSummary">Today you sailed across the caldera, visited a winery, and watched the sunset over Santorini. It looks like an unforgettable day.</p>
+                  <div class="button-row">
+                    <button class="ghost-button" type="button" id="generateJournalButton">Generate journal</button>
+                    <button class="ghost-button" type="button" id="createHighlightReelButton">Create reel</button>
+                  </div>
+                </article>
+                <article class="memory-settings-card">
+                  <span>Reminder Settings</span>
+                  <div class="memory-settings-grid">
+                    <label>Reminder time<input id="memoryReminderTime" type="time" value="21:00"></label>
+                    <label><input id="memoryDailyToggle" type="checkbox" checked> Daily reminders</label>
+                    <label><input id="memoryFollowupToggle" type="checkbox" checked> Morning follow-up</label>
+                    <label><input id="memoryAutoOrganizeToggle" type="checkbox" checked> Auto-organize by itinerary</label>
+                    <label><input id="memoryAiCaptionToggle" type="checkbox" checked> AI captions</label>
+                    <label><input id="memoryAiJournalToggle" type="checkbox" checked> AI daily journals</label>
+                    <label><input id="memorySocialPromptToggle" type="checkbox"> Prompt to share socially</label>
+                  </div>
+                </article>
+              </div>
+              <div class="memory-organization-strip">
+                <div><strong>Trip</strong><span>Miami 2027</span></div>
+                <div><strong>Day</strong><span>Day 2</span></div>
+                <div><strong>Event</strong><span>Ocean Grill Dinner</span></div>
+                <div><strong>Location</strong><span>Detected when available</span></div>
+                <div><strong>Album</strong><span>Private, shared, or company-only</span></div>
+              </div>
+            </section>
 
             <div class="social-grid">
               <section class="social-card">

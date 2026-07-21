@@ -2156,6 +2156,60 @@ function wireLocalInteractions() {
     });
   });
 
+  $("#openDailyMemoryButton")?.addEventListener("click", async () => {
+    $("#dailyMemoryScreen")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    $("#dailyMemoryMessage").textContent = "Today's memory screen opened from the end-of-day reminder. Choose visibility before adding photos, videos, or notes.";
+    addAuditEntry("Daily memory reminder opened", "Traveler opened end-of-day memory prompt after completed itinerary.");
+    await saveSyncedEvent("daily_memory_prompt_opened", { day: 3, destination: "Santorini" });
+  });
+
+  $$("[data-memory-action]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const action = button.dataset.memoryAction;
+      const visibility = $("#memoryVisibility")?.value || "Private (Only Me)";
+      const messages = {
+        "Upload Photos": `Photo uploader opened. New media will be grouped by trip, Day 3, itinerary event, time, and destination with ${visibility} visibility.`,
+        "Upload Videos": `Video uploader opened. Clips will be auto-organized with ${visibility} visibility.`,
+        "Take a Photo": `Camera workflow opened. Photo will not be shared until you approve ${visibility} visibility.`,
+        "Record a Video": `Video recorder opened. Recording stays private until you choose where to share it.`,
+        "Add Notes or Journal Entry": "Journal entry opened with today's completed activities as context.",
+        "Skip for Now": "Skipped for now. One optional morning follow-up can be sent if reminders remain enabled."
+      };
+      $("#dailyMemoryMessage").textContent = messages[action] || `${action} selected.`;
+      addAuditEntry("Daily memory action", `${action} selected with ${visibility} visibility.`);
+      await saveSyncedEvent("daily_memory_action", { action, visibility, autoOrganized: $("#memoryAutoOrganizeToggle")?.checked });
+    });
+  });
+
+  $("#generateJournalButton")?.addEventListener("click", async () => {
+    $("#memoryAiSummary").textContent = "AI journal: Day 3 in Santorini started with breakfast in Oia, moved into a bright catamaran cruise, slowed down at a winery tour, and ended with sunset dinner by the water.";
+    $("#dailyMemoryMessage").textContent = "AI daily journal generated. Review it before saving or sharing.";
+    addAuditEntry("AI daily memory journal generated", "Generated journal from completed itinerary context.");
+    await saveSyncedEvent("daily_memory_journal_generated", { day: 3 });
+  });
+
+  $("#createHighlightReelButton")?.addEventListener("click", async () => {
+    $("#dailyMemoryMessage").textContent = "Highlight reel draft created from today's best moments. Review photos, captions, music, and privacy before sharing.";
+    addAuditEntry("Daily highlight reel created", "AI memory assistant prepared a short recap reel draft.");
+    await saveSyncedEvent("daily_memory_highlight_reel_created", { requiresUserApproval: true });
+  });
+
+  ["#memoryReminderTime", "#memoryDailyToggle", "#memoryFollowupToggle", "#memoryAutoOrganizeToggle", "#memoryAiCaptionToggle", "#memoryAiJournalToggle", "#memorySocialPromptToggle"].forEach((selector) => {
+    $(selector)?.addEventListener("change", async () => {
+      const settings = {
+        reminderTime: $("#memoryReminderTime")?.value || "21:00",
+        dailyReminders: $("#memoryDailyToggle")?.checked,
+        followupReminders: $("#memoryFollowupToggle")?.checked,
+        autoOrganize: $("#memoryAutoOrganizeToggle")?.checked,
+        aiCaptions: $("#memoryAiCaptionToggle")?.checked,
+        aiJournals: $("#memoryAiJournalToggle")?.checked,
+        socialPrompts: $("#memorySocialPromptToggle")?.checked
+      };
+      $("#dailyMemoryMessage").textContent = `Memory reminder settings saved for ${settings.reminderTime}.`;
+      await saveSyncedEvent("daily_memory_settings_updated", settings);
+    });
+  });
+
   $$("[data-connection]").forEach((button) => {
     button.addEventListener("click", (event) => {
       event.target.textContent = event.target.textContent === "Connected" ? "Disconnect" : "Connected";

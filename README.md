@@ -93,6 +93,12 @@ TravelDrip now supports Cruise Vacation as a guided trip type. The app includes 
 
 Production cruise data is represented in `supabase-backend.sql` with `cruise_bookings`, `cruise_cabins`, `cruise_ports`, `cruise_excursions`, `cruise_onboard_activities`, and `cruise_dining_reservations`. Cruise line imports, live excursion availability, ship maps, and onboard account spending require provider integrations before they can be production-live.
 
+## Daily memory reminder
+
+TravelDrip now includes an End-of-Day Memory Prompt inside the Memories/Social hub. After a travel day or final itinerary item ends, travelers can be prompted to upload photos, videos, take a photo, record a video, add notes, generate an AI journal, create a highlight reel, or skip for now.
+
+Users choose visibility before upload: private, trip members, friends, shared album, company only, or public profile. Nothing is shared automatically. Production data is represented in `daily_memory_preferences`, `daily_memory_prompts`, and `daily_memory_items`.
+
 ## Enterprise corporate retreat mode
 
 The app now includes a Corporate Retreat RBAC section with role previews for Company Owner, Finance Admin, Retreat Organizer, Team Leader, and Employee. The preview demonstrates financial privacy rules: employees can see personal travel details and schedules, while corporate budgets and payment data are visible only to owner/finance roles.

@@ -1224,3 +1224,125 @@ create policy "Members read cruise dining" on public.cruise_dining_reservations
 drop policy if exists "Admins manage cruise dining" on public.cruise_dining_reservations;
 create policy "Admins manage cruise dining" on public.cruise_dining_reservations
   for all to authenticated using (public.has_trip_role(trip_id, array['owner','admin','organizer'])) with check (public.has_trip_role(trip_id, array['owner','admin','organizer']));
+
+create table if not exists public.daily_memory_preferences (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  trip_id uuid references public.trips(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  daily_reminders_enabled boolean not null default true,
+  reminder_time time not null default '21:00',
+  followup_reminders_enabled boolean not null default true,
+  auto_organize_by_itinerary boolean not null default true,
+  automatic_ai_captions boolean not null default true,
+  automatic_ai_daily_journals boolean not null default true,
+  social_share_prompts boolean not null default false,
+  default_visibility text not null default 'private' check (default_visibility in ('private','trip_members','friends','shared_album','company_only','public_profile')),
+  shared_album_requires_approval boolean not null default false,
+  metadata jsonb not null default '{}'::jsonb,
+  unique (trip_id, user_id)
+);
+
+drop trigger if exists set_daily_memory_preferences_updated_at on public.daily_memory_preferences;
+create trigger set_daily_memory_preferences_updated_at
+before update on public.daily_memory_preferences
+for each row execute function public.set_updated_at();
+
+create table if not exists public.daily_memory_prompts (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  trip_id uuid not null references public.trips(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  trip_day integer not null check (trip_day > 0),
+  destination text,
+  prompt_type text not null default 'end_of_day' check (prompt_type in ('end_of_day','after_final_activity','morning_followup')),
+  trigger_source text not null default 'itinerary_completed',
+  scheduled_for timestamptz,
+  sent_at timestamptz,
+  opened_at timestamptz,
+  skipped_at timestamptz,
+  status text not null default 'queued' check (status in ('queued','sent','opened','skipped','dismissed','completed','disabled')),
+  completed_activity_summary jsonb not null default '[]'::jsonb,
+  metadata jsonb not null default '{}'::jsonb
+);
+
+drop trigger if exists set_daily_memory_prompts_updated_at on public.daily_memory_prompts;
+create trigger set_daily_memory_prompts_updated_at
+before update on public.daily_memory_prompts
+for each row execute function public.set_updated_at();
+
+create table if not exists public.daily_memory_items (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  trip_id uuid not null references public.trips(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  prompt_id uuid references public.daily_memory_prompts(id) on delete set null,
+  trip_day integer not null check (trip_day > 0),
+  itinerary_item_id uuid references public.schedule_items(id) on delete set null,
+  media_id uuid references public.media(id) on delete set null,
+  memory_type text not null check (memory_type in ('photo','video','journal','note','highlight_reel','caption')),
+  title text,
+  body text,
+  location_name text,
+  captured_at timestamptz,
+  destination text,
+  visibility text not null default 'private' check (visibility in ('private','trip_members','friends','shared_album','company_only','public_profile')),
+  approval_status text not null default 'not_required' check (approval_status in ('not_required','pending','approved','rejected')),
+  ai_summary text,
+  ai_caption text,
+  metadata jsonb not null default '{}'::jsonb
+);
+
+drop trigger if exists set_daily_memory_items_updated_at on public.daily_memory_items;
+create trigger set_daily_memory_items_updated_at
+before update on public.daily_memory_items
+for each row execute function public.set_updated_at();
+
+create index if not exists idx_daily_memory_preferences_user on public.daily_memory_preferences(user_id, trip_id);
+create index if not exists idx_daily_memory_prompts_user_status on public.daily_memory_prompts(user_id, status, scheduled_for);
+create index if not exists idx_daily_memory_items_trip_day on public.daily_memory_items(trip_id, trip_day);
+create index if not exists idx_daily_memory_items_user on public.daily_memory_items(user_id, created_at desc);
+
+alter table public.daily_memory_preferences enable row level security;
+alter table public.daily_memory_prompts enable row level security;
+alter table public.daily_memory_items enable row level security;
+
+drop policy if exists "Users manage own daily memory preferences" on public.daily_memory_preferences;
+create policy "Users manage own daily memory preferences" on public.daily_memory_preferences
+  for all to authenticated
+  using (user_id = auth.uid() and (trip_id is null or public.is_trip_member(trip_id)))
+  with check (user_id = auth.uid() and (trip_id is null or public.is_trip_member(trip_id)));
+
+drop policy if exists "Users read own daily memory prompts" on public.daily_memory_prompts;
+create policy "Users read own daily memory prompts" on public.daily_memory_prompts
+  for select to authenticated
+  using (user_id = auth.uid() or public.has_trip_role(trip_id, array['owner','admin','organizer']));
+
+drop policy if exists "Users update own daily memory prompts" on public.daily_memory_prompts;
+create policy "Users update own daily memory prompts" on public.daily_memory_prompts
+  for update to authenticated
+  using (user_id = auth.uid())
+  with check (user_id = auth.uid());
+
+drop policy if exists "Users create own daily memory items" on public.daily_memory_items;
+create policy "Users create own daily memory items" on public.daily_memory_items
+  for insert to authenticated
+  with check (user_id = auth.uid() and public.is_trip_member(trip_id));
+
+drop policy if exists "Users read visible daily memory items" on public.daily_memory_items;
+create policy "Users read visible daily memory items" on public.daily_memory_items
+  for select to authenticated
+  using (
+    user_id = auth.uid()
+    or (visibility in ('trip_members','shared_album','company_only') and public.is_trip_member(trip_id))
+    or public.has_trip_role(trip_id, array['owner','admin','organizer'])
+  );
+
+drop policy if exists "Users manage own daily memory items" on public.daily_memory_items;
+create policy "Users manage own daily memory items" on public.daily_memory_items
+  for update to authenticated
+  using (user_id = auth.uid())
+  with check (user_id = auth.uid());
