@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#11222b">
+  <meta name="theme-color" content="#0096c7">
   <meta name="description" content="Traveldrip helps groups plan trips, split budgets, vote on plans, and stay synced.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=35">
+  <link rel="stylesheet" href="styles.css?v=36">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -314,6 +314,13 @@
         <article><span>Group bank</span><strong id="walletMetric">$6,400</strong><small id="depositMetric">$800 each</small></article>
         <article><span>Votes open</span><strong>4</strong><small>2 close today</small></article>
         <article><span>Target spend</span><strong>$1,250</strong><small>per person</small></article>
+      </section>
+
+      <section class="travel-social-strip" aria-label="TravelDrip social highlights">
+        <article><span>🌴</span><strong>Next Adventure</strong><small>18 days until Dubai</small></article>
+        <article><span>📸</span><strong>New Memories</strong><small>12 photos ready to share</small></article>
+        <article><span>🎉</span><strong>Achievement</strong><small>Beach Lover badge unlocked</small></article>
+        <article><span>🍹</span><strong>Dinner Tonight</strong><small>Rooftop table vote closes soon</small></article>
       </section>
 
       <section class="dashboard-widgets" id="dashboardWidgets" aria-label="Customizable dashboard widgets">
@@ -2071,6 +2078,53 @@
               </div>
               <button class="ghost-button" type="button" id="runSecurityAuditButton">Run security audit</button>
             </div>
+            <section class="theme-studio" aria-label="TravelDrip theme settings">
+              <div>
+                <p class="eyebrow">Theme Studio</p>
+                <h3>Tropical Social Edition</h3>
+                <p>Personalize TravelDrip with vibrant themes inspired by beaches, sunsets, cruises, festivals, and social travel memories.</p>
+              </div>
+              <label>App theme
+                <select id="themeSelector">
+                  <option value="tropical">Tropical Paradise</option>
+                  <option value="sunset">Sunset Escape</option>
+                  <option value="ocean">Ocean Breeze</option>
+                  <option value="miami">Miami Nights</option>
+                  <option value="cruise">Cruise Life</option>
+                  <option value="festival">Festival Vibes</option>
+                </select>
+              </label>
+              <div class="theme-swatch-grid" aria-label="Theme previews">
+                <button class="active" type="button" data-theme-choice="tropical"><span></span>Tropical Paradise</button>
+                <button type="button" data-theme-choice="sunset"><span></span>Sunset Escape</button>
+                <button type="button" data-theme-choice="ocean"><span></span>Ocean Breeze</button>
+                <button type="button" data-theme-choice="miami"><span></span>Miami Nights</button>
+                <button type="button" data-theme-choice="cruise"><span></span>Cruise Life</button>
+                <button type="button" data-theme-choice="festival"><span></span>Festival Vibes</button>
+              </div>
+              <p class="small" id="themeStatus">Tropical Paradise is active. Animations stay subtle and respect reduced-motion settings.</p>
+            </section>
+            <section class="travel-badge-panel" aria-label="Travel badges">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Travel Badges</p>
+                  <h3>Social profile energy</h3>
+                </div>
+                <span class="status-pill">10 badges</span>
+              </div>
+              <div class="travel-badge-grid">
+                <span>🏝 Beach Lover</span>
+                <span>✈️ Frequent Flyer</span>
+                <span>🚢 Cruise Captain</span>
+                <span>🌍 World Explorer</span>
+                <span>🍣 Foodie Traveler</span>
+                <span>🏕 Adventure Seeker</span>
+                <span>🏔 Mountain Climber</span>
+                <span>🌃 Nightlife Expert</span>
+                <span>💼 Business Traveler</span>
+                <span>👨‍👩‍👧 Family Planner</span>
+              </div>
+            </section>
             <section class="profile-photo-manager">
               <div class="profile-photo-main">
                 <div class="profile-photo-preview" id="profilePhotoPreview" data-profile-preview>
@@ -2315,6 +2369,6 @@
   </dialog>
 
   <script src="public-config.js?v=1"></script>
-  <script defer src="app.js?v=30"></script>
+  <script defer src="app.js?v=31"></script>
 </body>
 </html>

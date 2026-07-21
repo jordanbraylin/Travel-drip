@@ -8,6 +8,7 @@ const state = {
   isAdmin: false,
   adminStatusCheckedFor: "",
   hasEnteredApp: sessionStorage.getItem("traveldripEnteredApp") === "true",
+  theme: localStorage.getItem("traveldripTheme") || "tropical",
   profilePhoto: {
     dataUrl: localStorage.getItem("traveldripProfilePhoto") || "",
     savedDataUrl: localStorage.getItem("traveldripProfilePhoto") || "",
@@ -61,6 +62,14 @@ const dayCopy = [
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 const isFilePreview = location.protocol === "file:";
+const themeLabels = {
+  tropical: "Tropical Paradise",
+  sunset: "Sunset Escape",
+  ocean: "Ocean Breeze",
+  miami: "Miami Nights",
+  cruise: "Cruise Life",
+  festival: "Festival Vibes"
+};
 
 function setSyncStatus(message) {
   const el = $("#syncStatus");
@@ -677,6 +686,21 @@ function updateDashboardWidgets() {
       : "Corporate employee dashboard: flights, hotel, transportation, event schedule, activities, and announcements are visible."
   };
   $("#widgetStatusMessage").textContent = labels[tripType] || labels.group;
+}
+
+function applyTheme(theme = state.theme) {
+  const resolvedTheme = themeLabels[theme] ? theme : "tropical";
+  state.theme = resolvedTheme;
+  document.body.dataset.travelTheme = resolvedTheme;
+  if ($("#themeSelector")) $("#themeSelector").value = resolvedTheme;
+  $$(".theme-swatch-grid [data-theme-choice]").forEach((button) => {
+    const active = button.dataset.themeChoice === resolvedTheme;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+  if ($("#themeStatus")) {
+    $("#themeStatus").textContent = `${themeLabels[resolvedTheme]} is active. Animations stay subtle and respect reduced-motion settings.`;
+  }
 }
 
 function getActiveExploreCategory() {
@@ -2835,6 +2859,20 @@ function wireLocalInteractions() {
 
   $("#rolePreview")?.addEventListener("change", updateEnterpriseRole);
   $("#dashboardTripType")?.addEventListener("change", updateDashboardWidgets);
+  $("#themeSelector")?.addEventListener("change", async (event) => {
+    applyTheme(event.target.value);
+    localStorage.setItem("traveldripTheme", state.theme);
+    addAuditEntry("Theme updated", `${themeLabels[state.theme]} applied from Profile settings.`);
+    await saveSyncedEvent("theme_updated", { theme: state.theme });
+  });
+  $$(".theme-swatch-grid [data-theme-choice]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      applyTheme(button.dataset.themeChoice);
+      localStorage.setItem("traveldripTheme", state.theme);
+      addAuditEntry("Theme updated", `${themeLabels[state.theme]} applied from theme swatches.`);
+      await saveSyncedEvent("theme_updated", { theme: state.theme });
+    });
+  });
   $("#sidebarMenuButton")?.addEventListener("click", () => {
     const open = !document.body.classList.contains("sidebar-open");
     document.body.classList.toggle("sidebar-open", open);
@@ -3669,6 +3707,7 @@ async function sendAdminNotification(event) {
 }
 
 async function init() {
+  applyTheme();
   startAuthCarousel();
   wireLocalInteractions();
   wireInstallPrompt();
