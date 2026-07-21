@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=40">
+  <link rel="stylesheet" href="styles.css?v=41">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -28,7 +28,7 @@
         <span><strong>Traveldrip</strong><small>Group trips, synced</small></span>
       </a>
       <nav class="nav grouped-nav" aria-label="TravelDrip navigation">
-        <details class="nav-group" open>
+        <details class="nav-group" data-consumer-nav open>
           <summary>Primary Navigation</summary>
           <button class="active" type="button" data-target="dashboardHome">Home</button>
           <button type="button" data-target="exploreDrops">Explore</button>
@@ -38,7 +38,7 @@
           <button type="button" data-target="enterpriseRbac">Corporate</button>
           <button type="button" data-target="securityCenter">Profile</button>
         </details>
-        <details class="nav-group" open>
+        <details class="nav-group" data-consumer-nav open>
           <summary>Trip Management</summary>
           <button type="button" data-target="dashboardHome">Overview</button>
           <button type="button" data-target="itineraryAlerts">Itinerary</button>
@@ -52,7 +52,7 @@
           <button type="button" data-target="walletPanel">Budget & Wallet</button>
           <button type="button" data-target="socialHub" data-requires-trip-type="group corporate">Group Chat</button>
         </details>
-        <details class="nav-group" open>
+        <details class="nav-group" data-consumer-nav open>
           <summary>Financial</summary>
           <button type="button" data-target="walletPanel">My Wallet</button>
           <button type="button" data-target="groupBank">Group Bank</button>
@@ -63,16 +63,28 @@
           <button type="button" data-target="rideShareHub">Ride Share Expenses</button>
         </details>
         <details class="nav-group" data-corporate-nav open>
-          <summary>Corporate Retreat</summary>
-          <button type="button" data-target="enterpriseRbac">Company Dashboard</button>
-          <button type="button" data-target="enterpriseRbac">Employee Directory</button>
-          <button type="button" data-target="enterpriseRbac">Team Schedule</button>
+          <summary>Corporate Travel</summary>
+          <button type="button" data-target="dashboardHome">Corporate Home</button>
+          <button type="button" data-target="enterpriseRbac">My Travel</button>
+          <button type="button" data-target="enterpriseRbac">Events</button>
+          <button type="button" data-target="enterpriseRbac">Schedule</button>
+          <button type="button" data-target="enterpriseRbac">Activities</button>
+          <button type="button" data-target="socialHub">Messages</button>
+          <button type="button" data-target="enterpriseRbac">Per Diem</button>
+          <button type="button" data-target="walletPanel">Virtual Card</button>
+          <button type="button" data-target="enterpriseRbac">Expenses</button>
+          <button type="button" data-target="importantInfo">Documents</button>
+          <button type="button" data-target="importantInfo">Policies</button>
           <button type="button" data-target="importantInfo">Announcements</button>
-          <button type="button" data-target="enterpriseRbac">Event Agenda</button>
-          <button type="button" data-target="rideShareHub">Transportation</button>
-          <button type="button" data-target="enterpriseRbac" data-admin-only>Reports</button>
+          <button type="button" data-target="securityCenter">Profile</button>
+          <button type="button" data-target="enterpriseRbac" data-admin-only>Attendees</button>
+          <button type="button" data-target="enterpriseRbac" data-admin-only>Approvals</button>
           <button type="button" data-target="enterpriseRbac" data-admin-only>Budget</button>
+          <button type="button" data-target="enterpriseRbac" data-admin-only>Finance</button>
+          <button type="button" data-target="enterpriseRbac" data-admin-only>Reports</button>
+          <button type="button" data-target="enterpriseRbac" data-admin-only>Vendors</button>
           <button type="button" data-target="enterpriseRbac" data-admin-only>Audit Logs</button>
+          <button type="button" data-target="enterpriseRbac" data-admin-only>Corporate Settings</button>
         </details>
         <details class="nav-group">
           <summary>Settings</summary>
@@ -286,6 +298,30 @@
         <button type="button" data-target="socialHub">Memories</button>
         <button type="button" data-target="securityCenter">Settings</button>
       </nav>
+
+      <section class="panel corporate-mode-home" id="corporateHome" hidden aria-label="Corporate travel home">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">Corporate Travel Workspace</p>
+            <h2>Acme Leadership Summit</h2>
+            <p>Business travel, assignments, voting, per diem, card controls, receipts, and approvals are governed by company policy.</p>
+          </div>
+          <span class="compliance-badge" id="corporateWorkspaceBadge">Employee view</span>
+        </div>
+        <div class="corporate-home-grid">
+          <article><span>My Business Trip</span><strong>JFK to Dubai</strong><small>Flight, hotel, shuttle, and event agenda assigned by Travel Admin.</small></article>
+          <article><span>Per Diem</span><strong>$86 available today</strong><small>Meals and approved incidentals only. Unused funds return to company account.</small></article>
+          <article><span>Corporate Card</span><strong>Active Jul 24-28</strong><small>Merchant, region, category, and spending controls enforced.</small></article>
+          <article><span>Policy Status</span><strong>2 acknowledgments due</strong><small>Expense rules and emergency contact policy require confirmation.</small></article>
+        </div>
+        <div class="corporate-home-actions">
+          <button class="primary-button" type="button" data-target="enterpriseRbac">Open Corporate Dashboard</button>
+          <button class="ghost-button" type="button" data-target="importantInfo">View Policies</button>
+          <button class="ghost-button" type="button" data-target="walletPanel">Open Virtual Card</button>
+          <button class="ghost-button" type="button" data-target="socialHub">Company Messages</button>
+        </div>
+        <p class="small" id="corporateModeMessage">Corporate Mode is active. Personal leisure trips, public invites, vacation deals, and consumer wallet prompts are hidden from this workspace.</p>
+      </section>
 
       <section class="panel destination-insights" aria-label="Destination highlights">
         <div class="section-heading compact">
@@ -1300,22 +1336,33 @@
               </div>
               <label class="role-picker">Preview role
                 <select id="rolePreview">
-                  <option value="owner">Company Owner</option>
-                  <option value="finance">Finance Admin</option>
-                  <option value="organizer">Retreat Organizer</option>
-                  <option value="manager">Team Leader</option>
+                  <option value="owner">Corporate Owner</option>
+                  <option value="executive">Executive Administrator</option>
+                  <option value="travel">Travel Administrator</option>
+                  <option value="organizer">Event Organizer</option>
+                  <option value="finance">Finance Administrator</option>
+                  <option value="manager">Team Manager</option>
                   <option value="employee" selected>Employee</option>
+                  <option value="contractor">Contractor</option>
+                  <option value="guest">Guest</option>
+                  <option value="vendor">Vendor</option>
                 </select>
               </label>
             </div>
 
             <div class="retreat-type-grid" aria-label="Corporate retreat types">
-              <span>Company Retreat</span>
-              <span>Team Building Event</span>
+              <span>Corporate Retreat</span>
+              <span>Conference</span>
+              <span>Sales Kickoff</span>
               <span>Leadership Summit</span>
-              <span>Conference Trip</span>
-              <span>Incentive Trip</span>
-              <span>Employee Celebration</span>
+              <span>Training Event</span>
+              <span>Team-Building Event</span>
+              <span>Client Event</span>
+              <span>Executive Travel</span>
+              <span>Employee Business Trip</span>
+              <span>Company Celebration</span>
+              <span>Offsite Meeting</span>
+              <span>Multi-City Business Travel</span>
             </div>
 
             <div class="permission-grid">
@@ -1323,23 +1370,56 @@
                 <h3>Company Owner / Executive Admin</h3>
                 <p>Full access to budgets, vendor contracts, attendee operations, reports, payment approvals, retreat settings, and admin permissions.</p>
               </section>
+              <section class="permission-card role-owner" data-visible-roles="owner executive">
+                <h3>Executive Administrator</h3>
+                <p>Executive visibility across travel operations, high-level approvals, emergency updates, and company event controls.</p>
+              </section>
+              <section class="permission-card role-organizer" data-visible-roles="owner executive travel organizer">
+                <h3>Travel Administrator</h3>
+                <p>Creates corporate trips, assigns flights, hotels, transportation, travel documents, and employee business-trip records.</p>
+              </section>
               <section class="permission-card role-finance" data-visible-roles="owner finance">
                 <h3>Finance Admin</h3>
                 <p>Financial-only access to budgets, expenses, invoices, payments, refunds, reimbursements, and transaction history.</p>
               </section>
-              <section class="permission-card role-organizer" data-visible-roles="owner organizer">
+              <section class="permission-card role-organizer" data-visible-roles="owner executive travel organizer">
                 <h3>Retreat Organizer / Event Manager</h3>
                 <p>Operations access for guest lists, RSVP status, flights, hotels, transportation, schedules, workshops, activities, and meeting rooms.</p>
               </section>
-              <section class="permission-card role-manager" data-visible-roles="owner organizer manager">
+              <section class="permission-card role-manager" data-visible-roles="owner executive travel organizer manager">
                 <h3>Team Leader / Manager</h3>
                 <p>Limited access to assigned team members, team schedules, activities, meeting locations, and transportation details.</p>
               </section>
-              <section class="permission-card role-employee" data-visible-roles="owner finance organizer manager employee">
+              <section class="permission-card role-employee" data-visible-roles="owner executive travel organizer finance manager employee contractor guest vendor">
                 <h3>Employee / Attendee</h3>
                 <p>Participant access only: personal travel information, event agenda, activities, RSVP status, and team communication.</p>
               </section>
+              <section class="permission-card role-contractor" data-visible-roles="owner executive travel organizer manager contractor guest vendor">
+                <h3>Contractor / Guest / Vendor</h3>
+                <p>Temporary access to assigned event details, approved documents, limited messages, and expiration-controlled guest portal data.</p>
+              </section>
             </div>
+
+            <section class="social-card corporate-mode-controls">
+              <div class="section-heading compact">
+                <div>
+                  <h3>Corporate Mode activation and workspace separation</h3>
+                  <p>Corporate Mode activates for company accounts, corporate retreats, business trips, conferences, company access codes, and assigned corporate travelers.</p>
+                </div>
+                <label class="workspace-toggle">Workspace
+                  <select id="workspacePreview">
+                    <option value="corporate" selected>Corporate Travel</option>
+                    <option value="personal">Personal Travel</option>
+                  </select>
+                </label>
+              </div>
+              <div class="corporate-policy-grid">
+                <div><strong>Hidden in Corporate Mode</strong><span>Solo vacations, friends trips, bachelor trips, public invitations, personal group wallets, vacation deals, consumer social sharing, unapproved booking options, and leisure budget tools.</span></div>
+                <div><strong>Corporate language</strong><span>Team Members, Corporate Event, Company Wallet, Travel Policy, Per Diem, Assigned Travel, Approvals, and Reconciliation replace casual trip-planning labels.</span></div>
+                <div><strong>Workspace boundary</strong><span>Personal trips require switching to Personal Travel. Corporate data never appears in the personal workspace.</span></div>
+                <div><strong>Backend requirement</strong><span>UI hiding is not enough. Supabase RLS and APIs must enforce organization, role, employee, trip, event, department, and cost-center scope.</span></div>
+              </div>
+            </section>
 
             <div class="employee-dashboard">
               <section class="social-card">
@@ -1374,6 +1454,89 @@
                 <h3>Financial privacy enforced</h3>
                 <p>Employees never see company retreat budget, total trip cost, vendor pricing, employee travel costs, hotel rates, flight costs, group wallet balance, company payments, or expense reports.</p>
                 <p class="ai-denial">AI response: You do not have permission to access financial information for this retreat.</p>
+              </section>
+            </div>
+
+            <div class="corporate-feature-grid">
+              <section class="social-card">
+                <h3>Travel policy engine</h3>
+                <div class="corporate-policy-grid compact-list">
+                  <div><strong>Booking</strong><span>Approved airlines, booking windows, hotel categories, nightly rate caps, upgrade restrictions, cancellation rules.</span></div>
+                  <div><strong>Spending</strong><span>Meal limits, per-diem caps, alcohol rules, categories, receipt requirements, approval thresholds.</span></div>
+                  <div><strong>Mobility</strong><span>Approved transportation providers, region controls, international rules, guest rules, emergency exceptions.</span></div>
+                  <div><strong>Employee guidance</strong><span>Policy guidance appears before card, expense, voting, booking, and reimbursement actions.</span></div>
+                </div>
+              </section>
+
+              <section class="social-card corporate-voting-card">
+                <h3>Approved activity voting</h3>
+                <div class="vote-option-grid">
+                  <label><input type="radio" name="corporateVote" checked> Desert leadership dinner <span>Admin approved, 42 seats left</span></label>
+                  <label><input type="radio" name="corporateVote"> Innovation workshop <span>Manager approval required</span></label>
+                  <label class="is-disabled"><input type="radio" name="corporateVote" disabled> Yacht reception <span>Capacity reached, waitlist enabled</span></label>
+                </div>
+                <p class="small" id="corporateVoteMessage">Employees can only vote on administrator-approved activities. Creating company-funded activities is role restricted.</p>
+                <button class="primary-button" type="button" id="submitCorporateVoteButton">Submit Vote</button>
+              </section>
+
+              <section class="social-card">
+                <h3>Per-diem funding</h3>
+                <div class="finance-metrics">
+                  <article><span>Daily limit</span><strong>$125</strong></article>
+                  <article><span>Trip allowance</span><strong>$625</strong></article>
+                  <article><span>Available today</span><strong>$86</strong></article>
+                  <article><span>Expires</span><strong>Jul 28</strong></article>
+                </div>
+                <div class="corporate-policy-grid compact-list">
+                  <div><strong>Eligible categories</strong><span>Meals, transportation, hotel incidentals, approved emergency funds.</span></div>
+                  <div><strong>Controls</strong><span>Merchant category, active dates, timezone, country/region, meal and transport limits.</span></div>
+                  <div><strong>Unused funds</strong><span>Expired company funds return to the corporate account and generate reconciliation records.</span></div>
+                </div>
+              </section>
+
+              <section class="social-card">
+                <h3>Corporate virtual card</h3>
+                <div class="corporate-card-preview">
+                  <span>Acme Travel Card</span>
+                  <strong>Jordan Smith • **** 4821</strong>
+                  <small>Balance $486 • Meals and transport • Active Jul 24-28</small>
+                </div>
+                <div class="corporate-card-actions">
+                  <button type="button" data-corporate-card-action="Activate Card">Activate</button>
+                  <button type="button" data-corporate-card-action="View Card">View</button>
+                  <button type="button" data-corporate-card-action="Freeze Card">Freeze</button>
+                  <button type="button" data-corporate-card-action="Upload Receipt">Upload Receipt</button>
+                  <button type="button" data-corporate-card-action="Request Funds">Request Funds</button>
+                  <button type="button" data-corporate-card-action="Add to Apple Wallet">Add to Apple Wallet</button>
+                  <button type="button" data-corporate-card-action="Add to Google Wallet">Add to Google Wallet</button>
+                </div>
+                <p class="small" id="corporateCardMessage">Mobile wallet provisioning remains unavailable until an approved card issuer and wallet-token service are integrated.</p>
+              </section>
+
+              <section class="social-card">
+                <h3>Expenses and receipts</h3>
+                <div class="approval-flow">
+                  <div><strong>Employee</strong><span>Uploads receipt, scans line items, adds notes, category, and reimbursement request.</span></div>
+                  <div><strong>Finance</strong><span>Reviews transaction match, requests details, approves, rejects, marks exceptions, or exports report.</span></div>
+                  <div><strong>Reconciliation</strong><span>Missing receipts, unused funds, card activity, approvals, and audit logs stay attached to the event.</span></div>
+                </div>
+              </section>
+
+              <section class="social-card">
+                <h3>Corporate notifications</h3>
+                <div class="notification-list">
+                  <span>Trip assignment</span>
+                  <span>Event invitation</span>
+                  <span>Activity voting open</span>
+                  <span>Voting deadline</span>
+                  <span>Schedule change</span>
+                  <span>Per-diem issued</span>
+                  <span>Card declined</span>
+                  <span>Receipt required</span>
+                  <span>Expense approved</span>
+                  <span>Funds expiring</span>
+                  <span>Emergency announcement</span>
+                </div>
               </section>
             </div>
 
@@ -1431,6 +1594,19 @@
                 <div><time>Jul 20, 2026 9:58 AM</time><strong>Payment approval</strong><span>Finance Admin approved vendor deposit after 2FA.</span></div>
                 <div><time>Jul 19, 2026 4:22 PM</time><strong>Permission change</strong><span>Executive Admin granted Organizer operations access.</span></div>
               </div>
+            </section>
+
+            <section class="social-card corporate-acceptance-card">
+              <h3>Corporate acceptance checklist</h3>
+              <div class="corporate-acceptance-list">
+                <div data-corp-check="pass"><strong>Dedicated corporate navigation</strong><span>Corporate users see business-travel tabs and policy language.</span></div>
+                <div data-corp-check="pass"><strong>Consumer content separation</strong><span>Personal vacation content is hidden when Corporate Mode is active.</span></div>
+                <div data-corp-check="review"><strong>Activity voting</strong><span>Voting is limited to administrator-approved activities and capacity rules.</span></div>
+                <div data-corp-check="review"><strong>Per diem and virtual cards</strong><span>Controls are represented; issuer/payment provider integration is required before live use.</span></div>
+                <div data-corp-check="blocked"><strong>Backend enforcement</strong><span>Production requires Supabase RLS/API enforcement for organization, role, department, cost center, employee, trip, and event scope.</span></div>
+                <div data-corp-check="blocked"><strong>Mobile wallet provisioning</strong><span>Apple Wallet and Google Wallet must remain unavailable until approved issuer provisioning is connected.</span></div>
+              </div>
+              <p class="small" id="corporateAcceptanceMessage">Corporate Mode is a strict business-travel workspace in the UI. Final production readiness requires backend authorization and provider verification.</p>
             </section>
           </section>
 
@@ -2417,6 +2593,6 @@
   </dialog>
 
   <script src="public-config.js?v=1"></script>
-  <script defer src="app.js?v=33"></script>
+  <script defer src="app.js?v=34"></script>
 </body>
 </html>

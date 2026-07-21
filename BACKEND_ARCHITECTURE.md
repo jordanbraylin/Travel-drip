@@ -17,6 +17,7 @@ The backend schema adds:
 - Trip membership, roles, feature flags, and enabled modules
 - Invitations with secure tokens, RSVP tracking, and guest registration support
 - Corporate guest access codes, employee/attendee ID verification, temporary guest sessions, and guest access audit events
+- Corporate policy controls for business-trip types, role scopes, approved activity voting, per-diem allocations, corporate virtual cards, merchant/category/region limits, receipt requirements, expense approvals, reconciliation, and provider-backed mobile-wallet provisioning status
 - Schedule, flights, hotels, transportation, ride-share connections, group/private chat rooms, message participants, reactions, shared media, reports, polls, and votes
 - Cruise bookings, cabin assignments, port schedules, shore excursions, onboard activities, and dining reservations
 - Reservation and paid excursion records, assigned attendees, reminder preferences, queued reminder notifications, smart departure payloads, and calendar sync status
@@ -79,3 +80,9 @@ The backend has the tables, permission model, and API foundation for production.
 - Email/OTP delivery for high-risk guest access verification
 
 Payment card data, raw OAuth passwords, CVV values, and private keys should never be stored in Supabase tables or frontend files.
+
+## Corporate Mode Requirements
+
+Corporate Mode must be enforced by backend authorization, not only by the client UI. Every corporate record should be scoped by the relevant `organization_id`, `user_id`, `trip_id`, `event_id`, `employee_id`, `department_id`, `cost_center_id`, role, and permission scope. Production policies must prevent one organization from reading another organization's employees, trips, budgets, cards, votes, receipts, reimbursements, messages, documents, or audit logs.
+
+Per-diem funds and corporate virtual cards require provider-backed ledgers and issuing controls before live use. Unused company funds should return to the corporate account during reconciliation unless the company has explicitly configured a reimbursement policy.

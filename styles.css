@@ -4154,6 +4154,64 @@ input[type="range"] {
   gap: 14px;
 }
 
+.corporate-mode .trip-tab-bar {
+  display: none;
+}
+
+.corporate-mode-home {
+  margin-bottom: 18px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(235, 249, 255, 0.94)),
+    radial-gradient(circle at 88% 18%, rgba(255, 209, 102, 0.18), transparent 28%);
+  border-color: rgba(0, 119, 182, 0.22);
+}
+
+.corporate-home-grid,
+.corporate-policy-grid,
+.corporate-feature-grid,
+.corporate-acceptance-list {
+  display: grid;
+  gap: 10px;
+}
+
+.corporate-home-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.corporate-home-grid article,
+.corporate-policy-grid div,
+.corporate-acceptance-list div {
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.corporate-home-grid span,
+.corporate-home-grid small,
+.corporate-policy-grid span,
+.corporate-acceptance-list span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.corporate-home-grid strong,
+.corporate-policy-grid strong,
+.corporate-acceptance-list strong {
+  display: block;
+  margin: 5px 0;
+}
+
+.corporate-home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 .role-picker {
   display: grid;
   gap: 6px;
@@ -4163,6 +4221,7 @@ input[type="range"] {
 }
 
 .role-picker select,
+.workspace-toggle select,
 .retreat-type-grid span {
   min-height: 36px;
   border: 1px solid var(--line);
@@ -4170,15 +4229,25 @@ input[type="range"] {
   background: #fff;
 }
 
-.role-picker select {
+.role-picker select,
+.workspace-toggle select {
   padding: 0 10px;
+}
+
+.workspace-toggle {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
 }
 
 .retreat-type-grid,
 .permission-grid,
 .employee-dashboard,
 .approval-comm-grid,
-.enterprise-security-grid {
+.enterprise-security-grid,
+.corporate-feature-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
@@ -4221,23 +4290,47 @@ input[type="range"] {
 .role-organizer { border-left: 4px solid var(--reef); }
 .role-manager { border-left: 4px solid var(--violet); }
 .role-employee { border-left: 4px solid var(--sun); }
+.role-contractor { border-left: 4px solid var(--palm); }
 
 .permission-card.is-muted {
   opacity: 0.42;
 }
 
 .travel-info-list,
-.approval-flow {
+.approval-flow,
+.vote-option-grid,
+.corporate-card-actions {
   display: grid;
   gap: 8px;
 }
 
 .travel-info-list div,
-.approval-flow div {
+.approval-flow div,
+.vote-option-grid label {
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: #fff;
+}
+
+.vote-option-grid label {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  column-gap: 8px;
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.vote-option-grid label span {
+  grid-column: 2;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.vote-option-grid label.is-disabled {
+  opacity: 0.55;
 }
 
 .travel-info-list strong,
@@ -4323,6 +4416,92 @@ input[type="range"] {
   background: #fff;
   color: #8c2f20 !important;
   font-weight: 800;
+}
+
+.corporate-mode-controls,
+.corporate-acceptance-card {
+  border-color: rgba(0, 119, 182, 0.24);
+}
+
+.corporate-policy-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.corporate-policy-grid.compact-list {
+  grid-template-columns: 1fr;
+}
+
+.corporate-card-preview {
+  display: grid;
+  gap: 8px;
+  min-height: 156px;
+  margin-bottom: 10px;
+  padding: 18px;
+  border-radius: 14px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 84% 18%, rgba(255, 209, 102, 0.34), transparent 28%),
+    linear-gradient(135deg, #07171f, #0077b6 55%, #17b1a9);
+  box-shadow: 0 18px 34px rgba(0, 119, 182, 0.24);
+}
+
+.corporate-card-preview span,
+.corporate-card-preview small {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.corporate-card-preview strong {
+  margin-top: auto;
+  font-size: 20px;
+}
+
+.corporate-card-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.corporate-card-actions button {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.corporate-acceptance-list div {
+  position: relative;
+  padding-left: 38px;
+}
+
+.corporate-acceptance-list div::before {
+  position: absolute;
+  left: 10px;
+  top: 14px;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 950;
+}
+
+.corporate-acceptance-list [data-corp-check="pass"]::before {
+  content: "✓";
+  background: var(--palm);
+}
+
+.corporate-acceptance-list [data-corp-check="review"]::before {
+  content: "?";
+  background: var(--sun);
+  color: #5d3d00;
+}
+
+.corporate-acceptance-list [data-corp-check="blocked"]::before {
+  content: "!";
+  background: var(--reef);
 }
 
 .channel-list {
@@ -4941,6 +5120,11 @@ code {
   .creator-grid,
   .caption-studio,
   .analytics-grid,
+  .corporate-home-grid,
+  .corporate-policy-grid,
+  .corporate-feature-grid,
+  .corporate-card-actions,
+  .corporate-acceptance-list,
   .retreat-type-grid,
   .permission-grid,
   .employee-dashboard,

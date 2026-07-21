@@ -926,25 +926,51 @@ function renderTripType(type) {
 function updateDashboardWidgets() {
   const tripType = $("#dashboardTripType")?.value || "group";
   const role = $("#rolePreview")?.value || "employee";
-  const isAdminRole = ["owner", "finance"].includes(role);
+  const isCorporateMode = tripType === "corporate";
+  const isFinancialRole = ["owner", "executive", "finance"].includes(role);
+  const isAdminRole = ["owner", "executive", "travel", "organizer", "finance"].includes(role);
+
+  document.body.classList.toggle("corporate-mode", isCorporateMode);
+  if ($("#workspacePreview")) $("#workspacePreview").value = isCorporateMode ? "corporate" : "personal";
 
   $$("[data-widget-scope]").forEach((widget) => {
-    const allowed = widget.dataset.widgetScope.split(" ").includes(tripType);
-    const financeAllowed = !widget.dataset.financeWidget || tripType !== "corporate" || isAdminRole;
+    const allowed = widget.dataset.widgetScope.split(" ").includes(isCorporateMode ? "corporate" : tripType);
+    const financeAllowed = !widget.dataset.financeWidget || !isCorporateMode || isFinancialRole;
     widget.hidden = !allowed || !financeAllowed || widget.dataset.userHidden === "true";
   });
 
   $$("[data-corporate-nav]").forEach((section) => {
-    section.hidden = false;
+    section.hidden = !isCorporateMode;
+  });
+
+  $$("[data-consumer-nav]").forEach((section) => {
+    section.hidden = isCorporateMode;
   });
 
   $$("[data-requires-trip-type]").forEach((item) => {
-    item.hidden = !item.dataset.requiresTripType.split(" ").includes(tripType);
+    item.hidden = !item.dataset.requiresTripType.split(" ").includes(isCorporateMode ? "corporate" : tripType);
   });
 
   $$("[data-admin-only]").forEach((item) => {
     item.hidden = !isAdminRole;
   });
+
+  const isHomeVisible = $(".content-grid")?.hidden !== false;
+  if (isHomeVisible) {
+    ["#dashboardHome", ".destination-insights", ".travel-social-strip"].forEach((selector) => {
+      $$(selector).forEach((section) => {
+        section.hidden = isCorporateMode;
+        section.setAttribute("aria-hidden", String(isCorporateMode));
+      });
+    });
+    if ($("#corporateHome")) {
+      $("#corporateHome").hidden = !isCorporateMode;
+      $("#corporateHome").setAttribute("aria-hidden", String(!isCorporateMode));
+    }
+  }
+  if ($("#corporateWorkspaceBadge")) {
+    $("#corporateWorkspaceBadge").textContent = isAdminRole ? "Admin workspace" : "Employee workspace";
+  }
 
   const labels = {
     solo: "Solo dashboard: personal itinerary, AI recommendations, weather, budget, and documents are prioritized.",
@@ -952,9 +978,16 @@ function updateDashboardWidgets() {
     cruise: "Cruise dashboard: ship details, cabin, ports, excursions, onboard schedule, cruise wallet, reminders, and memories are prioritized.",
     corporate: isAdminRole
       ? "Corporate admin dashboard: employee logistics plus budget, approvals, attendance, reports, and audit widgets are visible."
-      : "Corporate employee dashboard: flights, hotel, transportation, event schedule, activities, and announcements are visible."
+      : "Corporate employee dashboard: assigned flights, hotel, transportation, event schedule, approved activities, per diem, card status, policies, and announcements are visible."
   };
-  $("#widgetStatusMessage").textContent = labels[tripType] || labels.group;
+  $("#widgetStatusMessage").textContent = isCorporateMode
+    ? `${labels.corporate} Personal leisure trips and consumer wallet prompts are hidden.`
+    : labels[tripType] || labels.group;
+  if ($("#corporateModeMessage")) {
+    $("#corporateModeMessage").textContent = isCorporateMode
+      ? "Corporate Mode is active. Personal leisure trips, public invites, vacation deals, and consumer wallet prompts are hidden from this workspace."
+      : "Personal Travel workspace is active. Corporate assignments, budgets, employee records, and policies stay separated.";
+  }
 }
 
 function applyTheme(theme = state.theme) {
@@ -2114,8 +2147,10 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   const dashboardSections = [
     ".pwa-panel",
     "#dashboardHome",
+    "#corporateHome",
     ".destination-insights",
     ".metrics",
+    ".travel-social-strip",
     "#dashboardWidgets"
   ];
   dashboardSections.forEach((selector) => {
@@ -2168,6 +2203,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
     if (exploreState.destinationId) showDestinationExploreDetail(exploreState.destinationId, exploreState.destinationAction);
   }
 
+  updateDashboardWidgets();
   document.title = `${routeDefinitions[resolvedTarget].label} - Traveldrip`;
   document.body.classList.remove("sidebar-open");
   $("#sidebarMenuButton")?.setAttribute("aria-expanded", "false");
@@ -3188,6 +3224,29 @@ function wireLocalInteractions() {
 
   $("#rolePreview")?.addEventListener("change", updateEnterpriseRole);
   $("#dashboardTripType")?.addEventListener("change", updateDashboardWidgets);
+  $("#workspacePreview")?.addEventListener("change", (event) => {
+    if ($("#dashboardTripType")) $("#dashboardTripType").value = event.target.value === "corporate" ? "corporate" : "group";
+    updateEnterpriseRole();
+    addAuditEntry("Workspace switched", event.target.value === "corporate" ? "Corporate Travel workspace opened." : "Personal Travel workspace opened.");
+  });
+  $("#submitCorporateVoteButton")?.addEventListener("click", async () => {
+    const selected = $("input[name='corporateVote']:checked")?.closest("label")?.textContent.trim().replace(/\s+/g, " ") || "approved activity";
+    $("#corporateVoteMessage").textContent = `Vote submitted for ${selected}. Changes remain open until the administrator deadline and follow team, capacity, anonymity, and approval rules.`;
+    addInAppNotification("Corporate", "Activity vote submitted and confirmation sent.");
+    addAuditEntry("Corporate activity vote", selected);
+    await saveSyncedEvent("corporate_activity_vote", { selected, approvedOnly: true });
+  });
+  $$(".corporate-card-actions [data-corporate-card-action]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const action = button.dataset.corporateCardAction;
+      const unavailableWallet = action.includes("Wallet");
+      $("#corporateCardMessage").textContent = unavailableWallet
+        ? `${action} is unavailable until approved issuer wallet-token provisioning is connected. No broken provisioning flow is shown.`
+        : `${action} opened with MFA, device verification, spending controls, audit logging, and session timeout requirements.`;
+      addAuditEntry("Corporate virtual card action", `${action}: ${unavailableWallet ? "provider integration required" : "policy-controlled action opened"}.`);
+      await saveSyncedEvent("corporate_card_action", { action, providerIntegrationRequired: unavailableWallet });
+    });
+  });
   $("#themeSelector")?.addEventListener("change", async (event) => {
     applyTheme(event.target.value);
     localStorage.setItem("traveldripTheme", state.theme);
@@ -3631,7 +3690,7 @@ function updatePolicyAcknowledgment(event) {
 
 function updateEnterpriseRole() {
   const selectedRole = $("#rolePreview")?.value || "employee";
-  const canSeeFinancials = ["owner", "finance"].includes(selectedRole);
+  const canSeeFinancials = ["owner", "executive", "finance"].includes(selectedRole);
 
   $$("[data-visible-roles]").forEach((card) => {
     const allowedRoles = card.dataset.visibleRoles.split(" ");
@@ -3641,8 +3700,8 @@ function updateEnterpriseRole() {
   $("[data-financial-panel]")?.toggleAttribute("hidden", !canSeeFinancials);
   $("#restrictedFinancePanel")?.toggleAttribute("hidden", canSeeFinancials);
 
-  if (selectedRole === "employee") {
-    addAuditEntry("Financial access blocked", "Employee role preview restricted corporate budget visibility.");
+  if (!canSeeFinancials) {
+    addAuditEntry("Financial access blocked", `${selectedRole} role preview restricted corporate budget visibility.`);
   }
   updateDashboardWidgets();
 }
