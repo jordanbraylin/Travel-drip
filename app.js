@@ -982,6 +982,21 @@ async function sendMagicLink(email) {
   $("#authMessage").textContent = error ? error.message : "Magic link sent. Check your email.";
 }
 
+async function signInWithOAuth(provider) {
+  if (!state.supabase) {
+    showAuthSetupMessage();
+    return;
+  }
+
+  const { error } = await state.supabase.auth.signInWithOAuth({
+    provider,
+    options: getAuthOptions()
+  });
+  $("#authMessage").textContent = error
+    ? error.message
+    : `Redirecting to ${provider === "google" ? "Google" : "Apple"} sign-in...`;
+}
+
 async function signOut() {
   if (state.supabase) await state.supabase.auth.signOut();
   state.hasEnteredApp = false;
@@ -1675,6 +1690,9 @@ function wireLocalInteractions() {
   $("#landingLoginButton")?.addEventListener("click", () => setAuthMode("signin"));
   $("#landingSignupButton")?.addEventListener("click", () => setAuthMode("signup"));
   $("#enterAppButton")?.addEventListener("click", enterAppPreview);
+  $$("[data-oauth-provider]").forEach((button) => {
+    button.addEventListener("click", () => signInWithOAuth(button.dataset.oauthProvider));
+  });
   $$("[data-password-toggle]").forEach((button) => {
     button.addEventListener("click", () => {
       const input = $(`#${button.dataset.passwordToggle}`);
@@ -1703,9 +1721,7 @@ function wireLocalInteractions() {
         "Verify Email": "Email verification status is checked after registration and before live account sync.",
         "Two-Factor Authentication": "Two-factor setup appears after sign-in when production auth requires an extra verification step.",
         "Terms of Service": "Terms of Service opens the TravelDrip usage, payment, content, and account rules in the legal policy area.",
-        "Privacy Policy": "Privacy Policy opens the TravelDrip privacy, security, and data protection guidance in the security center.",
-        "Google Sign-In": "Google sign-in is ready for production OAuth configuration.",
-        "Apple Sign-In": "Apple sign-in is ready for production OAuth configuration."
+        "Privacy Policy": "Privacy Policy opens the TravelDrip privacy, security, and data protection guidance in the security center."
       };
       const detail = messages[workflow] || "Authentication workflow opened.";
       $("#authMessage").textContent = detail;
