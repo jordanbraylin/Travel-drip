@@ -206,6 +206,49 @@ const tripTypeConfigs = {
   }
 };
 
+const authCarouselSlides = [
+  {
+    quote: "Plan together. Travel better.",
+    src: "https://images.unsplash.com/photo-1527631746610-bca00a040d60?q=80&w=1400&auto=format&fit=crop",
+    alt: "Friends walking together during a city trip"
+  },
+  {
+    quote: "Where trips become memories.",
+    src: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1400&auto=format&fit=crop",
+    alt: "Bright beach vacation shoreline"
+  },
+  {
+    quote: "Your next adventure starts here.",
+    src: "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1400&auto=format&fit=crop",
+    alt: "Greek island coastline with blue water"
+  },
+  {
+    quote: "Travel is better when shared.",
+    src: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1400&auto=format&fit=crop",
+    alt: "Friends dining together at a restaurant"
+  },
+  {
+    quote: "Explore more. Stress less.",
+    src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format&fit=crop",
+    alt: "Road trip along a coastal highway"
+  },
+  {
+    quote: "Every journey deserves a story.",
+    src: "https://images.unsplash.com/photo-1522199710521-72d69614c702?q=80&w=1400&auto=format&fit=crop",
+    alt: "Corporate team working during a retreat"
+  },
+  {
+    quote: "Go somewhere worth remembering.",
+    src: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=1400&auto=format&fit=crop",
+    alt: "Traveler hiking through a dramatic outdoor landscape"
+  },
+  {
+    quote: "One app. Every part of your trip.",
+    src: "https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?q=80&w=1400&auto=format&fit=crop",
+    alt: "Busy local market with colorful travel details"
+  }
+];
+
 function hideLoader() {
   window.setTimeout(() => $("#loader")?.classList.add("done"), 450);
 }
@@ -297,6 +340,36 @@ function renderTripType(type) {
   $("#tripTravelersInput").value = config.travelersHidden ? "1" : "6";
   $("#featuresEnabledList").innerHTML = config.enabled.map((feature) => `<span>${escapeHtml(feature)}</span>`).join("");
   $("#featuresHiddenList").innerHTML = config.hidden.map((feature) => `<span>${escapeHtml(feature)}</span>`).join("");
+}
+
+function startAuthCarousel() {
+  const frame = $(".auth-carousel");
+  const image = $("#authCarouselImage");
+  const quote = $("#authQuote");
+  if (!frame || !image || !quote || !authCarouselSlides.length) return;
+
+  let index = 0;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const preload = (slide) => {
+    const nextImage = new Image();
+    nextImage.src = slide.src;
+  };
+
+  const renderSlide = () => {
+    index = (index + 1) % authCarouselSlides.length;
+    const slide = authCarouselSlides[index];
+    preload(authCarouselSlides[(index + 1) % authCarouselSlides.length]);
+    frame.classList.add("is-fading");
+    window.setTimeout(() => {
+      image.src = slide.src;
+      image.alt = slide.alt;
+      quote.textContent = slide.quote;
+    }, 240);
+    window.setTimeout(() => frame.classList.remove("is-fading"), 820);
+  };
+
+  preload(authCarouselSlides[1]);
+  if (!reduceMotion) window.setInterval(renderSlide, 5200);
 }
 
 function getBillInputs() {
@@ -720,6 +793,7 @@ function setAuthMode(mode, scrollIntoView = false) {
   const authTitle = $("#authTitle");
   const authCopy = $("#authCopy");
   const authMessage = $("#authMessage");
+  const bottomCopy = $("#authBottomCopy");
 
   state.authMode = isSignup ? "signup" : "signin";
   state.hasEnteredApp = false;
@@ -731,6 +805,8 @@ function setAuthMode(mode, scrollIntoView = false) {
   }
   if (loginForm) loginForm.hidden = isSignup;
   if (signupForm) signupForm.hidden = !isSignup;
+  if ($("#verificationPanel")) $("#verificationPanel").hidden = true;
+  if ($("#authOnboardingPanel")) $("#authOnboardingPanel").hidden = true;
 
   showLoginButton?.classList.toggle("active", !isSignup);
   showSignupButton?.classList.toggle("active", isSignup);
@@ -744,9 +820,12 @@ function setAuthMode(mode, scrollIntoView = false) {
   if (authTitle) authTitle.textContent = isSignup ? "Create your Traveldrip account" : "Sign in to sync your trip data";
   if (authCopy) {
     authCopy.textContent = isSignup
-      ? "Register with your full name, email address, and password. If email confirmation is enabled, verify your inbox before logging in."
-      : "Use your Traveldrip account to keep messages, votes, wallet settings, and trip details synced across devices.";
+      ? "Create an account, verify your email, then choose whether you are planning solo, with a group, or for a corporate retreat."
+      : "Use your Traveldrip account to keep solo plans, group memories, corporate retreats, wallets, and live alerts synced across devices.";
   }
+  if (bottomCopy) bottomCopy.textContent = isSignup ? "Already have an account?" : "New to TravelDrip?";
+  $("#landingSignupButton").hidden = isSignup;
+  $("#landingLoginButton").hidden = !isSignup;
   if (authMessage) authMessage.textContent = isSignup ? "Email verification may be required after account creation." : "Enter your email and password to log in.";
 
   const route = getAuthRoute(state.authMode);
@@ -819,8 +898,10 @@ async function signUp(fullName, email, password) {
     return;
   }
 
-  setAuthMode("signin");
-  $("#authMessage").textContent = "Account created. Check your email to verify your address, then log in.";
+  $("#signupForm").hidden = true;
+  $("#verificationPanel").hidden = false;
+  $("#authOnboardingPanel").hidden = true;
+  $("#authMessage").textContent = "Account created. Check your email to verify your address, then continue to onboarding.";
 }
 
 async function sendMagicLink(email) {
@@ -1439,10 +1520,23 @@ function wireLocalInteractions() {
 
   $("#signupForm")?.addEventListener("submit", (event) => {
     event.preventDefault();
+    const password = $("#signupPasswordInput").value;
+    const confirmPassword = $("#signupConfirmPasswordInput").value;
+
+    if (password !== confirmPassword) {
+      $("#authMessage").textContent = "Passwords must match before creating your account.";
+      return;
+    }
+
+    if (!$("#termsAgreeInput").checked || !$("#privacyAgreeInput").checked) {
+      $("#authMessage").textContent = "Agree to the Terms of Service and Privacy Policy to continue.";
+      return;
+    }
+
     signUp(
       $("#signupNameInput").value.trim(),
       $("#signupEmailInput").value.trim(),
-      $("#signupPasswordInput").value
+      password
     );
   });
 
@@ -1461,13 +1555,37 @@ function wireLocalInteractions() {
   $("#landingLoginButton")?.addEventListener("click", () => setAuthMode("signin"));
   $("#landingSignupButton")?.addEventListener("click", () => setAuthMode("signup"));
   $("#enterAppButton")?.addEventListener("click", enterAppPreview);
+  $$("[data-password-toggle]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const input = $(`#${button.dataset.passwordToggle}`);
+      if (!input) return;
+      const showing = input.type === "text";
+      input.type = showing ? "password" : "text";
+      button.textContent = showing ? "Show" : "Hide";
+    });
+  });
+  $("#continueOnboardingButton")?.addEventListener("click", () => {
+    $("#verificationPanel").hidden = true;
+    $("#authOnboardingPanel").hidden = false;
+    $("#authMessage").textContent = "Choose the first travel experience you want to create.";
+  });
+  $$("[data-onboarding-choice]").forEach((button) => {
+    button.addEventListener("click", () => {
+      $("#authMessage").textContent = `${button.dataset.onboardingChoice} selected. Continue into TravelDrip to finish your guided setup.`;
+      enterAppPreview();
+    });
+  });
   $$("[data-auth-workflow]").forEach((button) => {
     button.addEventListener("click", () => {
       const workflow = button.dataset.authWorkflow;
       const messages = {
         "Forgot Password": "Password reset opens a secure email recovery flow when Supabase auth is fully configured.",
         "Verify Email": "Email verification status is checked after registration and before live account sync.",
-        "Two-Factor Authentication": "Two-factor setup is reserved for production auth settings and should require server-side verification."
+        "Two-Factor Authentication": "Two-factor setup appears after sign-in when production auth requires an extra verification step.",
+        "Terms of Service": "Terms of Service opens the TravelDrip usage, payment, content, and account rules in the legal policy area.",
+        "Privacy Policy": "Privacy Policy opens the TravelDrip privacy, security, and data protection guidance in the security center.",
+        "Google Sign-In": "Google sign-in is ready for production OAuth configuration.",
+        "Apple Sign-In": "Apple sign-in is ready for production OAuth configuration."
       };
       const detail = messages[workflow] || "Authentication workflow opened.";
       $("#authMessage").textContent = detail;
@@ -1814,6 +1932,7 @@ async function sendAdminNotification(event) {
 }
 
 async function init() {
+  startAuthCarousel();
   wireLocalInteractions();
   wireInstallPrompt();
   await registerServiceWorker();

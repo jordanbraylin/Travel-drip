@@ -80,47 +80,78 @@
         </header>
 
         <div class="auth-landing-grid">
-          <div class="auth-landing-copy">
-            <p class="auth-pill">Travel, minus the guesswork</p>
-            <h1>Plan your trips and stay in the loop with live updates.</h1>
-            <p id="authCopy">Traveldrip keeps your itinerary organized and pings you the moment something changes - right on your device, wherever you are.</p>
-            <div class="auth-landing-actions">
-              <button class="auth-start-button" type="button" id="landingSignupButton">Create your account</button>
-              <button class="auth-link-button" type="button" id="landingLoginButton">I already have an account</button>
-              <button class="auth-link-button muted" type="button" id="enterAppButton">Continue to app preview</button>
+          <section class="auth-carousel" aria-label="Travel inspiration carousel">
+            <img id="authCarouselImage" src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?q=80&w=1400&auto=format&fit=crop" alt="Friends walking together during a city trip" fetchpriority="high">
+            <div class="auth-carousel-overlay">
+              <p class="auth-pill">Social travel for every kind of trip</p>
+              <h1>Discover, plan, travel, and share.</h1>
+              <p id="authCopy">Traveldrip brings solo adventures, group vacations, and corporate retreats into one beautiful travel workspace.</p>
+              <blockquote id="authQuote">Plan together. Travel better.</blockquote>
+              <div class="auth-travel-tags" aria-label="Supported travel styles">
+                <span>Solo trips</span><span>Group memories</span><span>Corporate retreats</span><span>Food finds</span><span>Beach escapes</span>
+              </div>
             </div>
-          </div>
-          <figure class="auth-landing-media">
-            <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop" alt="A winding coastal road beside turquoise water">
-          </figure>
-        </div>
+          </section>
 
-        <div class="auth-card" aria-live="polite">
-          <div>
-            <p class="eyebrow">Live account</p>
-            <h2 id="authTitle">Sign in to sync your trip data</h2>
+          <div class="auth-card" aria-live="polite">
+            <div>
+              <p class="eyebrow">Live account</p>
+              <h2 id="authTitle">Sign in to sync your trip data</h2>
+              <p class="auth-card-copy">A premium home for itineraries, wallets, memories, alerts, and travel planning.</p>
+            </div>
+            <div class="auth-switch" role="tablist" aria-label="Account access">
+              <button class="active" type="button" id="formLoginButton" role="tab" aria-controls="authForm" aria-selected="true">Sign in</button>
+              <button type="button" id="formSignupButton" role="tab" aria-controls="signupForm" aria-selected="false">Sign Up</button>
+            </div>
+            <form class="auth-form" id="authForm">
+              <label>Email address<input id="emailInput" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+              <label>Password
+                <span class="password-field"><input id="passwordInput" type="password" autocomplete="current-password" placeholder="Your password" required minlength="6"><button type="button" data-password-toggle="passwordInput">Show</button></span>
+              </label>
+              <div class="auth-inline-row">
+                <label class="auth-check"><input id="rememberMeInput" type="checkbox"> Remember me</label>
+                <button class="text-button" type="button" data-auth-workflow="Forgot Password">Forgot password?</button>
+              </div>
+              <button class="primary-button" type="submit">Sign In</button>
+              <div class="social-signin" aria-label="Optional social sign in">
+                <button type="button" data-auth-workflow="Google Sign-In">Continue with Google</button>
+                <button type="button" data-auth-workflow="Apple Sign-In">Continue with Apple</button>
+              </div>
+            </form>
+            <form class="auth-form" id="signupForm" hidden>
+              <label>Full name<input id="signupNameInput" type="text" autocomplete="name" placeholder="Jordan Taylor" required></label>
+              <label>Email address<input id="signupEmailInput" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+              <label>Password
+                <span class="password-field"><input id="signupPasswordInput" type="password" autocomplete="new-password" placeholder="Create a password" required minlength="6"><button type="button" data-password-toggle="signupPasswordInput">Show</button></span>
+              </label>
+              <label>Confirm password
+                <span class="password-field"><input id="signupConfirmPasswordInput" type="password" autocomplete="new-password" placeholder="Confirm your password" required minlength="6"><button type="button" data-password-toggle="signupConfirmPasswordInput">Show</button></span>
+              </label>
+              <label class="auth-check"><input id="termsAgreeInput" type="checkbox" required> I agree to the <button type="button" data-auth-workflow="Terms of Service">Terms of Service</button></label>
+              <label class="auth-check"><input id="privacyAgreeInput" type="checkbox" required> I agree to the <button type="button" data-auth-workflow="Privacy Policy">Privacy Policy</button></label>
+              <button class="primary-button" type="submit">Create account</button>
+            </form>
+            <section class="verification-panel" id="verificationPanel" hidden>
+              <strong>Email verification sent</strong>
+              <span>Check your inbox, verify your email, then continue to onboarding.</span>
+              <button class="ghost-button" type="button" id="continueOnboardingButton">Continue to onboarding</button>
+            </section>
+            <section class="onboarding-panel" id="authOnboardingPanel" hidden>
+              <strong>What type of travel experience do you want to create?</strong>
+              <div>
+                <button type="button" data-onboarding-choice="Solo Trip">Solo Trip</button>
+                <button type="button" data-onboarding-choice="Group Trip">Group Trip</button>
+                <button type="button" data-onboarding-choice="Corporate Retreat">Corporate Retreat</button>
+              </div>
+            </section>
+            <div class="auth-support-actions">
+              <button type="button" data-auth-workflow="Verify Email">Verify Email</button>
+              <button type="button" data-auth-workflow="Two-Factor Authentication">Two-Factor Authentication</button>
+              <button type="button" id="enterAppButton">Preview app</button>
+            </div>
+            <p class="small" id="authMessage">Create an account or log in to enable live sync.</p>
+            <p class="auth-bottom-link"><span id="authBottomCopy">New to TravelDrip?</span> <button type="button" id="landingSignupButton">Create your account</button><button type="button" id="landingLoginButton" hidden>I already have an account</button></p>
           </div>
-          <div class="auth-switch" role="tablist" aria-label="Account access">
-            <button class="active" type="button" id="formLoginButton" role="tab" aria-controls="authForm" aria-selected="true">Sign in</button>
-            <button type="button" id="formSignupButton" role="tab" aria-controls="signupForm" aria-selected="false">Sign Up</button>
-          </div>
-          <form class="auth-form" id="authForm">
-            <label>Email address<input id="emailInput" type="email" autocomplete="email" placeholder="you@example.com" required></label>
-            <label>Password<input id="passwordInput" type="password" autocomplete="current-password" placeholder="Your password" required minlength="6"></label>
-            <button class="primary-button" type="submit">Log in</button>
-          </form>
-          <form class="auth-form" id="signupForm" hidden>
-            <label>Full name<input id="signupNameInput" type="text" autocomplete="name" placeholder="Jordan Taylor" required></label>
-            <label>Email address<input id="signupEmailInput" type="email" autocomplete="email" placeholder="you@example.com" required></label>
-            <label>Password<input id="signupPasswordInput" type="password" autocomplete="new-password" placeholder="Create a password" required minlength="6"></label>
-            <button class="primary-button" type="submit">Create account</button>
-          </form>
-          <div class="auth-support-actions">
-            <button type="button" data-auth-workflow="Forgot Password">Forgot Password</button>
-            <button type="button" data-auth-workflow="Verify Email">Verify Email</button>
-            <button type="button" data-auth-workflow="Two-Factor Authentication">Two-Factor Authentication</button>
-          </div>
-          <p class="small" id="authMessage">Create an account or log in to enable live sync.</p>
         </div>
       </section>
 
