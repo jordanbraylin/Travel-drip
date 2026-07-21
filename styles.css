@@ -1298,7 +1298,11 @@ body.auth-screen main {
 .ride-destination-row,
 .ride-location-grid,
 .ride-entry-grid,
-.ride-estimate-grid {
+.ride-estimate-grid,
+.ride-account-panel,
+.shared-ride-panel,
+.shared-ride-members,
+.ride-assistant-panel {
   display: grid;
   gap: 8px;
 }
@@ -1353,6 +1357,75 @@ body.auth-screen main {
   background: #fff;
   color: var(--ink);
   font-weight: 900;
+}
+
+.ride-provider-list button.active {
+  border-color: rgba(15, 167, 145, 0.45);
+  background: #e9f7f3;
+  color: var(--sea-dark);
+}
+
+.ride-provider-list button span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.ride-account-panel,
+.shared-ride-panel {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: #fff;
+}
+
+.ride-account-panel h3,
+.shared-ride-panel h3 {
+  margin: 0;
+}
+
+.ride-account-panel span,
+.shared-ride-panel span,
+.ride-assistant-panel span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ride-account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.shared-ride-members {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.shared-ride-members label,
+.ride-assistant-panel > div {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: #f8fbfa;
+}
+
+.shared-ride-members label {
+  display: grid;
+  gap: 4px;
+}
+
+.shared-ride-members input {
+  justify-self: start;
+}
+
+.ride-assistant-panel {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .ride-estimate-grid {
@@ -2680,6 +2753,10 @@ code {
   .payment-method-grid,
   .corporate-meal-rules,
   .ride-destination-row,
+  .ride-account-panel,
+  .shared-ride-panel,
+  .shared-ride-members,
+  .ride-assistant-panel,
   .ride-location-grid,
   .ride-entry-grid,
   .ride-estimate-grid,

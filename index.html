@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=18">
+  <link rel="stylesheet" href="styles.css?v=19">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -882,6 +882,18 @@
               </label>
               <div id="rideProviderList" class="ride-provider-list" aria-label="Recommended ride-share providers"></div>
             </div>
+            <div class="ride-account-panel">
+              <div>
+                <p class="eyebrow">Account connection</p>
+                <h3 id="rideConnectionTitle">Connect your Careem account to continue.</h3>
+                <span id="rideConnectionMeta">TravelDrip never asks for or stores ride-share passwords. Provider authentication opens through supported OAuth, app link, or secure web flow.</span>
+              </div>
+              <div class="ride-account-actions">
+                <button class="primary-button" type="button" id="connectRideAccountButton">Connect account</button>
+                <button class="ghost-button" type="button" id="reconnectRideAccountButton">Reconnect</button>
+                <button class="ghost-button" type="button" id="disconnectRideAccountButton">Disconnect</button>
+              </div>
+            </div>
             <div class="ride-location-grid">
               <label>Favorite pickup<input id="ridePickup" value="JBR Hotel Lobby"></label>
               <label>Drop-off<input id="rideDropoff" value="Dubai Marina Dinner"></label>
@@ -893,9 +905,18 @@
               <div><span>Estimate</span><strong id="rideEstimate">$18-$22</strong></div>
             </div>
             <div class="button-row">
+              <button class="primary-button" type="button" id="launchRideButton">Launch provider</button>
               <button class="primary-button" type="button" id="shareRideButton">Share ride</button>
               <button class="ghost-button" type="button" id="importRideReceiptButton">Import receipt</button>
               <button class="ghost-button" type="button" id="rideAdviceButton">AI ride advice</button>
+            </div>
+            <div class="shared-ride-panel">
+              <div>
+                <p class="eyebrow">Shared ride</p>
+                <h3 id="sharedRideTitle">Airport dinner transfer</h3>
+                <span id="sharedRideMeta">Pickup 7:15 PM • JBR Hotel Lobby to Dubai Marina Dinner • ETA 8 min</span>
+              </div>
+              <div id="sharedRideMembers" class="shared-ride-members" aria-label="Shared ride members"></div>
             </div>
             <div class="ride-entry-grid">
               <label>Total fare<input id="rideFare" type="number" min="0" step="0.01" value="48.00" inputmode="decimal"></label>
@@ -915,6 +936,11 @@
               <div><span>Remaining</span><strong id="rideRemaining">$63.05</strong></div>
             </div>
             <div class="split-preview" id="rideSplitPreview" aria-label="Ride split preview"></div>
+            <div class="ride-assistant-panel">
+              <div><strong>AI Transportation Assistant</strong><span id="rideAssistantCopy">Ask for fastest airport ride, least expensive provider, SUV vs two cars, safety notes, traffic, and local availability.</span></div>
+              <div><strong>Notifications</strong><span>Account connected, ride booked, driver assigned/arriving, ride started/ended, receipt ready, amount ready, and expense paid.</span></div>
+              <div><strong>Security</strong><span>Users can revoke access anytime. Ride activity is audit logged and production data should be encrypted at rest.</span></div>
+            </div>
             <div class="payment-method-grid">
               <button type="button" data-ride-pay="TravelDrip Wallet">Wallet</button>
               <button type="button" data-ride-pay="TravelDrip Virtual Card">Virtual Card</button>
@@ -1084,6 +1110,6 @@
   </dialog>
 
   <script src="public-config.js?v=1"></script>
-  <script defer src="app.js?v=23"></script>
+  <script defer src="app.js?v=24"></script>
 </body>
 </html>

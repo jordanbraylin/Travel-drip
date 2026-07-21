@@ -10,6 +10,13 @@ const state = {
     supabaseUrl: "",
     supabaseAnonKey: "",
     vapidPublicKey: ""
+  },
+  selectedRideProvider: "Careem",
+  connectedRideAccounts: {
+    Careem: { connected: true, account: "Connected rider profile", status: "Account Connected" },
+    Uber: { connected: false, account: "", status: "Not connected" },
+    Lyft: { connected: false, account: "", status: "Not connected" },
+    Grab: { connected: false, account: "", status: "Not connected" }
   }
 };
 
@@ -96,6 +103,13 @@ const rideParticipants = [
   { name: "Alex", custom: 16, percent: 15, note: "Shared drop-off" },
   { name: "Priya", custom: 12, percent: 0, note: "Short segment" },
   { name: "Noah", custom: 12, percent: 0, note: "Short segment" }
+];
+
+const sharedRideMembers = [
+  { name: "Jordan", status: "Organizer", splitting: true },
+  { name: "Sarah", status: "Joined", splitting: true },
+  { name: "Mike", status: "Joined", splitting: true },
+  { name: "Alex", status: "Leaving later", splitting: false }
 ];
 
 function hideLoader() {
@@ -339,10 +353,40 @@ function renderRideProviders() {
   if (!$("#rideProviderList")) return;
   const destination = $("#rideDestination")?.value || "United Arab Emirates";
   const providers = rideProvidersByDestination[destination] || ["Local taxi", "Hotel transfer"];
-  $("#rideProviderList").innerHTML = providers.map((provider) => `<button type="button" data-ride-provider="${escapeHtml(provider)}">${escapeHtml(provider)}</button>`).join("");
-  $("#rideRecommended").textContent = providers[0];
-  $("#rideWait").textContent = providers[0] === "Careem" || providers[0] === "Grab" ? "8 min" : "12 min";
+  if (!providers.includes(state.selectedRideProvider)) state.selectedRideProvider = providers[0];
+  $("#rideProviderList").innerHTML = providers.map((provider) => {
+    const account = state.connectedRideAccounts[provider];
+    const status = account?.connected ? "Connected" : "Connect required";
+    return `<button class="${provider === state.selectedRideProvider ? "active" : ""}" type="button" data-ride-provider="${escapeHtml(provider)}"><strong>${escapeHtml(provider)}</strong><span>${status}</span></button>`;
+  }).join("");
+  $("#rideRecommended").textContent = state.selectedRideProvider;
+  $("#rideWait").textContent = state.selectedRideProvider === "Careem" || state.selectedRideProvider === "Grab" ? "8 min" : "12 min";
   $("#rideEstimate").textContent = destination === "United Arab Emirates" ? "$18-$22" : "$16-$28";
+  renderRideAccount();
+}
+
+function renderRideAccount() {
+  if (!$("#rideConnectionTitle")) return;
+  const provider = state.selectedRideProvider;
+  const account = state.connectedRideAccounts[provider] || { connected: false, account: "", status: "Not connected" };
+  $("#rideConnectionTitle").textContent = account.connected ? `${provider} account connected` : `Connect your ${provider} account to continue.`;
+  $("#rideConnectionMeta").textContent = account.connected
+    ? `${account.status} • ${account.account || "Connected account"} • You can disconnect, reconnect, or switch providers anytime.`
+    : `TravelDrip never stores your ${provider} password. Use ${provider}'s supported authentication or launch the official app with trip details prefilled.`;
+  $("#connectRideAccountButton").hidden = account.connected;
+  $("#reconnectRideAccountButton").hidden = !account.connected;
+  $("#disconnectRideAccountButton").hidden = !account.connected;
+  $("#launchRideButton").disabled = !account.connected;
+
+  if ($("#sharedRideMembers")) {
+    $("#sharedRideMembers").innerHTML = sharedRideMembers.map((member) => `
+      <label>
+        <input type="checkbox" data-shared-rider="${escapeHtml(member.name)}" ${member.splitting ? "checked" : ""}>
+        <strong>${escapeHtml(member.name)}</strong>
+        <span>${escapeHtml(member.status)} • ${member.splitting ? "Splitting fare" : "Not splitting"}</span>
+      </label>
+    `).join("");
+  }
 }
 
 function renderRideSplit() {
@@ -929,15 +973,65 @@ function wireLocalInteractions() {
   $("#rideProviderList")?.addEventListener("click", (event) => {
     const button = event.target.closest("[data-ride-provider]");
     if (!button) return;
-    $("#rideRecommended").textContent = button.dataset.rideProvider;
-    $("#rideMessage").textContent = `${button.dataset.rideProvider} selected. Production launch requires app deep links or provider web links by market.`;
+    state.selectedRideProvider = button.dataset.rideProvider;
+    renderRideSplit();
+    const account = state.connectedRideAccounts[state.selectedRideProvider];
+    $("#rideMessage").textContent = account?.connected
+      ? `${state.selectedRideProvider} selected and connected. You can launch the official provider app, start a ride, or share trip details.`
+      : `Connect your ${state.selectedRideProvider} account to continue. TravelDrip never asks for ride-share passwords.`;
+  });
+
+  $("#connectRideAccountButton")?.addEventListener("click", async () => {
+    const provider = state.selectedRideProvider;
+    state.connectedRideAccounts[provider] = { connected: true, account: "Connected rider profile", status: "Account Connected" };
+    renderRideAccount();
+    $("#rideMessage").textContent = `${provider} account connected through secure provider authorization. Passwords are never requested or stored by TravelDrip.`;
+    addAuditEntry("Ride share account connected", `${provider} account authorized for transportation launch and receipt import.`);
+    await saveSyncedEvent("ride_account_connected", { provider });
+  });
+
+  $("#reconnectRideAccountButton")?.addEventListener("click", async () => {
+    const provider = state.selectedRideProvider;
+    state.connectedRideAccounts[provider] = { connected: true, account: "Connected rider profile", status: "Account Reconnected" };
+    renderRideAccount();
+    $("#rideMessage").textContent = `${provider} account reconnected. Access can be revoked from TravelDrip or the provider account settings.`;
+    addAuditEntry("Ride share account reconnected", `${provider} authorization refreshed.`);
+    await saveSyncedEvent("ride_account_reconnected", { provider });
+  });
+
+  $("#disconnectRideAccountButton")?.addEventListener("click", async () => {
+    const provider = state.selectedRideProvider;
+    state.connectedRideAccounts[provider] = { connected: false, account: "", status: "Disconnected" };
+    renderRideAccount();
+    $("#rideMessage").textContent = `${provider} disconnected. Existing ride receipts remain in the trip audit log, but new launches require reconnection.`;
+    addAuditEntry("Ride share account disconnected", `${provider} authorization revoked.`);
+    await saveSyncedEvent("ride_account_disconnected", { provider });
+  });
+
+  $("#launchRideButton")?.addEventListener("click", async () => {
+    const provider = state.selectedRideProvider;
+    const pickup = $("#ridePickup").value.trim();
+    const dropoff = $("#rideDropoff").value.trim();
+    $("#rideMessage").textContent = `${provider} launch prepared with pickup ${pickup} and destination ${dropoff}. If direct booking is unavailable, open the official app with details prefilled.`;
+    addAuditEntry("Ride provider launched", `${provider} launch prepared for ${pickup} to ${dropoff}.`);
+    await saveSyncedEvent("ride_provider_launched", { provider, pickup, dropoff });
+  });
+
+  $("#sharedRideMembers")?.addEventListener("change", (event) => {
+    const checkbox = event.target.closest("[data-shared-rider]");
+    if (!checkbox) return;
+    const member = sharedRideMembers.find((entry) => entry.name === checkbox.dataset.sharedRider);
+    if (member) member.splitting = checkbox.checked;
+    renderRideAccount();
+    renderRideSplit();
+    $("#rideMessage").textContent = `${checkbox.dataset.sharedRider} ${checkbox.checked ? "included in" : "removed from"} fare splitting for this shared ride.`;
   });
 
   $("#shareRideButton")?.addEventListener("click", async () => {
-    const provider = $("#rideRecommended").textContent;
+    const provider = state.selectedRideProvider;
     const pickup = $("#ridePickup").value.trim();
     const dropoff = $("#rideDropoff").value.trim();
-    $("#rideMessage").textContent = `${provider} ride shared: ${pickup} to ${dropoff}. Group members will be notified when their portion is ready.`;
+    $("#rideMessage").textContent = `${provider} shared ride created: ${pickup} to ${dropoff}. Members can join, leave, view pickup, destination, ETA, and payment amount.`;
     addAuditEntry("Ride shared", `${provider} ride details shared with pickup ${pickup} and drop-off ${dropoff}.`);
     await saveSyncedEvent("ride_shared", { provider, pickup, dropoff });
   });
@@ -955,10 +1049,13 @@ function wireLocalInteractions() {
 
   $("#rideAdviceButton")?.addEventListener("click", () => {
     const passengers = Number($("#ridePassengers").value || 1);
-    const provider = $("#rideRecommended").textContent;
-    $("#rideMessage").textContent = passengers >= 6
+    const provider = state.selectedRideProvider;
+    const destination = $("#rideDestination").value;
+    const advice = passengers >= 6
       ? `For your group of ${passengers}, a larger ${provider} vehicle may cost less than booking two standard rides.`
-      : `${provider} is the fastest recommendation right now based on destination, time of day, estimated wait, and price.`;
+      : `${provider} is the fastest recommendation in ${destination} right now based on local availability, wait time, traffic, and price.`;
+    $("#rideAssistantCopy").textContent = advice;
+    $("#rideMessage").textContent = advice;
   });
 
   $$("[data-ride-pay]").forEach((button) => {
