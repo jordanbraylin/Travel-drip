@@ -1832,6 +1832,10 @@ body.auth-screen main {
   background: #fbfcfb;
 }
 
+.guided-step[hidden] {
+  display: none;
+}
+
 .guided-step > span {
   color: var(--sea);
   font-size: 12px;

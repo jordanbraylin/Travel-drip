@@ -309,8 +309,19 @@
                 <span>Step 1</span>
                 <h3>What type of trip are you planning?</h3>
                 <p>Choose a trip type first so TravelDrip can show the right tools, permissions, and workflows.</p>
+                <div class="trip-type-selector" aria-label="Choose trip type">
+                  <button type="button" data-trip-type="solo" aria-pressed="false">
+                    <strong>Solo Trip</strong><span>Private planning, personal budget, AI recommendations, documents, packing, journal, and memories.</span>
+                  </button>
+                  <button type="button" data-trip-type="group" aria-pressed="false">
+                    <strong>Group Trip</strong><span>Invites, shared itinerary, chat, @mentions, polls, wallet, bill splits, ride splits, and shared memories.</span>
+                  </button>
+                  <button type="button" data-trip-type="corporate" aria-pressed="false">
+                    <strong>Corporate Retreat / Business Travel</strong><span>Employee invites, role permissions, agendas, assignments, approvals, reporting, and audit logs.</span>
+                  </button>
+                </div>
               </div>
-              <div class="guided-step trip-details-step">
+              <div class="guided-step trip-details-step" id="tripDetailsStep" hidden>
                 <span>Step 2</span>
                 <h3 id="tripDetailsTitle">Solo trip details</h3>
                 <form class="trip-creation-form" id="tripCreationForm">
@@ -326,23 +337,12 @@
                   <button class="primary-button" type="submit">Create tailored trip</button>
                 </form>
               </div>
-              <div class="guided-step">
+              <div class="guided-step" id="tripAiSetupStep" hidden>
                 <span>Step 3</span>
                 <h3>AI setup</h3>
                 <p id="tripAiSetupPrompt">How can I help plan your trip? Try: Build me a 5-day itinerary.</p>
               </div>
             </section>
-            <div class="trip-type-selector" aria-label="Choose trip type">
-              <button class="active" type="button" data-trip-type="solo" aria-pressed="true">
-                <strong>Solo Trip</strong><span>Private planning, personal budget, AI recommendations, documents, packing, journal, and memories.</span>
-              </button>
-              <button type="button" data-trip-type="group" aria-pressed="false">
-                <strong>Group Trip</strong><span>Invites, shared itinerary, chat, @mentions, polls, wallet, bill splits, ride splits, and shared memories.</span>
-              </button>
-              <button type="button" data-trip-type="corporate" aria-pressed="false">
-                <strong>Corporate Retreat / Business Travel</strong><span>Employee invites, role permissions, agendas, assignments, approvals, reporting, and audit logs.</span>
-              </button>
-            </div>
             <p class="small" id="soloModeMessage">Solo Trip selected. Group chat, voting, and shared wallet tools stay hidden until you invite others.</p>
 
             <div class="feature-toggle-grid" id="featureToggleGrid">

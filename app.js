@@ -289,6 +289,8 @@ function renderTripType(type) {
   });
 
   $("#soloModeMessage").textContent = config.message;
+  $("#tripDetailsStep").hidden = false;
+  $("#tripAiSetupStep").hidden = false;
   $("#tripDetailsTitle").textContent = config.detailsTitle;
   $("#tripAiSetupPrompt").textContent = config.aiPrompt;
   $("#travelerCountField").hidden = config.travelersHidden;
@@ -1288,7 +1290,13 @@ function wireLocalInteractions() {
   $("#startTripCreationButton")?.addEventListener("click", () => {
     $("#guidedTripFlow")?.classList.add("is-open");
     $("#guidedTripFlow")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    renderTripType($(".trip-type-selector button.active")?.dataset.tripType || "solo");
+    $("#tripDetailsStep").hidden = true;
+    $("#tripAiSetupStep").hidden = true;
+    $$("[data-trip-type]").forEach((typeButton) => {
+      typeButton.classList.remove("active");
+      typeButton.setAttribute("aria-pressed", "false");
+    });
+    $("#soloModeMessage").textContent = "Choose a trip type to customize the form, features, permissions, and AI setup.";
   });
 
   $("#tripCreationForm")?.addEventListener("submit", async (event) => {
