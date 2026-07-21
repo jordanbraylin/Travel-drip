@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=37">
+  <link rel="stylesheet" href="styles.css?v=38">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -2326,6 +2326,39 @@
             <p class="small" id="navigationStatusMessage">Navigation audit checks buttons, links, tab targets, modal triggers, role-restricted actions, and fallback workflow messaging.</p>
           </section>
 
+          <section class="panel go-live-panel" id="goLiveReadiness" data-route-support="securityCenter">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Production Readiness</p>
+                <h2>Go-live acceptance checklist</h2>
+              </div>
+              <button class="ghost-button" type="button" id="runGoLiveAuditButton">Run go-live audit</button>
+            </div>
+            <div class="go-live-summary-grid">
+              <article><span>Production deployment</span><strong id="goLiveDeploymentStatus">Live</strong><small>Vercel deployment is reachable over HTTPS.</small></article>
+              <article><span>Environment</span><strong id="goLiveEnvironmentStatus">Partial</strong><small>Public Supabase keys are configured; server secrets still required.</small></article>
+              <article><span>Local QA</span><strong id="goLiveLocalStatus">Ready for staging</strong><small>Static markup, routing, assets, and syntax checks pass locally.</small></article>
+              <article><span>Release decision</span><strong id="goLiveDecisionStatus">Not public-ready</strong><small>Provider-backed production tests remain blocking.</small></article>
+            </div>
+            <div class="go-live-checklist" id="goLiveChecklist" aria-label="Production go-live acceptance checklist">
+              <div data-go-live-status="pass"><strong>Live domain and HTTPS</strong><span>Production URL loads at traveldrip-app.vercel.app with HTTPS.</span></div>
+              <div data-go-live-status="pass"><strong>Public Supabase config</strong><span><code>NEXT_PUBLIC_SUPABASE_URL</code> and publishable key are present in production health output.</span></div>
+              <div data-go-live-status="blocked"><strong>Server Supabase/admin environment</strong><span><code>SUPABASE_SERVICE_ROLE_KEY</code> and <code>SUPABASE_ADMIN_EMAILS</code> are missing from production health output.</span></div>
+              <div data-go-live-status="blocked"><strong>Push notifications</strong><span><code>VAPID_PUBLIC_KEY</code> and <code>VAPID_PRIVATE_KEY</code> are missing from production health output.</span></div>
+              <div data-go-live-status="blocked"><strong>Payments and wallet providers</strong><span>Deposits, refunds, Apple Pay, Google Wallet, virtual card, and tap-to-pay need real PCI-compliant provider testing.</span></div>
+              <div data-go-live-status="blocked"><strong>External integrations</strong><span>Email, SMS, OAuth, ride-share, flight, hotel, cruise, restaurant, maps, calendar, social posting, storage, malware scanning, monitoring, and backups need provider-level verification.</span></div>
+              <div data-go-live-status="review"><strong>User journeys</strong><span>Solo, group, corporate, cruise, and event journeys are represented in the UI and still need production user/account tests.</span></div>
+              <div data-go-live-status="review"><strong>Accessibility and performance</strong><span>Responsive UI and reduced-motion support are present; full device/browser testing still needs completion.</span></div>
+            </div>
+            <div class="go-live-actions">
+              <button class="primary-button" type="button" data-target="securityCenter">Review security</button>
+              <button class="ghost-button" type="button" data-target="walletPanel">Review wallet</button>
+              <button class="ghost-button" type="button" data-target="itineraryAlerts">Review notifications</button>
+              <button class="ghost-button" type="button" data-target="socialHub">Review messaging</button>
+            </div>
+            <p class="small" id="goLiveStatusMessage">Do not mark TravelDrip Ready for Production until all critical production checks pass with real provider credentials and user journey tests.</p>
+          </section>
+
           <section class="panel audit-panel" data-route-support="groupBank walletPanel">
             <div class="section-heading compact">
               <div>
@@ -2369,6 +2402,6 @@
   </dialog>
 
   <script src="public-config.js?v=1"></script>
-  <script defer src="app.js?v=31"></script>
+  <script defer src="app.js?v=32"></script>
 </body>
 </html>

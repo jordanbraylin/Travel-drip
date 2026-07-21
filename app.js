@@ -2929,6 +2929,7 @@ function wireLocalInteractions() {
     showWorkflowMessage("Navigation audit", "Checked buttons, links, targets, modals, role restrictions, and fallback workflows.");
   });
   $("#runSecurityAuditButton")?.addEventListener("click", renderSecurityAudit);
+  $("#runGoLiveAuditButton")?.addEventListener("click", renderGoLiveAudit);
   $("#signupNameInput")?.addEventListener("input", (event) => {
     state.profilePhoto.initials = initialsFromName(event.target.value);
     localStorage.setItem("traveldripProfileInitials", state.profilePhoto.initials);
@@ -3033,6 +3034,7 @@ function wireLocalInteractions() {
   wireNavigationFallbacks();
   renderNavigationAudit();
   renderSecurityAudit();
+  renderGoLiveAudit();
   renderProfilePhoto();
 
   $("#chatForm")?.addEventListener("submit", async (event) => {
@@ -3539,6 +3541,32 @@ function renderSecurityAudit() {
     ? `Security audit found ${audit.failed.length} item(s) needing review: ${audit.failed.join(", ")}.`
     : `Security audit passed ${audit.passed}/${audit.checks.length} local controls. Production still requires real provider-side MFA, tokenized payments, malware scanning, rate limiting, and encrypted storage.`;
   addAuditEntry("Security audit completed", audit.failed.length ? `Review: ${audit.failed.join(", ")}` : "Local security controls validated.");
+}
+
+function getGoLiveAudit() {
+  const checks = $$("[data-go-live-status]").map((item) => ({
+    title: item.querySelector("strong")?.textContent || "Go-live check",
+    status: item.dataset.goLiveStatus || "review"
+  }));
+  return {
+    checks,
+    passed: checks.filter((check) => check.status === "pass").length,
+    blocked: checks.filter((check) => check.status === "blocked").length,
+    review: checks.filter((check) => check.status === "review").length
+  };
+}
+
+function renderGoLiveAudit() {
+  if (!$("#goLiveStatusMessage")) return;
+  const audit = getGoLiveAudit();
+  $("#goLiveDeploymentStatus").textContent = "Live";
+  $("#goLiveEnvironmentStatus").textContent = audit.blocked ? "Blocked" : "Ready";
+  $("#goLiveLocalStatus").textContent = "Validated";
+  $("#goLiveDecisionStatus").textContent = audit.blocked ? "Not public-ready" : "Ready for production";
+  $("#goLiveStatusMessage").textContent = audit.blocked
+    ? `Go-live blocked: ${audit.blocked} critical production item(s) still require provider credentials, live integrations, or real user journey verification. ${audit.passed} checks passed and ${audit.review} need manual review.`
+    : `Go-live checklist passed ${audit.passed}/${audit.checks.length} checks. Confirm monitoring and backups before public launch.`;
+  addAuditEntry("Go-live audit completed", audit.blocked ? `${audit.blocked} blocking production check(s) remain.` : "Production acceptance checklist passed.");
 }
 
 function wireNavigationFallbacks() {

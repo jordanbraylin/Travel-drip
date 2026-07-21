@@ -1379,6 +1379,7 @@ body.auth-screen main {
 .wallet-breakdown,
 .navigation-status-grid,
 .security-status-grid,
+.go-live-summary-grid,
 .policy-summary-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1396,6 +1397,7 @@ body.auth-screen main {
 .wallet-breakdown div,
 .navigation-status-grid div,
 .security-status-grid article,
+.go-live-summary-grid article,
 .policy-summary-grid article {
   min-width: 0;
   padding: 12px;
@@ -1410,6 +1412,8 @@ body.auth-screen main {
 .navigation-status-grid span,
 .security-status-grid span,
 .security-status-grid small,
+.go-live-summary-grid span,
+.go-live-summary-grid small,
 .policy-summary-grid span,
 .policy-summary-grid small {
   display: block;
@@ -1422,6 +1426,7 @@ body.auth-screen main {
 .wallet-breakdown strong,
 .navigation-status-grid strong,
 .security-status-grid strong,
+.go-live-summary-grid strong,
 .policy-summary-grid strong {
   display: block;
   margin-top: 6px;
@@ -1433,6 +1438,7 @@ body.auth-screen main {
 .audit-list,
 .security-list,
 .navigation-audit-list,
+.go-live-checklist,
 .security-control-grid,
 .fraud-signal-list,
 .copyright-columns,
@@ -1446,6 +1452,7 @@ body.auth-screen main {
 .audit-list div,
 .security-list div,
 .navigation-audit-list div,
+.go-live-checklist div,
 .security-control-grid div,
 .fraud-signal-list div,
 .copyright-columns div,
@@ -1471,6 +1478,8 @@ body.auth-screen main {
 .security-list span,
 .navigation-audit-list strong,
 .navigation-audit-list span,
+.go-live-checklist strong,
+.go-live-checklist span,
 .security-control-grid strong,
 .security-control-grid span,
 .fraud-signal-list strong,
@@ -1485,6 +1494,7 @@ body.auth-screen main {
 .audit-list span,
 .security-list span,
 .navigation-audit-list span,
+.go-live-checklist span,
 .security-control-grid span,
 .fraud-signal-list span,
 .copyright-process span,
@@ -1496,6 +1506,56 @@ body.auth-screen main {
 
 .navigation-audit-list .is-warning strong {
   color: #9a3412;
+}
+
+.go-live-panel {
+  border-color: rgba(255, 107, 74, 0.24);
+}
+
+.go-live-checklist div {
+  position: relative;
+  padding-left: 36px;
+}
+
+.go-live-checklist div::before {
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.go-live-checklist [data-go-live-status="pass"]::before {
+  content: "✓";
+  background: var(--palm);
+}
+
+.go-live-checklist [data-go-live-status="blocked"]::before {
+  content: "!";
+  background: var(--reef);
+}
+
+.go-live-checklist [data-go-live-status="review"]::before {
+  content: "?";
+  background: var(--sun);
+  color: #5d3d00;
+}
+
+.go-live-checklist [data-go-live-status="blocked"] strong {
+  color: #9f2f19;
+}
+
+.go-live-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .security-control-grid {

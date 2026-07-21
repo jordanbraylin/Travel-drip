@@ -4,7 +4,27 @@ Date: July 21, 2026
 
 Final status: Not Ready for Production
 
-TravelDrip is ready for a Vercel demo/staging redeploy after the latest local fixes, but it should not be published as production-ready for real users until the external production checks below are completed. The local app shell, navigation targets, syntax, static assets, and security-header configuration were reviewed in this workspace. Live Supabase, Vercel, payment, wallet, ride-share, push, OAuth, email, SMS, maps, calendar, flight, hotel, cruise, restaurant, social, monitoring, and storage providers were not fully testable from this offline sandbox.
+TravelDrip is ready for a Vercel demo/staging redeploy after the latest local fixes, but it should not be marked production-ready for real users until the blocking provider-backed checks below pass. The app now includes an in-app Production Readiness panel in the Security Center area so the go-live decision is visible inside the product experience.
+
+## Live Deployment Check
+
+Production URL:
+- `https://traveldrip-app.vercel.app/` is reachable over HTTPS.
+- `https://traveldrip-app.vercel.app/api/health` returned `ok: true`.
+
+Production health response observed on July 21, 2026:
+- `supabaseUrlConfigured: true`
+- `supabasePublishableKeyConfigured: true`
+- `supabaseServiceRoleConfigured: false`
+- `adminEmailsConfigured: false`
+- `vapidPublicKeyConfigured: false`
+- `vapidPrivateKeyConfigured: false`
+
+Release decision:
+- Public Supabase login configuration is present.
+- Admin/server Supabase configuration is incomplete.
+- Push notification keys are incomplete.
+- Production is still blocked for real-user launch until the missing server-side and notification variables are added and tested.
 
 ## Local Validation Completed
 
@@ -12,39 +32,40 @@ Build status:
 - Static app structure is present with `index.html`, `admin.html`, `app.js`, `styles.css`, `manifest.webmanifest`, `sw.js`, `api/*`, and Vercel config.
 - There is no separate production build script in `package.json`; Vercel should serve the static files and serverless API routes directly.
 - JavaScript syntax check passed for `app.js`, `sw.js`, and every `api/*.js` file.
-- Internal static links checked from `index.html`; no missing local assets were found for manifest, icons, CSS, admin page, home page, or bundled PDFs.
+- Internal static links checked from `index.html`; no missing local assets were found.
+- CSS brace balance passed.
 
 Navigation status:
-- DOM ID audit passed with 342 IDs and no duplicate IDs.
-- 64 `data-target` navigation targets were checked and all resolve to existing sections.
+- DOM ID audit passed with 368 IDs and no duplicate IDs.
+- 68 `data-target` navigation targets were checked and all resolve to existing sections.
 - Authentication workflow controls for Sign In, Sign Up, Forgot Password, Terms, Privacy, Verify Email, and Two-Factor Authentication are present.
 - Message send/receive notification logic is present for in-app notifications and browser notifications when permission is granted.
+- The new go-live checklist includes 8 tracked checks: 2 passed, 4 blocked, and 2 manual-review items.
 
 Security status:
 - No committed live private-key patterns were detected in source files.
+- Secret-scan matches are documentation placeholders only, including examples for service-role and VAPID private keys.
+- The pasted Supabase publishable key is not committed into local source files.
 - `public-config.js` contains the Supabase URL but no publishable key, VAPID key, service role key, or private secret.
 - `.gitignore` excludes `.env`, `.env.*`, `.vercel`, `node_modules`, `dist`, `coverage`, and logs.
 - `vercel.json` includes security headers: CSP, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, and Permissions-Policy.
-- Permissions-Policy was adjusted to allow same-origin camera and geolocation so profile-photo capture and travel/location flows are not blocked by production headers.
+- Permissions-Policy allows same-origin camera and geolocation while keeping microphone disabled.
 - API routes apply no-store/no-sniff/referrer/CSP headers and require Bearer auth where applicable.
 
 Cache and deployment fixes made:
-- `index.html` now loads `app.js?v=28`.
-- `admin.html` now loads `styles.css?v=33` and `app.js?v=28`.
-- `vercel.json` now allows `camera=(self)` and `geolocation=(self)` while keeping microphone disabled.
+- `index.html` now loads `styles.css?v=38` and `app.js?v=32`.
+- `admin.html` now loads `styles.css?v=38` and `app.js?v=32`.
+- `sw.js` now uses cache name `traveldrip-v31`.
 
 ## Production Checks Still Required
 
 Deployment and domain:
-- Confirm Vercel build/deploy succeeds from the connected GitHub repo.
-- Confirm the final production domain loads over HTTPS.
+- Confirm Vercel redeploy succeeds from the connected GitHub repo.
 - Confirm direct refresh works on `/login`, `/register`, and `/admin`.
 - Confirm `/api/health` returns all required production configuration booleans as `true`.
 
 Environment variables:
-- Add and verify `NEXT_PUBLIC_SUPABASE_URL`.
-- Add and verify `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
-- Add and verify `SUPABASE_URL`.
+- Add and verify `SUPABASE_URL` if server routes require it separately from `NEXT_PUBLIC_SUPABASE_URL`.
 - Add and verify `SUPABASE_SERVICE_ROLE_KEY`.
 - Add and verify `SUPABASE_ADMIN_EMAILS`.
 - Add and verify `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` before enabling production push notifications.
@@ -64,7 +85,7 @@ Database:
 Integrations:
 - Payments, refunds, virtual card issuing, Apple Pay, Google Wallet, and tap-to-pay are not production-live until a real payment/card issuer is connected and tested.
 - Ride-share providers are not fully integrated until official OAuth/API or approved app-link flows are configured.
-- Receipt scanning/OCR, flight status, hotel, cruise, restaurant reservations, maps, calendar, email, SMS, social sharing, media storage, malware scanning, analytics, and error monitoring need provider-level tests before production claims.
+- Receipt scanning/OCR, flight status, hotel, cruise, restaurant reservations, maps, calendar, email, SMS, social sharing, media storage, malware scanning, analytics, backups, and error monitoring need provider-level tests before production claims.
 
 Quality assurance:
 - Test on iPhone, Android, tablet, desktop, Chrome, Safari, Firefox, and Edge.
@@ -76,7 +97,7 @@ Quality assurance:
 ## Known Limitations
 
 - `node_modules` and `package-lock.json` are not present in this workspace, so dependency audit and serverless import/runtime tests could not be completed locally.
-- Live Vercel deployment status could not be confirmed from this sandbox.
+- Shell network access to GitHub/Vercel is restricted in this environment, so pushing and triggering a redeploy may need to happen from the signed-in browser or a local terminal with network access.
 - Supabase migrations and RLS policies could not be verified against the live database from this sandbox.
 - Browser push delivery requires production VAPID keys and deployed service-worker context.
 - Financial, wallet, refund, card, Apple Pay, Google Wallet, and tap-to-pay workflows are UI and ledger-flow demonstrations until real providers are connected.
@@ -86,4 +107,4 @@ Quality assurance:
 
 Do not market TravelDrip as production-ready for real users yet.
 
-Recommended next step: deploy to Vercel staging from Git, configure the required environment variables, run Supabase migrations, confirm `/api/health`, then execute the full production QA checklist against the deployed URL.
+Recommended next step: add the missing Vercel environment variables, redeploy from Git, confirm `/api/health` returns all critical booleans as `true`, then execute the full production QA checklist against the deployed URL.
