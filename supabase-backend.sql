@@ -1751,3 +1751,147 @@ create policy "Users manage own profile photo uploads" on public.profile_photo_u
   for all to authenticated
   using (user_id = auth.uid())
   with check (user_id = auth.uid());
+
+-- Backend scalability, storage, backup, and reliability readiness tracking.
+create table if not exists public.backend_scalability_test_runs (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  environment text not null check (environment in ('development','staging','production')),
+  test_name text not null,
+  scenario text not null,
+  concurrent_users integer not null default 0 check (concurrent_users >= 0),
+  peak_requests_per_second numeric(10,2) not null default 0 check (peak_requests_per_second >= 0),
+  api_p95_ms integer,
+  database_p95_ms integer,
+  queue_delay_ms integer,
+  storage_throughput_mb numeric(12,2),
+  error_rate numeric(6,4) not null default 0 check (error_rate >= 0),
+  status text not null default 'planned' check (status in ('planned','running','passed','failed','blocked')),
+  findings jsonb not null default '{}'::jsonb,
+  reviewed_by uuid references auth.users(id) on delete set null,
+  reviewed_at timestamptz
+);
+
+create table if not exists public.backend_backup_restore_tests (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  environment text not null check (environment in ('staging','production')),
+  backup_provider text not null default 'supabase',
+  backup_type text not null check (backup_type in ('daily','point_in_time','manual','regional_copy')),
+  backup_started_at timestamptz,
+  backup_completed_at timestamptz,
+  restore_tested_at timestamptz,
+  recovery_point_objective_minutes integer,
+  recovery_time_objective_minutes integer,
+  encrypted boolean not null default true,
+  geographic_redundancy boolean not null default false,
+  status text not null default 'not_tested' check (status in ('not_tested','scheduled','passed','failed','blocked')),
+  notes text
+);
+
+create table if not exists public.data_retention_policies (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  data_domain text not null,
+  retention_days integer not null check (retention_days > 0),
+  deletion_behavior text not null check (deletion_behavior in ('delete','anonymize','archive_restricted','legal_hold')),
+  applies_to_corporate boolean not null default true,
+  applies_to_consumer boolean not null default true,
+  legal_basis text,
+  policy_version text not null default 'v1'
+);
+
+drop trigger if exists set_data_retention_policies_updated_at on public.data_retention_policies;
+create trigger set_data_retention_policies_updated_at
+before update on public.data_retention_policies
+for each row execute function public.set_updated_at();
+
+create table if not exists public.api_performance_events (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  environment text not null check (environment in ('development','staging','production')),
+  route text not null,
+  method text not null,
+  status_code integer not null,
+  duration_ms integer not null check (duration_ms >= 0),
+  user_id uuid references auth.users(id) on delete set null,
+  organization_id uuid references public.organizations(id) on delete set null,
+  trip_id uuid references public.trips(id) on delete set null,
+  request_size_bytes integer,
+  response_size_bytes integer,
+  rate_limited boolean not null default false,
+  idempotency_key text,
+  metadata jsonb not null default '{}'::jsonb
+);
+
+create table if not exists public.storage_processing_jobs (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  user_id uuid references auth.users(id) on delete set null,
+  organization_id uuid references public.organizations(id) on delete set null,
+  trip_id uuid references public.trips(id) on delete cascade,
+  bucket text not null,
+  storage_path text not null,
+  file_category text not null check (file_category in ('profile_photo','trip_photo','video','receipt','passport','visa','flight_confirmation','hotel_confirmation','event_document','corporate_photo','other')),
+  mime_type text not null,
+  file_size_bytes bigint not null check (file_size_bytes > 0),
+  visibility text not null default 'private' check (visibility in ('private','trip_members','organization','public','company_only')),
+  processing_status text not null default 'queued' check (processing_status in ('queued','processing','completed','failed','quarantined')),
+  malware_scan_status text not null default 'pending' check (malware_scan_status in ('pending','clean','infected','unsupported','failed')),
+  thumbnail_path text,
+  signed_url_expires_at timestamptz,
+  metadata jsonb not null default '{}'::jsonb
+);
+
+drop trigger if exists set_storage_processing_jobs_updated_at on public.storage_processing_jobs;
+create trigger set_storage_processing_jobs_updated_at
+before update on public.storage_processing_jobs
+for each row execute function public.set_updated_at();
+
+create index if not exists idx_backend_scalability_runs_status on public.backend_scalability_test_runs(environment, status, created_at desc);
+create index if not exists idx_backend_backup_restore_status on public.backend_backup_restore_tests(environment, status, created_at desc);
+create index if not exists idx_data_retention_domain on public.data_retention_policies(data_domain, policy_version);
+create index if not exists idx_api_performance_route_time on public.api_performance_events(route, created_at desc);
+create index if not exists idx_api_performance_org_time on public.api_performance_events(organization_id, created_at desc);
+create index if not exists idx_storage_processing_jobs_status on public.storage_processing_jobs(processing_status, malware_scan_status, created_at desc);
+create index if not exists idx_storage_processing_jobs_trip on public.storage_processing_jobs(trip_id, created_at desc);
+
+alter table public.backend_scalability_test_runs enable row level security;
+alter table public.backend_backup_restore_tests enable row level security;
+alter table public.data_retention_policies enable row level security;
+alter table public.api_performance_events enable row level security;
+alter table public.storage_processing_jobs enable row level security;
+
+drop policy if exists "Admins read scalability test runs" on public.backend_scalability_test_runs;
+create policy "Admins read scalability test runs" on public.backend_scalability_test_runs
+  for select to authenticated
+  using (exists (select 1 from public.organization_members om where om.user_id = auth.uid() and om.role in ('owner','admin','finance_admin')));
+
+drop policy if exists "Admins read backup restore tests" on public.backend_backup_restore_tests;
+create policy "Admins read backup restore tests" on public.backend_backup_restore_tests
+  for select to authenticated
+  using (exists (select 1 from public.organization_members om where om.user_id = auth.uid() and om.role in ('owner','admin','finance_admin')));
+
+drop policy if exists "Authenticated users read retention policies" on public.data_retention_policies;
+create policy "Authenticated users read retention policies" on public.data_retention_policies
+  for select to authenticated
+  using (true);
+
+drop policy if exists "Admins read api performance events" on public.api_performance_events;
+create policy "Admins read api performance events" on public.api_performance_events
+  for select to authenticated
+  using (
+    user_id = auth.uid()
+    or public.is_org_member(organization_id, array['owner','admin','finance_admin'])
+  );
+
+drop policy if exists "Users read allowed storage processing jobs" on public.storage_processing_jobs;
+create policy "Users read allowed storage processing jobs" on public.storage_processing_jobs
+  for select to authenticated
+  using (
+    user_id = auth.uid()
+    or public.is_trip_member(trip_id)
+    or public.is_org_member(organization_id, array['owner','admin','finance_admin'])
+  );

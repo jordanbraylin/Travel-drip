@@ -28,7 +28,7 @@ Traveldrip is a Vercel-ready PWA for group trip planning with Supabase auth, rea
 
 For local static preview login, paste only the browser-safe publishable key into `public-config.js`. Do not put service-role or private notification keys in that file.
 
-See `BACKEND_ARCHITECTURE.md` for the full backend table, API, RLS, audit, and production integration notes.
+See `BACKEND_ARCHITECTURE.md` for the full backend table, API, RLS, audit, and production integration notes. See `BACKEND_SCALABILITY_REPORT.md` for the backend scalability, data-storage, backup, restore, monitoring, load-test, and final readiness checklist.
 
 ## Corporate guest access portal
 

@@ -2,6 +2,8 @@
 
 This project now includes a production-oriented backend foundation for Supabase and Vercel serverless APIs.
 
+For the launch-readiness view of scalability, data storage, backup, restore, load testing, monitoring, and reliability work, see `BACKEND_SCALABILITY_REPORT.md`.
+
 ## Supabase Schema
 
 Run these SQL files in order:
@@ -24,6 +26,7 @@ The backend schema adds:
 - Daily memory reminder preferences, end-of-day prompt events, and organized memory items by trip/day/itinerary
 - Wallets, group banks, wallet transactions, receipt scanning records, item claims, ride split participants, and refund-ready audit data
 - Important information, acknowledgments, documents, media, social connections, AI sessions, notifications, background jobs, saved places, and audit logs
+- Operational readiness tables for scalability test runs, backup/restore evidence, data-retention policies, API performance events, and storage-processing jobs
 
 ## Access Control
 

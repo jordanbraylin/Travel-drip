@@ -1482,6 +1482,7 @@ body.auth-screen main {
 .wallet-breakdown,
 .navigation-status-grid,
 .security-status-grid,
+.backend-summary-grid,
 .go-live-summary-grid,
 .policy-summary-grid {
   display: grid;
@@ -1500,6 +1501,7 @@ body.auth-screen main {
 .wallet-breakdown div,
 .navigation-status-grid div,
 .security-status-grid article,
+.backend-summary-grid article,
 .go-live-summary-grid article,
 .policy-summary-grid article {
   min-width: 0;
@@ -1515,6 +1517,8 @@ body.auth-screen main {
 .navigation-status-grid span,
 .security-status-grid span,
 .security-status-grid small,
+.backend-summary-grid span,
+.backend-summary-grid small,
 .go-live-summary-grid span,
 .go-live-summary-grid small,
 .policy-summary-grid span,
@@ -1529,6 +1533,7 @@ body.auth-screen main {
 .wallet-breakdown strong,
 .navigation-status-grid strong,
 .security-status-grid strong,
+.backend-summary-grid strong,
 .go-live-summary-grid strong,
 .policy-summary-grid strong {
   display: block;
@@ -1541,6 +1546,7 @@ body.auth-screen main {
 .audit-list,
 .security-list,
 .navigation-audit-list,
+.backend-checklist,
 .go-live-checklist,
 .security-control-grid,
 .fraud-signal-list,
@@ -1555,6 +1561,7 @@ body.auth-screen main {
 .audit-list div,
 .security-list div,
 .navigation-audit-list div,
+.backend-checklist div,
 .go-live-checklist div,
 .security-control-grid div,
 .fraud-signal-list div,
@@ -1581,6 +1588,8 @@ body.auth-screen main {
 .security-list span,
 .navigation-audit-list strong,
 .navigation-audit-list span,
+.backend-checklist strong,
+.backend-checklist span,
 .go-live-checklist strong,
 .go-live-checklist span,
 .security-control-grid strong,
@@ -1597,6 +1606,7 @@ body.auth-screen main {
 .audit-list span,
 .security-list span,
 .navigation-audit-list span,
+.backend-checklist span,
 .go-live-checklist span,
 .security-control-grid span,
 .fraud-signal-list span,
@@ -1609,6 +1619,57 @@ body.auth-screen main {
 
 .navigation-audit-list .is-warning strong {
   color: #9a3412;
+}
+
+.backend-readiness-panel {
+  border-color: rgba(0, 119, 182, 0.22);
+  background: linear-gradient(135deg, #fff, #eefaff);
+}
+
+.backend-checklist div {
+  position: relative;
+  padding-left: 36px;
+}
+
+.backend-checklist div::before {
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.backend-checklist [data-backend-status="pass"]::before {
+  content: "✓";
+  background: var(--palm);
+}
+
+.backend-checklist [data-backend-status="review"]::before {
+  content: "?";
+  background: var(--sun);
+  color: #5d3d00;
+}
+
+.backend-checklist [data-backend-status="blocked"]::before {
+  content: "!";
+  background: var(--reef);
+}
+
+.backend-checklist [data-backend-status="blocked"] strong {
+  color: #9f2f19;
+}
+
+.backend-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .go-live-panel {
@@ -5069,6 +5130,7 @@ code {
   .wallet-breakdown,
   .navigation-status-grid,
   .security-status-grid,
+  .backend-summary-grid,
   .security-control-grid,
   .policy-summary-grid,
   .copyright-columns,

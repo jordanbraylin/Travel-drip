@@ -3317,6 +3317,7 @@ function wireLocalInteractions() {
     showWorkflowMessage("Navigation audit", "Checked buttons, links, targets, modals, role restrictions, and fallback workflows.");
   });
   $("#runSecurityAuditButton")?.addEventListener("click", renderSecurityAudit);
+  $("#runBackendReadinessButton")?.addEventListener("click", renderBackendReadiness);
   $("#runGoLiveAuditButton")?.addEventListener("click", renderGoLiveAudit);
   $("#signupNameInput")?.addEventListener("input", (event) => {
     state.profilePhoto.initials = initialsFromName(event.target.value);
@@ -3422,6 +3423,7 @@ function wireLocalInteractions() {
   wireNavigationFallbacks();
   renderNavigationAudit();
   renderSecurityAudit();
+  renderBackendReadiness();
   renderGoLiveAudit();
   renderProfilePhoto();
 
@@ -3929,6 +3931,32 @@ function renderSecurityAudit() {
     ? `Security audit found ${audit.failed.length} item(s) needing review: ${audit.failed.join(", ")}.`
     : `Security audit passed ${audit.passed}/${audit.checks.length} local controls. Production still requires real provider-side MFA, tokenized payments, malware scanning, rate limiting, and encrypted storage.`;
   addAuditEntry("Security audit completed", audit.failed.length ? `Review: ${audit.failed.join(", ")}` : "Local security controls validated.");
+}
+
+function getBackendReadinessAudit() {
+  const checks = $$("[data-backend-status]").map((item) => ({
+    title: item.querySelector("strong")?.textContent || "Backend check",
+    status: item.dataset.backendStatus || "review"
+  }));
+  return {
+    checks,
+    passed: checks.filter((check) => check.status === "pass").length,
+    review: checks.filter((check) => check.status === "review").length,
+    blocked: checks.filter((check) => check.status === "blocked").length
+  };
+}
+
+function renderBackendReadiness() {
+  if (!$("#backendReadinessMessage")) return;
+  const audit = getBackendReadinessAudit();
+  $("#backendArchitectureStatus").textContent = audit.passed ? "Documented" : "Needs design";
+  $("#backendStorageStatus").textContent = audit.blocked ? "Needs provider tests" : "Ready";
+  $("#backendReliabilityStatus").textContent = audit.blocked ? "Blocked" : "Ready";
+  $("#backendFinalStatus").textContent = audit.blocked ? "Not ready" : "Ready with limits";
+  $("#backendReadinessMessage").textContent = audit.blocked
+    ? `Backend readiness blocked: ${audit.blocked} production reliability item(s) still need real environment verification. ${audit.passed} checks passed and ${audit.review} need review.`
+    : `Backend readiness has ${audit.passed}/${audit.checks.length} checks passing. Confirm production monitoring and restore drills before launch.`;
+  addAuditEntry("Backend readiness audit completed", audit.blocked ? `${audit.blocked} blocking scalability/reliability check(s) remain.` : "Backend readiness checklist passed.");
 }
 
 function getGoLiveAudit() {

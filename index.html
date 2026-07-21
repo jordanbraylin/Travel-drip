@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=41">
+  <link rel="stylesheet" href="styles.css?v=42">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -2411,6 +2411,42 @@
             <p class="small" id="securityAuditMessage">Security audit checks auth controls, role restrictions, sensitive-notification copy, wallet PIN gates, API hardening, file links, and financial privacy messaging.</p>
           </section>
 
+          <section class="panel backend-readiness-panel" id="backendReadiness" data-route-support="securityCenter">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Backend Scalability</p>
+                <h2>Data storage, reliability, and recovery</h2>
+                <p>Production readiness requires tested database performance, private storage, backups, queues, monitoring, and server-side authorization.</p>
+              </div>
+              <button class="ghost-button" type="button" id="runBackendReadinessButton">Run backend audit</button>
+            </div>
+            <div class="backend-summary-grid">
+              <article><span>Architecture</span><strong id="backendArchitectureStatus">Postgres + RLS</strong><small>Normalized tables, keys, indexes, and role policies</small></article>
+              <article><span>Storage</span><strong id="backendStorageStatus">Private buckets</strong><small>Signed URLs, validation, compression, and malware scanning required</small></article>
+              <article><span>Reliability</span><strong id="backendReliabilityStatus">Needs proof</strong><small>Backups, restore tests, queues, and monitoring must be verified</small></article>
+              <article><span>Final status</span><strong id="backendFinalStatus">Not ready</strong><small>Load and recovery tests are still required</small></article>
+            </div>
+            <div class="backend-checklist" id="backendChecklist" aria-label="Backend scalability and reliability checklist">
+              <div data-backend-status="pass"><strong>Relational data model</strong><span>Users, trips, events, messages, wallets, media, documents, corporate records, audit logs, and reminders are represented in Supabase schema files.</span></div>
+              <div data-backend-status="pass"><strong>Row-Level Security foundation</strong><span>Trip, organization, guest, profile, media, message, and financial access should be enforced by RLS and server APIs.</span></div>
+              <div data-backend-status="review"><strong>Indexes and pagination</strong><span>Common joins and timestamp queries are indexed; every large list still needs production query-plan review and pagination limits.</span></div>
+              <div data-backend-status="review"><strong>Object storage</strong><span>Photos, videos, receipts, passports, tickets, and documents must live in private object storage with signed URLs and file scanning.</span></div>
+              <div data-backend-status="review"><strong>Atomic financial operations</strong><span>Wallet deposits, refunds, allocations, bill splits, ride splits, and card actions require database transactions and idempotency keys.</span></div>
+              <div data-backend-status="blocked"><strong>Connection pooling and load tests</strong><span>Production connection pooling, traffic-spike tests, message/photo upload load tests, and API latency results have not been verified in this sandbox.</span></div>
+              <div data-backend-status="blocked"><strong>Backup and restore proof</strong><span>Daily backups, PITR, encrypted retention, geographic redundancy, and successful restore tests still need production confirmation.</span></div>
+              <div data-backend-status="blocked"><strong>Background jobs and queues</strong><span>Email, SMS, push, reminders, media processing, AI recaps, reports, refunds, and cleanup jobs need retries, dead letters, and monitoring.</span></div>
+              <div data-backend-status="blocked"><strong>Monitoring and incident response</strong><span>Database capacity, slow queries, API errors, queue failures, login abuse, storage growth, backup failures, and suspicious payments need live alerts.</span></div>
+              <div data-backend-status="blocked"><strong>Security and privacy tests</strong><span>RLS, auth, password reset, sessions, file access, corporate permissions, rate limits, vulnerability scans, and pen tests must pass before launch.</span></div>
+            </div>
+            <div class="backend-actions">
+              <button class="primary-button" type="button" data-target="securityCenter">Review security controls</button>
+              <button class="ghost-button" type="button" data-target="groupBank">Review financial data</button>
+              <button class="ghost-button" type="button" data-target="enterpriseRbac">Review corporate RLS</button>
+              <button class="ghost-button" type="button" data-target="socialHub">Review media and messages</button>
+            </div>
+            <p class="small" id="backendReadinessMessage">Do not mark the backend production-ready until scalability, storage, backup, restore, monitoring, and security tests have passed against production-like data.</p>
+          </section>
+
           <section class="panel copyright-policy" id="copyrightPolicy">
             <div class="section-heading compact">
               <div>
@@ -2593,6 +2629,6 @@
   </dialog>
 
   <script src="public-config.js?v=1"></script>
-  <script defer src="app.js?v=34"></script>
+  <script defer src="app.js?v=35"></script>
 </body>
 </html>
