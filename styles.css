@@ -1943,6 +1943,11 @@ body.auth-screen main {
 .guided-trip-flow,
 .trip-creation-form,
 .feature-toggle-grid,
+.invitation-builder-grid,
+.invitation-options-grid,
+.invitation-form-grid,
+.invite-checkbox-grid,
+.rsvp-status-grid,
 .solo-dashboard-grid,
 .solo-workspace {
   display: grid;
@@ -2030,6 +2035,140 @@ body.auth-screen main {
 .hidden-feature-list span {
   background: #f7ebe9;
   color: #8a392e;
+}
+
+.invitation-step .section-heading {
+  align-items: start;
+}
+
+.invitation-builder-grid {
+  grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr);
+}
+
+.invitation-options-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.invite-card,
+.invitation-options-grid section {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: #fff;
+}
+
+.invitation-preview-card {
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background:
+    linear-gradient(180deg, rgba(11, 31, 38, 0.08), rgba(11, 31, 38, 0.88)),
+    url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=800&auto=format&fit=crop") center/cover;
+  color: #fff;
+}
+
+.invite-template-badge {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: rgba(255, 244, 226, 0.22);
+  color: #fff7eb;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.invitation-preview-card h3,
+.invitation-preview-card p {
+  color: #fff;
+}
+
+.invite-preview-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.invite-preview-meta span {
+  border-radius: 999px;
+  padding: 5px 8px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.invitation-form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.invitation-form-grid .wide {
+  grid-column: 1 / -1;
+}
+
+.invitation-form-grid label,
+.invite-checkbox-grid label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.invitation-form-grid input,
+.invitation-form-grid select,
+.invitation-form-grid textarea {
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+}
+
+.invitation-form-grid textarea {
+  min-height: 82px;
+  resize: vertical;
+}
+
+.invite-checkbox-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.invite-checkbox-grid label {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  background: #fbfcfb;
+}
+
+.rsvp-status-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.rsvp-status-grid div {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: #fbfcfb;
+}
+
+.rsvp-status-grid span,
+.rsvp-status-grid strong {
+  display: block;
+}
+
+.rsvp-status-grid span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.rsvp-status-grid strong {
+  margin-top: 4px;
+  font-size: 22px;
 }
 
 .trip-type-selector {
@@ -3369,6 +3508,11 @@ code {
   .feature-toggle-grid,
   .trip-type-selector,
   .trip-creation-form,
+  .invitation-builder-grid,
+  .invitation-options-grid,
+  .invitation-form-grid,
+  .invite-checkbox-grid,
+  .rsvp-status-grid,
   .solo-dashboard-grid,
   .solo-workspace,
   .solo-budget-list,

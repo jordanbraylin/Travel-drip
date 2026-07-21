@@ -373,6 +373,90 @@
                 <h3>AI setup</h3>
                 <p id="tripAiSetupPrompt">How can I help plan your trip? Try: Build me a 5-day itinerary.</p>
               </div>
+              <div class="guided-step invitation-step" id="invitationSetupStep" hidden>
+                <span>Step 4</span>
+                <div class="section-heading compact">
+                  <div>
+                    <h3>Would you like to send invitations now?</h3>
+                    <p id="invitationModeCopy">Solo travelers can share an itinerary with trusted contacts or invite someone to join later.</p>
+                  </div>
+                  <div class="button-row no-margin">
+                    <button class="primary-button" type="button" id="sendInvitesNowButton">Send Invitations Now</button>
+                    <button class="ghost-button" type="button" id="saveInvitesLaterButton">Save & Invite Later</button>
+                    <button class="ghost-button" type="button" id="skipInvitesButton">Skip for Now</button>
+                  </div>
+                </div>
+                <div class="invitation-builder-grid">
+                  <section class="invite-card invitation-preview-card">
+                    <span class="invite-template-badge" id="inviteTemplateBadge">Solo itinerary share</span>
+                    <h3 id="invitePreviewTitle">Tokyo solo food sprint</h3>
+                    <p id="invitePreviewMessage">You're invited to follow my Tokyo itinerary, check in on key travel updates, and stay connected while I explore.</p>
+                    <div class="invite-preview-meta">
+                      <span id="invitePreviewDestination">Tokyo, Japan</span>
+                      <span id="invitePreviewDates">Aug 8 - Aug 13, 2026</span>
+                      <span id="invitePreviewType">Solo Trip</span>
+                    </div>
+                  </section>
+                  <section class="invite-card">
+                    <h3>Customize invitation</h3>
+                    <div class="invitation-form-grid">
+                      <label>Custom title<input id="inviteTitleInput" type="text" value="You're invited to my Tokyo solo food sprint"></label>
+                      <label>RSVP deadline<input id="inviteDeadlineInput" type="date" value="2026-07-30"></label>
+                      <label>Theme color<select id="inviteThemeInput"><option>Ocean blue</option><option>Sunset orange</option><option>Sand beige</option><option>Corporate navy</option></select></label>
+                      <label id="companyLogoField" hidden>Company logo<input id="companyLogoInput" type="file" accept="image/*"></label>
+                      <label class="wide">Welcome message<textarea id="inviteMessageInput">You're invited to join the trip plan, view key details, and RSVP in TravelDrip.</textarea></label>
+                      <label class="wide">Personal note<textarea id="inviteNoteInput">I would love for you to be part of this travel experience.</textarea></label>
+                    </div>
+                    <button class="ghost-button" type="button" id="aiInviteCopyButton">AI write invitation</button>
+                  </section>
+                </div>
+                <div class="invitation-options-grid">
+                  <section>
+                    <h3>Recipients</h3>
+                    <div class="solo-tag-list" id="inviteRecipientList">
+                      <span>Trusted family</span><span>Emergency contact</span><span>Invite someone later</span>
+                    </div>
+                  </section>
+                  <section>
+                    <h3>Delivery methods</h3>
+                    <div class="invite-checkbox-grid">
+                      <label><input type="checkbox" data-invite-method="Email" checked> Email</label>
+                      <label><input type="checkbox" data-invite-method="SMS"> SMS/Text</label>
+                      <label><input type="checkbox" data-invite-method="In-app" checked> In-app</label>
+                      <label><input type="checkbox" data-invite-method="QR Code"> QR Code</label>
+                      <label><input type="checkbox" data-invite-method="Share link"> Share link</label>
+                      <label><input type="checkbox" data-invite-method="Calendar invite"> Calendar .ics</label>
+                      <label><input type="checkbox" data-invite-method="WhatsApp"> WhatsApp</label>
+                      <label><input type="checkbox" data-invite-method="Teams or Slack"> Teams/Slack</label>
+                    </div>
+                  </section>
+                  <section>
+                    <h3>Privacy & permissions</h3>
+                    <div class="invite-checkbox-grid">
+                      <label><input type="checkbox" data-invite-permission="Invite-only" checked> Invite-only trip</label>
+                      <label><input type="checkbox" data-invite-permission="Approval required" checked> Approval required</label>
+                      <label><input type="checkbox" data-invite-permission="Public link"> Public invitation link</label>
+                      <label><input type="checkbox" data-invite-permission="Expiration date" checked> Link expiration date</label>
+                      <label><input type="checkbox" data-invite-permission="Attendee cap"> Maximum attendees</label>
+                    </div>
+                  </section>
+                  <section>
+                    <h3>RSVP tracking</h3>
+                    <div class="rsvp-status-grid">
+                      <div><span>Sent</span><strong id="rsvpSentCount">0</strong></div>
+                      <div><span>Opened</span><strong id="rsvpOpenedCount">0</strong></div>
+                      <div><span>Accepted</span><strong id="rsvpAcceptedCount">0</strong></div>
+                      <div><span>Pending</span><strong id="rsvpPendingCount">0</strong></div>
+                    </div>
+                    <div class="button-row">
+                      <button class="ghost-button" type="button" data-reminder-type="RSVP reminder">RSVP reminder</button>
+                      <button class="ghost-button" type="button" data-reminder-type="Payment reminder">Payment reminder</button>
+                      <button class="ghost-button" type="button" data-reminder-type="Document reminder">Document reminder</button>
+                    </div>
+                  </section>
+                </div>
+                <p class="small" id="invitationStatusMessage">Invitations include trip name, destination, dates, organizer, RSVP deadline, trip type, and only role-appropriate information.</p>
+              </div>
             </section>
             <p class="small" id="soloModeMessage">Solo Trip selected. Group chat, voting, and shared wallet tools stay hidden until you invite others.</p>
 

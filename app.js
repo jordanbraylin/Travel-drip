@@ -206,6 +206,45 @@ const tripTypeConfigs = {
   }
 };
 
+const invitationConfigs = {
+  solo: {
+    badge: "Solo itinerary share",
+    modeCopy: "Solo travelers can share an itinerary with trusted contacts, emergency contacts, or invite someone to join later.",
+    title: "You're invited to my Tokyo solo food sprint",
+    message: "Follow my itinerary, see key travel updates, and stay connected while I explore Tokyo.",
+    recipients: ["Trusted family", "Emergency contact", "Close friend", "Invite someone later"],
+    sent: 2,
+    opened: 1,
+    accepted: 1,
+    pending: 1,
+    companyLogo: false
+  },
+  group: {
+    badge: "Group adventure invite",
+    modeCopy: "Group organizers can invite friends, family, couples, clubs, sports teams, and travel groups.",
+    title: "You're invited to our Miami 2027 Adventure",
+    message: "Join us for an unforgettable weekend of beaches, great food, shared rides, and amazing memories.",
+    recipients: ["Friends", "Family", "Couples", "Clubs", "Sports teams", "Travel groups"],
+    sent: 12,
+    opened: 9,
+    accepted: 7,
+    pending: 3,
+    companyLogo: false
+  },
+  corporate: {
+    badge: "Corporate branded invite",
+    modeCopy: "Corporate admins can invite employees, executives, managers, clients, speakers, vendors, and event coordinators while hiding confidential financial details.",
+    title: "You're invited to the 2027 Leadership Retreat",
+    message: "Please join the company retreat for workshops, team-building, assigned travel, event schedules, and important announcements.",
+    recipients: ["Employees", "Executives", "Managers", "Clients", "Guest speakers", "Vendors", "Event coordinators", "CSV import", "Company directory"],
+    sent: 86,
+    opened: 74,
+    accepted: 61,
+    pending: 19,
+    companyLogo: true
+  }
+};
+
 const authCarouselSlides = [
   {
     quote: "Plan together. Travel better.",
@@ -340,6 +379,32 @@ function renderTripType(type) {
   $("#tripTravelersInput").value = config.travelersHidden ? "1" : "6";
   $("#featuresEnabledList").innerHTML = config.enabled.map((feature) => `<span>${escapeHtml(feature)}</span>`).join("");
   $("#featuresHiddenList").innerHTML = config.hidden.map((feature) => `<span>${escapeHtml(feature)}</span>`).join("");
+  renderInvitationSetup(type);
+}
+
+function renderInvitationSetup(type) {
+  const config = invitationConfigs[type] || invitationConfigs.solo;
+  const tripName = $("#tripNameInput")?.value.trim() || "Tokyo solo food sprint";
+  const destination = $("#tripDestinationInput")?.value.trim() || "Tokyo, Japan";
+  const startDate = $("#tripStartInput")?.value || "2026-08-08";
+  const endDate = $("#tripEndInput")?.value || "2026-08-13";
+  const typeLabel = tripTypeConfigs[type]?.label || "Solo Trip";
+
+  $("#invitationModeCopy").textContent = config.modeCopy;
+  $("#inviteTemplateBadge").textContent = config.badge;
+  $("#invitePreviewTitle").textContent = tripName;
+  $("#invitePreviewMessage").textContent = config.message;
+  $("#invitePreviewDestination").textContent = destination;
+  $("#invitePreviewDates").textContent = `${startDate} - ${endDate}`;
+  $("#invitePreviewType").textContent = typeLabel;
+  $("#inviteTitleInput").value = config.title;
+  $("#inviteMessageInput").value = config.message;
+  $("#inviteRecipientList").innerHTML = config.recipients.map((recipient) => `<span>${escapeHtml(recipient)}</span>`).join("");
+  $("#companyLogoField").hidden = !config.companyLogo;
+  $("#rsvpSentCount").textContent = String(config.sent);
+  $("#rsvpOpenedCount").textContent = String(config.opened);
+  $("#rsvpAcceptedCount").textContent = String(config.accepted);
+  $("#rsvpPendingCount").textContent = String(config.pending);
 }
 
 function startAuthCarousel() {
@@ -1373,6 +1438,7 @@ function wireLocalInteractions() {
     $("#guidedTripFlow")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     $("#tripDetailsStep").hidden = true;
     $("#tripAiSetupStep").hidden = true;
+    $("#invitationSetupStep").hidden = true;
     $$("[data-trip-type]").forEach((typeButton) => {
       typeButton.classList.remove("active");
       typeButton.setAttribute("aria-pressed", "false");
@@ -1385,6 +1451,8 @@ function wireLocalInteractions() {
     const type = $(".trip-type-selector button.active")?.dataset.tripType || "solo";
     const config = tripTypeConfigs[type] || tripTypeConfigs.solo;
     const tripName = $("#tripNameInput").value.trim() || config.label;
+    $("#invitationSetupStep").hidden = false;
+    renderInvitationSetup(type);
     $("#soloModeMessage").textContent = `${config.label} created: ${tripName}. TravelDrip configured the right dashboard, permissions, and workflows automatically.`;
     addAuditEntry("Guided trip created", `${config.label} created with tailored feature set.`);
     await saveSyncedEvent("guided_trip_created", {
@@ -1397,6 +1465,58 @@ function wireLocalInteractions() {
       budget: Number($("#tripBudgetInput").value || 0),
       style: $("#tripStyleInput").value,
       interests: $("#tripInterestsInput").value.trim()
+    });
+  });
+
+  ["#inviteTitleInput", "#inviteMessageInput", "#tripNameInput", "#tripDestinationInput", "#tripStartInput", "#tripEndInput"].forEach((selector) => {
+    $(selector)?.addEventListener("input", () => {
+      $("#invitePreviewTitle").textContent = $("#tripNameInput").value.trim() || $("#inviteTitleInput").value.trim();
+      $("#invitePreviewMessage").textContent = $("#inviteMessageInput").value.trim() || "Invitation message preview.";
+      $("#invitePreviewDestination").textContent = $("#tripDestinationInput").value.trim() || "Destination";
+      $("#invitePreviewDates").textContent = `${$("#tripStartInput").value || "Start date"} - ${$("#tripEndInput").value || "End date"}`;
+    });
+  });
+
+  $("#aiInviteCopyButton")?.addEventListener("click", async () => {
+    const type = $(".trip-type-selector button.active")?.dataset.tripType || "solo";
+    const tones = {
+      solo: "I created a TravelDrip itinerary so you can follow my plans, see check-ins, and stay connected while I travel.",
+      group: "You're invited to an unforgettable TravelDrip adventure with shared plans, RSVP tracking, group memories, and easy updates.",
+      corporate: "You are invited to our company retreat. TravelDrip will keep your assigned travel, agenda, announcements, and important documents organized."
+    };
+    $("#inviteMessageInput").value = tones[type] || tones.solo;
+    $("#invitePreviewMessage").textContent = $("#inviteMessageInput").value;
+    $("#invitationStatusMessage").textContent = "AI invitation assistant generated a polished message for the selected trip type.";
+    addAuditEntry("AI invitation copy generated", `${tripTypeConfigs[type]?.label || "Trip"} invitation copy created.`);
+    await saveSyncedEvent("ai_invitation_copy_generated", { type });
+  });
+
+  $("#sendInvitesNowButton")?.addEventListener("click", async () => {
+    const methods = $$("[data-invite-method]").filter((input) => input.checked).map((input) => input.dataset.inviteMethod);
+    $("#rsvpSentCount").textContent = String(Math.max(1, Number($("#rsvpSentCount").textContent || 0) + 1));
+    $("#rsvpPendingCount").textContent = String(Math.max(1, Number($("#rsvpPendingCount").textContent || 0) + 1));
+    $("#invitationStatusMessage").textContent = `Invitations queued through ${methods.join(", ") || "in-app notification"}. Invitees can accept, maybe, or decline directly from the invite.`;
+    addAuditEntry("Invitations sent", `Invitation methods: ${methods.join(", ") || "in-app notification"}.`);
+    await saveSyncedEvent("trip_invitations_sent", { methods });
+  });
+
+  $("#saveInvitesLaterButton")?.addEventListener("click", async () => {
+    $("#invitationStatusMessage").textContent = "Invitation draft saved. Organizer can return later to send, edit, import guests, or generate a QR/link.";
+    addAuditEntry("Invitation draft saved", "Organizer chose Save & Invite Later.");
+    await saveSyncedEvent("trip_invitation_draft_saved", { status: "saved" });
+  });
+
+  $("#skipInvitesButton")?.addEventListener("click", async () => {
+    $("#invitationStatusMessage").textContent = "Invitations skipped for now. Trip setup remains complete and invite tools stay available.";
+    addAuditEntry("Invitations skipped", "Organizer skipped invitation setup.");
+    await saveSyncedEvent("trip_invitations_skipped", { status: "skipped" });
+  });
+
+  $$("[data-reminder-type]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      $("#invitationStatusMessage").textContent = `${button.dataset.reminderType} queued for pending invitees.`;
+      addAuditEntry("Invitation reminder queued", button.dataset.reminderType);
+      await saveSyncedEvent("trip_invitation_reminder", { type: button.dataset.reminderType });
     });
   });
 
