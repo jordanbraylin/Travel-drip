@@ -1977,6 +1977,71 @@ function wireLocalInteractions() {
     });
   });
 
+  $$("[data-reservation-action]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const action = button.dataset.reservationAction;
+      const reminderMessage = $("#reservationReminderMessage");
+      if (reminderMessage) {
+        reminderMessage.textContent = `${action} opened for the assigned reservation. TravelDrip keeps attendees, meeting details, confirmations, and quick actions attached to the booking.`;
+      }
+      addAuditEntry("Reservation reminder action", `${action} selected from reservation and paid excursion reminders.`);
+      await saveSyncedEvent("reservation_reminder_action", {
+        action,
+        notifyAssignedTravelersOnly: true,
+        corporateFinancialPrivacy: true
+      });
+    });
+  });
+
+  $("#calculateDepartureButton")?.addEventListener("click", async () => {
+    const departureCopy = $("#departureAlertCopy");
+    if (departureCopy) {
+      departureCopy.textContent = "Leave by 6:55 PM. Current traffic adds 12 minutes, walking from drop-off takes 5 minutes, and ride-share pickup is estimated at 8 minutes.";
+    }
+    $("#reservationReminderMessage").textContent = "Smart departure alert calculated using location, traffic, walking time, transit, and ride-share estimates.";
+    addAuditEntry("Smart departure alert calculated", "Time-to-leave recommendation generated for a restaurant reservation.");
+    await saveSyncedEvent("reservation_departure_alert_calculated", {
+      leaveBy: "18:55",
+      travelFactors: ["current_location", "traffic", "walking_time", "public_transportation", "ride_share_estimate"]
+    });
+  });
+
+  $("#reservationAiReviewButton")?.addEventListener("click", async () => {
+    const aiCopy = $("#reservationAiCopy");
+    if (aiCopy) {
+      aiCopy.textContent = "AI review: Ocean Rooftop Grill is in two hours, traffic is heavier than usual, your sunset cruise check-in closes at 4:30 PM, and tomorrow has two booked experiences to review.";
+    }
+    $("#reservationReminderMessage").textContent = "AI Trip Manager reviewed upcoming reservations, paid excursions, route timing, and preparation notes.";
+    addAuditEntry("AI reservation review", "AI reviewed upcoming restaurant, excursion, cruise, and corporate reminder context.");
+    await saveSyncedEvent("reservation_ai_review", {
+      includesTrafficGuidance: true,
+      includesGearReminders: true,
+      includesScheduleSummary: true
+    });
+  });
+
+  $$("[data-calendar-provider]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const provider = button.dataset.calendarProvider;
+      $("#reservationReminderMessage").textContent = `${provider} sync prepared. Confirmed reservations and paid excursions can be added with update sync where supported.`;
+      addAuditEntry("Reservation calendar sync", `${provider} selected for reservation and excursion reminders.`);
+      await saveSyncedEvent("reservation_calendar_sync", { provider, updateSyncSupported: true });
+    });
+  });
+
+  [...$$("[data-reminder-offset]"), ...$$("[data-reminder-type-toggle]")].forEach((input) => {
+    input.addEventListener("change", async () => {
+      const offsets = $$("[data-reminder-offset]")
+        .filter((entry) => entry.checked)
+        .map((entry) => entry.dataset.reminderOffset);
+      const types = $$("[data-reminder-type-toggle]")
+        .filter((entry) => entry.checked)
+        .map((entry) => entry.dataset.reminderTypeToggle);
+      $("#reservationReminderMessage").textContent = `Reminder preferences updated: ${types.join(", ") || "no optional types"} with ${offsets.join(", ") || "arrival-only"} timing.`;
+      await saveSyncedEvent("reservation_reminder_preferences_updated", { offsets, types });
+    });
+  });
+
   $$("[data-trip-type]").forEach((button) => {
     button.addEventListener("click", async () => {
       const type = button.dataset.tripType;

@@ -87,6 +87,12 @@ TravelDrip now includes Smart Itinerary Notifications for flight status changes,
 
 Travelers can choose alert categories and delivery channels: push, email, SMS where available, and in-app alerts. Emergency announcements remain always-on for traveler safety. Production preference sync is represented in `itinerary_notification_preferences`, while sent/queued itinerary alerts can be recorded in `itinerary_notification_events`.
 
+## Reservation and paid excursion reminders
+
+TravelDrip now includes reminder workflows for confirmed restaurant reservations, paid excursions, cruise activities, and corporate assigned events. The itinerary notification screen shows reminder schedules for confirmation, 24-hour, 2-hour, 30-minute, and smart departure alerts, plus quick actions for viewing reservations, tickets, itinerary details, directions, venue/organizer contact, companion reminders, sharing with trip members, and calendar sync.
+
+Production reminder data is represented in `reservation_reminder_preferences`, `reservation_records`, `reservation_attendees`, `reservation_reminders`, and `reservation_calendar_syncs`. Scheduled jobs should queue reminder notifications only for assigned attendees, calculate time-to-leave guidance from traffic/location/provider data, and keep corporate employees limited to their own assigned meals, sessions, transportation, and activities.
+
 ## Cruise vacation mode
 
 TravelDrip now supports Cruise Vacation as a guided trip type. The app includes a cruise overview, ship details, cabin assignment, port schedule, shore excursions, onboard schedule, dining reservations, cruise wallet, cruise documents, notifications, AI Cruise Manager, group cruise features, corporate cruise visibility rules, and post-cruise memories.

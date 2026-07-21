@@ -5030,3 +5030,133 @@ main {
     grid-template-columns: 1fr;
   }
 }
+
+.reservation-reminder-panel {
+  display: grid;
+  gap: 16px;
+  margin-top: 22px;
+  border: 1px solid rgba(8, 127, 140, 0.16);
+  border-radius: 28px;
+  padding: 18px;
+  background:
+    linear-gradient(135deg, rgba(223, 247, 245, 0.72), rgba(247, 234, 214, 0.52)),
+    #fff;
+}
+
+.reservation-reminder-grid,
+.reservation-preferences-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.reservation-reminder-card,
+.smart-departure-card,
+.reservation-ai-card,
+.reservation-preferences-grid > div {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--soft-shadow);
+}
+
+.reservation-reminder-card.featured {
+  background:
+    linear-gradient(135deg, rgba(8, 127, 140, 0.10), rgba(255, 122, 92, 0.10)),
+    #fff;
+}
+
+.reservation-reminder-card span,
+.reservation-preferences-grid h4,
+.smart-departure-card .eyebrow,
+.reservation-ai-card .eyebrow {
+  color: var(--sea);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.reservation-reminder-card h4,
+.smart-departure-card h4,
+.reservation-ai-card h4,
+.reservation-preferences-grid h4,
+.reservation-reminder-card p,
+.smart-departure-card p,
+.reservation-ai-card p {
+  margin: 0;
+}
+
+.reservation-reminder-card h4,
+.smart-departure-card h4,
+.reservation-ai-card h4 {
+  margin-top: 6px;
+  color: var(--ink);
+}
+
+.reservation-reminder-card p,
+.smart-departure-card p,
+.reservation-ai-card p {
+  margin-top: 8px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.reservation-reminder-card ul {
+  margin: 12px 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.mini-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mini-action-row button,
+.reservation-preferences-grid button {
+  min-height: 38px;
+  border: 1px solid rgba(8, 127, 140, 0.18);
+  border-radius: 999px;
+  padding: 0 12px;
+  background: #fff;
+  color: #24555d;
+  font-weight: 850;
+}
+
+.smart-departure-card,
+.reservation-ai-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+}
+
+.reservation-preferences-grid > div {
+  display: grid;
+  gap: 8px;
+}
+
+.reservation-preferences-grid label {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  border-radius: 16px;
+  padding: 9px 10px;
+  background: #f7fbfa;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+@media (max-width: 900px) {
+  .reservation-reminder-grid,
+  .reservation-preferences-grid,
+  .smart-departure-card,
+  .reservation-ai-card {
+    grid-template-columns: 1fr;
+  }
+}

@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=25">
+  <link rel="stylesheet" href="styles.css?v=26">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -1655,6 +1655,114 @@
               <button class="ghost-button" type="button" id="simulateAlertButton">Simulate itinerary update</button>
             </div>
             <p class="small" id="alertMessage">All critical emergency announcements stay enabled for traveler safety.</p>
+            <div class="reservation-reminder-panel">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Reservation and paid excursion reminders</p>
+                  <h3>Never miss a confirmed booking</h3>
+                </div>
+                <span class="compliance-badge">Departure aware</span>
+              </div>
+              <div class="reservation-reminder-grid">
+                <article class="reservation-reminder-card featured">
+                  <span>Restaurant reservation</span>
+                  <h4>Ocean Rooftop Grill</h4>
+                  <p>Today at 7:30 PM. OpenTable confirmation OT-28491. Leave by 6:55 PM to arrive on time.</p>
+                  <ul>
+                    <li>Reminders: confirmed, 24h, 2h, 30m, time to leave</li>
+                    <li>Attending: Sarah, Mike, Alex, Jordan</li>
+                    <li>Dress code: resort casual</li>
+                  </ul>
+                  <div class="mini-action-row">
+                    <button type="button" data-reservation-action="View Reservation">View Reservation</button>
+                    <button type="button" data-reservation-action="Get Directions">Get Directions</button>
+                    <button type="button" data-reservation-action="Contact Venue">Contact Venue</button>
+                  </div>
+                </article>
+                <article class="reservation-reminder-card">
+                  <span>Paid excursion</span>
+                  <h4>Catamaran Sunset Cruise</h4>
+                  <p>Begins at 5:00 PM at Marina Dock B. Check-in closes at 4:30 PM and tickets are already paid.</p>
+                  <ul>
+                    <li>Quick actions: View Ticket, Open Itinerary, Share</li>
+                    <li>Organizer can send one-tap reminders to attendees</li>
+                    <li>AI note: bring ID, sunscreen, and closed-toe shoes</li>
+                  </ul>
+                  <div class="mini-action-row">
+                    <button type="button" data-reservation-action="View Ticket">View Ticket</button>
+                    <button type="button" data-reservation-action="Open Itinerary">Open Itinerary</button>
+                    <button type="button" data-reservation-action="Share with Trip Members">Share</button>
+                  </div>
+                </article>
+                <article class="reservation-reminder-card">
+                  <span>Cruise activity</span>
+                  <h4>Shore Excursion: Old San Juan</h4>
+                  <p>Ship time 9:15 AM. Meet at Theater Deck 4 before disembarkation. Specialty dining and shows use the same reminder engine.</p>
+                  <ul>
+                    <li>Supports shore excursions, spa, shows, dining, embarkation, and disembarkation</li>
+                    <li>Reminder recipients are limited to booked travelers</li>
+                  </ul>
+                  <div class="mini-action-row">
+                    <button type="button" data-reservation-action="View Excursion Details">View Details</button>
+                    <button type="button" data-reservation-action="Add Companion Reminder">Companion Reminder</button>
+                  </div>
+                </article>
+                <article class="reservation-reminder-card">
+                  <span>Corporate assignment</span>
+                  <h4>Leadership Workshop Transfer</h4>
+                  <p>Employees receive only their assigned meals, sessions, activities, transportation, and company-sponsored excursions.</p>
+                  <ul>
+                    <li>Company budgets and unrelated attendee details stay hidden</li>
+                    <li>Admins can send additional reminders to assigned participants</li>
+                  </ul>
+                  <div class="mini-action-row">
+                    <button type="button" data-reservation-action="Contact Organizer">Contact Organizer</button>
+                    <button type="button" data-reservation-action="Send Organizer Reminder">Send Reminder</button>
+                  </div>
+                </article>
+              </div>
+              <div class="smart-departure-card">
+                <div>
+                  <p class="eyebrow">Smart departure alert</p>
+                  <h4>Leave in 20 minutes</h4>
+                  <p id="departureAlertCopy">TravelDrip checks current location, traffic, walking time, public transportation, and ride-share estimates before sending time-to-leave alerts.</p>
+                </div>
+                <button class="primary-button" type="button" id="calculateDepartureButton">Calculate departure</button>
+              </div>
+              <div class="reservation-preferences-grid">
+                <div>
+                  <h4>Reminder timing</h4>
+                  <label><input type="checkbox" data-reminder-offset="24h" checked> 24 hours before</label>
+                  <label><input type="checkbox" data-reminder-offset="12h"> 12 hours before</label>
+                  <label><input type="checkbox" data-reminder-offset="2h" checked> 2 hours before</label>
+                  <label><input type="checkbox" data-reminder-offset="1h"> 1 hour before</label>
+                  <label><input type="checkbox" data-reminder-offset="30m" checked> 30 minutes before</label>
+                  <label><input type="checkbox" data-reminder-offset="arrival" checked> Arrival / time-to-leave alerts</label>
+                </div>
+                <div>
+                  <h4>Reminder types</h4>
+                  <label><input type="checkbox" data-reminder-type-toggle="Restaurant reservations" checked> Restaurant reservations</label>
+                  <label><input type="checkbox" data-reminder-type-toggle="Paid excursions" checked> Paid excursions and tickets</label>
+                  <label><input type="checkbox" data-reminder-type-toggle="Cruise activities" checked> Cruise activities</label>
+                  <label><input type="checkbox" data-reminder-type-toggle="Corporate assignments" checked> Corporate assigned events</label>
+                </div>
+                <div>
+                  <h4>Calendar sync</h4>
+                  <button type="button" data-calendar-provider="Apple Calendar">Apple Calendar</button>
+                  <button type="button" data-calendar-provider="Google Calendar">Google Calendar</button>
+                  <button type="button" data-calendar-provider="Outlook Calendar">Outlook Calendar</button>
+                </div>
+              </div>
+              <div class="reservation-ai-card">
+                <div>
+                  <p class="eyebrow">AI Trip Manager</p>
+                  <h4>Proactive booking guidance</h4>
+                  <p id="reservationAiCopy">Your dinner reservation is in two hours. If traffic increases, TravelDrip will recommend leaving earlier and surface gear or check-in requirements.</p>
+                </div>
+                <button class="ghost-button" type="button" id="reservationAiReviewButton">Review today</button>
+              </div>
+              <p class="small" id="reservationReminderMessage">Reservation reminders notify only assigned travelers and keep corporate financial details private.</p>
+            </div>
           </section>
 
           <section class="panel">

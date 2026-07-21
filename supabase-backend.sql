@@ -1346,3 +1346,175 @@ create policy "Users manage own daily memory items" on public.daily_memory_items
   for update to authenticated
   using (user_id = auth.uid())
   with check (user_id = auth.uid());
+
+create table if not exists public.reservation_reminder_preferences (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  trip_id uuid references public.trips(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  restaurant_reminders_enabled boolean not null default true,
+  paid_excursion_reminders_enabled boolean not null default true,
+  cruise_activity_reminders_enabled boolean not null default true,
+  corporate_assignment_reminders_enabled boolean not null default true,
+  smart_departure_alerts_enabled boolean not null default true,
+  reminder_offsets text[] not null default array['24h','2h','30m','departure']::text[],
+  arrival_only boolean not null default false,
+  calendar_sync jsonb not null default '{}'::jsonb,
+  metadata jsonb not null default '{}'::jsonb,
+  unique (trip_id, user_id)
+);
+
+drop trigger if exists set_reservation_reminder_preferences_updated_at on public.reservation_reminder_preferences;
+create trigger set_reservation_reminder_preferences_updated_at
+before update on public.reservation_reminder_preferences
+for each row execute function public.set_updated_at();
+
+create table if not exists public.reservation_records (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  trip_id uuid not null references public.trips(id) on delete cascade,
+  created_by uuid references auth.users(id) on delete set null,
+  reservation_type text not null check (reservation_type in ('restaurant','paid_excursion','cruise_activity','corporate_assignment','transportation','ticketed_event','spa','show','dining')),
+  title text not null,
+  provider_name text,
+  confirmation_number text,
+  status text not null default 'confirmed' check (status in ('draft','confirmed','updated','cancelled','completed')),
+  starts_at timestamptz not null,
+  ends_at timestamptz,
+  meeting_location text,
+  venue_name text,
+  venue_contact text,
+  address text,
+  check_in_closes_at timestamptz,
+  paid boolean not null default false,
+  cost_cents integer check (cost_cents is null or cost_cents >= 0),
+  currency text not null default 'USD',
+  reservation_source text not null default 'manual' check (reservation_source in ('manual','opentable','partner','cruise_line','corporate_admin','imported')),
+  travel_time_minutes integer check (travel_time_minutes is null or travel_time_minutes >= 0),
+  departure_at timestamptz,
+  special_instructions text,
+  metadata jsonb not null default '{}'::jsonb
+);
+
+drop trigger if exists set_reservation_records_updated_at on public.reservation_records;
+create trigger set_reservation_records_updated_at
+before update on public.reservation_records
+for each row execute function public.set_updated_at();
+
+create table if not exists public.reservation_attendees (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  reservation_id uuid not null references public.reservation_records(id) on delete cascade,
+  trip_id uuid not null references public.trips(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  attendee_role text not null default 'attendee' check (attendee_role in ('attendee','organizer','employee','finance_admin','guest')),
+  attendance_status text not null default 'assigned' check (attendance_status in ('assigned','accepted','maybe','declined','checked_in','cancelled')),
+  notification_enabled boolean not null default true,
+  assigned_by uuid references auth.users(id) on delete set null,
+  metadata jsonb not null default '{}'::jsonb,
+  unique (reservation_id, user_id)
+);
+
+create table if not exists public.reservation_reminders (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  reservation_id uuid not null references public.reservation_records(id) on delete cascade,
+  trip_id uuid not null references public.trips(id) on delete cascade,
+  user_id uuid references auth.users(id) on delete cascade,
+  reminder_type text not null check (reminder_type in ('confirmation','24h','12h','2h','1h','30m','departure','arrival')),
+  scheduled_for timestamptz not null,
+  sent_at timestamptz,
+  opened_at timestamptz,
+  status text not null default 'queued' check (status in ('queued','sent','opened','skipped','failed','disabled')),
+  channels text[] not null default array['push','in_app']::text[],
+  action_payload jsonb not null default '{}'::jsonb,
+  ai_context jsonb not null default '{}'::jsonb,
+  metadata jsonb not null default '{}'::jsonb
+);
+
+drop trigger if exists set_reservation_reminders_updated_at on public.reservation_reminders;
+create trigger set_reservation_reminders_updated_at
+before update on public.reservation_reminders
+for each row execute function public.set_updated_at();
+
+create table if not exists public.reservation_calendar_syncs (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  reservation_id uuid not null references public.reservation_records(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  provider text not null check (provider in ('apple','google','outlook')),
+  provider_event_id text,
+  sync_status text not null default 'pending' check (sync_status in ('pending','synced','updated','failed','revoked')),
+  last_synced_at timestamptz,
+  metadata jsonb not null default '{}'::jsonb,
+  unique (reservation_id, user_id, provider)
+);
+
+drop trigger if exists set_reservation_calendar_syncs_updated_at on public.reservation_calendar_syncs;
+create trigger set_reservation_calendar_syncs_updated_at
+before update on public.reservation_calendar_syncs
+for each row execute function public.set_updated_at();
+
+create index if not exists idx_reservation_reminder_preferences_user on public.reservation_reminder_preferences(user_id, trip_id);
+create index if not exists idx_reservation_records_trip_start on public.reservation_records(trip_id, starts_at);
+create index if not exists idx_reservation_records_type on public.reservation_records(reservation_type, status);
+create index if not exists idx_reservation_attendees_user on public.reservation_attendees(user_id, trip_id);
+create index if not exists idx_reservation_attendees_reservation on public.reservation_attendees(reservation_id);
+create index if not exists idx_reservation_reminders_queue on public.reservation_reminders(status, scheduled_for);
+create index if not exists idx_reservation_reminders_user on public.reservation_reminders(user_id, scheduled_for);
+create index if not exists idx_reservation_calendar_syncs_user on public.reservation_calendar_syncs(user_id, provider);
+
+alter table public.reservation_reminder_preferences enable row level security;
+alter table public.reservation_records enable row level security;
+alter table public.reservation_attendees enable row level security;
+alter table public.reservation_reminders enable row level security;
+alter table public.reservation_calendar_syncs enable row level security;
+
+drop policy if exists "Users manage own reservation reminder preferences" on public.reservation_reminder_preferences;
+create policy "Users manage own reservation reminder preferences" on public.reservation_reminder_preferences
+  for all to authenticated
+  using (user_id = auth.uid() and (trip_id is null or public.is_trip_member(trip_id)))
+  with check (user_id = auth.uid() and (trip_id is null or public.is_trip_member(trip_id)));
+
+drop policy if exists "Members read reservation records" on public.reservation_records;
+create policy "Members read reservation records" on public.reservation_records
+  for select to authenticated
+  using (public.is_trip_member(trip_id));
+
+drop policy if exists "Admins manage reservation records" on public.reservation_records;
+create policy "Admins manage reservation records" on public.reservation_records
+  for all to authenticated
+  using (public.has_trip_role(trip_id, array['owner','admin','organizer']))
+  with check (public.has_trip_role(trip_id, array['owner','admin','organizer']));
+
+drop policy if exists "Users read assigned reservation attendees" on public.reservation_attendees;
+create policy "Users read assigned reservation attendees" on public.reservation_attendees
+  for select to authenticated
+  using (user_id = auth.uid() or public.has_trip_role(trip_id, array['owner','admin','organizer']));
+
+drop policy if exists "Admins manage reservation attendees" on public.reservation_attendees;
+create policy "Admins manage reservation attendees" on public.reservation_attendees
+  for all to authenticated
+  using (public.has_trip_role(trip_id, array['owner','admin','organizer']))
+  with check (public.has_trip_role(trip_id, array['owner','admin','organizer']));
+
+drop policy if exists "Users read own reservation reminders" on public.reservation_reminders;
+create policy "Users read own reservation reminders" on public.reservation_reminders
+  for select to authenticated
+  using (user_id = auth.uid() or public.has_trip_role(trip_id, array['owner','admin','organizer']));
+
+drop policy if exists "Users update own reservation reminders" on public.reservation_reminders;
+create policy "Users update own reservation reminders" on public.reservation_reminders
+  for update to authenticated
+  using (user_id = auth.uid() or public.has_trip_role(trip_id, array['owner','admin','organizer']))
+  with check (user_id = auth.uid() or public.has_trip_role(trip_id, array['owner','admin','organizer']));
+
+drop policy if exists "Users manage own reservation calendar syncs" on public.reservation_calendar_syncs;
+create policy "Users manage own reservation calendar syncs" on public.reservation_calendar_syncs
+  for all to authenticated
+  using (user_id = auth.uid())
+  with check (user_id = auth.uid());
