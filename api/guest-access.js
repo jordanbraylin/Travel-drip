@@ -1,0 +1,815 @@
+import crypto from "node:crypto";
+import {
+  applySecurityHeaders,
+  createSupabaseAdminClient,
+  getBearerToken,
+  getRequestBody,
+  methodNotAllowed,
+  requireAuthenticatedUser,
+  requireTripRole,
+  sanitizeText,
+  writeAuditLog
+} from "./_security.js";
+
+const sessionTtlMs = 1000 * 60 * 60 * 4;
+const genericVerifyError = "We could not verify your access information. Check your details or contact your event organizer.";
+
+function getPepper() {
+  return process.env.GUEST_ACCESS_PEPPER || process.env.SUPABASE_SERVICE_ROLE_KEY || "traveldrip-local-preview";
+}
+
+function normalizeSecret(value) {
+  return String(value || "").trim().toUpperCase().replace(/\s+/g, "");
+}
+
+function hashValue(value, scope = "guest") {
+  return crypto
+    .createHash("sha256")
+    .update(`${scope}:${normalizeSecret(value)}:${getPepper()}`)
+    .digest("hex");
+}
+
+function randomCode() {
+  return `TD-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
+}
+
+function randomToken() {
+  return crypto.randomBytes(40).toString("base64url");
+}
+
+function maskIdentifier(value) {
+  const raw = String(value || "").trim();
+  const suffix = raw.slice(-4) || "0000";
+  return `••••${suffix}`;
+}
+
+function getIpHash(request) {
+  const ip = request.headers["x-forwarded-for"]?.split(",")[0]?.trim()
+    || request.socket?.remoteAddress
+    || "";
+  return ip ? hashValue(ip, "ip") : "";
+}
+
+function getDeviceInformation(request) {
+  return {
+    userAgent: sanitizeText(request.headers["user-agent"], "", 260),
+    acceptLanguage: sanitizeText(request.headers["accept-language"], "", 120)
+  };
+}
+
+async function logGuestAccess(supabase, request, event) {
+  await supabase.from("guest_access_events").insert({
+    ...event,
+    device_information: getDeviceInformation(request),
+    ip_hash: getIpHash(request)
+  });
+}
+
+async function createAccessCode(request, response, body) {
+  const { user, supabase } = await requireAuthenticatedUser(request, response);
+  if (!user || !supabase) return;
+
+  const tripId = body.tripId || body.trip_id;
+  if (!tripId) {
+    response.status(400).json({ error: "tripId is required" });
+    return;
+  }
+
+  const canManage = await requireTripRole(supabase, tripId, user.id, ["owner", "admin", "organizer", "finance_admin"]);
+  if (!canManage) {
+    response.status(403).json({ error: "Corporate access admin required" });
+    return;
+  }
+
+  const code = sanitizeText(body.code, "", 80) || randomCode();
+  const expiresAt = body.expiresAt || body.expires_at || new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString();
+  const { data, error } = await supabase
+    .from("corporate_access_codes")
+    .insert({
+      trip_id: tripId,
+      organization_id: body.organizationId || body.organization_id || null,
+      code_hash: hashValue(code, "access-code"),
+      code_hint: code.slice(-4),
+      code_type: sanitizeText(body.codeType || body.code_type, "shared_event", 40),
+      assigned_role: sanitizeText(body.assignedRole || body.assigned_role, "employee", 40),
+      assigned_attendee_id: body.assignedAttendeeId || body.assigned_attendee_id || null,
+      assigned_department: sanitizeText(body.assignedDepartment || body.assigned_department, "", 120),
+      assigned_team_id: sanitizeText(body.assignedTeamId || body.assigned_team_id, "", 120),
+      allowed_start_at: body.allowedStartAt || body.allowed_start_at || null,
+      allowed_end_at: body.allowedEndAt || body.allowed_end_at || null,
+      expires_at: expiresAt,
+      usage_limit: Math.max(0, Number(body.usageLimit || body.usage_limit || 0)),
+      requires_employee_id: body.requiresEmployeeId !== false,
+      requires_email_verification: Boolean(body.requiresEmailVerification || body.requires_email_verification),
+      requires_otp: Boolean(body.requiresOtp || body.requires_otp),
+      created_by: user.id,
+      metadata: body.metadata || {}
+    })
+    .select("id, trip_id, code_type, assigned_role, assigned_department, assigned_team_id, expires_at, usage_limit, usage_count, requires_employee_id, requires_email_verification, requires_otp, status, code_hint")
+    .single();
+
+  if (error) {
+    response.status(500).json({ error: error.message });
+    return;
+  }
+
+  await writeAuditLog(supabase, {
+    actorUserId: user.id,
+    tripId,
+    action: "guest_access_code.created",
+    entityType: "corporate_access_code",
+    entityId: data.id,
+    metadata: { codeType: data.code_type, assignedRole: data.assigned_role }
+  });
+
+  response.status(201).json({ accessCode: data, plainCode: code });
+}
+
+async function upsertAttendee(request, response, body) {
+  const { user, supabase } = await requireAuthenticatedUser(request, response);
+  if (!user || !supabase) return;
+
+  const tripId = body.tripId || body.trip_id;
+  const employeeId = sanitizeText(body.employeeId || body.employee_id || body.attendeeId || body.attendee_id, "", 120);
+  const fullName = sanitizeText(body.fullName || body.full_name, "", 180);
+  if (!tripId || !employeeId || !fullName) {
+    response.status(400).json({ error: "tripId, employeeId, and fullName are required" });
+    return;
+  }
+
+  const canManage = await requireTripRole(supabase, tripId, user.id, ["owner", "admin", "organizer", "finance_admin"]);
+  if (!canManage) {
+    response.status(403).json({ error: "Corporate attendee admin required" });
+    return;
+  }
+
+  const nameParts = fullName.split(/\s+/);
+  const lastName = sanitizeText(body.lastName || body.last_name || nameParts[nameParts.length - 1], "", 100);
+  const { data, error } = await supabase
+    .from("corporate_attendees")
+    .upsert({
+      trip_id: tripId,
+      organization_id: body.organizationId || body.organization_id || null,
+      user_id: body.userId || body.user_id || null,
+      employee_id_hash: hashValue(employeeId, "employee-id"),
+      employee_id_masked: maskIdentifier(employeeId),
+      attendee_reference: sanitizeText(body.attendeeReference || body.attendee_reference, maskIdentifier(employeeId), 120),
+      full_name: fullName,
+      last_name: lastName.toLowerCase(),
+      company_email: sanitizeText(body.companyEmail || body.company_email, "", 180).toLowerCase(),
+      department: sanitizeText(body.department, "", 120),
+      job_title: sanitizeText(body.jobTitle || body.job_title, "", 140),
+      manager_name: sanitizeText(body.managerName || body.manager_name, "", 140),
+      role: sanitizeText(body.role, "employee", 40),
+      access_status: sanitizeText(body.accessStatus || body.access_status, "active", 40),
+      accessibility_requirements: sanitizeText(body.accessibilityRequirements || body.accessibility_requirements, "", 240),
+      dietary_preferences: sanitizeText(body.dietaryPreferences || body.dietary_preferences, "", 240),
+      metadata: body.metadata || {}
+    }, { onConflict: "trip_id,employee_id_hash" })
+    .select("id, trip_id, employee_id_masked, attendee_reference, full_name, company_email, department, role, access_status")
+    .single();
+
+  if (error) {
+    response.status(500).json({ error: error.message });
+    return;
+  }
+
+  await writeAuditLog(supabase, {
+    actorUserId: user.id,
+    tripId,
+    action: "corporate_attendee.upserted",
+    entityType: "corporate_attendee",
+    entityId: data.id,
+    metadata: { role: data.role, department: data.department }
+  });
+
+  response.status(200).json({ attendee: data });
+}
+
+async function revokeAccessCode(request, response, body) {
+  const { user, supabase } = await requireAuthenticatedUser(request, response);
+  if (!user || !supabase) return;
+
+  const tripId = body.tripId || body.trip_id;
+  const accessCodeId = body.accessCodeId || body.access_code_id;
+  if (!tripId || !accessCodeId) {
+    response.status(400).json({ error: "tripId and accessCodeId are required" });
+    return;
+  }
+
+  const canManage = await requireTripRole(supabase, tripId, user.id, ["owner", "admin", "organizer", "finance_admin"]);
+  if (!canManage) {
+    response.status(403).json({ error: "Corporate access admin required" });
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("corporate_access_codes")
+    .update({ status: "revoked", revoked_at: new Date().toISOString() })
+    .eq("id", accessCodeId)
+    .eq("trip_id", tripId)
+    .select("id, status, revoked_at")
+    .single();
+
+  if (error) {
+    response.status(500).json({ error: error.message });
+    return;
+  }
+
+  await writeAuditLog(supabase, {
+    actorUserId: user.id,
+    tripId,
+    action: "guest_access_code.revoked",
+    entityType: "corporate_access_code",
+    entityId: accessCodeId
+  });
+
+  response.status(200).json({ accessCode: data });
+}
+
+async function updateAccessCode(request, response, body) {
+  const { user, supabase } = await requireAuthenticatedUser(request, response);
+  if (!user || !supabase) return;
+
+  const tripId = body.tripId || body.trip_id;
+  const accessCodeId = body.accessCodeId || body.access_code_id;
+  if (!tripId || !accessCodeId) {
+    response.status(400).json({ error: "tripId and accessCodeId are required" });
+    return;
+  }
+
+  const canManage = await requireTripRole(supabase, tripId, user.id, ["owner", "admin", "organizer", "finance_admin"]);
+  if (!canManage) {
+    response.status(403).json({ error: "Corporate access admin required" });
+    return;
+  }
+
+  const updates = { updated_at: new Date().toISOString() };
+  if (body.expiresAt || body.expires_at) updates.expires_at = body.expiresAt || body.expires_at;
+  if (body.allowedStartAt || body.allowed_start_at) updates.allowed_start_at = body.allowedStartAt || body.allowed_start_at;
+  if (body.allowedEndAt || body.allowed_end_at) updates.allowed_end_at = body.allowedEndAt || body.allowed_end_at;
+  if (body.usageLimit !== undefined || body.usage_limit !== undefined) updates.usage_limit = Math.max(0, Number(body.usageLimit ?? body.usage_limit));
+  if (body.status) updates.status = sanitizeText(body.status, "active", 40);
+  if (body.assignedRole || body.assigned_role) updates.assigned_role = sanitizeText(body.assignedRole || body.assigned_role, "employee", 40);
+  if (body.assignedDepartment || body.assigned_department) updates.assigned_department = sanitizeText(body.assignedDepartment || body.assigned_department, "", 120);
+  if (body.metadata) updates.metadata = body.metadata;
+
+  const { data, error } = await supabase
+    .from("corporate_access_codes")
+    .update(updates)
+    .eq("id", accessCodeId)
+    .eq("trip_id", tripId)
+    .select("id, trip_id, code_type, assigned_role, assigned_department, expires_at, usage_limit, usage_count, status")
+    .single();
+
+  if (error) {
+    response.status(500).json({ error: error.message });
+    return;
+  }
+
+  await writeAuditLog(supabase, {
+    actorUserId: user.id,
+    tripId,
+    action: "guest_access_code.updated",
+    entityType: "corporate_access_code",
+    entityId: accessCodeId,
+    metadata: updates
+  });
+
+  response.status(200).json({ accessCode: data });
+}
+
+async function buildGuestPortal(supabase, attendee, session) {
+  const [tripResult, flightsResult, hotelsResult, transportationResult, scheduleResult, infoResult, mediaResult] = await Promise.all([
+    supabase.from("trips").select("id, title, destination, starts_on, ends_on, trip_type").eq("id", attendee.trip_id).single(),
+    supabase.from("flights").select("airline, flight_number, departure_airport, arrival_airport, departs_at, arrives_at, status, details").eq("trip_id", attendee.trip_id).eq("user_id", attendee.user_id || "00000000-0000-0000-0000-000000000000"),
+    supabase.from("hotels").select("hotel_name, address, check_in_at, check_out_at, confirmation_number, details").eq("trip_id", attendee.trip_id).eq("id", attendee.hotel_record_id || "00000000-0000-0000-0000-000000000000"),
+    supabase.from("transportation_records").select("provider_name, transportation_type, pickup_location, dropoff_location, pickup_at, status, details").eq("trip_id", attendee.trip_id).eq("id", attendee.transportation_record_id || "00000000-0000-0000-0000-000000000000"),
+    supabase.from("schedule_items").select("title, item_type, starts_at, ends_at, location_name, location_address, details").eq("trip_id", attendee.trip_id).in("visibility", ["members", "employees", "public"]).order("starts_at", { ascending: true }).limit(30),
+    supabase.from("information_sections").select("section_type, title, body, pinned, requires_acknowledgment, version").eq("trip_id", attendee.trip_id).order("pinned", { ascending: false }).limit(30),
+    supabase.from("media").select("storage_path, media_type, caption, metadata").eq("trip_id", attendee.trip_id).eq("visibility", "members").limit(16)
+  ]);
+
+  return {
+    session: {
+      expiresAt: session.expires_at,
+      lastActivityAt: session.last_activity_at,
+      permissions: session.permissions
+    },
+    attendee: {
+      id: attendee.id,
+      attendeeReference: attendee.attendee_reference,
+      employeeIdMasked: attendee.employee_id_masked,
+      fullName: attendee.full_name,
+      department: attendee.department,
+      role: attendee.role,
+      accessStatus: attendee.access_status
+    },
+    event: tripResult.data || null,
+    myTravel: {
+      flights: flightsResult.data || [],
+      hotels: hotelsResult.data || [],
+      transportation: transportationResult.data || []
+    },
+    myEvent: {
+      schedule: scheduleResult.data || []
+    },
+    importantInformation: infoResult.data || [],
+    sharedPhotos: mediaResult.data || []
+  };
+}
+
+async function verifyGuest(request, response, body) {
+  const { client: supabase, error: configError } = createSupabaseAdminClient();
+  if (configError) {
+    response.status(503).json({ error: configError });
+    return;
+  }
+
+  const accessCode = sanitizeText(body.accessCode || body.access_code, "", 100);
+  const employeeId = sanitizeText(body.employeeId || body.employee_id || body.attendeeId || body.attendee_id, "", 120);
+  const lastName = sanitizeText(body.lastName || body.last_name, "", 100).toLowerCase();
+  const companyEmail = sanitizeText(body.companyEmail || body.company_email, "", 180).toLowerCase();
+
+  if (!accessCode || !employeeId || !lastName) {
+    response.status(400).json({ error: genericVerifyError });
+    return;
+  }
+
+  const { data: code } = await supabase
+    .from("corporate_access_codes")
+    .select("*")
+    .eq("code_hash", hashValue(accessCode, "access-code"))
+    .maybeSingle();
+
+  const now = new Date();
+  const codeBlocked = !code
+    || code.status !== "active"
+    || new Date(code.expires_at) <= now
+    || (code.allowed_start_at && new Date(code.allowed_start_at) > now)
+    || (code.allowed_end_at && new Date(code.allowed_end_at) < now)
+    || (code.usage_limit > 0 && code.usage_count >= code.usage_limit);
+
+  if (codeBlocked) {
+    await logGuestAccess(supabase, request, {
+      trip_id: code?.trip_id || null,
+      organization_id: code?.organization_id || null,
+      access_code_id: code?.id || null,
+      action: "guest.verify",
+      result: code?.status === "revoked" ? "revoked" : "failed",
+      risk_status: "watch",
+      metadata: { reason: "code_not_active" }
+    });
+    response.status(401).json({ error: genericVerifyError });
+    return;
+  }
+
+  const { data: attendee } = await supabase
+    .from("corporate_attendees")
+    .select("*")
+    .eq("trip_id", code.trip_id)
+    .eq("employee_id_hash", hashValue(employeeId, "employee-id"))
+    .maybeSingle();
+
+  const emailRequired = Boolean(code.requires_email_verification);
+  const attendeeMatches = attendee
+    && attendee.access_status === "active"
+    && attendee.last_name === lastName
+    && (!emailRequired || attendee.company_email === companyEmail)
+    && (!code.assigned_attendee_id || code.assigned_attendee_id === attendee.id);
+
+  if (!attendeeMatches) {
+    await logGuestAccess(supabase, request, {
+      trip_id: code.trip_id,
+      organization_id: code.organization_id,
+      access_code_id: code.id,
+      attendee_id: attendee?.id || null,
+      action: "guest.verify",
+      result: "failed",
+      risk_status: "watch",
+      metadata: { reason: "attendee_not_verified" }
+    });
+    response.status(401).json({ error: genericVerifyError });
+    return;
+  }
+
+  const token = randomToken();
+  const expiresAt = new Date(Date.now() + sessionTtlMs).toISOString();
+  const permissions = {
+    viewPersonalTravel: true,
+    viewSchedule: true,
+    viewAnnouncements: true,
+    viewApprovedPhotos: true,
+    downloadApprovedDocuments: true,
+    completeAcknowledgments: true,
+    viewBudgets: false,
+    approveExpenses: false,
+    inviteAttendees: false
+  };
+
+  const { data: session, error: sessionError } = await supabase
+    .from("guest_sessions")
+    .insert({
+      attendee_id: attendee.id,
+      trip_id: attendee.trip_id,
+      access_code_id: code.id,
+      session_token_hash: hashValue(token, "guest-session"),
+      device_information: getDeviceInformation(request),
+      ip_address: null,
+      created_at_ip_hash: getIpHash(request),
+      expires_at: expiresAt,
+      permissions
+    })
+    .select("*")
+    .single();
+
+  if (sessionError) {
+    response.status(500).json({ error: sessionError.message });
+    return;
+  }
+
+  await supabase
+    .from("corporate_access_codes")
+    .update({ usage_count: code.usage_count + 1 })
+    .eq("id", code.id);
+
+  await logGuestAccess(supabase, request, {
+    trip_id: code.trip_id,
+    organization_id: code.organization_id,
+    access_code_id: code.id,
+    attendee_id: attendee.id,
+    guest_session_id: session.id,
+    action: "guest.verify",
+    result: "success",
+    risk_status: "normal",
+    metadata: { role: attendee.role, department: attendee.department }
+  });
+
+  const portal = await buildGuestPortal(supabase, attendee, session);
+  response.status(200).json({ guestSessionToken: token, portal });
+}
+
+async function getGuestPortal(request, response) {
+  const { client: supabase, error: configError } = createSupabaseAdminClient();
+  if (configError) {
+    response.status(503).json({ error: configError });
+    return;
+  }
+
+  const token = getBearerToken(request);
+  if (!token) {
+    response.status(401).json({ error: "Guest session required" });
+    return;
+  }
+
+  const { data: session } = await supabase
+    .from("guest_sessions")
+    .select("*, corporate_attendees(*)")
+    .eq("session_token_hash", hashValue(token, "guest-session"))
+    .maybeSingle();
+
+  if (!session || session.status !== "active" || new Date(session.expires_at) <= new Date() || session.revoked_at) {
+    response.status(401).json({ error: "Guest session expired. Please reverify your identity." });
+    return;
+  }
+
+  await supabase
+    .from("guest_sessions")
+    .update({ last_activity_at: new Date().toISOString() })
+    .eq("id", session.id);
+
+  await logGuestAccess(supabase, request, {
+    trip_id: session.trip_id,
+    attendee_id: session.attendee_id,
+    access_code_id: session.access_code_id,
+    guest_session_id: session.id,
+    action: "guest.portal.viewed",
+    result: "success",
+    risk_status: "normal"
+  });
+
+  const portal = await buildGuestPortal(supabase, session.corporate_attendees, session);
+  response.status(200).json({ portal });
+}
+
+async function endGuestSession(request, response, body) {
+  const { client: supabase, error: configError } = createSupabaseAdminClient();
+  if (configError) {
+    response.status(503).json({ error: configError });
+    return;
+  }
+
+  const token = getBearerToken(request) || body.guestSessionToken || body.guest_session_token;
+  if (!token) {
+    response.status(401).json({ error: "Guest session required" });
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("guest_sessions")
+    .update({
+      status: "ended",
+      revoked_at: new Date().toISOString()
+    })
+    .eq("session_token_hash", hashValue(token, "guest-session"))
+    .select("id, trip_id, attendee_id, access_code_id")
+    .maybeSingle();
+
+  if (error) {
+    response.status(500).json({ error: error.message });
+    return;
+  }
+
+  if (data) {
+    await logGuestAccess(supabase, request, {
+      trip_id: data.trip_id,
+      attendee_id: data.attendee_id,
+      access_code_id: data.access_code_id,
+      guest_session_id: data.id,
+      action: "guest.session.ended",
+      result: "success",
+      risk_status: "normal"
+    });
+  }
+
+  response.status(200).json({ ok: true });
+}
+
+async function refreshGuestSession(request, response, body) {
+  const { client: supabase, error: configError } = createSupabaseAdminClient();
+  if (configError) {
+    response.status(503).json({ error: configError });
+    return;
+  }
+
+  const token = getBearerToken(request) || body.guestSessionToken || body.guest_session_token;
+  if (!token) {
+    response.status(401).json({ error: "Guest session required" });
+    return;
+  }
+
+  const expiresAt = new Date(Date.now() + sessionTtlMs).toISOString();
+  const { data, error } = await supabase
+    .from("guest_sessions")
+    .update({
+      expires_at: expiresAt,
+      last_activity_at: new Date().toISOString()
+    })
+    .eq("session_token_hash", hashValue(token, "guest-session"))
+    .eq("status", "active")
+    .select("id, trip_id, attendee_id, access_code_id, expires_at")
+    .maybeSingle();
+
+  if (error) {
+    response.status(500).json({ error: error.message });
+    return;
+  }
+
+  if (!data) {
+    response.status(401).json({ error: "Guest session expired. Please reverify your identity." });
+    return;
+  }
+
+  await logGuestAccess(supabase, request, {
+    trip_id: data.trip_id,
+    attendee_id: data.attendee_id,
+    access_code_id: data.access_code_id,
+    guest_session_id: data.id,
+    action: "guest.session.refreshed",
+    result: "success",
+    risk_status: "normal"
+  });
+
+  response.status(200).json({ expiresAt: data.expires_at });
+}
+
+async function submitGuestAcknowledgment(request, response, body) {
+  const { client: supabase, error: configError } = createSupabaseAdminClient();
+  if (configError) {
+    response.status(503).json({ error: configError });
+    return;
+  }
+
+  const token = getBearerToken(request) || body.guestSessionToken || body.guest_session_token;
+  const informationSectionId = body.informationSectionId || body.information_section_id;
+  const version = Math.max(1, Number(body.version || 1));
+  if (!token || !informationSectionId) {
+    response.status(400).json({ error: "Guest session and informationSectionId are required" });
+    return;
+  }
+
+  const { data: session } = await supabase
+    .from("guest_sessions")
+    .select("id, trip_id, attendee_id, status, expires_at, corporate_attendees(user_id)")
+    .eq("session_token_hash", hashValue(token, "guest-session"))
+    .maybeSingle();
+
+  if (!session || session.status !== "active" || new Date(session.expires_at) <= new Date()) {
+    response.status(401).json({ error: "Guest session expired. Please reverify your identity." });
+    return;
+  }
+
+  const userId = session.corporate_attendees?.user_id;
+  if (!userId) {
+    response.status(409).json({ error: "A full account is required to permanently attach this acknowledgment." });
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("acknowledgments")
+    .upsert({
+      information_section_id: informationSectionId,
+      user_id: userId,
+      version
+    }, { onConflict: "information_section_id,user_id,version" })
+    .select("*")
+    .single();
+
+  if (error) {
+    response.status(500).json({ error: error.message });
+    return;
+  }
+
+  await logGuestAccess(supabase, request, {
+    trip_id: session.trip_id,
+    attendee_id: session.attendee_id,
+    guest_session_id: session.id,
+    action: "guest.acknowledgment.submitted",
+    result: "success",
+    risk_status: "normal",
+    metadata: { informationSectionId, version }
+  });
+
+  response.status(200).json({ acknowledgment: data });
+}
+
+async function queueGuestOtp(request, response, body) {
+  const { client: supabase, error: configError } = createSupabaseAdminClient();
+  if (configError) {
+    response.status(503).json({ error: configError });
+    return;
+  }
+
+  const accessCode = sanitizeText(body.accessCode || body.access_code, "", 100);
+  const companyEmail = sanitizeText(body.companyEmail || body.company_email, "", 180).toLowerCase();
+  if (!accessCode || !companyEmail) {
+    response.status(400).json({ error: "Access code and company email are required" });
+    return;
+  }
+
+  const { data: code } = await supabase
+    .from("corporate_access_codes")
+    .select("id, trip_id, organization_id, status")
+    .eq("code_hash", hashValue(accessCode, "access-code"))
+    .maybeSingle();
+
+  if (code?.status === "active") {
+    await supabase.from("background_jobs").insert({
+      job_type: "guest_access_otp",
+      payload: {
+        tripId: code.trip_id,
+        accessCodeId: code.id,
+        companyEmailHash: hashValue(companyEmail, "email")
+      }
+    });
+  }
+
+  await logGuestAccess(supabase, request, {
+    trip_id: code?.trip_id || null,
+    organization_id: code?.organization_id || null,
+    access_code_id: code?.id || null,
+    action: "guest.otp.requested",
+    result: "success",
+    risk_status: "normal"
+  });
+
+  response.status(202).json({ ok: true, message: "If your information matches, a verification code will be sent." });
+}
+
+async function upgradeGuestToAccount(request, response, body) {
+  const accountToken = sanitizeText(body.accountAccessToken || body.account_access_token, "", 1200);
+  const guestToken = getBearerToken(request) || body.guestSessionToken || body.guest_session_token;
+  if (!accountToken || !guestToken) {
+    response.status(400).json({ error: "accountAccessToken and guest session are required" });
+    return;
+  }
+
+  const { client: supabase, error: configError } = createSupabaseAdminClient();
+  if (configError) {
+    response.status(503).json({ error: configError });
+    return;
+  }
+
+  const { data: userData, error: userError } = await supabase.auth.getUser(accountToken);
+  if (userError || !userData.user) {
+    response.status(401).json({ error: "Authenticated account required" });
+    return;
+  }
+
+  const { data: session } = await supabase
+    .from("guest_sessions")
+    .select("id, trip_id, attendee_id, status, expires_at")
+    .eq("session_token_hash", hashValue(guestToken, "guest-session"))
+    .maybeSingle();
+
+  if (!session || session.status !== "active" || new Date(session.expires_at) <= new Date()) {
+    response.status(401).json({ error: "Guest session expired. Please reverify your identity." });
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("corporate_attendees")
+    .update({
+      user_id: userData.user.id,
+      access_status: "upgraded"
+    })
+    .eq("id", session.attendee_id)
+    .select("id, trip_id, user_id, full_name, access_status")
+    .single();
+
+  if (error) {
+    response.status(500).json({ error: error.message });
+    return;
+  }
+
+  await supabase.from("guest_sessions").update({ status: "ended", revoked_at: new Date().toISOString() }).eq("id", session.id);
+  await logGuestAccess(supabase, request, {
+    trip_id: session.trip_id,
+    attendee_id: session.attendee_id,
+    guest_session_id: session.id,
+    action: "guest.account.upgraded",
+    result: "success",
+    risk_status: "normal"
+  });
+
+  response.status(200).json({ attendee: data });
+}
+
+export default async function handler(request, response) {
+  applySecurityHeaders(response);
+
+  if (!["GET", "POST", "PATCH", "DELETE"].includes(request.method)) {
+    methodNotAllowed(response, "GET, POST, PATCH, DELETE");
+    return;
+  }
+
+  const body = getRequestBody(request);
+  const action = sanitizeText(body.action || new URL(request.url, "https://traveldrip.local").searchParams.get("action"), "", 80);
+
+  if (request.method === "GET") {
+    await getGuestPortal(request, response);
+    return;
+  }
+
+  if (request.method === "DELETE" || action === "end-session") {
+    await endGuestSession(request, response, body);
+    return;
+  }
+
+  if (action === "create-code") {
+    await createAccessCode(request, response, body);
+    return;
+  }
+
+  if (action === "update-code") {
+    await updateAccessCode(request, response, body);
+    return;
+  }
+
+  if (action === "upsert-attendee") {
+    await upsertAttendee(request, response, body);
+    return;
+  }
+
+  if (action === "revoke-code") {
+    await revokeAccessCode(request, response, body);
+    return;
+  }
+
+  if (action === "refresh-session") {
+    await refreshGuestSession(request, response, body);
+    return;
+  }
+
+  if (action === "submit-acknowledgment") {
+    await submitGuestAcknowledgment(request, response, body);
+    return;
+  }
+
+  if (action === "send-otp") {
+    await queueGuestOtp(request, response, body);
+    return;
+  }
+
+  if (action === "upgrade-account") {
+    await upgradeGuestToAccount(request, response, body);
+    return;
+  }
+
+  if (action === "verify") {
+    await verifyGuest(request, response, body);
+    return;
+  }
+
+  response.status(400).json({ error: "Unsupported guest access action" });
+}

@@ -30,6 +30,20 @@ For local static preview login, paste only the browser-safe publishable key into
 
 See `BACKEND_ARCHITECTURE.md` for the full backend table, API, RLS, audit, and production integration notes.
 
+## Corporate guest access portal
+
+TravelDrip now includes a Corporate Guest Portal entry from the login screen for invited employees, contractors, speakers, vendors, and event attendees. The production API is `/api/guest-access`.
+
+For Supabase/Vercel production use:
+
+1. Run `supabase-backend.sql`.
+2. Add `GUEST_ACCESS_PEPPER` in Vercel as a long random server-only value.
+3. Use `/api/guest-access` with authenticated admin actions to create access codes and attendee records.
+4. Guests verify with company/event code plus employee or attendee ID and last name.
+5. Guest sessions are temporary, audited, and expose only approved personal travel, schedule, information, and media records.
+
+Do not store raw access codes or employee IDs in browser storage, logs, analytics, or public files.
+
 ## Push notification setup
 
 1. Generate VAPID keys with `npx web-push generate-vapid-keys`.

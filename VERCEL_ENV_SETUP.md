@@ -38,6 +38,7 @@ The live-login fields should show:
 SUPABASE_URL=https://bfuiqmmbsgfcnyeneunv.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY
 SUPABASE_ADMIN_EMAILS=you@example.com
+GUEST_ACCESS_PEPPER=PASTE_A_LONG_RANDOM_SERVER_ONLY_SECRET
 ```
 
 ## Required for push notifications
@@ -62,6 +63,7 @@ vercel env add NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY production
 vercel env add SUPABASE_URL production
 vercel env add SUPABASE_SERVICE_ROLE_KEY production
 vercel env add SUPABASE_ADMIN_EMAILS production
+vercel env add GUEST_ACCESS_PEPPER production
 vercel env add VAPID_SUBJECT production
 vercel env add VAPID_PUBLIC_KEY production
 vercel env add VAPID_PRIVATE_KEY production
@@ -70,4 +72,4 @@ vercel --prod
 
 Repeat with `preview` and `development` if needed.
 
-Never commit real values for `SUPABASE_SERVICE_ROLE_KEY` or `VAPID_PRIVATE_KEY`.
+Never commit real values for `SUPABASE_SERVICE_ROLE_KEY`, `GUEST_ACCESS_PEPPER`, or `VAPID_PRIVATE_KEY`.

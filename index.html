@@ -146,6 +146,7 @@
             <div class="auth-switch" role="tablist" aria-label="Account access">
               <button class="active" type="button" id="formLoginButton" role="tab" aria-controls="authForm" aria-selected="true">Sign in</button>
               <button type="button" id="formSignupButton" role="tab" aria-controls="signupForm" aria-selected="false">Sign Up</button>
+              <button type="button" id="formGuestButton" role="tab" aria-controls="guestAccessForm" aria-selected="false">Company Event</button>
             </div>
             <form class="auth-form" id="authForm">
               <label>Email address<input id="emailInput" type="email" autocomplete="email" placeholder="you@example.com" required></label>
@@ -175,6 +176,41 @@
               <label class="auth-check"><input id="privacyAgreeInput" type="checkbox" required> I agree to the <button type="button" data-auth-workflow="Privacy Policy">Privacy Policy</button></label>
               <button class="primary-button" type="submit">Create account</button>
             </form>
+            <form class="auth-form guest-access-form" id="guestAccessForm" hidden>
+              <div class="guest-access-heading">
+                <span>Corporate Guest Portal</span>
+                <strong>Access a Company Event</strong>
+                <small>No password required. Your event code and employee ID are verified server-side.</small>
+              </div>
+              <label>Company or event access code<input id="guestAccessCodeInput" type="text" autocomplete="one-time-code" placeholder="TEAMMIAMI27" required></label>
+              <label>Employee ID or attendee ID<input id="guestEmployeeIdInput" type="text" autocomplete="off" placeholder="Employee or attendee ID" required></label>
+              <label>Last name<input id="guestLastNameInput" type="text" autocomplete="family-name" placeholder="Last name" required></label>
+              <label>Company email, if required<input id="guestCompanyEmailInput" type="email" autocomplete="email" placeholder="name@company.com"></label>
+              <button class="primary-button" type="submit">Continue</button>
+              <div class="guest-access-actions">
+                <button type="button" id="guestHelpButton">Request Help</button>
+                <button type="button" id="guestReturnLoginButton">Return to Sign In</button>
+                <button type="button" id="guestCreateAccountButton">Create a Full Account</button>
+              </div>
+            </form>
+            <section class="guest-portal-panel" id="guestPortalPanel" hidden>
+              <div>
+                <span>Verified guest session</span>
+                <strong id="guestPortalTitle">Leadership Retreat</strong>
+                <small id="guestPortalMeta">Session expires automatically after inactivity.</small>
+              </div>
+              <div class="guest-portal-grid">
+                <article><span>My Travel</span><strong id="guestTravelSummary">Flight, hotel, and transportation details unlocked.</strong></article>
+                <article><span>My Event</span><strong id="guestEventSummary">Personal schedule, sessions, meals, and meeting points.</strong></article>
+                <article><span>Important Information</span><strong id="guestInfoSummary">Rules, policies, emergency contacts, and acknowledgments.</strong></article>
+                <article><span>Shared Photos</span><strong id="guestPhotoSummary">Only approved event media is visible.</strong></article>
+              </div>
+              <div class="guest-access-actions">
+                <button type="button" id="guestReverifyButton">Reverify Identity</button>
+                <button type="button" id="guestLogoutButton">Log Out</button>
+                <button type="button" id="guestReportButton">Report Unauthorized Access</button>
+              </div>
+            </section>
             <section class="verification-panel" id="verificationPanel" hidden>
               <strong>Email verification sent</strong>
               <span>Check your inbox, verify your email, then continue to onboarding.</span>

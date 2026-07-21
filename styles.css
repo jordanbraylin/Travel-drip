@@ -661,7 +661,7 @@ body.auth-screen main {
 
 .auth-switch {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
   padding: 4px;
   border: 1px solid var(--line);
@@ -682,6 +682,86 @@ body.auth-screen main {
   background: #fff;
   color: var(--ink);
   box-shadow: 0 8px 22px rgba(25, 47, 56, 0.1);
+}
+
+.guest-access-heading,
+.guest-portal-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.guest-access-heading {
+  padding: 12px;
+  border: 1px solid rgba(0, 172, 176, 0.24);
+  border-radius: 8px;
+  background: #eefbfa;
+}
+
+.guest-access-heading span,
+.guest-portal-panel span {
+  color: var(--sea);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.guest-access-heading strong,
+.guest-portal-panel strong {
+  color: var(--ink);
+}
+
+.guest-access-heading small,
+.guest-portal-panel small {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.guest-access-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.guest-access-actions button {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.guest-portal-panel {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfb;
+}
+
+.guest-portal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.guest-portal-grid article {
+  min-height: 98px;
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+}
+
+.guest-portal-grid strong {
+  font-size: 13px;
+  line-height: 1.35;
 }
 
 .auth-support-actions {
@@ -4003,6 +4083,7 @@ code {
   .invitation-form-grid,
   .invite-checkbox-grid,
   .rsvp-status-grid,
+  .guest-portal-grid,
   .solo-dashboard-grid,
   .solo-workspace,
   .solo-budget-list,

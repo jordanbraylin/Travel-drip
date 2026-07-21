@@ -855,3 +855,155 @@ create policy "Admins read audit logs" on public.audit_logs
 drop policy if exists "Users manage saved places" on public.saved_places;
 create policy "Users manage saved places" on public.saved_places
   for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+create table if not exists public.corporate_access_codes (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  organization_id uuid references public.organizations(id) on delete cascade,
+  trip_id uuid not null references public.trips(id) on delete cascade,
+  code_hash text not null unique,
+  code_hint text,
+  code_type text not null default 'shared_event' check (code_type in ('shared_event','individual','department','team','vip','vendor','speaker')),
+  assigned_role text not null default 'employee' check (assigned_role in ('employee','contractor','speaker','vendor','vip','guest')),
+  assigned_attendee_id uuid,
+  assigned_department text,
+  assigned_team_id text,
+  allowed_start_at timestamptz,
+  allowed_end_at timestamptz,
+  expires_at timestamptz not null,
+  usage_limit integer not null default 0 check (usage_limit >= 0),
+  usage_count integer not null default 0 check (usage_count >= 0),
+  requires_employee_id boolean not null default true,
+  requires_email_verification boolean not null default false,
+  requires_otp boolean not null default false,
+  status text not null default 'active' check (status in ('active','expired','revoked','usage_limit_reached','locked')),
+  created_by uuid references auth.users(id) on delete set null,
+  revoked_at timestamptz,
+  metadata jsonb not null default '{}'::jsonb
+);
+
+drop trigger if exists set_corporate_access_codes_updated_at on public.corporate_access_codes;
+create trigger set_corporate_access_codes_updated_at
+before update on public.corporate_access_codes
+for each row execute function public.set_updated_at();
+
+create table if not exists public.corporate_attendees (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  organization_id uuid references public.organizations(id) on delete cascade,
+  trip_id uuid not null references public.trips(id) on delete cascade,
+  user_id uuid references auth.users(id) on delete set null,
+  employee_id_hash text not null,
+  employee_id_masked text not null,
+  attendee_reference text not null,
+  full_name text not null,
+  last_name text not null,
+  company_email text,
+  department text,
+  job_title text,
+  manager_name text,
+  role text not null default 'employee' check (role in ('employee','contractor','speaker','vendor','vip','guest')),
+  access_status text not null default 'active' check (access_status in ('active','locked','revoked','pending','upgraded')),
+  travel_record_id uuid,
+  hotel_record_id uuid,
+  transportation_record_id uuid,
+  schedule_assignment_id uuid,
+  accessibility_requirements text,
+  dietary_preferences text,
+  metadata jsonb not null default '{}'::jsonb,
+  unique (trip_id, employee_id_hash)
+);
+
+drop trigger if exists set_corporate_attendees_updated_at on public.corporate_attendees;
+create trigger set_corporate_attendees_updated_at
+before update on public.corporate_attendees
+for each row execute function public.set_updated_at();
+
+alter table public.corporate_access_codes
+  drop constraint if exists corporate_access_codes_assigned_attendee_fk;
+alter table public.corporate_access_codes
+  add constraint corporate_access_codes_assigned_attendee_fk
+  foreign key (assigned_attendee_id) references public.corporate_attendees(id) on delete set null;
+
+create table if not exists public.guest_sessions (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  attendee_id uuid not null references public.corporate_attendees(id) on delete cascade,
+  trip_id uuid not null references public.trips(id) on delete cascade,
+  access_code_id uuid references public.corporate_access_codes(id) on delete set null,
+  session_token_hash text not null unique,
+  device_information jsonb not null default '{}'::jsonb,
+  ip_address inet,
+  created_at_ip_hash text,
+  expires_at timestamptz not null,
+  last_activity_at timestamptz not null default now(),
+  revoked_at timestamptz,
+  status text not null default 'active' check (status in ('active','expired','revoked','ended','locked')),
+  permissions jsonb not null default '{}'::jsonb
+);
+
+drop trigger if exists set_guest_sessions_updated_at on public.guest_sessions;
+create trigger set_guest_sessions_updated_at
+before update on public.guest_sessions
+for each row execute function public.set_updated_at();
+
+create table if not exists public.guest_access_events (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  organization_id uuid references public.organizations(id) on delete set null,
+  trip_id uuid references public.trips(id) on delete set null,
+  attendee_id uuid references public.corporate_attendees(id) on delete set null,
+  access_code_id uuid references public.corporate_access_codes(id) on delete set null,
+  guest_session_id uuid references public.guest_sessions(id) on delete set null,
+  action text not null,
+  result text not null check (result in ('success','failed','blocked','revoked','expired')),
+  risk_status text not null default 'normal' check (risk_status in ('normal','watch','suspicious','locked')),
+  device_information jsonb not null default '{}'::jsonb,
+  ip_hash text,
+  metadata jsonb not null default '{}'::jsonb
+);
+
+create index if not exists idx_corporate_access_codes_trip on public.corporate_access_codes(trip_id, status);
+create index if not exists idx_corporate_access_codes_hash on public.corporate_access_codes(code_hash);
+create index if not exists idx_corporate_attendees_trip_hash on public.corporate_attendees(trip_id, employee_id_hash);
+create index if not exists idx_guest_sessions_hash on public.guest_sessions(session_token_hash);
+create index if not exists idx_guest_sessions_attendee on public.guest_sessions(attendee_id, status);
+create index if not exists idx_guest_access_events_trip on public.guest_access_events(trip_id, created_at desc);
+
+alter table public.corporate_access_codes enable row level security;
+alter table public.corporate_attendees enable row level security;
+alter table public.guest_sessions enable row level security;
+alter table public.guest_access_events enable row level security;
+
+drop policy if exists "Corporate admins manage access codes" on public.corporate_access_codes;
+create policy "Corporate admins manage access codes" on public.corporate_access_codes
+  for all to authenticated
+  using (public.has_trip_role(trip_id, array['owner','admin','organizer','finance_admin']))
+  with check (public.has_trip_role(trip_id, array['owner','admin','organizer','finance_admin']));
+
+drop policy if exists "Corporate admins manage attendee records" on public.corporate_attendees;
+create policy "Corporate admins manage attendee records" on public.corporate_attendees
+  for all to authenticated
+  using (public.has_trip_role(trip_id, array['owner','admin','organizer','finance_admin']))
+  with check (public.has_trip_role(trip_id, array['owner','admin','organizer','finance_admin']));
+
+drop policy if exists "Linked users can read own attendee record" on public.corporate_attendees;
+create policy "Linked users can read own attendee record" on public.corporate_attendees
+  for select to authenticated
+  using (user_id = auth.uid() or public.has_trip_role(trip_id, array['owner','admin','organizer','finance_admin']));
+
+drop policy if exists "Corporate admins read guest sessions" on public.guest_sessions;
+create policy "Corporate admins read guest sessions" on public.guest_sessions
+  for select to authenticated
+  using (public.has_trip_role(trip_id, array['owner','admin','organizer','finance_admin']));
+
+drop policy if exists "Corporate admins read guest access events" on public.guest_access_events;
+create policy "Corporate admins read guest access events" on public.guest_access_events
+  for select to authenticated
+  using (
+    (trip_id is not null and public.has_trip_role(trip_id, array['owner','admin','organizer','finance_admin']))
+    or (organization_id is not null and public.is_org_member(organization_id, array['owner','admin','finance_admin']))
+  );

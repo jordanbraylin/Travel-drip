@@ -16,6 +16,7 @@ The backend schema adds:
 - Unified trip/event records for solo trips, group trips, corporate retreats, weddings, birthdays, family reunions, bachelor/bachelorette trips, anniversaries, conferences, business events, and custom special events
 - Trip membership, roles, feature flags, and enabled modules
 - Invitations with secure tokens, RSVP tracking, and guest registration support
+- Corporate guest access codes, employee/attendee ID verification, temporary guest sessions, and guest access audit events
 - Schedule, flights, hotels, transportation, ride-share connections, chat, polls, and votes
 - Wallets, group banks, wallet transactions, receipt scanning records, item claims, ride split participants, and refund-ready audit data
 - Important information, acknowledgments, documents, media, social connections, AI sessions, notifications, background jobs, saved places, and audit logs
@@ -44,6 +45,9 @@ New Vercel API routes:
 - `GET|POST|PATCH|DELETE /api/schedule` manages itinerary and event schedule items.
 - `GET /api/explore` returns category-specific Explore results with working action URLs and empty states.
 - `GET /api/audit?tripId=...` returns audit logs for owner/admin/organizer/finance roles.
+- `POST /api/guest-access` supports `create-code`, `update-code`, `upsert-attendee`, `revoke-code`, public `verify`, `refresh-session`, `submit-acknowledgment`, `send-otp`, and `upgrade-account` actions.
+- `GET /api/guest-access` returns the verified Corporate Guest Portal for a temporary guest session token.
+- `DELETE /api/guest-access` ends a temporary guest session.
 
 ## Environment Variables
 
@@ -54,9 +58,10 @@ NEXT_PUBLIC_SUPABASE_URL=https://bfuiqmmbsgfcnyeneunv.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-browser-safe-publishable-key
 SUPABASE_SERVICE_ROLE_KEY=your-server-only-service-role-key
 SUPABASE_ADMIN_EMAILS=admin@example.com
+GUEST_ACCESS_PEPPER=long-random-server-only-secret
 ```
 
-Do not place `SUPABASE_SERVICE_ROLE_KEY`, payment secrets, OAuth client secrets, VAPID private keys, or provider refresh tokens in `public-config.js`, static HTML, or client JavaScript.
+Do not place `SUPABASE_SERVICE_ROLE_KEY`, `GUEST_ACCESS_PEPPER`, payment secrets, OAuth client secrets, VAPID private keys, or provider refresh tokens in `public-config.js`, static HTML, or client JavaScript.
 
 ## Production Integrations Still Needed
 
@@ -68,5 +73,6 @@ The backend has the tables, permission model, and API foundation for production.
 - Email/SMS delivery provider
 - Ride-share OAuth and receipt import providers
 - Scheduled job runner for reminders, invite expiry, refunds, travel alerts, and notification retries
+- Email/OTP delivery for high-risk guest access verification
 
 Payment card data, raw OAuth passwords, CVV values, and private keys should never be stored in Supabase tables or frontend files.

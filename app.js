@@ -4,6 +4,7 @@ const state = {
   pendingWalletPayment: null,
   pendingSecureAction: null,
   authMode: "signin",
+  guestSessionToken: sessionStorage.getItem("traveldripGuestSessionToken") || "",
   isAdmin: false,
   adminStatusCheckedFor: "",
   hasEnteredApp: sessionStorage.getItem("traveldripEnteredApp") === "true",
@@ -1178,11 +1179,13 @@ function updateAdminUi() {
 }
 
 function getAuthRoute(mode) {
+  if (mode === "guest") return isFilePreview ? "#company-event" : "/login#company-event";
   if (isFilePreview) return mode === "signup" ? "#register" : "#login";
   return mode === "signup" ? "/register" : "/login";
 }
 
 function getInitialAuthMode() {
+  if (location.hash === "#company-event") return "guest";
   if (location.hash === "#register" || location.pathname === "/register" || location.pathname.endsWith("/register.html")) return "signup";
   if (location.hash === "#login" || location.pathname === "/login" || location.pathname.endsWith("/login.html")) return "signin";
   return "";
@@ -1192,19 +1195,22 @@ function setAuthMode(mode, scrollIntoView = false) {
   if (location.pathname === "/admin.html") return;
 
   const isSignup = mode === "signup";
+  const isGuest = mode === "guest";
   const authPanel = $("#authPanel");
   const loginForm = $("#authForm");
   const signupForm = $("#signupForm");
+  const guestForm = $("#guestAccessForm");
   const showLoginButton = $("#showLoginButton");
   const showSignupButton = $("#showSignupButton");
   const formLoginButton = $("#formLoginButton");
   const formSignupButton = $("#formSignupButton");
+  const formGuestButton = $("#formGuestButton");
   const authTitle = $("#authTitle");
   const authCopy = $("#authCopy");
   const authMessage = $("#authMessage");
   const bottomCopy = $("#authBottomCopy");
 
-  state.authMode = isSignup ? "signup" : "signin";
+  state.authMode = isGuest ? "guest" : isSignup ? "signup" : "signin";
   state.hasEnteredApp = false;
   sessionStorage.removeItem("traveldripEnteredApp");
   document.body.classList.add("auth-screen");
@@ -1212,37 +1218,55 @@ function setAuthMode(mode, scrollIntoView = false) {
     authPanel.hidden = false;
     authPanel.classList.add("show-form");
   }
-  if (loginForm) loginForm.hidden = isSignup;
+  if (loginForm) loginForm.hidden = isSignup || isGuest;
   if (signupForm) signupForm.hidden = !isSignup;
+  if (guestForm) guestForm.hidden = !isGuest;
+  if ($("#guestPortalPanel")) $("#guestPortalPanel").hidden = true;
   if ($("#verificationPanel")) $("#verificationPanel").hidden = true;
   if ($("#authOnboardingPanel")) $("#authOnboardingPanel").hidden = true;
 
-  showLoginButton?.classList.toggle("active", !isSignup);
+  showLoginButton?.classList.toggle("active", !isSignup && !isGuest);
   showSignupButton?.classList.toggle("active", isSignup);
-  formLoginButton?.classList.toggle("active", !isSignup);
+  formLoginButton?.classList.toggle("active", !isSignup && !isGuest);
   formSignupButton?.classList.toggle("active", isSignup);
-  showLoginButton?.setAttribute("aria-selected", String(!isSignup));
+  formGuestButton?.classList.toggle("active", isGuest);
+  showLoginButton?.setAttribute("aria-selected", String(!isSignup && !isGuest));
   showSignupButton?.setAttribute("aria-selected", String(isSignup));
-  formLoginButton?.setAttribute("aria-selected", String(!isSignup));
+  formLoginButton?.setAttribute("aria-selected", String(!isSignup && !isGuest));
   formSignupButton?.setAttribute("aria-selected", String(isSignup));
+  formGuestButton?.setAttribute("aria-selected", String(isGuest));
 
-  if (authTitle) authTitle.textContent = isSignup ? "Create your Traveldrip account" : "Sign in to sync your trip data";
-  if (authCopy) {
-    authCopy.textContent = isSignup
-      ? "Create an account, verify your email, then choose whether you are planning solo, with a group, or for a corporate retreat."
-      : "Use your Traveldrip account to keep solo plans, group memories, corporate retreats, wallets, and live alerts synced across devices.";
+  if (authTitle) {
+    authTitle.textContent = isGuest
+      ? "Access your company event"
+      : isSignup
+        ? "Create your Traveldrip account"
+        : "Sign in to sync your trip data";
   }
-  if (bottomCopy) bottomCopy.textContent = isSignup ? "Already have an account?" : "New to TravelDrip?";
+  if (authCopy) {
+    authCopy.textContent = isGuest
+      ? "Use your company code plus employee or attendee ID to view only the travel details, schedule, documents, and photos approved for you."
+      : isSignup
+        ? "Create an account, verify your email, then choose whether you are planning solo, with a group, or for a corporate retreat."
+        : "Use your Traveldrip account to keep solo plans, group memories, corporate retreats, wallets, and live alerts synced across devices.";
+  }
+  if (bottomCopy) bottomCopy.textContent = isGuest ? "Need a full TravelDrip profile?" : isSignup ? "Already have an account?" : "New to TravelDrip?";
   $("#landingSignupButton").hidden = isSignup;
-  $("#landingLoginButton").hidden = !isSignup;
-  if (authMessage) authMessage.textContent = isSignup ? "Email verification may be required after account creation." : "Enter your email and password to log in.";
+  $("#landingLoginButton").hidden = !isSignup && !isGuest;
+  if (authMessage) {
+    authMessage.textContent = isGuest
+      ? "Guest sessions are temporary, audited, and expire automatically."
+      : isSignup
+        ? "Email verification may be required after account creation."
+        : "Enter your email and password to log in.";
+  }
 
   const route = getAuthRoute(state.authMode);
   if (`${location.pathname}${location.hash}` !== route) {
     history.replaceState(null, "", route);
   }
 
-  const firstInput = isSignup ? $("#signupNameInput") : $("#emailInput");
+  const firstInput = isGuest ? $("#guestAccessCodeInput") : isSignup ? $("#signupNameInput") : $("#emailInput");
   firstInput?.focus({ preventScroll: true });
   if (scrollIntoView) authPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -1339,6 +1363,91 @@ async function signInWithOAuth(provider) {
   $("#authMessage").textContent = error
     ? error.message
     : `Redirecting to ${provider === "google" ? "Google" : "Apple"} sign-in...`;
+}
+
+function renderGuestPortal(portal = {}) {
+  const event = portal.event || {};
+  const travel = portal.myTravel || {};
+  const myEvent = portal.myEvent || {};
+  const info = portal.importantInformation || [];
+  const photos = portal.sharedPhotos || [];
+  $("#guestAccessForm").hidden = true;
+  $("#guestPortalPanel").hidden = false;
+  $("#guestPortalTitle").textContent = event.title || "Corporate Guest Portal";
+  $("#guestPortalMeta").textContent = portal.session?.expiresAt
+    ? `Temporary session expires ${new Date(portal.session.expiresAt).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}.`
+    : "Temporary session active. Reverification is required for sensitive actions.";
+  $("#guestTravelSummary").textContent = `${travel.flights?.length || 0} flights, ${travel.hotels?.length || 0} hotels, ${travel.transportation?.length || 0} transportation records visible.`;
+  $("#guestEventSummary").textContent = `${myEvent.schedule?.length || 0} assigned schedule items available.`;
+  $("#guestInfoSummary").textContent = `${info.length} information sections and required acknowledgments available.`;
+  $("#guestPhotoSummary").textContent = `${photos.length} approved shared media items visible.`;
+}
+
+async function verifyGuestAccess() {
+  const payload = {
+    action: "verify",
+    accessCode: $("#guestAccessCodeInput").value.trim(),
+    employeeId: $("#guestEmployeeIdInput").value.trim(),
+    lastName: $("#guestLastNameInput").value.trim(),
+    companyEmail: $("#guestCompanyEmailInput").value.trim()
+  };
+
+  if (!payload.accessCode || !payload.employeeId || !payload.lastName) {
+    $("#authMessage").textContent = "Enter your access code, attendee ID, and last name to continue.";
+    return;
+  }
+
+  $("#authMessage").textContent = "Verifying secure event access...";
+
+  if (isFilePreview) {
+    state.guestSessionToken = "local-preview-guest-session";
+    sessionStorage.setItem("traveldripGuestSessionToken", state.guestSessionToken);
+    renderGuestPortal({
+      session: { expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 4).toISOString() },
+      event: { title: "2027 Leadership Retreat" },
+      myTravel: { flights: [{}], hotels: [{}], transportation: [{}] },
+      myEvent: { schedule: [{}, {}, {}] },
+      importantInformation: [{}, {}, {}, {}],
+      sharedPhotos: [{}, {}, {}, {}, {}, {}]
+    });
+    $("#authMessage").textContent = "Guest portal preview opened. Production verification hashes the code and employee ID server-side.";
+    addAuditEntry("Guest portal preview opened", "Corporate event guest access flow verified locally with secure production API ready.");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/guest-access", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      $("#authMessage").textContent = result.error || "We could not verify your access information. Check your details or contact your event organizer.";
+      return;
+    }
+    state.guestSessionToken = result.guestSessionToken;
+    sessionStorage.setItem("traveldripGuestSessionToken", state.guestSessionToken);
+    renderGuestPortal(result.portal);
+    $("#authMessage").textContent = "Guest access verified. Only approved personal event details are visible.";
+  } catch (_error) {
+    $("#authMessage").textContent = "Guest access is temporarily unavailable. Try again or contact your event organizer.";
+  }
+}
+
+async function endGuestAccess() {
+  const token = state.guestSessionToken;
+  state.guestSessionToken = "";
+  sessionStorage.removeItem("traveldripGuestSessionToken");
+  if (token && !isFilePreview) {
+    await fetch("/api/guest-access", {
+      method: "DELETE",
+      headers: { "Authorization": `Bearer ${token}` }
+    }).catch(() => {});
+  }
+  $("#guestPortalPanel").hidden = true;
+  $("#guestAccessForm").hidden = false;
+  $("#authMessage").textContent = "Guest session ended.";
 }
 
 async function signOut() {
@@ -2126,6 +2235,11 @@ function wireLocalInteractions() {
     );
   });
 
+  $("#guestAccessForm")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    verifyGuestAccess();
+  });
+
   $("#openAuthButton")?.addEventListener("click", () => {
     setAuthMode("signin", true);
   });
@@ -2138,8 +2252,25 @@ function wireLocalInteractions() {
   $("#showSignupButton")?.addEventListener("click", () => setAuthMode("signup"));
   $("#formLoginButton")?.addEventListener("click", () => setAuthMode("signin"));
   $("#formSignupButton")?.addEventListener("click", () => setAuthMode("signup"));
+  $("#formGuestButton")?.addEventListener("click", () => setAuthMode("guest"));
   $("#landingLoginButton")?.addEventListener("click", () => setAuthMode("signin"));
   $("#landingSignupButton")?.addEventListener("click", () => setAuthMode("signup"));
+  $("#guestReturnLoginButton")?.addEventListener("click", () => setAuthMode("signin"));
+  $("#guestCreateAccountButton")?.addEventListener("click", () => setAuthMode("signup"));
+  $("#guestHelpButton")?.addEventListener("click", () => {
+    $("#authMessage").textContent = "Help request opens organizer support without revealing whether the code or employee record exists.";
+    showWorkflowMessage("Guest access help", "Organizer support request prepared with safe, non-sensitive context.");
+  });
+  $("#guestReverifyButton")?.addEventListener("click", () => {
+    $("#guestPortalPanel").hidden = true;
+    $("#guestAccessForm").hidden = false;
+    $("#authMessage").textContent = "Re-enter your company event code and attendee ID to reverify.";
+  });
+  $("#guestLogoutButton")?.addEventListener("click", endGuestAccess);
+  $("#guestReportButton")?.addEventListener("click", () => {
+    $("#authMessage").textContent = "Unauthorized access report prepared for the company event organizer.";
+    showWorkflowMessage("Report unauthorized access", "Guest session risk report logged without exposing employee ID values.");
+  });
   $("#enterAppButton")?.addEventListener("click", enterAppPreview);
   $$("[data-oauth-provider]").forEach((button) => {
     button.addEventListener("click", () => signInWithOAuth(button.dataset.oauthProvider));
@@ -2182,6 +2313,7 @@ function wireLocalInteractions() {
   window.addEventListener("hashchange", () => {
     if (location.hash === "#register") setAuthMode("signup");
     if (location.hash === "#login") setAuthMode("signin");
+    if (location.hash === "#company-event") setAuthMode("guest");
   });
 
   const initialAuthMode = getInitialAuthMode();
