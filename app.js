@@ -2584,12 +2584,6 @@ function wireLocalInteractions() {
       await saveSyncedEvent("profile_photo_privacy_changed", { privacy: input.value });
     });
   });
-  $("#photoZoomInput")?.addEventListener("input", renderProfilePhoto);
-  $("#photoRotateInput")?.addEventListener("input", renderProfilePhoto);
-  $("#photoCropShape")?.addEventListener("change", () => {
-    $("#profilePhotoPreview")?.classList.toggle("rounded-square", $("#photoCropShape").value === "Rounded Square");
-    setProfilePhotoMessage("Crop shape preview updated. Save changes to apply the edited photo.");
-  });
   $("#saveProfilePhotoButton")?.addEventListener("click", async () => {
     state.profilePhoto.savedDataUrl = state.profilePhoto.dataUrl;
     localStorage.setItem("traveldripProfilePhoto", state.profilePhoto.savedDataUrl);
@@ -2893,8 +2887,6 @@ function initialsFromName(name) {
 }
 
 function renderProfilePhoto() {
-  document.documentElement.style.setProperty("--profile-photo-rotation", `${Number($("#photoRotateInput")?.value || 0)}deg`);
-  document.documentElement.style.setProperty("--profile-photo-scale", `${Number($("#photoZoomInput")?.value || 1)}`);
   $$("[data-profile-initials]").forEach((avatar) => {
     avatar.textContent = state.profilePhoto.initials;
     avatar.classList.toggle("has-photo", Boolean(state.profilePhoto.dataUrl));

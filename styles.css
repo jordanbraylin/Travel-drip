@@ -5610,10 +5610,6 @@ main {
   overflow: hidden;
 }
 
-.profile-photo-preview.rounded-square {
-  border-radius: 26px;
-}
-
 .profile-photo-avatar {
   width: 100%;
   height: 100%;
@@ -5631,7 +5627,6 @@ main {
 
 .profile-photo-avatar.has-photo {
   color: transparent;
-  transform: rotate(var(--profile-photo-rotation, 0deg)) scale(var(--profile-photo-scale, 1));
 }
 
 .profile-photo-avatar.large {
@@ -5667,11 +5662,10 @@ main {
 }
 
 .profile-photo-tools {
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.9fr) minmax(220px, 0.9fr);
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.8fr);
 }
 
 .photo-drop-zone,
-.photo-editor-card,
 .photo-privacy-card,
 .profile-photo-policy-grid div {
   border: 1px solid var(--line);
@@ -5700,18 +5694,15 @@ main {
   line-height: 1.45;
 }
 
-.photo-editor-card,
 .photo-privacy-card {
   display: grid;
   gap: 8px;
 }
 
-.photo-editor-card h4,
 .photo-privacy-card h4 {
   margin: 0;
 }
 
-.photo-editor-card label,
 .photo-privacy-card label {
   display: grid;
   gap: 6px;
@@ -5727,11 +5718,6 @@ main {
   border-radius: 14px;
   padding: 8px 10px;
   background: #f7fbfa;
-}
-
-.photo-editor-card select,
-.photo-editor-card input[type="range"] {
-  width: 100%;
 }
 
 .profile-photo-appearances,
