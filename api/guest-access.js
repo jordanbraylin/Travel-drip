@@ -13,6 +13,7 @@ import {
 
 const sessionTtlMs = 1000 * 60 * 60 * 4;
 const genericVerifyError = "We could not verify your access information. Check your details or contact your event organizer.";
+const weakAccessCodes = new Set(["1234", "PASSWORD", "COMPANY", "TRAVEL", "RETREAT", "WELCOME", "EVENTCODE"]);
 
 function getPepper() {
   return process.env.GUEST_ACCESS_PEPPER || process.env.SUPABASE_SERVICE_ROLE_KEY || "traveldrip-local-preview";
@@ -31,6 +32,14 @@ function hashValue(value, scope = "guest") {
 
 function randomCode() {
   return `TD-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
+}
+
+function isSecureAccessCode(code) {
+  const normalized = normalizeSecret(code);
+  return normalized.length >= 8
+    && /[A-Z]/.test(normalized)
+    && /\d/.test(normalized)
+    && !weakAccessCodes.has(normalized);
 }
 
 function randomToken() {
@@ -82,6 +91,10 @@ async function createAccessCode(request, response, body) {
   }
 
   const code = sanitizeText(body.code, "", 80) || randomCode();
+  if (!isSecureAccessCode(code)) {
+    response.status(400).json({ error: "Access codes must be at least 8 characters and include letters and numbers." });
+    return;
+  }
   const expiresAt = body.expiresAt || body.expires_at || new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString();
   const { data, error } = await supabase
     .from("corporate_access_codes")
@@ -100,6 +113,12 @@ async function createAccessCode(request, response, body) {
       expires_at: expiresAt,
       usage_limit: Math.max(0, Number(body.usageLimit || body.usage_limit || 0)),
       requires_employee_id: body.requiresEmployeeId !== false,
+      requires_last_name: body.requiresLastName !== false && body.requires_last_name !== false,
+      requires_company_domain: Boolean(body.requiresCompanyDomain || body.requires_company_domain),
+      company_domain: sanitizeText(body.companyDomain || body.company_domain, "", 180).toLowerCase().replace(/^@/, ""),
+      remember_device_allowed: Boolean(body.rememberDeviceAllowed || body.remember_device_allowed),
+      minimum_code_length: Math.max(8, Number(body.minimumCodeLength || body.minimum_code_length || 8)),
+      max_failed_attempts: Math.max(1, Number(body.maxFailedAttempts || body.max_failed_attempts || 5)),
       requires_email_verification: Boolean(body.requiresEmailVerification || body.requires_email_verification),
       requires_otp: Boolean(body.requiresOtp || body.requires_otp),
       created_by: user.id,
@@ -205,7 +224,7 @@ async function revokeAccessCode(request, response, body) {
 
   const { data, error } = await supabase
     .from("corporate_access_codes")
-    .update({ status: "revoked", revoked_at: new Date().toISOString() })
+    .update({ status: "revoked", revoked_at: new Date().toISOString(), revoked_by: user.id })
     .eq("id", accessCodeId)
     .eq("trip_id", tripId)
     .select("id, status, revoked_at")
@@ -250,8 +269,24 @@ async function updateAccessCode(request, response, body) {
   if (body.allowedEndAt || body.allowed_end_at) updates.allowed_end_at = body.allowedEndAt || body.allowed_end_at;
   if (body.usageLimit !== undefined || body.usage_limit !== undefined) updates.usage_limit = Math.max(0, Number(body.usageLimit ?? body.usage_limit));
   if (body.status) updates.status = sanitizeText(body.status, "active", 40);
+  if (body.code) {
+    const code = sanitizeText(body.code, "", 80);
+    if (!isSecureAccessCode(code)) {
+      response.status(400).json({ error: "Access codes must be at least 8 characters and include letters and numbers." });
+      return;
+    }
+    updates.code_hash = hashValue(code, "access-code");
+    updates.code_hint = code.slice(-4);
+    updates.failed_attempt_count = 0;
+    updates.locked_until = null;
+  }
   if (body.assignedRole || body.assigned_role) updates.assigned_role = sanitizeText(body.assignedRole || body.assigned_role, "employee", 40);
   if (body.assignedDepartment || body.assigned_department) updates.assigned_department = sanitizeText(body.assignedDepartment || body.assigned_department, "", 120);
+  if (body.requiresLastName !== undefined || body.requires_last_name !== undefined) updates.requires_last_name = Boolean(body.requiresLastName ?? body.requires_last_name);
+  if (body.requiresCompanyDomain !== undefined || body.requires_company_domain !== undefined) updates.requires_company_domain = Boolean(body.requiresCompanyDomain ?? body.requires_company_domain);
+  if (body.companyDomain !== undefined || body.company_domain !== undefined) updates.company_domain = sanitizeText(body.companyDomain || body.company_domain, "", 180).toLowerCase().replace(/^@/, "");
+  if (body.rememberDeviceAllowed !== undefined || body.remember_device_allowed !== undefined) updates.remember_device_allowed = Boolean(body.rememberDeviceAllowed ?? body.remember_device_allowed);
+  if (body.maxFailedAttempts !== undefined || body.max_failed_attempts !== undefined) updates.max_failed_attempts = Math.max(1, Number(body.maxFailedAttempts ?? body.max_failed_attempts));
   if (body.metadata) updates.metadata = body.metadata;
 
   const { data, error } = await supabase
@@ -331,7 +366,7 @@ async function verifyGuest(request, response, body) {
   const lastName = sanitizeText(body.lastName || body.last_name, "", 100).toLowerCase();
   const companyEmail = sanitizeText(body.companyEmail || body.company_email, "", 180).toLowerCase();
 
-  if (!accessCode || !employeeId || !lastName) {
+  if (!accessCode || !employeeId || !isSecureAccessCode(accessCode)) {
     response.status(400).json({ error: genericVerifyError });
     return;
   }
@@ -348,7 +383,8 @@ async function verifyGuest(request, response, body) {
     || new Date(code.expires_at) <= now
     || (code.allowed_start_at && new Date(code.allowed_start_at) > now)
     || (code.allowed_end_at && new Date(code.allowed_end_at) < now)
-    || (code.usage_limit > 0 && code.usage_count >= code.usage_limit);
+    || (code.usage_limit > 0 && code.usage_count >= code.usage_limit)
+    || (code.locked_until && new Date(code.locked_until) > now);
 
   if (codeBlocked) {
     await logGuestAccess(supabase, request, {
@@ -364,6 +400,30 @@ async function verifyGuest(request, response, body) {
     return;
   }
 
+  const registerFailedAttempt = async (reason, attendeeId = null) => {
+    const failedCount = Number(code.failed_attempt_count || 0) + 1;
+    const lockThreshold = Math.max(1, Number(code.max_failed_attempts || 5));
+    const locksCode = failedCount >= lockThreshold;
+    await supabase
+      .from("corporate_access_codes")
+      .update({
+        failed_attempt_count: failedCount,
+        locked_until: locksCode ? new Date(Date.now() + 1000 * 60 * 15).toISOString() : code.locked_until || null,
+        status: code.status
+      })
+      .eq("id", code.id);
+    await logGuestAccess(supabase, request, {
+      trip_id: code.trip_id,
+      organization_id: code.organization_id,
+      access_code_id: code.id,
+      attendee_id: attendeeId,
+      action: "guest.verify",
+      result: locksCode ? "blocked" : "failed",
+      risk_status: locksCode ? "locked" : "watch",
+      metadata: { reason, failedAttemptCount: failedCount }
+    });
+  };
+
   const { data: attendee } = await supabase
     .from("corporate_attendees")
     .select("*")
@@ -372,23 +432,18 @@ async function verifyGuest(request, response, body) {
     .maybeSingle();
 
   const emailRequired = Boolean(code.requires_email_verification);
+  const lastNameRequired = code.requires_last_name !== false;
+  const domainRequired = Boolean(code.requires_company_domain && code.company_domain);
+  const emailDomain = companyEmail.includes("@") ? companyEmail.split("@").pop() : "";
   const attendeeMatches = attendee
     && attendee.access_status === "active"
-    && attendee.last_name === lastName
+    && (!lastNameRequired || attendee.last_name === lastName)
     && (!emailRequired || attendee.company_email === companyEmail)
+    && (!domainRequired || emailDomain === code.company_domain)
     && (!code.assigned_attendee_id || code.assigned_attendee_id === attendee.id);
 
   if (!attendeeMatches) {
-    await logGuestAccess(supabase, request, {
-      trip_id: code.trip_id,
-      organization_id: code.organization_id,
-      access_code_id: code.id,
-      attendee_id: attendee?.id || null,
-      action: "guest.verify",
-      result: "failed",
-      risk_status: "watch",
-      metadata: { reason: "attendee_not_verified" }
-    });
+    await registerFailedAttempt("attendee_not_verified", attendee?.id || null);
     response.status(401).json({ error: genericVerifyError });
     return;
   }
@@ -418,6 +473,9 @@ async function verifyGuest(request, response, body) {
       ip_address: null,
       created_at_ip_hash: getIpHash(request),
       expires_at: expiresAt,
+      remembered_device: Boolean(body.rememberDevice || body.remember_device) && Boolean(code.remember_device_allowed),
+      event_access_scope: "single_event",
+      last_revalidated_at: new Date().toISOString(),
       permissions
     })
     .select("*")
@@ -430,7 +488,7 @@ async function verifyGuest(request, response, body) {
 
   await supabase
     .from("corporate_access_codes")
-    .update({ usage_count: code.usage_count + 1 })
+    .update({ usage_count: code.usage_count + 1, failed_attempt_count: 0, locked_until: null })
     .eq("id", code.id);
 
   await logGuestAccess(supabase, request, {

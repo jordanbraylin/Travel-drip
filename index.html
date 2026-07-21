@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=42">
+  <link rel="stylesheet" href="styles.css?v=43">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -1538,6 +1538,24 @@
                   <span>Emergency announcement</span>
                 </div>
               </section>
+
+              <section class="social-card corporate-access-management" data-visible-roles="owner executive travel organizer">
+                <h3>Access-code management</h3>
+                <div class="corporate-access-admin-grid">
+                  <div><span>Active code</span><strong>•••• 7A2F</strong><small>Original code hidden after hashing</small></div>
+                  <div><span>Status</span><strong>Active</strong><small>Activation Jul 20, expires Aug 4</small></div>
+                  <div><span>Successful verifications</span><strong>84</strong><small>17 remaining before limit</small></div>
+                  <div><span>Failed attempts</span><strong>6</strong><small>Rate limiting active</small></div>
+                </div>
+                <div class="corporate-card-actions">
+                  <button type="button" data-corporate-access-admin="Generate Secure Code">Generate Secure Code</button>
+                  <button type="button" data-corporate-access-admin="Replace Event Code">Replace Event Code</button>
+                  <button type="button" data-corporate-access-admin="Extend Expiration">Extend Expiration</button>
+                  <button type="button" data-corporate-access-admin="Revoke User Access">Revoke User Access</button>
+                  <button type="button" data-corporate-access-admin="Export Audit Log">Export Audit Log</button>
+                </div>
+                <p class="small" id="corporateAccessAdminMessage">Admins can view access status, attempts, verified users, revoked users, last access time, and session status without exposing full codes.</p>
+              </section>
             </div>
 
             <div class="approval-comm-grid">
@@ -2628,7 +2646,35 @@
     </form>
   </dialog>
 
+  <dialog class="pin-dialog corporate-access-dialog" id="corporateAccessDialog" aria-labelledby="corporateAccessTitle">
+    <form method="dialog" class="pin-card corporate-access-card" id="corporateAccessForm">
+      <p class="eyebrow">Secure corporate access</p>
+      <h2 id="corporateAccessTitle">Enter Corporate Event Code</h2>
+      <p id="corporateAccessSummary">Enter the secure code provided by your company to access this corporate retreat or event. Corporate details remain hidden until verification succeeds.</p>
+      <label for="corporateEventCodeInput">Corporate event code</label>
+      <span class="password-field corporate-code-field">
+        <input id="corporateEventCodeInput" type="password" autocomplete="one-time-code" placeholder="TEAM2027A" required minlength="8">
+        <button type="button" id="toggleCorporateCodeButton">Show</button>
+      </span>
+      <label for="corporateIdentityInput">Employee email or employee ID</label>
+      <input id="corporateIdentityInput" type="text" autocomplete="email" placeholder="name@company.com or employee ID" required>
+      <label for="corporateLastNameInput">Last name, if required</label>
+      <input id="corporateLastNameInput" type="text" autocomplete="family-name" placeholder="Last name">
+      <label class="auth-check"><input id="rememberCorporateEventInput" type="checkbox"> Remember this event on this device</label>
+      <div class="corporate-access-rules">
+        <span>Access is matched to the correct company event, employee record, role, active code, and unexpired session.</span>
+        <span>Failed attempts never reveal whether an employee, event, or company exists.</span>
+      </div>
+      <p class="small" id="corporateAccessMessage">No attendee names, schedules, hotels, documents, budgets, cards, messages, or approved photos are shown before verification.</p>
+      <div class="dialog-actions corporate-access-actions">
+        <button class="ghost-button" value="cancel" type="button" id="returnPersonalButton">Return to Personal Travel</button>
+        <button class="ghost-button" value="help" type="button" id="contactCorporateAdminButton">Contact Event Administrator</button>
+        <button class="primary-button" value="confirm" type="submit">Continue</button>
+      </div>
+    </form>
+  </dialog>
+
   <script src="public-config.js?v=1"></script>
-  <script defer src="app.js?v=35"></script>
+  <script defer src="app.js?v=36"></script>
 </body>
 </html>

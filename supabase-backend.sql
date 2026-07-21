@@ -875,11 +875,22 @@ create table if not exists public.corporate_access_codes (
   usage_limit integer not null default 0 check (usage_limit >= 0),
   usage_count integer not null default 0 check (usage_count >= 0),
   requires_employee_id boolean not null default true,
+  requires_last_name boolean not null default true,
+  requires_company_domain boolean not null default false,
+  company_domain text,
+  remember_device_allowed boolean not null default false,
+  minimum_code_length integer not null default 8 check (minimum_code_length >= 8),
+  max_failed_attempts integer not null default 5 check (max_failed_attempts >= 1),
+  failed_attempt_count integer not null default 0 check (failed_attempt_count >= 0),
+  locked_until timestamptz,
   requires_email_verification boolean not null default false,
   requires_otp boolean not null default false,
   status text not null default 'active' check (status in ('active','expired','revoked','usage_limit_reached','locked')),
   created_by uuid references auth.users(id) on delete set null,
+  revoked_by uuid references auth.users(id) on delete set null,
   revoked_at timestamptz,
+  replaced_by_code_id uuid references public.corporate_access_codes(id) on delete set null,
+  replaced_at timestamptz,
   metadata jsonb not null default '{}'::jsonb
 );
 
@@ -940,6 +951,9 @@ create table if not exists public.guest_sessions (
   created_at_ip_hash text,
   expires_at timestamptz not null,
   last_activity_at timestamptz not null default now(),
+  last_revalidated_at timestamptz,
+  remembered_device boolean not null default false,
+  event_access_scope text not null default 'single_event' check (event_access_scope in ('single_event','multi_event','personal_only')),
   revoked_at timestamptz,
   status text not null default 'active' check (status in ('active','expired','revoked','ended','locked')),
   permissions jsonb not null default '{}'::jsonb
@@ -968,10 +982,30 @@ create table if not exists public.guest_access_events (
 
 create index if not exists idx_corporate_access_codes_trip on public.corporate_access_codes(trip_id, status);
 create index if not exists idx_corporate_access_codes_hash on public.corporate_access_codes(code_hash);
+create index if not exists idx_corporate_access_codes_locked_until on public.corporate_access_codes(locked_until);
 create index if not exists idx_corporate_attendees_trip_hash on public.corporate_attendees(trip_id, employee_id_hash);
 create index if not exists idx_guest_sessions_hash on public.guest_sessions(session_token_hash);
 create index if not exists idx_guest_sessions_attendee on public.guest_sessions(attendee_id, status);
+create index if not exists idx_guest_sessions_trip_status_expires on public.guest_sessions(trip_id, status, expires_at);
 create index if not exists idx_guest_access_events_trip on public.guest_access_events(trip_id, created_at desc);
+
+alter table public.corporate_access_codes
+  add column if not exists requires_last_name boolean not null default true,
+  add column if not exists requires_company_domain boolean not null default false,
+  add column if not exists company_domain text,
+  add column if not exists remember_device_allowed boolean not null default false,
+  add column if not exists minimum_code_length integer not null default 8,
+  add column if not exists max_failed_attempts integer not null default 5,
+  add column if not exists failed_attempt_count integer not null default 0,
+  add column if not exists locked_until timestamptz,
+  add column if not exists revoked_by uuid references auth.users(id) on delete set null,
+  add column if not exists replaced_by_code_id uuid references public.corporate_access_codes(id) on delete set null,
+  add column if not exists replaced_at timestamptz;
+
+alter table public.guest_sessions
+  add column if not exists last_revalidated_at timestamptz,
+  add column if not exists remembered_device boolean not null default false,
+  add column if not exists event_access_scope text not null default 'single_event';
 
 alter table public.corporate_access_codes enable row level security;
 alter table public.corporate_attendees enable row level security;

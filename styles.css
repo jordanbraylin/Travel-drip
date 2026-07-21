@@ -3523,6 +3523,15 @@ input[type="range"] {
   backdrop-filter: blur(4px);
 }
 
+.corporate-access-dialog::backdrop {
+  background: rgba(7, 17, 22, 0.86);
+  backdrop-filter: blur(8px);
+}
+
+.corporate-access-dialog {
+  width: min(560px, calc(100% - 28px));
+}
+
 .pin-card {
   display: grid;
   gap: 12px;
@@ -3551,10 +3560,54 @@ input[type="range"] {
   outline: 0;
 }
 
+.corporate-access-card input {
+  letter-spacing: 0;
+  text-align: left;
+  font-size: 16px;
+}
+
+.corporate-code-field input {
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 88px 0 12px;
+}
+
+.corporate-code-field {
+  position: relative;
+}
+
+.corporate-code-field button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  min-height: 36px;
+  padding: 0 13px;
+}
+
+.corporate-access-rules {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgba(0, 119, 182, 0.18);
+  border-radius: 8px;
+  background: #eefaff;
+}
+
+.corporate-access-rules span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .dialog-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+}
+
+.corporate-access-actions {
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .admin-page {
@@ -4530,6 +4583,33 @@ input[type="range"] {
   cursor: pointer;
 }
 
+.corporate-access-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.corporate-access-admin-grid div {
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.corporate-access-admin-grid span,
+.corporate-access-admin-grid small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.corporate-access-admin-grid strong {
+  display: block;
+  margin: 4px 0;
+}
+
 .corporate-acceptance-list div {
   position: relative;
   padding-left: 38px;
@@ -5258,6 +5338,27 @@ code {
 
   .auth-carousel img {
     transform: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .corporate-access-dialog {
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    border-radius: 0;
+  }
+
+  .corporate-access-card {
+    min-height: 100dvh;
+    align-content: center;
+    padding: 22px;
+  }
+
+  .corporate-access-actions,
+  .corporate-access-admin-grid {
+    grid-template-columns: 1fr;
   }
 }
 

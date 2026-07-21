@@ -55,6 +55,8 @@ New Vercel API routes:
 - `POST /api/guest-access` supports `create-code`, `update-code`, `upsert-attendee`, `revoke-code`, public `verify`, `refresh-session`, `submit-acknowledgment`, `send-otp`, and `upgrade-account` actions.
 - `GET /api/guest-access` returns the verified Corporate Guest Portal for a temporary guest session token.
 - `DELETE /api/guest-access` ends a temporary guest session.
+- Corporate event codes are stored as salted hashes, must meet minimum strength rules, can require employee ID/email, last name, company domain, OTP/email verification, usage windows, rate limits, remembered-device policy, revocation, replacement, and full audit events.
+- Corporate UI routes and workspace switching are gated before corporate schedules, documents, announcements, attendee details, budgets, or approved media render.
 
 ## Environment Variables
 

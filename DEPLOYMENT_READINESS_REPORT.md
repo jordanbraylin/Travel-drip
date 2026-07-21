@@ -36,12 +36,13 @@ Build status:
 - CSS brace balance passed.
 
 Navigation status:
-- DOM ID audit passed with 394 IDs and no duplicate IDs.
+- DOM ID audit passed with 407 IDs and no duplicate IDs.
 - 88 `data-target` navigation targets were checked and all resolve to existing sections.
 - Authentication workflow controls for Sign In, Sign Up, Forgot Password, Terms, Privacy, Verify Email, and Two-Factor Authentication are present.
 - Message send/receive notification logic is present for in-app notifications and browser notifications when permission is granted.
 - The Home dashboard rotating destination banner includes active reviewed destinations, fun facts, travel tips, best-season notes, local greetings, pause/previous/next controls, slide indicators, mobile swipe support, and Explore routing.
 - Corporate Mode now separates the business-travel workspace from consumer trip planning, with dedicated corporate navigation, role previews, policy controls, activity voting, per-diem, virtual card, expense, notification, and acceptance-checklist surfaces.
+- Corporate event access is now gated before corporate routes or workspace content render, requiring a secure event code plus employee identity, with short-lived sessions, generic failure messaging, mobile dialog support, admin code-management actions, and hashed-code backend support.
 - Backend scalability readiness is documented in `BACKEND_SCALABILITY_REPORT.md` and visible inside the Security Center with database, storage, backup, queue, monitoring, and load-test acceptance checks.
 - The new go-live checklist includes 8 tracked checks: 2 passed, 4 blocked, and 2 manual-review items.
 
@@ -56,9 +57,9 @@ Security status:
 - API routes apply no-store/no-sniff/referrer/CSP headers and require Bearer auth where applicable.
 
 Cache and deployment fixes made:
-- `index.html` now loads `styles.css?v=42` and `app.js?v=35`.
-- `admin.html` now loads `styles.css?v=42` and `app.js?v=35`.
-- `sw.js` now uses cache name `traveldrip-v35`.
+- `index.html` now loads `styles.css?v=43` and `app.js?v=36`.
+- `admin.html` now loads `styles.css?v=43` and `app.js?v=36`.
+- `sw.js` now uses cache name `traveldrip-v36`.
 
 ## Production Checks Still Required
 
@@ -84,6 +85,7 @@ Database:
 - Run `supabase-backend.sql`.
 - Verify required tables, indexes, helper functions, RLS policies, audit logs, realtime publication, and guest-access records in Supabase.
 - Confirm users cannot access trips, messages, finances, or corporate records outside their role.
+- Confirm corporate event codes are created with `GUEST_ACCESS_PEPPER`, stored as hashes only, rate-limited after repeated failures, and revoked/replaced sessions no longer grant access.
 - Confirm scalability test runs, backup/restore test records, retention policies, API performance events, and storage processing jobs are recorded and reviewable.
 
 Integrations:

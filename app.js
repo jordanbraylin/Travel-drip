@@ -8,6 +8,13 @@ const state = {
   isAdmin: false,
   adminStatusCheckedFor: "",
   hasEnteredApp: sessionStorage.getItem("traveldripEnteredApp") === "true",
+  corporateAccess: {
+    verified: sessionStorage.getItem("traveldripCorporateAccessVerified") === "true",
+    eventId: sessionStorage.getItem("traveldripCorporateEventId") || "",
+    role: sessionStorage.getItem("traveldripCorporateRole") || "employee",
+    expiresAt: sessionStorage.getItem("traveldripCorporateAccessExpiresAt") || "",
+    pendingTarget: ""
+  },
   theme: localStorage.getItem("traveldripTheme") || "tropical",
   profilePhoto: {
     dataUrl: localStorage.getItem("traveldripProfilePhoto") || "",
@@ -926,12 +933,16 @@ function renderTripType(type) {
 function updateDashboardWidgets() {
   const tripType = $("#dashboardTripType")?.value || "group";
   const role = $("#rolePreview")?.value || "employee";
-  const isCorporateMode = tripType === "corporate";
+  if (state.corporateAccess.verified && !hasValidCorporateAccess()) {
+    clearCorporateAccess("Corporate event session expired. Re-enter the secure code to continue.");
+  }
+  const isCorporateMode = tripType === "corporate" && hasValidCorporateAccess();
   const isFinancialRole = ["owner", "executive", "finance"].includes(role);
   const isAdminRole = ["owner", "executive", "travel", "organizer", "finance"].includes(role);
 
   document.body.classList.toggle("corporate-mode", isCorporateMode);
   if ($("#workspacePreview")) $("#workspacePreview").value = isCorporateMode ? "corporate" : "personal";
+  if ($("#dashboardTripType") && tripType === "corporate" && !isCorporateMode) $("#dashboardTripType").value = "group";
 
   $$("[data-widget-scope]").forEach((widget) => {
     const allowed = widget.dataset.widgetScope.split(" ").includes(isCorporateMode ? "corporate" : tripType);
@@ -2140,8 +2151,130 @@ function getRouteForTarget(target) {
   return routeDefinitions[target]?.path || `/app/${target}`;
 }
 
+function isCorporateTarget(target) {
+  return target === "enterpriseRbac";
+}
+
+function hasValidCorporateAccess() {
+  if (!state.corporateAccess.verified) return false;
+  if (!state.corporateAccess.expiresAt) return false;
+  return new Date(state.corporateAccess.expiresAt) > new Date();
+}
+
+function clearCorporateAccess(message = "Corporate session view closed. Personal Travel is active.") {
+  state.corporateAccess = {
+    verified: false,
+    eventId: "",
+    role: "employee",
+    expiresAt: "",
+    pendingTarget: ""
+  };
+  sessionStorage.removeItem("traveldripCorporateAccessVerified");
+  sessionStorage.removeItem("traveldripCorporateEventId");
+  sessionStorage.removeItem("traveldripCorporateRole");
+  sessionStorage.removeItem("traveldripCorporateAccessExpiresAt");
+  if ($("#dashboardTripType")) $("#dashboardTripType").value = "group";
+  updateDashboardWidgets();
+  if ($("#corporateAccessMessage")) $("#corporateAccessMessage").textContent = message;
+}
+
+function showCorporateAccessGate(target = "enterpriseRbac", reason = "Corporate verification required.") {
+  state.corporateAccess.pendingTarget = target;
+  if ($("#corporateAccessMessage")) $("#corporateAccessMessage").textContent = reason;
+  $("#corporateAccessDialog")?.showModal();
+  window.setTimeout(() => $("#corporateEventCodeInput")?.focus(), 0);
+  addAuditEntry("Corporate access gate shown", `${target}: protected corporate content hidden before verification.`);
+}
+
+function corporateCodeLooksValid(code) {
+  const value = String(code || "").trim();
+  const weak = ["1234", "PASSWORD", "COMPANY", "TRAVEL", "RETREAT"];
+  return value.length >= 8 && /[a-z]/i.test(value) && /\d/.test(value) && !weak.includes(value.toUpperCase());
+}
+
+async function verifyCorporateAccessGate() {
+  const accessCode = $("#corporateEventCodeInput")?.value.trim() || "";
+  const identity = $("#corporateIdentityInput")?.value.trim() || "";
+  const lastName = $("#corporateLastNameInput")?.value.trim() || "";
+  const remember = Boolean($("#rememberCorporateEventInput")?.checked);
+  if (!corporateCodeLooksValid(accessCode)) {
+    $("#corporateAccessMessage").textContent = "Code not recognized. Please verify the code provided by your company and try again.";
+    addAuditEntry("Corporate access failed", "Weak or invalid-looking code rejected before protected content loaded.");
+    return;
+  }
+  if (!identity) {
+    $("#corporateAccessMessage").textContent = "Enter your employee email or employee ID to continue.";
+    return;
+  }
+
+  $("#corporateAccessMessage").textContent = "Verifying corporate event access...";
+  if (isFilePreview) {
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * (remember ? 8 : 4)).toISOString();
+    state.corporateAccess = {
+      verified: true,
+      eventId: "leadership-summit-preview",
+      role: "employee",
+      expiresAt,
+      pendingTarget: state.corporateAccess.pendingTarget || "enterpriseRbac"
+    };
+    sessionStorage.setItem("traveldripCorporateAccessVerified", "true");
+    sessionStorage.setItem("traveldripCorporateEventId", state.corporateAccess.eventId);
+    sessionStorage.setItem("traveldripCorporateRole", state.corporateAccess.role);
+    sessionStorage.setItem("traveldripCorporateAccessExpiresAt", expiresAt);
+    $("#corporateAccessDialog")?.close();
+    if ($("#dashboardTripType")) $("#dashboardTripType").value = "corporate";
+    renderRoute(state.corporateAccess.pendingTarget || "enterpriseRbac", { updateHistory: true });
+    addAuditEntry("Corporate access verified", "Preview session created after code and employee identity check. Production validates hashed code and attendee record server-side.");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/guest-access", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "verify",
+        accessCode,
+        employeeId: identity,
+        lastName,
+        companyEmail: identity.includes("@") ? identity : ""
+      })
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      $("#corporateAccessMessage").textContent = result.error || "Code not recognized. Please verify the code provided by your company and try again.";
+      return;
+    }
+    state.guestSessionToken = result.guestSessionToken;
+    sessionStorage.setItem("traveldripGuestSessionToken", state.guestSessionToken);
+    const expiresAt = result.portal?.session?.expiresAt || new Date(Date.now() + 1000 * 60 * 60 * 4).toISOString();
+    state.corporateAccess = {
+      verified: true,
+      eventId: result.portal?.event?.id || "verified-corporate-event",
+      role: result.portal?.attendee?.role || "employee",
+      expiresAt,
+      pendingTarget: state.corporateAccess.pendingTarget || "enterpriseRbac"
+    };
+    sessionStorage.setItem("traveldripCorporateAccessVerified", "true");
+    sessionStorage.setItem("traveldripCorporateEventId", state.corporateAccess.eventId);
+    sessionStorage.setItem("traveldripCorporateRole", state.corporateAccess.role);
+    sessionStorage.setItem("traveldripCorporateAccessExpiresAt", expiresAt);
+    $("#corporateAccessDialog")?.close();
+    if ($("#dashboardTripType")) $("#dashboardTripType").value = "corporate";
+    renderRoute(state.corporateAccess.pendingTarget || "enterpriseRbac", { updateHistory: true });
+  } catch (_error) {
+    $("#corporateAccessMessage").textContent = "Corporate access is temporarily unavailable. Try again or contact your event administrator.";
+  }
+}
+
 function renderRoute(target = getTargetFromRoute(), { updateHistory = false, replace = false } = {}) {
   const resolvedTarget = routeDefinitions[target] ? target : "dashboardHome";
+  const requestedCorporatePath = normalizeAppPath(location.pathname).startsWith("/corporate");
+  if ((isCorporateTarget(resolvedTarget) || requestedCorporatePath) && resolvedTarget !== "dashboardHome" && !hasValidCorporateAccess()) {
+    renderRoute("dashboardHome", { updateHistory: true, replace: true });
+    showCorporateAccessGate(resolvedTarget, "Enter your company event code before corporate dashboard information loads.");
+    return;
+  }
   document.body.classList.toggle("app-routed", !document.body.classList.contains("auth-screen"));
   const isHome = resolvedTarget === "dashboardHome";
   const dashboardSections = [
@@ -3223,11 +3356,45 @@ function wireLocalInteractions() {
   updateSocialPreview();
 
   $("#rolePreview")?.addEventListener("change", updateEnterpriseRole);
-  $("#dashboardTripType")?.addEventListener("change", updateDashboardWidgets);
+  $("#dashboardTripType")?.addEventListener("change", (event) => {
+    if (event.target.value === "corporate" && !hasValidCorporateAccess()) {
+      event.target.value = "group";
+      updateDashboardWidgets();
+      showCorporateAccessGate("enterpriseRbac", "Select Corporate Travel only after entering your secure event code.");
+      return;
+    }
+    updateDashboardWidgets();
+  });
   $("#workspacePreview")?.addEventListener("change", (event) => {
+    if (event.target.value === "corporate" && !hasValidCorporateAccess()) {
+      event.target.value = "personal";
+      if ($("#dashboardTripType")) $("#dashboardTripType").value = "group";
+      updateEnterpriseRole();
+      showCorporateAccessGate("enterpriseRbac", "Switching to Corporate Travel requires secure event-code verification.");
+      return;
+    }
     if ($("#dashboardTripType")) $("#dashboardTripType").value = event.target.value === "corporate" ? "corporate" : "group";
     updateEnterpriseRole();
     addAuditEntry("Workspace switched", event.target.value === "corporate" ? "Corporate Travel workspace opened." : "Personal Travel workspace opened.");
+  });
+  $("#corporateAccessForm")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    verifyCorporateAccessGate();
+  });
+  $("#toggleCorporateCodeButton")?.addEventListener("click", () => {
+    const input = $("#corporateEventCodeInput");
+    if (!input) return;
+    input.type = input.type === "password" ? "text" : "password";
+    $("#toggleCorporateCodeButton").textContent = input.type === "password" ? "Show" : "Hide";
+  });
+  $("#returnPersonalButton")?.addEventListener("click", () => {
+    $("#corporateAccessDialog")?.close();
+    clearCorporateAccess();
+    renderRoute("dashboardHome", { updateHistory: true, replace: true });
+  });
+  $("#contactCorporateAdminButton")?.addEventListener("click", () => {
+    $("#corporateAccessMessage").textContent = "Administrator contact request prepared. TravelDrip does not reveal whether the code, employee, or event exists.";
+    addAuditEntry("Corporate access help requested", "Safe admin contact workflow opened from secure access gate.");
   });
   $("#submitCorporateVoteButton")?.addEventListener("click", async () => {
     const selected = $("input[name='corporateVote']:checked")?.closest("label")?.textContent.trim().replace(/\s+/g, " ") || "approved activity";
@@ -3245,6 +3412,14 @@ function wireLocalInteractions() {
         : `${action} opened with MFA, device verification, spending controls, audit logging, and session timeout requirements.`;
       addAuditEntry("Corporate virtual card action", `${action}: ${unavailableWallet ? "provider integration required" : "policy-controlled action opened"}.`);
       await saveSyncedEvent("corporate_card_action", { action, providerIntegrationRequired: unavailableWallet });
+    });
+  });
+  $$("[data-corporate-access-admin]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const action = button.dataset.corporateAccessAdmin;
+      $("#corporateAccessAdminMessage").textContent = `${action} opened. Production stores only hashed codes, tracks attempts, invalidates revoked sessions, and never returns the full stored code.`;
+      addAuditEntry("Corporate access admin action", `${action}: admin access management workflow opened.`);
+      await saveSyncedEvent("corporate_access_admin_action", { action, hashedCodesOnly: true });
     });
   });
   $("#themeSelector")?.addEventListener("change", async (event) => {

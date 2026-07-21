@@ -39,8 +39,10 @@ For Supabase/Vercel production use:
 1. Run `supabase-backend.sql`.
 2. Add `GUEST_ACCESS_PEPPER` in Vercel as a long random server-only value.
 3. Use `/api/guest-access` with authenticated admin actions to create access codes and attendee records.
-4. Guests verify with company/event code plus employee or attendee ID and last name.
-5. Guest sessions are temporary, audited, and expose only approved personal travel, schedule, information, and media records.
+4. Guests verify with company/event code plus employee email or attendee ID. Last-name and company-domain checks can be required per event policy.
+5. Corporate routes, dashboard mode switching, invitations, event schedules, documents, attendee records, announcements, and approved media remain hidden until a short-lived corporate access session is verified.
+6. Guest sessions are temporary, audited, rate-limited, and expose only approved personal travel, schedule, information, and media records.
+7. Corporate admins can generate, replace, extend, revoke, and audit event codes without exposing stored code values.
 
 Do not store raw access codes or employee IDs in browser storage, logs, analytics, or public files.
 
