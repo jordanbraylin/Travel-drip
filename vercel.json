@@ -15,6 +15,22 @@
   "rewrites": [
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/register", "destination": "/index.html" },
-    { "source": "/login", "destination": "/index.html" }
+    { "source": "/login", "destination": "/index.html" },
+    { "source": "/home", "destination": "/index.html" },
+    { "source": "/dashboard", "destination": "/index.html" },
+    { "source": "/explore", "destination": "/index.html" },
+    { "source": "/explore/:path*", "destination": "/index.html" },
+    { "source": "/trips", "destination": "/index.html" },
+    { "source": "/trips/:path*", "destination": "/index.html" },
+    { "source": "/messages", "destination": "/index.html" },
+    { "source": "/messages/:path*", "destination": "/index.html" },
+    { "source": "/memories", "destination": "/index.html" },
+    { "source": "/memories/:path*", "destination": "/index.html" },
+    { "source": "/corporate", "destination": "/index.html" },
+    { "source": "/corporate/:path*", "destination": "/index.html" },
+    { "source": "/profile", "destination": "/index.html" },
+    { "source": "/profile/:path*", "destination": "/index.html" },
+    { "source": "/settings", "destination": "/index.html" },
+    { "source": "/settings/:path*", "destination": "/index.html" }
   ]
 }

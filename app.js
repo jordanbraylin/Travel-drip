@@ -683,6 +683,31 @@ function getActiveExploreCategory() {
   return $("#exploreTabs button.active")?.dataset.exploreCategory || "trending";
 }
 
+function getExploreCategorySlug(categoryKey = "trending") {
+  const category = exploreCategories[categoryKey] ? categoryKey : "trending";
+  return category.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`).toLowerCase();
+}
+
+function getExploreCategoryFromSlug(slug = "") {
+  const normalized = slug.trim().toLowerCase();
+  return Object.keys(exploreCategories).find((key) => getExploreCategorySlug(key) === normalized) || "trending";
+}
+
+function getExploreRoute(categoryKey = getActiveExploreCategory(), itemId = "") {
+  if (isFilePreview) return `index.html#exploreDrops`;
+  const base = `/explore/${getExploreCategorySlug(categoryKey)}`;
+  return itemId ? `${base}/${encodeURIComponent(itemId)}` : base;
+}
+
+function getExploreRouteState(pathname = location.pathname) {
+  const parts = normalizeAppPath(pathname).split("/").filter(Boolean);
+  if (parts[0] !== "explore") return { category: "trending", itemId: "" };
+  return {
+    category: getExploreCategoryFromSlug(parts[1] || "trending"),
+    itemId: parts[2] ? decodeURIComponent(parts[2]) : ""
+  };
+}
+
 function getExploreItems(categoryKey = getActiveExploreCategory()) {
   const query = $("#exploreSearchInput")?.value.trim().toLowerCase() || "";
   const rating = Number($("#exploreRatingFilter")?.value || 0);
@@ -1438,10 +1463,11 @@ function enterAppPreview() {
   $("#authPanel")?.classList.remove("show-form");
   if ($("#authPanel")) $("#authPanel").hidden = true;
   document.body.classList.remove("auth-screen");
-  const appRoute = isFilePreview ? "index.html" : "/";
+  const appRoute = isFilePreview ? "index.html" : "/home";
   if (location.hash === "#login" || location.hash === "#register" || location.pathname === "/login" || location.pathname === "/register") {
-    history.replaceState(null, "", appRoute);
+    history.replaceState({ target: "dashboardHome" }, "", appRoute);
   }
+  renderRoute(getTargetFromRoute(), { replace: true });
 }
 
 function showAuthSetupMessage() {
@@ -1625,6 +1651,178 @@ async function signOut() {
   updateAuthUi();
 }
 
+const routeDefinitions = {
+  dashboardHome: { path: "/home", label: "Home Dashboard" },
+  exploreDrops: { path: "/explore", label: "Explore" },
+  tripsPanel: { path: "/trips", label: "My Trips" },
+  groupBank: { path: "/trips/dubai-weekend/group-bank", label: "Group Bank" },
+  walletPanel: { path: "/trips/dubai-weekend/wallet", label: "Wallet" },
+  rideShareHub: { path: "/trips/dubai-weekend/transportation", label: "Transportation" },
+  splitBill: { path: "/trips/dubai-weekend/split-bill", label: "Restaurant Bill Split" },
+  itineraryAlerts: { path: "/trips/dubai-weekend/itinerary", label: "Itinerary & Alerts" },
+  importantInfo: { path: "/trips/dubai-weekend/important-information", label: "Important Information" },
+  cruisePanel: { path: "/trips/dubai-weekend/cruise", label: "Cruise" },
+  socialHub: { path: "/messages", label: "Messages & Memories" },
+  enterpriseRbac: { path: "/corporate", label: "Corporate" },
+  securityCenter: { path: "/profile", label: "Profile & Settings" },
+  copyrightPolicy: { path: "/settings/help", label: "Help & Copyright" }
+};
+
+const routeAliases = {
+  "/": "dashboardHome",
+  "/index.html": "dashboardHome",
+  "/home": "dashboardHome",
+  "/dashboard": "dashboardHome",
+  "/explore": "exploreDrops",
+  "/trips": "tripsPanel",
+  "/trips/dubai-weekend": "tripsPanel",
+  "/trips/dubai-weekend/overview": "dashboardHome",
+  "/trips/dubai-weekend/itinerary": "itineraryAlerts",
+  "/trips/dubai-weekend/flights": "itineraryAlerts",
+  "/trips/dubai-weekend/hotels": "importantInfo",
+  "/trips/dubai-weekend/travel": "rideShareHub",
+  "/trips/dubai-weekend/transportation": "rideShareHub",
+  "/trips/dubai-weekend/ride-share": "rideShareHub",
+  "/trips/dubai-weekend/wallet": "walletPanel",
+  "/trips/dubai-weekend/my-wallet": "walletPanel",
+  "/trips/dubai-weekend/group-bank": "groupBank",
+  "/trips/dubai-weekend/transactions": "walletPanel",
+  "/trips/dubai-weekend/refunds": "walletPanel",
+  "/trips/dubai-weekend/virtual-card": "walletPanel",
+  "/trips/dubai-weekend/split-bill": "splitBill",
+  "/trips/dubai-weekend/ride-share-split": "rideShareHub",
+  "/trips/dubai-weekend/group-chat": "socialHub",
+  "/trips/dubai-weekend/private-messages": "socialHub",
+  "/trips/dubai-weekend/documents": "importantInfo",
+  "/trips/dubai-weekend/important-information": "importantInfo",
+  "/trips/dubai-weekend/memories": "socialHub",
+  "/trips/dubai-weekend/settings": "securityCenter",
+  "/trips/dubai-weekend/cruise": "cruisePanel",
+  "/messages": "socialHub",
+  "/messages/group": "socialHub",
+  "/messages/private": "socialHub",
+  "/messages/announcements": "socialHub",
+  "/messages/ai-trip-manager": "socialHub",
+  "/messages/media": "socialHub",
+  "/memories": "socialHub",
+  "/corporate": "enterpriseRbac",
+  "/corporate/my-flight": "enterpriseRbac",
+  "/corporate/my-hotel": "enterpriseRbac",
+  "/corporate/my-transportation": "rideShareHub",
+  "/corporate/my-event-schedule": "enterpriseRbac",
+  "/corporate/my-activities": "enterpriseRbac",
+  "/corporate/announcements": "importantInfo",
+  "/corporate/important-information": "importantInfo",
+  "/corporate/approved-photos": "socialHub",
+  "/corporate/budget": "enterpriseRbac",
+  "/corporate/finance": "enterpriseRbac",
+  "/corporate/reports": "enterpriseRbac",
+  "/corporate/audit-logs": "enterpriseRbac",
+  "/profile": "securityCenter",
+  "/profile/my-profile": "securityCenter",
+  "/profile/edit": "securityCenter",
+  "/profile/privacy": "securityCenter",
+  "/profile/notifications": "itineraryAlerts",
+  "/profile/connected-accounts": "socialHub",
+  "/profile/ride-share-connections": "rideShareHub",
+  "/profile/social-media-connections": "socialHub",
+  "/profile/wallet-settings": "walletPanel",
+  "/profile/security": "securityCenter",
+  "/profile/travel-statistics": "tripsPanel",
+  "/settings": "securityCenter",
+  "/settings/notifications": "itineraryAlerts",
+  "/settings/privacy": "securityCenter",
+  "/settings/security": "securityCenter",
+  "/settings/help": "copyrightPolicy",
+  "/settings/navigation-audit": "securityCenter"
+};
+
+const sectionRouteIds = Object.keys(routeDefinitions);
+
+function normalizeAppPath(pathname = location.pathname) {
+  const clean = pathname.replace(/\/+$/, "") || "/";
+  if (clean.endsWith("/index.html")) return "/index.html";
+  return clean;
+}
+
+function getTargetFromRoute(pathname = location.pathname) {
+  const hashTarget = location.hash.startsWith("#") ? location.hash.slice(1) : "";
+  if (hashTarget && routeDefinitions[hashTarget]) return hashTarget;
+  if (normalizeAppPath(pathname).startsWith("/explore/")) return "exploreDrops";
+  return routeAliases[normalizeAppPath(pathname)] || "dashboardHome";
+}
+
+function getRouteForTarget(target) {
+  if (isFilePreview) return `index.html#${target}`;
+  return routeDefinitions[target]?.path || `/app/${target}`;
+}
+
+function renderRoute(target = getTargetFromRoute(), { updateHistory = false, replace = false } = {}) {
+  const resolvedTarget = routeDefinitions[target] ? target : "dashboardHome";
+  document.body.classList.toggle("app-routed", !document.body.classList.contains("auth-screen"));
+  const isHome = resolvedTarget === "dashboardHome";
+  const dashboardSections = [
+    ".pwa-panel",
+    "#dashboardHome",
+    ".destination-insights",
+    ".metrics",
+    "#dashboardWidgets"
+  ];
+  dashboardSections.forEach((selector) => {
+    $$(selector).forEach((section) => {
+      section.hidden = !isHome;
+      section.setAttribute("aria-hidden", String(!isHome));
+    });
+  });
+
+  const contentGrid = $(".content-grid");
+  if (contentGrid) {
+    contentGrid.hidden = isHome;
+    contentGrid.setAttribute("aria-hidden", String(isHome));
+  }
+
+  sectionRouteIds.forEach((sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    section.classList.add("route-screen");
+    section.hidden = sectionId !== resolvedTarget;
+    section.setAttribute("aria-hidden", String(sectionId !== resolvedTarget));
+  });
+  $$("[data-route-support]").forEach((section) => {
+    const supportedRoutes = section.dataset.routeSupport.split(/\s+/);
+    const visible = !isHome && supportedRoutes.includes(resolvedTarget);
+    section.hidden = !visible;
+    section.setAttribute("aria-hidden", String(!visible));
+  });
+  $$(".content-grid section.panel:not([id]):not([data-route-support])").forEach((section) => {
+    section.hidden = true;
+    section.setAttribute("aria-hidden", "true");
+  });
+
+  $$(".nav button, .mobile-nav button, .trip-tab-bar button, [data-target]").forEach((navButton) => {
+    navButton.classList.toggle("active", navButton.dataset.target === resolvedTarget);
+    if (navButton.dataset.target) navButton.setAttribute("aria-current", navButton.dataset.target === resolvedTarget ? "page" : "false");
+  });
+
+  const route = getRouteForTarget(resolvedTarget);
+  const current = normalizeAppPath(location.pathname);
+  if (updateHistory && current !== route) {
+    const method = replace ? "replaceState" : "pushState";
+    history[method]({ target: resolvedTarget }, "", route);
+  }
+
+  if (resolvedTarget === "exploreDrops") {
+    const exploreState = getExploreRouteState();
+    renderExplore(exploreState.category);
+    if (exploreState.itemId) showExploreDetail(exploreState.itemId);
+  }
+
+  document.title = `${routeDefinitions[resolvedTarget].label} - Traveldrip`;
+  document.body.classList.remove("sidebar-open");
+  $("#sidebarMenuButton")?.setAttribute("aria-expanded", "false");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 function wireLocalInteractions() {
   renderPlan(0);
   renderBillSplit();
@@ -1652,6 +1850,8 @@ function wireLocalInteractions() {
 
   $$("#exploreTabs button").forEach((button) => {
     button.addEventListener("click", () => {
+      history.pushState({ target: "exploreDrops", category: button.dataset.exploreCategory }, "", getExploreRoute(button.dataset.exploreCategory));
+      renderRoute("exploreDrops");
       $("#exploreSkeleton").hidden = false;
       $("#exploreResultsGrid").hidden = true;
       window.setTimeout(() => {
@@ -1680,7 +1880,10 @@ function wireLocalInteractions() {
       return;
     }
     const detailButton = event.target.closest("[data-explore-detail]");
-    if (detailButton) showExploreDetail(detailButton.dataset.exploreDetail);
+    if (detailButton) {
+      history.pushState({ target: "exploreDrops", category: getActiveExploreCategory(), itemId: detailButton.dataset.exploreDetail }, "", getExploreRoute(getActiveExploreCategory(), detailButton.dataset.exploreDetail));
+      renderRoute("exploreDrops");
+    }
   });
 
   $("#exploreDetailPanel")?.addEventListener("click", (event) => {
@@ -1688,7 +1891,10 @@ function wireLocalInteractions() {
     if (actionButton) handleExploreAction(actionButton.dataset.exploreAction, actionButton.dataset.exploreItem);
   });
 
-  $("#exploreBackButton")?.addEventListener("click", () => renderExplore());
+  $("#exploreBackButton")?.addEventListener("click", () => {
+    history.pushState({ target: "exploreDrops", category: getActiveExploreCategory() }, "", getExploreRoute(getActiveExploreCategory()));
+    renderRoute("exploreDrops");
+  });
   $("#exploreRetryButton")?.addEventListener("click", () => renderExplore());
   $$("[data-explore-empty]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -2390,14 +2596,16 @@ function wireLocalInteractions() {
   $$("[data-target]").forEach((button) => {
     button.addEventListener("click", () => {
       const target = button.dataset.target;
-      const targetSection = $(`#${target}`);
-      if (!targetSection) return;
-
-      $$(".nav button, .mobile-nav button, .trip-tab-bar button").forEach((navButton) => {
-        navButton.classList.remove("active");
-      });
-      button.classList.add("active");
-      targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (!target || !$(`#${target}`)) return;
+      renderRoute(target, { updateHistory: true });
+    });
+  });
+  $$("[data-route-link]").forEach((link) => {
+    link.addEventListener("click", (event) => {
+      const target = link.dataset.routeLink;
+      if (!target || !routeDefinitions[target]) return;
+      event.preventDefault();
+      renderRoute(target, { updateHistory: true });
     });
   });
 
@@ -2851,10 +3059,21 @@ function wireLocalInteractions() {
     if (location.hash === "#register") setAuthMode("signup");
     if (location.hash === "#login") setAuthMode("signin");
     if (location.hash === "#company-event") setAuthMode("guest");
+    const target = getTargetFromRoute();
+    if (!getInitialAuthMode()) renderRoute(target, { replace: true });
+  });
+  window.addEventListener("popstate", () => {
+    const authMode = getInitialAuthMode();
+    if (authMode) {
+      setAuthMode(authMode);
+      return;
+    }
+    renderRoute(getTargetFromRoute());
   });
 
   const initialAuthMode = getInitialAuthMode();
   if (initialAuthMode) setAuthMode(initialAuthMode);
+  else renderRoute(getTargetFromRoute(), { updateHistory: true, replace: true });
 
   $("#signOutButton")?.addEventListener("click", signOut);
   $("#notifyButton")?.addEventListener("click", enableNotifications);
@@ -3052,6 +3271,11 @@ function getNavigationAudit() {
 
   targetButtons.forEach((button) => {
     if (!$(`#${button.dataset.target}`)) issues.push(`Missing section target: ${button.dataset.target}`);
+    if (!routeDefinitions[button.dataset.target]) issues.push(`Missing route for target: ${button.dataset.target}`);
+  });
+
+  Object.entries(routeDefinitions).forEach(([target, route]) => {
+    if (!$(`#${target}`)) issues.push(`Route ${route.path} points to missing screen: ${target}`);
   });
 
   $$("[aria-controls]").forEach((control) => {
@@ -3068,6 +3292,7 @@ function getNavigationAudit() {
   return {
     targetCount: targetButtons.length,
     linkCount: links.length,
+    routeCount: Object.keys(routeAliases).length,
     workflowCount: workflowButtons.length,
     restrictedCards,
     issues
@@ -3081,7 +3306,8 @@ function renderNavigationAudit() {
   $("#navLinkCount").textContent = `${audit.linkCount} checked`;
   $("#navWorkflowCount").textContent = `${audit.workflowCount} checked`;
   $("#navigationAuditList").innerHTML = [
-    `<div><strong>Main navigation</strong><span>${audit.targetCount} section buttons validate against real screen IDs. Mobile and desktop navigation share the same target map.</span></div>`,
+    `<div><strong>Main navigation</strong><span>${audit.targetCount} section buttons validate against real screen IDs and route through browser history instead of scroll-only jumps.</span></div>`,
+    `<div><strong>Deep links</strong><span>${audit.routeCount} app routes map to dedicated TravelDrip screens for refresh, bookmarks, and back/forward navigation.</span></div>`,
     `<div><strong>Role permissions</strong><span>${audit.restrictedCards} role-gated corporate panels enforce employee, organizer, owner, and finance visibility messaging.</span></div>`,
     `<div><strong>Modals and workflows</strong><span>Wallet PIN dialog, auth tabs, ride-share connection, receipt scanner, bill split, and fallback workflow messages are wired.</span></div>`,
     audit.issues.length

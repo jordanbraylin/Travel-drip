@@ -384,6 +384,18 @@ main {
   box-shadow: var(--shadow);
 }
 
+body.app-routed main > section.route-screen[hidden] {
+  display: none !important;
+}
+
+body.app-routed main > section.route-screen:not([hidden]) {
+  display: block;
+}
+
+body.app-routed main > section#dashboardHome.route-screen:not([hidden]) {
+  display: grid;
+}
+
 .pwa-panel {
   display: none;
   grid-template-columns: minmax(0, 1fr) auto;

@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=34">
+  <link rel="stylesheet" href="styles.css?v=35">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -23,7 +23,7 @@
 
   <div class="shell">
     <aside class="sidebar" aria-label="Primary">
-      <a class="brand" href="index.html" aria-label="Traveldrip home">
+      <a class="brand" href="index.html" data-route-link="dashboardHome" aria-label="Traveldrip home">
         <span class="brand-mark" aria-hidden="true"></span>
         <span><strong>Traveldrip</strong><small>Group trips, synced</small></span>
       </a>
@@ -447,7 +447,7 @@
 
       <section class="content-grid">
         <div class="main-stack">
-          <section class="panel">
+          <section class="panel" data-route-support="groupBank">
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Group Bank Overview</p>
@@ -470,7 +470,7 @@
             </div>
           </section>
 
-          <section class="panel admin-bank-panel">
+          <section class="panel admin-bank-panel" data-route-support="groupBank">
             <div>
               <p class="eyebrow">Admin Controls</p>
               <h2>Organizer financial tools</h2>
@@ -1442,13 +1442,13 @@
         </div>
 
         <aside class="right-stack">
-          <section class="panel">
+          <section class="panel" data-route-support="itineraryAlerts walletPanel">
             <div class="section-heading compact"><h2>Your trips</h2><button class="icon-button" type="button" aria-label="Add trip">Add</button></div>
             <div class="trip-row"><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=500&auto=format&fit=crop" alt="Miami beach"><span><strong>Miami 2027</strong><small>8 travelers, 5 decisions left</small></span></div>
             <div class="trip-row"><img src="https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?q=80&w=500&auto=format&fit=crop" alt="Venice canal"><span><strong>Venice food map</strong><small>3 travelers, draft mode</small></span></div>
           </section>
 
-          <section class="panel">
+          <section class="panel" data-route-support="tripsPanel">
             <h2>AI itinerary builder</h2>
             <p id="builderCopy">Balanced pace with one anchor activity each day.</p>
             <div class="tabs" role="tablist" aria-label="Itinerary days">
@@ -2147,13 +2147,13 @@
             </div>
           </section>
 
-          <section class="panel map-panel">
+          <section class="panel map-panel" data-route-support="itineraryAlerts rideShareHub">
             <div class="map" aria-label="Trip route map"><span class="pin one">1</span><span class="pin two">2</span><span class="pin three">3</span></div>
             <h2>Smart route</h2>
             <p>Three stops are clustered to save 42 minutes of transit on Friday.</p>
           </section>
 
-          <section class="panel navigation-audit-panel">
+          <section class="panel navigation-audit-panel" data-route-support="securityCenter">
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Navigation QA</p>
@@ -2170,7 +2170,7 @@
             <p class="small" id="navigationStatusMessage">Navigation audit checks buttons, links, tab targets, modal triggers, role-restricted actions, and fallback workflow messaging.</p>
           </section>
 
-          <section class="panel audit-panel">
+          <section class="panel audit-panel" data-route-support="groupBank walletPanel">
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Audit & Compliance</p>
@@ -2213,6 +2213,6 @@
   </dialog>
 
   <script src="public-config.js?v=1"></script>
-  <script defer src="app.js?v=29"></script>
+  <script defer src="app.js?v=30"></script>
 </body>
 </html>
