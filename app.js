@@ -558,6 +558,39 @@ function renderTripType(type) {
   renderInvitationSetup(type);
 }
 
+function updateDashboardWidgets() {
+  const tripType = $("#dashboardTripType")?.value || "group";
+  const role = $("#rolePreview")?.value || "employee";
+  const isAdminRole = ["owner", "finance"].includes(role);
+
+  $$("[data-widget-scope]").forEach((widget) => {
+    const allowed = widget.dataset.widgetScope.split(" ").includes(tripType);
+    const financeAllowed = !widget.dataset.financeWidget || tripType !== "corporate" || isAdminRole;
+    widget.hidden = !allowed || !financeAllowed || widget.dataset.userHidden === "true";
+  });
+
+  $$("[data-corporate-nav]").forEach((section) => {
+    section.hidden = tripType !== "corporate";
+  });
+
+  $$("[data-requires-trip-type]").forEach((item) => {
+    item.hidden = !item.dataset.requiresTripType.split(" ").includes(tripType);
+  });
+
+  $$("[data-admin-only]").forEach((item) => {
+    item.hidden = tripType === "corporate" && !isAdminRole;
+  });
+
+  const labels = {
+    solo: "Solo dashboard: personal itinerary, AI recommendations, weather, budget, and documents are prioritized.",
+    group: "Group dashboard: chat, polls, shared budget, events, member activity, and notifications are prioritized.",
+    corporate: isAdminRole
+      ? "Corporate admin dashboard: employee logistics plus budget, approvals, attendance, reports, and audit widgets are visible."
+      : "Corporate employee dashboard: flights, hotel, transportation, event schedule, activities, and announcements are visible."
+  };
+  $("#widgetStatusMessage").textContent = labels[tripType] || labels.group;
+}
+
 function getActiveExploreCategory() {
   return $("#exploreTabs button.active")?.dataset.exploreCategory || "trending";
 }
@@ -1322,6 +1355,7 @@ function wireLocalInteractions() {
   renderBillSplit();
   renderRideSplit();
   updateEnterpriseRole();
+  updateDashboardWidgets();
   startLivePlanRotation();
 
   $$(".tab").forEach((button) => {
@@ -1959,8 +1993,9 @@ function wireLocalInteractions() {
       if (!targetSection) return;
 
       $$(".nav button, .mobile-nav button").forEach((navButton) => {
-        navButton.classList.toggle("active", navButton.dataset.target === target);
+        navButton.classList.remove("active");
       });
+      button.classList.add("active");
       targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
@@ -1986,6 +2021,52 @@ function wireLocalInteractions() {
   });
 
   $("#rolePreview")?.addEventListener("change", updateEnterpriseRole);
+  $("#dashboardTripType")?.addEventListener("change", updateDashboardWidgets);
+  $("#sidebarMenuButton")?.addEventListener("click", () => {
+    const open = !document.body.classList.contains("sidebar-open");
+    document.body.classList.toggle("sidebar-open", open);
+    $("#sidebarMenuButton").setAttribute("aria-expanded", String(open));
+  });
+  $(".sidebar")?.addEventListener("click", (event) => {
+    if (!event.target.closest("[data-target], a")) return;
+    document.body.classList.remove("sidebar-open");
+    $("#sidebarMenuButton")?.setAttribute("aria-expanded", "false");
+  });
+  $("[data-target]")?.ownerDocument?.addEventListener("click", (event) => {
+    if (!document.body.classList.contains("sidebar-open")) return;
+    if (event.target.closest(".sidebar, #sidebarMenuButton")) return;
+    document.body.classList.remove("sidebar-open");
+    $("#sidebarMenuButton")?.setAttribute("aria-expanded", "false");
+  });
+  $$("[data-widget-hide]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const widget = $(`[data-widget="${button.dataset.widgetHide}"]`);
+      if (!widget) return;
+      widget.dataset.userHidden = "true";
+      updateDashboardWidgets();
+      $("#widgetStatusMessage").textContent = `${button.dataset.widgetHide} widget hidden. Use Reset layout to restore hidden widgets.`;
+    });
+  });
+  $$("[data-widget-pin]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const widget = $(`[data-widget="${button.dataset.widgetPin}"]`);
+      if (!widget) return;
+      widget.classList.toggle("is-pinned");
+      $("#widgetStatusMessage").textContent = `${button.dataset.widgetPin} widget ${widget.classList.contains("is-pinned") ? "pinned" : "unpinned"}.`;
+    });
+  });
+  $("#resetWidgetsButton")?.addEventListener("click", () => {
+    $$("[data-widget]").forEach((widget) => {
+      delete widget.dataset.userHidden;
+      widget.classList.remove("is-pinned");
+    });
+    updateDashboardWidgets();
+    $("#widgetStatusMessage").textContent = "Dashboard layout reset to the default widget set.";
+  });
+  $("#askAiWidgetButton")?.addEventListener("click", () => {
+    $("#widgetStatusMessage").textContent = "AI Trip Manager opened with reminders, weather, budget, flight, and activity context.";
+    addAuditEntry("AI widget opened", "Dashboard Ask AI action opened travel assistant context.");
+  });
   $("#infoSearch")?.addEventListener("input", filterImportantInfo);
   $$(".trip-check").forEach((checkbox) => {
     checkbox.addEventListener("change", updateChecklistProgress);
@@ -2156,6 +2237,7 @@ function updateEnterpriseRole() {
   if (selectedRole === "employee") {
     addAuditEntry("Financial access blocked", "Employee role preview restricted corporate budget visibility.");
   }
+  updateDashboardWidgets();
 }
 
 function appendMessage(author, text) {

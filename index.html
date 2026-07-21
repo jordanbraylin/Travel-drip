@@ -27,20 +27,63 @@
         <span class="brand-mark" aria-hidden="true"></span>
         <span><strong>Traveldrip</strong><small>Group trips, synced</small></span>
       </a>
-      <nav class="nav">
-        <button class="active" type="button" data-target="dashboardHome">Dashboard</button>
-        <button type="button" data-target="exploreDrops">Explore</button>
-        <button type="button" data-target="tripsPanel">Trips</button>
-        <button type="button" data-target="walletPanel">Wallet</button>
-        <button type="button" data-target="rideShareHub">Transportation</button>
-        <button type="button" data-target="splitBill">Split Bill</button>
-        <button type="button" data-target="itineraryAlerts">Alerts</button>
-        <button type="button" data-target="socialHub">Social Hub</button>
-        <button type="button" data-target="enterpriseRbac">Enterprise</button>
-        <button type="button" data-target="importantInfo">Important Info</button>
-        <button type="button" data-target="securityCenter">Security</button>
-        <button type="button" data-target="copyrightPolicy">Copyright</button>
-        <a href="admin.html">Admin</a>
+      <nav class="nav grouped-nav" aria-label="TravelDrip navigation">
+        <details class="nav-group" open>
+          <summary>Primary Navigation</summary>
+          <button class="active" type="button" data-target="dashboardHome">Home</button>
+          <button type="button" data-target="exploreDrops">Explore</button>
+          <button type="button" data-target="tripsPanel">My Trips</button>
+          <button type="button" data-target="socialHub">Messages</button>
+          <button type="button" data-target="socialHub">Memories</button>
+          <button type="button" data-target="securityCenter">Profile</button>
+        </details>
+        <details class="nav-group" open>
+          <summary>Trip Management</summary>
+          <button type="button" data-target="dashboardHome">Overview</button>
+          <button type="button" data-target="itineraryAlerts">Itinerary</button>
+          <button type="button" data-target="itineraryAlerts">Flight Details</button>
+          <button type="button" data-target="importantInfo">Hotel Details</button>
+          <button type="button" data-target="rideShareHub">Transportation</button>
+          <button type="button" data-target="exploreDrops">Activities</button>
+          <button type="button" data-target="importantInfo">Documents</button>
+          <button type="button" data-target="importantInfo">Important Information</button>
+          <button type="button" data-target="walletPanel">Budget & Wallet</button>
+          <button type="button" data-target="socialHub" data-requires-trip-type="group corporate">Group Chat</button>
+        </details>
+        <details class="nav-group" open>
+          <summary>Financial</summary>
+          <button type="button" data-target="walletPanel">My Wallet</button>
+          <button type="button" data-target="groupBank">Group Bank</button>
+          <button type="button" data-target="walletPanel">Virtual Card</button>
+          <button type="button" data-target="walletPanel">Transaction History</button>
+          <button type="button" data-target="walletPanel">Refund Center</button>
+          <button type="button" data-target="splitBill">Smart Bill Split</button>
+          <button type="button" data-target="rideShareHub">Ride Share Expenses</button>
+        </details>
+        <details class="nav-group" data-corporate-nav open>
+          <summary>Corporate Retreat</summary>
+          <button type="button" data-target="enterpriseRbac">Company Dashboard</button>
+          <button type="button" data-target="enterpriseRbac">Employee Directory</button>
+          <button type="button" data-target="enterpriseRbac">Team Schedule</button>
+          <button type="button" data-target="importantInfo">Announcements</button>
+          <button type="button" data-target="enterpriseRbac">Event Agenda</button>
+          <button type="button" data-target="rideShareHub">Transportation</button>
+          <button type="button" data-target="enterpriseRbac" data-admin-only>Reports</button>
+          <button type="button" data-target="enterpriseRbac" data-admin-only>Budget</button>
+          <button type="button" data-target="enterpriseRbac" data-admin-only>Audit Logs</button>
+        </details>
+        <details class="nav-group">
+          <summary>Settings</summary>
+          <button type="button" data-target="securityCenter">Account</button>
+          <button type="button" data-target="itineraryAlerts">Notifications</button>
+          <button type="button" data-target="securityCenter">Privacy</button>
+          <button type="button" data-target="socialHub">Connected Social Media</button>
+          <button type="button" data-target="rideShareHub">Connected Ride Share Accounts</button>
+          <button type="button" data-target="securityCenter">Security</button>
+          <button type="button" data-target="walletPanel">Wallet Settings</button>
+          <button type="button" data-target="copyrightPolicy">Help & Support</button>
+          <a href="admin.html">Admin</a>
+        </details>
       </nav>
       <div class="install-card">
         <strong>Add Traveldrip to your phone</strong>
@@ -55,6 +98,7 @@
 
     <main>
       <header class="topbar">
+        <button class="icon-button menu-button" type="button" id="sidebarMenuButton" aria-label="Open navigation" aria-expanded="false">Menu</button>
         <label class="search">
           <span aria-hidden="true">Search</span>
           <input type="search" placeholder="Cities, stays, restaurants, friends">
@@ -218,6 +262,88 @@
         <article><span>Group bank</span><strong id="walletMetric">$6,400</strong><small id="depositMetric">$800 each</small></article>
         <article><span>Votes open</span><strong>4</strong><small>2 close today</small></article>
         <article><span>Target spend</span><strong>$1,250</strong><small>per person</small></article>
+      </section>
+
+      <section class="dashboard-widgets" id="dashboardWidgets" aria-label="Customizable dashboard widgets">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">Smart Dashboard</p>
+            <h2>Today in TravelDrip</h2>
+          </div>
+          <div class="dashboard-controls">
+            <label>Trip type
+              <select id="dashboardTripType">
+                <option value="group">Group Trip</option>
+                <option value="solo">Solo Trip</option>
+                <option value="corporate">Corporate Retreat</option>
+              </select>
+            </label>
+            <button class="ghost-button" type="button" id="resetWidgetsButton">Reset layout</button>
+          </div>
+        </div>
+        <div class="widget-grid" id="widgetGrid">
+          <article class="travel-widget upcoming-widget" data-widget="upcoming" data-widget-scope="solo group corporate">
+            <div class="widget-toolbar"><span>Upcoming Trip</span><button type="button" data-widget-pin="upcoming">Pin</button><button type="button" data-widget-hide="upcoming">Hide</button></div>
+            <h3>Dubai long weekend</h3>
+            <p>Departing in <strong>18 days</strong></p>
+            <div class="widget-meta"><span>Aug 8 - Aug 11</span><span>JBR Marina</span></div>
+            <button class="primary-button" type="button" data-target="tripsPanel">Quick View</button>
+          </article>
+          <article class="travel-widget ai-widget is-large" data-widget="ai" data-widget-scope="solo group corporate">
+            <div class="widget-toolbar"><span>AI Trip Manager</span><button type="button" data-widget-pin="ai">Pin</button><button type="button" data-widget-hide="ai">Hide</button></div>
+            <div class="ai-reminder-list">
+              <div><strong>Today</strong><span>Confirm rooftop dinner headcount by 6 PM.</span></div>
+              <div><strong>Suggestion</strong><span>Book museum slot before ticket prices rise.</span></div>
+              <div><strong>Weather</strong><span>Heat advisory: move outdoor walk earlier.</span></div>
+              <div><strong>Budget</strong><span>Shared wallet has $740 available after holds.</span></div>
+            </div>
+            <button class="primary-button" type="button" id="askAiWidgetButton">Ask AI</button>
+          </article>
+          <article class="travel-widget budget-widget" data-widget="budget" data-widget-scope="solo group corporate" data-finance-widget>
+            <div class="widget-toolbar"><span>Budget Snapshot</span><button type="button" data-widget-pin="budget">Pin</button><button type="button" data-widget-hide="budget">Hide</button></div>
+            <h3>$1,250 target</h3>
+            <div class="progress-bar"><span style="width: 64%"></span></div>
+            <div class="widget-meta"><span>$800 spent</span><span>$450 available</span><span>$220 due soon</span></div>
+          </article>
+          <article class="travel-widget flight-widget" data-widget="flight" data-widget-scope="solo group corporate">
+            <div class="widget-toolbar"><span>Flight</span><button type="button" data-widget-pin="flight">Pin</button><button type="button" data-widget-hide="flight">Hide</button></div>
+            <h3>Delta DL 241</h3>
+            <p>Depart 8:45 AM • Gate B18</p>
+            <span class="status-pill">On time</span>
+            <button class="ghost-button" type="button" data-target="itineraryAlerts">View Details</button>
+          </article>
+          <article class="travel-widget weather-widget" data-widget="weather" data-widget-scope="solo group corporate">
+            <div class="widget-toolbar"><span>Weather</span><button type="button" data-widget-pin="weather">Pin</button><button type="button" data-widget-hide="weather">Hide</button></div>
+            <h3>92°F sunny</h3>
+            <p>Pack sunglasses, light layers indoors, and hydrate before afternoon activities.</p>
+          </article>
+          <article class="travel-widget memories-widget" data-widget="memories" data-widget-scope="solo group corporate">
+            <div class="widget-toolbar"><span>Memories</span><button type="button" data-widget-pin="memories">Pin</button><button type="button" data-widget-hide="memories">Hide</button></div>
+            <div class="mini-collage">
+              <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?q=80&w=300&auto=format&fit=crop" alt="Beach memory">
+              <img src="https://images.unsplash.com/photo-1493558103817-58b2924bce98?q=80&w=300&auto=format&fit=crop" alt="Road trip memory">
+              <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=300&auto=format&fit=crop" alt="Outdoor table memory">
+            </div>
+            <button class="ghost-button" type="button" data-target="socialHub">Open album</button>
+          </article>
+          <article class="travel-widget notifications-widget" data-widget="notifications" data-widget-scope="group corporate">
+            <div class="widget-toolbar"><span>Notifications</span><button type="button" data-widget-pin="notifications">Pin</button><button type="button" data-widget-hide="notifications">Hide</button></div>
+            <div class="notification-mini-list">
+              <span>Travel: Gate changed to B18</span>
+              <span>Payments: Wallet deadline tomorrow</span>
+              <span>Messages: Sarah mentioned dinner</span>
+              <span>Activities: Yacht vote closes tonight</span>
+            </div>
+            <button class="ghost-button" type="button" data-target="itineraryAlerts">View All</button>
+          </article>
+          <article class="travel-widget corporate-widget" data-widget="corporate" data-widget-scope="corporate">
+            <div class="widget-toolbar"><span>Corporate Ops</span><button type="button" data-widget-pin="corporate">Pin</button><button type="button" data-widget-hide="corporate">Hide</button></div>
+            <h3>Retreat readiness</h3>
+            <p>Attendance 86%, documents 74%, finance reports admin-only.</p>
+            <button class="ghost-button" type="button" data-target="enterpriseRbac">Company Dashboard</button>
+          </article>
+        </div>
+        <p class="small" id="widgetStatusMessage">Widgets adapt to trip type. Pin, hide, or reset the layout anytime.</p>
       </section>
 
       <section class="bank-grid" id="groupBank">
