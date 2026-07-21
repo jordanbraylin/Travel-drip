@@ -113,6 +113,51 @@ const sharedRideMembers = [
   { name: "Alex", status: "Leaving later", splitting: false }
 ];
 
+const livePlanDestinations = [
+  {
+    location: "United Arab Emirates",
+    title: "Dubai long weekend",
+    description: "Rooftop dinners, desert rides, beach clubs, and a shared wallet that keeps everyone even.",
+    photo: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1600&auto=format&fit=crop",
+    alt: "Dubai skyline at sunset"
+  },
+  {
+    location: "California",
+    title: "California coast drive",
+    description: "Pacific overlooks, vineyard stops, beach bonfires, and live alerts for every route change.",
+    photo: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop",
+    alt: "California coastal highway beside turquoise water"
+  },
+  {
+    location: "Japan",
+    title: "Tokyo food sprint",
+    description: "Ramen counters, late trains, market mornings, and bill splits that update before the next stop.",
+    photo: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1600&auto=format&fit=crop",
+    alt: "Tokyo city street with bright signs"
+  },
+  {
+    location: "New York",
+    title: "New York city week",
+    description: "Museum slots, dinner reservations, Broadway timing, and meeting point reminders for the whole crew.",
+    photo: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=1600&auto=format&fit=crop",
+    alt: "New York skyline and city streets"
+  },
+  {
+    location: "Greece",
+    title: "Santorini sunset loop",
+    description: "Cliffside stays, boat day holds, shared photos, and itinerary changes pushed as they happen.",
+    photo: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=1600&auto=format&fit=crop",
+    alt: "White buildings on a Santorini cliff above the sea"
+  },
+  {
+    location: "Florida",
+    title: "Miami friends escape",
+    description: "Pool plans, dinner votes, rideshare splits, and wallet approvals that keep the weekend moving.",
+    photo: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?q=80&w=1600&auto=format&fit=crop",
+    alt: "Tropical beach shoreline with clear water"
+  }
+];
+
 function hideLoader() {
   window.setTimeout(() => $("#loader")?.classList.add("done"), 450);
 }
@@ -138,6 +183,32 @@ function renderPlan(index) {
     </div>
   `).join("");
   if (builderCopy) builderCopy.textContent = dayCopy[index];
+}
+
+function startLivePlanRotation() {
+  const hero = $("#dashboardHome");
+  const photo = $("#livePlanPhoto");
+  const location = $("#livePlanLocation");
+  const title = $("#livePlanTitle");
+  const description = $("#livePlanDescription");
+  if (!hero || !photo || !location || !title || !description) return;
+
+  let index = 0;
+  const renderDestination = () => {
+    index = (index + 1) % livePlanDestinations.length;
+    const destination = livePlanDestinations[index];
+    hero.classList.add("is-flashing");
+    window.setTimeout(() => {
+      photo.src = destination.photo;
+      photo.alt = destination.alt;
+      location.textContent = `Live group plan • ${destination.location}`;
+      title.textContent = destination.title;
+      description.textContent = destination.description;
+    }, 180);
+    window.setTimeout(() => hero.classList.remove("is-flashing"), 700);
+  };
+
+  window.setInterval(renderDestination, 4200);
 }
 
 function getBillInputs() {
@@ -691,6 +762,7 @@ function wireLocalInteractions() {
   renderBillSplit();
   renderRideSplit();
   updateEnterpriseRole();
+  startLivePlanRotation();
 
   $$(".tab").forEach((button) => {
     button.addEventListener("click", () => {
