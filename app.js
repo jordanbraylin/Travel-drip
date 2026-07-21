@@ -288,6 +288,182 @@ const authCarouselSlides = [
   }
 ];
 
+const exploreCategories = {
+  trending: {
+    label: "Trending",
+    filters: ["Rooftop", "Creator guides", "Tours", "Hotels", "Saved often", "Group-friendly"],
+    items: [
+      {
+        id: "miami-yacht",
+        title: "Miami Sunset Yacht Experience",
+        type: "Viral group experience",
+        price: "$180 starting",
+        rating: 4.8,
+        distance: 2.4,
+        status: "Available Aug 8-11",
+        image: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?q=80&w=900&auto=format&fit=crop",
+        description: "Private sunset cruise with skyline views, shareable photo stops, and group add-ons.",
+        details: ["Location: Biscayne Bay", "Best dates: Friday and Saturday sunset", "Saved by 2,430 TravelDrip users"],
+        actions: ["Save", "Add to Trip", "Share", "Book"]
+      },
+      {
+        id: "nola-food-weekend",
+        title: "Three-Day New Orleans Food Weekend",
+        type: "Trending itinerary",
+        price: "$780 estimate",
+        rating: 4.7,
+        distance: 0.8,
+        status: "Best Sep-Nov",
+        image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=900&auto=format&fit=crop",
+        description: "Sample itinerary with brunch, jazz, seafood, local history, and creator food guides.",
+        details: ["Featured restaurants included", "Weekend dates recommended", "Popular for couples and small groups"],
+        actions: ["Save", "Add to Trip", "Share", "Customize Trip"]
+      }
+    ]
+  },
+  food: {
+    label: "Food and Restaurants",
+    filters: ["Under $25", "$25-$50", "$50-$100", "Fine Dining", "Rooftop", "Brunch", "Seafood", "Vegan", "Local Favorites", "Group-Friendly"],
+    items: [
+      {
+        id: "oceanview-sushi",
+        title: "Oceanview Rooftop Sushi",
+        type: "Japanese cuisine",
+        price: "$55 per person",
+        rating: 4.7,
+        distance: 1.1,
+        status: "Open now",
+        image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=900&auto=format&fit=crop",
+        description: "Rooftop seating, ocean views, group reservations, and omakase-style platters.",
+        details: ["Cuisine: Japanese", "Reservations supported", "Dietary notes available"],
+        actions: ["View Menu", "Get Directions", "Save", "Add to Itinerary", "Start Smart Bill Split", "Make Reservation"]
+      },
+      {
+        id: "local-cuban-cafe",
+        title: "Local Cuban Cafe",
+        type: "Cuban cuisine",
+        price: "$22 per person",
+        rating: 4.6,
+        distance: 0.7,
+        status: "Open now",
+        image: "https://images.unsplash.com/photo-1559305616-3f99cd43e353?q=80&w=900&auto=format&fit=crop",
+        description: "Casual brunch favorite with cafe con leche, sandwiches, and group-friendly tables.",
+        details: ["Popular brunch location", "Local favorite", "Under $25 per person"],
+        actions: ["View Menu", "Get Directions", "Save", "Add to Itinerary", "Start Smart Bill Split"]
+      }
+    ]
+  },
+  nightlife: {
+    label: "Nightclubs and Nightlife",
+    filters: ["Nightclubs", "Rooftop Bars", "Lounges", "Live Music", "Beach Clubs", "Cocktail Bars", "LGBTQ+ Friendly", "Under $50 Entry", "VIP Experiences"],
+    items: [
+      {
+        id: "skyline-lounge",
+        title: "Skyline Rooftop Lounge",
+        type: "Rooftop bar",
+        price: "$25 entry estimate",
+        rating: 4.6,
+        distance: 1.8,
+        status: "Open until 2:00 AM",
+        image: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=900&auto=format&fit=crop",
+        description: "R&B and hip-hop, upscale casual dress code, skyline photo spots, and safety notes.",
+        details: ["Age: 21+", "Dress code: upscale casual", "Music: R&B and hip-hop"],
+        actions: ["Get Directions", "Save", "Add to Itinerary", "Vote in Group Chat", "Book"]
+      },
+      {
+        id: "ocean-beach-club",
+        title: "Ocean Beach Club",
+        type: "Beachfront venue",
+        price: "$40 entry estimate",
+        rating: 4.5,
+        distance: 3.2,
+        status: "Open until 3:00 AM",
+        image: "https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=900&auto=format&fit=crop",
+        description: "House and electronic music, table reservations, beachfront access, and ride-share pickup tips.",
+        details: ["Age: 21+", "Tables supported", "Safety: use marked pickup zone"],
+        actions: ["Get Directions", "Save", "Add to Itinerary", "Vote in Group Chat", "Visit Website"]
+      }
+    ]
+  },
+  under900: {
+    label: "Trips Under $900",
+    filters: ["Flight included", "Hotel included", "Food estimate", "Activities", "2-4 days", "Customize budget"],
+    items: [
+      {
+        id: "miami-875",
+        title: "Three-Day Miami Getaway",
+        type: "Budget trip estimate",
+        price: "$875 per person",
+        rating: 4.7,
+        distance: 0,
+        status: "Estimate includes taxes and fees",
+        image: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?q=80&w=900&auto=format&fit=crop",
+        description: "Flight $245, two hotel nights $310, food $160, activities $95, transportation $65.",
+        details: ["Hotel: boutique beach stay", "Suggested dates: Aug weekends", "All pricing is estimated"],
+        actions: ["Save", "Customize Trip", "Create This Trip", "Share"]
+      },
+      {
+        id: "nashville-820",
+        title: "Four-Day Nashville Weekend",
+        type: "Budget trip estimate",
+        price: "$820 per person",
+        rating: 4.6,
+        distance: 0,
+        status: "Estimate includes local transport",
+        image: "https://images.unsplash.com/photo-1545419913-775e6e82e14a?q=80&w=900&auto=format&fit=crop",
+        description: "Flight $230, three hotel nights $285, food $155, activities $90, transportation $60.",
+        details: ["Music venues included", "Great for groups", "All pricing is estimated"],
+        actions: ["Save", "Customize Trip", "Create This Trip"]
+      }
+    ]
+  }
+};
+
+[
+  ["activities", "Activities", "Guided tour", "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=900&auto=format&fit=crop", ["Museums", "Tours", "Workshops", "Tickets", "Rainy day"]],
+  ["hidden", "Hidden Gems", "Local favorite", "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?q=80&w=900&auto=format&fit=crop", ["Local guides", "Quiet spots", "Photo walks", "Underrated food"]],
+  ["beaches", "Beaches", "Beach day", "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=900&auto=format&fit=crop", ["Swimmable", "Family", "Beach club", "Sunset"]],
+  ["shopping", "Shopping", "Market and boutiques", "https://images.unsplash.com/photo-1481437156560-3205f6a55735?q=80&w=900&auto=format&fit=crop", ["Markets", "Luxury", "Vintage", "Local makers"]],
+  ["outdoor", "Outdoor Adventures", "Trail and water", "https://images.unsplash.com/photo-1527004013197-933c4bb611b3?q=80&w=900&auto=format&fit=crop", ["Hiking", "Water sports", "Bike", "Guided"]],
+  ["family", "Family-Friendly", "All ages", "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?q=80&w=900&auto=format&fit=crop", ["All ages", "Low walking", "Accessible", "Educational"]],
+  ["luxury", "Luxury Experiences", "Premium", "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=900&auto=format&fit=crop", ["Resorts", "Private tours", "Fine dining", "Spa"]],
+  ["events", "Local Events", "This week", "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=900&auto=format&fit=crop", ["Concerts", "Festivals", "Sports", "Pop-ups"]],
+  ["weekend", "Weekend Getaways", "Short trip", "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=900&auto=format&fit=crop", ["2 nights", "Road trip", "Flight deals", "Couples"]]
+].forEach(([key, label, type, image, filters]) => {
+  exploreCategories[key] = {
+    label,
+    filters,
+    items: [
+      {
+        id: `${key}-top-pick`,
+        title: `${label} Top Pick`,
+        type,
+        price: key === "luxury" ? "$240+" : key === "family" ? "$35+" : "$65 estimate",
+        rating: 4.7,
+        distance: key === "weekend" ? 120 : 2.6,
+        status: key === "events" ? "Available this weekend" : "Recommended for selected dates",
+        image,
+        description: `Personalized ${label.toLowerCase()} recommendation based on destination, dates, budget, interests, and trip type.`,
+        details: ["Matches current destination", "Adapted to selected trip type", "Includes safety and planning notes"],
+        actions: ["Save", "Add to Trip", "Share", "Get Directions"]
+      },
+      {
+        id: `${key}-local-guide`,
+        title: `${label} Local Guide`,
+        type: "Creator guide",
+        price: "$18 guide",
+        rating: 4.5,
+        distance: 1.4,
+        status: "Saved often",
+        image,
+        description: "A curated guide with local timing tips, nearby stops, and TravelDrip itinerary actions.",
+        details: ["Public travel guide", "Great for planning", "Includes nearby options"],
+        actions: ["Save", "Add to Trip", "Share", "Ask AI Trip Manager"]
+      }
+    ]
+  };
+});
+
 function hideLoader() {
   window.setTimeout(() => $("#loader")?.classList.add("done"), 450);
 }
@@ -380,6 +556,141 @@ function renderTripType(type) {
   $("#featuresEnabledList").innerHTML = config.enabled.map((feature) => `<span>${escapeHtml(feature)}</span>`).join("");
   $("#featuresHiddenList").innerHTML = config.hidden.map((feature) => `<span>${escapeHtml(feature)}</span>`).join("");
   renderInvitationSetup(type);
+}
+
+function getActiveExploreCategory() {
+  return $("#exploreTabs button.active")?.dataset.exploreCategory || "trending";
+}
+
+function getExploreItems(categoryKey = getActiveExploreCategory()) {
+  const query = $("#exploreSearchInput")?.value.trim().toLowerCase() || "";
+  const rating = Number($("#exploreRatingFilter")?.value || 0);
+  const distanceFilter = $("#exploreDistanceFilter")?.value || "any";
+  const openNow = Boolean($("#exploreOpenNowFilter")?.checked);
+  const budget = $("#exploreBudgetFilter")?.value || "any";
+  let items = exploreCategories[categoryKey]?.items || [];
+
+  if (query) {
+    items = items.filter((item) => `${item.title} ${item.type} ${item.description} ${item.details.join(" ")}`.toLowerCase().includes(query));
+  }
+  if (rating) items = items.filter((item) => item.rating >= rating);
+  if (distanceFilter !== "any") items = items.filter((item) => item.distance <= Number(distanceFilter));
+  if (openNow) items = items.filter((item) => item.status.toLowerCase().includes("open"));
+  if (budget !== "any") {
+    const ceiling = Number(budget);
+    items = items.filter((item) => {
+      const price = Number((item.price.match(/\d+/) || [0])[0]);
+      return price <= ceiling || categoryKey === "under900";
+    });
+  }
+  return items;
+}
+
+function renderExplore(categoryKey = getActiveExploreCategory()) {
+  if (!$("#exploreResultsGrid")) return;
+  const category = exploreCategories[categoryKey] || exploreCategories.trending;
+  const destination = $("#exploreDestinationInput")?.value.trim() || "your destination";
+  const tripType = $("#exploreTripTypeFilter")?.selectedOptions?.[0]?.textContent || "selected trip";
+  const items = getExploreItems(categoryKey);
+
+  $$("#exploreTabs button").forEach((button) => {
+    const active = button.dataset.exploreCategory === categoryKey;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-selected", String(active));
+  });
+
+  $("#exploreDetailPanel").hidden = true;
+  $("#exploreBackButton").hidden = true;
+  $("#exploreResultsGrid").hidden = false;
+  $("#exploreSubfilters").innerHTML = category.filters.map((filter) => `<button type="button" data-explore-subfilter="${escapeHtml(filter)}">${escapeHtml(filter)}</button>`).join("");
+  $("#exploreResultsSummary").textContent = `${category.label} results for ${destination} ${tripType.toLowerCase()}`;
+  $("#exploreEmptyState").hidden = items.length > 0;
+  $("#exploreResultsGrid").innerHTML = items.map((item) => `
+    <article class="explore-card" data-explore-card="${escapeHtml(item.id)}">
+      <button class="explore-card-main" type="button" data-explore-detail="${escapeHtml(item.id)}">
+        <img src="${item.image}" alt="${escapeHtml(item.title)}">
+        <span>${escapeHtml(item.type)}</span>
+        <h3>${escapeHtml(item.title)}</h3>
+        <p>${escapeHtml(item.description)}</p>
+        <div class="explore-card-meta">
+          <strong>${escapeHtml(item.price)}</strong>
+          <small>${item.rating.toFixed(1)} rating</small>
+          <small>${item.distance ? `${item.distance} mi` : "Trip estimate"}</small>
+          <small>${escapeHtml(item.status)}</small>
+        </div>
+      </button>
+      <div class="explore-card-actions">
+        ${item.actions.map((action) => `<button type="button" data-explore-action="${escapeHtml(action)}" data-explore-item="${escapeHtml(item.id)}">${escapeHtml(action)}</button>`).join("")}
+      </div>
+    </article>
+  `).join("");
+}
+
+function findExploreItem(itemId) {
+  return Object.values(exploreCategories).flatMap((category) => category.items).find((item) => item.id === itemId);
+}
+
+function showExploreDetail(itemId) {
+  const item = findExploreItem(itemId);
+  if (!item) return;
+  $("#exploreResultsGrid").hidden = true;
+  $("#exploreEmptyState").hidden = true;
+  $("#exploreBackButton").hidden = false;
+  $("#exploreDetailPanel").hidden = false;
+  $("#exploreDetailPanel").innerHTML = `
+    <img src="${item.image}" alt="${escapeHtml(item.title)}">
+    <div>
+      <p class="eyebrow">${escapeHtml(item.type)}</p>
+      <h3>${escapeHtml(item.title)}</h3>
+      <p>${escapeHtml(item.description)}</p>
+      <div class="explore-card-meta detail">
+        <strong>${escapeHtml(item.price)}</strong>
+        <small>${item.rating.toFixed(1)} rating</small>
+        <small>${item.distance ? `${item.distance} mi away` : "Budget estimate"}</small>
+        <small>${escapeHtml(item.status)}</small>
+      </div>
+      <div class="explore-detail-list">
+        ${item.details.map((detail) => `<span>${escapeHtml(detail)}</span>`).join("")}
+      </div>
+      <div class="explore-card-actions">
+        ${item.actions.map((action) => `<button type="button" data-explore-action="${escapeHtml(action)}" data-explore-item="${escapeHtml(item.id)}">${escapeHtml(action)}</button>`).join("")}
+      </div>
+    </div>
+  `;
+  $("#exploreStatusMessage").textContent = `${item.title} detail page opened. Back returns to ${exploreCategories[getActiveExploreCategory()].label} with filters preserved.`;
+}
+
+async function handleExploreAction(action, itemId) {
+  const item = findExploreItem(itemId);
+  const category = exploreCategories[getActiveExploreCategory()]?.label || "Explore";
+  const destination = $("#exploreDestinationInput")?.value.trim() || "selected destination";
+  const messages = {
+    "Save": `${item.title} added to Saved Places.`,
+    "Add to Trip": `${item.title} opened the selected trip itinerary with destination ${destination}.`,
+    "Add to Itinerary": `${item.title} added to the itinerary draft.`,
+    "Share": `${item.title} opened TravelDrip sharing and connected social options.`,
+    "Book": `${item.title} opened the supported booking flow.`,
+    "Visit Website": `${item.title} opened the provider website workflow.`,
+    "Customize Trip": `${item.title} opened the budget customization flow.`,
+    "Create This Trip": `${item.title} opened guided trip creation with budget filters preserved.`,
+    "View Menu": `${item.title} menu preview opened.`,
+    "Get Directions": `${item.title} opened map directions for ${destination}.`,
+    "Start Smart Bill Split": `${item.title} opened Smart Bill Split.`,
+    "Make Reservation": `${item.title} opened reservation availability.`,
+    "Vote in Group Chat": `${item.title} created a group chat poll.`,
+    "Ask AI Trip Manager": `AI Trip Manager opened with ${item.title} as context.`
+  };
+  $("#exploreStatusMessage").textContent = messages[action] || `${action} opened for ${item.title}.`;
+  addAuditEntry("Explore action", `${action}: ${item.title} from ${category}.`);
+  await saveSyncedEvent("explore_action", {
+    action,
+    itemId,
+    category,
+    destination,
+    tripType: $("#exploreTripTypeFilter")?.value || "group",
+    dates: $("#exploreDatesInput")?.value || "",
+    budget: $("#exploreBudgetFilter")?.value || "any"
+  });
 }
 
 function renderInvitationSetup(type) {
@@ -1025,6 +1336,65 @@ function wireLocalInteractions() {
     button.addEventListener("click", () => {
       $$(".chip").forEach((chip) => chip.classList.remove("active"));
       button.classList.add("active");
+    });
+  });
+
+  renderExplore("trending");
+
+  $$("#exploreTabs button").forEach((button) => {
+    button.addEventListener("click", () => {
+      $("#exploreSkeleton").hidden = false;
+      $("#exploreResultsGrid").hidden = true;
+      window.setTimeout(() => {
+        $("#exploreSkeleton").hidden = true;
+        renderExplore(button.dataset.exploreCategory);
+      }, 220);
+    });
+  });
+
+  ["#exploreSearchInput", "#exploreDestinationInput", "#exploreDatesInput", "#exploreBudgetFilter", "#exploreTripTypeFilter", "#exploreRatingFilter", "#exploreDistanceFilter", "#exploreOpenNowFilter", "#exploreAccessibleFilter"].forEach((selector) => {
+    $(selector)?.addEventListener("input", () => renderExplore());
+    $(selector)?.addEventListener("change", () => renderExplore());
+  });
+
+  $("#exploreSubfilters")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-explore-subfilter]");
+    if (!button) return;
+    button.classList.toggle("active");
+    $("#exploreStatusMessage").textContent = `${button.dataset.exploreSubfilter} filter ${button.classList.contains("active") ? "applied" : "removed"}. Results remain in ${exploreCategories[getActiveExploreCategory()].label}.`;
+  });
+
+  $("#exploreResultsGrid")?.addEventListener("click", (event) => {
+    const actionButton = event.target.closest("[data-explore-action]");
+    if (actionButton) {
+      handleExploreAction(actionButton.dataset.exploreAction, actionButton.dataset.exploreItem);
+      return;
+    }
+    const detailButton = event.target.closest("[data-explore-detail]");
+    if (detailButton) showExploreDetail(detailButton.dataset.exploreDetail);
+  });
+
+  $("#exploreDetailPanel")?.addEventListener("click", (event) => {
+    const actionButton = event.target.closest("[data-explore-action]");
+    if (actionButton) handleExploreAction(actionButton.dataset.exploreAction, actionButton.dataset.exploreItem);
+  });
+
+  $("#exploreBackButton")?.addEventListener("click", () => renderExplore());
+  $("#exploreRetryButton")?.addEventListener("click", () => renderExplore());
+  $$("[data-explore-empty]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const action = button.dataset.exploreEmpty;
+      if (action === "Clear Filters") {
+        $("#exploreSearchInput").value = "";
+        $("#exploreBudgetFilter").value = "any";
+        $("#exploreRatingFilter").value = "0";
+        $("#exploreDistanceFilter").value = "any";
+        $("#exploreOpenNowFilter").checked = false;
+        $("#exploreAccessibleFilter").checked = false;
+        renderExplore();
+      } else {
+        $("#exploreStatusMessage").textContent = `${action} opened for Explore filters.`;
+      }
     });
   });
 

@@ -299,29 +299,66 @@
             </div>
           </section>
 
-          <div class="section-heading">
-            <h2>Explore drops</h2>
-            <div class="chips" aria-label="Filters">
-              <button class="chip active" type="button">Trending</button>
-              <button class="chip" type="button">Food</button>
-              <button class="chip" type="button">Nightlife</button>
-              <button class="chip" type="button">Under $900</button>
+          <section class="panel explore-panel" id="exploreDrops">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Explore</p>
+                <h2>Personalized travel discovery</h2>
+              </div>
+              <button class="ghost-button" type="button" id="exploreBackButton" hidden>Back to results</button>
             </div>
-          </div>
-
-          <section class="destinations" id="exploreDrops">
-            <article class="destination-card">
-              <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=900&auto=format&fit=crop" alt="Bali coast">
-              <div><h3>Bali surf reset</h3><p>Villa stays, sunrise hikes, and low-key beach dinners for six.</p><span>76% match</span></div>
-            </article>
-            <article class="destination-card">
-              <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=900&auto=format&fit=crop" alt="Tokyo at night">
-              <div><h3>Tokyo nights</h3><p>Sushi counters, listening bars, vintage shops, and late trains.</p><span>91% match</span></div>
-            </article>
-            <article class="destination-card">
-              <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=900&auto=format&fit=crop" alt="Greek island coastline">
-              <div><h3>Paros island hop</h3><p>Ferries, clear coves, family-run tavernas, and sunset rooms.</p><span>84% match</span></div>
-            </article>
+            <div class="explore-context-grid">
+              <label>Destination<input id="exploreDestinationInput" type="text" value="Miami"></label>
+              <label>Dates<input id="exploreDatesInput" type="text" value="Aug 8 - Aug 11"></label>
+              <label>Budget<select id="exploreBudgetFilter"><option value="any">Any budget</option><option value="25">Under $25</option><option value="50">$25-$50</option><option value="100">$50-$100</option><option value="900">Under $900</option></select></label>
+              <label>Trip type<select id="exploreTripTypeFilter"><option value="group">Group Trip</option><option value="solo">Solo Trip</option><option value="corporate">Corporate Retreat</option></select></label>
+            </div>
+            <div class="explore-search-row">
+              <label class="explore-search">Search Explore<input id="exploreSearchInput" type="search" placeholder="Restaurants, events, hidden gems, guides"></label>
+              <div class="explore-filter-row">
+                <label><input id="exploreOpenNowFilter" type="checkbox"> Open now</label>
+                <label><input id="exploreAccessibleFilter" type="checkbox"> Accessible</label>
+                <label>Rating<select id="exploreRatingFilter"><option value="0">Any</option><option value="4.5">4.5+</option><option value="4.7">4.7+</option></select></label>
+                <label>Distance<select id="exploreDistanceFilter"><option value="any">Any</option><option value="2">Within 2 mi</option><option value="5">Within 5 mi</option><option value="10">Within 10 mi</option></select></label>
+              </div>
+            </div>
+            <div class="explore-tabs" id="exploreTabs" role="tablist" aria-label="Explore categories">
+              <button class="active" type="button" data-explore-category="trending">Trending</button>
+              <button type="button" data-explore-category="food">Food and Restaurants</button>
+              <button type="button" data-explore-category="nightlife">Nightclubs and Nightlife</button>
+              <button type="button" data-explore-category="under900">Trips Under $900</button>
+              <button type="button" data-explore-category="activities">Activities</button>
+              <button type="button" data-explore-category="hidden">Hidden Gems</button>
+              <button type="button" data-explore-category="beaches">Beaches</button>
+              <button type="button" data-explore-category="shopping">Shopping</button>
+              <button type="button" data-explore-category="outdoor">Outdoor Adventures</button>
+              <button type="button" data-explore-category="family">Family-Friendly</button>
+              <button type="button" data-explore-category="luxury">Luxury Experiences</button>
+              <button type="button" data-explore-category="events">Local Events</button>
+              <button type="button" data-explore-category="weekend">Weekend Getaways</button>
+            </div>
+            <div class="explore-subfilters" id="exploreSubfilters" aria-label="Explore filters"></div>
+            <div class="explore-results-toolbar">
+              <span id="exploreResultsSummary">Trending results for Miami group travel</span>
+              <button class="ghost-button" type="button" id="exploreRetryButton" hidden>Retry</button>
+            </div>
+            <div class="explore-skeleton-grid" id="exploreSkeleton" hidden>
+              <div></div><div></div><div></div>
+            </div>
+            <div class="explore-results-grid" id="exploreResultsGrid" aria-live="polite"></div>
+            <section class="explore-empty-state" id="exploreEmptyState" hidden>
+              <h3>No exact matches were found.</h3>
+              <p>Try changing your dates, destination, or budget.</p>
+              <div class="button-row">
+                <button class="ghost-button" type="button" data-explore-empty="Adjust Filters">Adjust Filters</button>
+                <button class="ghost-button" type="button" data-explore-empty="Increase Budget">Increase Budget</button>
+                <button class="ghost-button" type="button" data-explore-empty="View Nearby Options">View Nearby Options</button>
+                <button class="ghost-button" type="button" data-explore-empty="Ask AI Trip Manager">Ask AI Trip Manager</button>
+                <button class="ghost-button" type="button" data-explore-empty="Clear Filters">Clear Filters</button>
+              </div>
+            </section>
+            <section class="explore-detail-panel" id="exploreDetailPanel" hidden></section>
+            <p class="small" id="exploreStatusMessage">Select a category to see matching recommendations. Every result card opens details and every action preserves Explore context.</p>
           </section>
 
           <section class="panel solo-mode-panel" id="tripsPanel">
