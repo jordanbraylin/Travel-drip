@@ -2625,20 +2625,6 @@ function wireLocalInteractions() {
     await saveSyncedEvent("message", { text, conversation: $("#activeConversationName")?.textContent || "Trip chat" });
   });
 
-  $("#voteChatForm")?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const input = $("#voteChatInput");
-    const text = input.value.trim();
-    if (!text) return;
-    const message = document.createElement("div");
-    message.className = "msg";
-    message.innerHTML = `<strong>You:</strong> ${escapeHtml(text)}`;
-    $("#voteMessages")?.appendChild(message);
-    input.value = "";
-    message.scrollIntoView({ block: "nearest" });
-    await saveSyncedEvent("poll_chat_message", { text });
-  });
-
   $$("[data-message-tab]").forEach((button) => {
     button.addEventListener("click", async () => {
       const type = button.dataset.messageTab;
