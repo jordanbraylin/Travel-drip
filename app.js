@@ -2358,7 +2358,101 @@ function wireLocalInteractions() {
     if (!text) return;
     appendMessage("You", text);
     input.value = "";
-    await saveSyncedEvent("message", { text });
+    $("#messageStatus").textContent = "Message sent. Read receipts, notifications, and realtime sync are queued for this conversation.";
+    await saveSyncedEvent("message", { text, conversation: $("#activeConversationName")?.textContent || "Trip chat" });
+  });
+
+  $("#voteChatForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const input = $("#voteChatInput");
+    const text = input.value.trim();
+    if (!text) return;
+    const message = document.createElement("div");
+    message.className = "msg";
+    message.innerHTML = `<strong>You:</strong> ${escapeHtml(text)}`;
+    $("#voteMessages")?.appendChild(message);
+    input.value = "";
+    message.scrollIntoView({ block: "nearest" });
+    await saveSyncedEvent("poll_chat_message", { text });
+  });
+
+  $$("[data-message-tab]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const type = button.dataset.messageTab;
+      $$("[data-message-tab]").forEach((tab) => tab.classList.toggle("active", tab === button));
+      $$("[data-conversation-type]").forEach((card) => {
+        card.hidden = card.dataset.conversationType !== type;
+        card.classList.toggle("active", !card.hidden && !$(".conversation-card.active:not([hidden])"));
+      });
+      const firstVisible = $(".conversation-card:not([hidden])");
+      firstVisible?.click();
+      $("#messageStatus").textContent = type === "group"
+        ? "Showing trip and event group conversations with unread counts, online members, pinned announcements, polls, payments, rides, and itinerary cards."
+        : "Showing private direct messages. Users can mute, archive, block, report, and manage privacy per conversation.";
+      await saveSyncedEvent("message_tab_opened", { type });
+    });
+  });
+
+  $$("[data-conversation-name]").forEach((card) => {
+    card.addEventListener("click", async () => {
+      $$("[data-conversation-name]").forEach((entry) => entry.classList.toggle("active", entry === card));
+      const type = card.dataset.conversationType;
+      const name = card.dataset.conversationName;
+      $("#conversationTypeLabel").textContent = type === "private" ? "Private Message" : "Group Chat";
+      $("#activeConversationName").textContent = name;
+      $("#conversationMeta").textContent = type === "private"
+        ? "Direct message • online status visible • privacy tools available"
+        : "Trip/event chat • private to invited members • notifications on";
+      $("#chatInput").placeholder = type === "private" ? `Message ${name}` : `Message ${name}`;
+      $("#messageStatus").textContent = `${name} opened. Notifications will route back to this conversation.`;
+      await saveSyncedEvent("conversation_opened", { type, name });
+    });
+  });
+
+  $("#messageSearchInput")?.addEventListener("input", (event) => {
+    const query = event.target.value.trim().toLowerCase();
+    $$("[data-conversation-name]").forEach((card) => {
+      const matches = card.dataset.conversationName.toLowerCase().includes(query) || card.textContent.toLowerCase().includes(query);
+      const tab = $(".message-tabs .active")?.dataset.messageTab || "group";
+      card.hidden = card.dataset.conversationType !== tab || (query && !matches);
+    });
+    $("#messageStatus").textContent = query
+      ? `Searching messages, users, photos, documents, polls, and shared links for "${event.target.value.trim()}".`
+      : "Search cleared. Conversations restored for the active tab.";
+  });
+
+  $$("[data-message-action]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const action = button.dataset.messageAction;
+      $("#messageStatus").textContent = `${action} is connected for ${$("#activeConversationName")?.textContent || "this conversation"}. Permission checks apply before restricted content opens.`;
+      addAuditEntry("Message action", `${action} selected in the messaging hub.`);
+      await saveSyncedEvent("message_action", { action, conversation: $("#activeConversationName")?.textContent });
+    });
+  });
+
+  $$("[data-chat-tool]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const tool = button.dataset.chatTool;
+      $("#messageStatus").textContent = `${tool} composer opened. Shared media, locations, polls, payment requests, and itinerary cards stay attached to this chat.`;
+      await saveSyncedEvent("chat_tool_opened", { tool, conversation: $("#activeConversationName")?.textContent });
+    });
+  });
+
+  $("#messageAiButton")?.addEventListener("click", async () => {
+    appendMessage("AI Trip Manager", "Your group is meeting in the hotel lobby at 8:00 AM tomorrow. I only show payment or finance details you are allowed to see.");
+    $("#messageStatus").textContent = "AI Trip Manager answered inside chat with permission-aware trip context.";
+    await saveSyncedEvent("message_ai_assistant", { permissionAware: true });
+  });
+
+  $("#newConversationButton")?.addEventListener("click", async () => {
+    $("#messageStatus").textContent = "New conversation flow opened. Choose trip members, friends, corporate teammates, organizers, hosts, vendors, or event staff based on permissions.";
+    await saveSyncedEvent("new_conversation_started", { source: "messages_hub" });
+  });
+
+  $("#simulateMessageNotificationButton")?.addEventListener("click", async () => {
+    $("#messageStatus").textContent = "Notification simulated: @mention in Miami 2027 opened the correct group chat and highlighted the message.";
+    addAuditEntry("Message notification routed", "Simulated @mention notification opened the correct conversation.");
+    await saveSyncedEvent("message_notification_routed", { type: "mention", conversation: "Miami 2027" });
   });
 
   $("#authForm")?.addEventListener("submit", (event) => {

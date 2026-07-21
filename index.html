@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=26">
+  <link rel="stylesheet" href="styles.css?v=27">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -851,11 +851,130 @@
           <section class="panel social-hub" id="socialHub">
             <div class="section-heading compact">
               <div>
-                <p class="eyebrow">Social Media Hub</p>
-                <h2>Memories and smart sharing</h2>
+                <p class="eyebrow">Messages</p>
+                <h2>Group chats and private messages</h2>
               </div>
-              <button class="primary-button" type="button" id="generateCaptionButton">Generate caption</button>
+              <button class="primary-button" type="button" id="newConversationButton">New message</button>
             </div>
+
+            <section class="messages-hub" aria-label="TravelDrip messaging dashboard">
+              <div class="message-search-row">
+                <label>Search messages
+                  <input id="messageSearchInput" type="search" placeholder="Search chats, people, polls, photos, files, and links">
+                </label>
+                <button class="ghost-button" type="button" id="messageAiButton">Ask AI in chat</button>
+              </div>
+              <div class="message-tabs" role="tablist" aria-label="Messages tabs">
+                <button class="active" type="button" data-message-tab="group">Group Chats</button>
+                <button type="button" data-message-tab="private">Private Messages</button>
+              </div>
+              <div class="messages-layout">
+                <aside class="conversation-list" id="conversationList" aria-label="Conversation list">
+                  <button class="conversation-card active" type="button" data-conversation-type="group" data-conversation-name="Miami 2027">
+                    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=180&q=70" alt="Miami beach group trip">
+                    <span><strong>Miami 2027</strong><small>Sarah: Dinner poll closes tonight.</small></span>
+                    <em>12 unread • 6 online</em>
+                  </button>
+                  <button class="conversation-card" type="button" data-conversation-type="group" data-conversation-name="Caribbean Cruise">
+                    <img src="https://images.unsplash.com/photo-1548574505-5e239809ee19?auto=format&fit=crop&w=180&q=70" alt="Cruise ship at sea">
+                    <span><strong>Caribbean Cruise</strong><small>AI Cruise Manager pinned boarding steps.</small></span>
+                    <em>4 unread • 9 online</em>
+                  </button>
+                  <button class="conversation-card" type="button" data-conversation-type="group" data-conversation-name="Johnson Wedding">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=180&q=70" alt="Wedding event guests">
+                    <span><strong>Johnson Wedding</strong><small>Reception shuttle schedule shared.</small></span>
+                    <em>2 unread • 14 online</em>
+                  </button>
+                  <button class="conversation-card" type="button" data-conversation-type="group" data-conversation-name="Leadership Retreat">
+                    <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=180&q=70" alt="Corporate team retreat">
+                    <span><strong>Leadership Retreat</strong><small>Announcement: workshop room changed.</small></span>
+                    <em>Read-only • 5 online</em>
+                  </button>
+                  <button class="conversation-card" type="button" data-conversation-type="private" data-conversation-name="Alex Morgan" hidden>
+                    <span class="message-avatar">AM</span>
+                    <span><strong>Alex Morgan</strong><small>Can you send the hotel confirmation?</small></span>
+                    <em>Online • 3 unread</em>
+                  </button>
+                  <button class="conversation-card" type="button" data-conversation-type="private" data-conversation-name="Maya Chen" hidden>
+                    <span class="message-avatar">MC</span>
+                    <span><strong>Maya Chen</strong><small>Ride split looks good to me.</small></span>
+                    <em>Away • 1 unread</em>
+                  </button>
+                  <button class="conversation-card" type="button" data-conversation-type="private" data-conversation-name="Event Support" hidden>
+                    <span class="message-avatar">ES</span>
+                    <span><strong>Event Support</strong><small>Your ticket question was answered.</small></span>
+                    <em>Active now</em>
+                  </button>
+                </aside>
+                <section class="chat-workspace" aria-label="Selected conversation">
+                  <div class="chat-header">
+                    <div>
+                      <p class="eyebrow" id="conversationTypeLabel">Group Chat</p>
+                      <h3 id="activeConversationName">Miami 2027</h3>
+                      <span id="conversationMeta">6 members online • private trip chat • notifications on</span>
+                    </div>
+                    <div class="mini-action-row">
+                      <button type="button" data-message-action="Mute">Mute</button>
+                      <button type="button" data-message-action="Pin">Pin</button>
+                      <button type="button" data-message-action="Archive">Archive</button>
+                    </div>
+                  </div>
+                  <div class="pinned-message">
+                    <strong>Pinned</strong>
+                    <span>Meet in the hotel lobby at 8:00 AM for airport transportation.</span>
+                    <button type="button" data-message-action="Open pinned announcement">Open</button>
+                  </div>
+                  <div class="messages modern-messages" id="messages">
+                    <div class="msg"><strong>Alex:</strong> Can we keep Saturday open after 10?</div>
+                    <div class="msg"><strong>Sarah:</strong> I like the late seating if the shuttle is included.</div>
+                    <div class="msg ai-msg"><strong>AI Trip Manager:</strong> Your group is meeting in the hotel lobby at 8:00 AM. Sarah also has $125 remaining toward the group trip.</div>
+                  </div>
+                  <div class="chat-tool-row">
+                    <button type="button" data-chat-tool="Photo">Photo</button>
+                    <button type="button" data-chat-tool="Video">Video</button>
+                    <button type="button" data-chat-tool="File">File</button>
+                    <button type="button" data-chat-tool="Location">Location</button>
+                    <button type="button" data-chat-tool="Poll">Poll</button>
+                    <button type="button" data-chat-tool="Payment Request">Payment</button>
+                    <button type="button" data-chat-tool="Itinerary Card">Itinerary</button>
+                    <button type="button" data-chat-tool="Voice Message">Voice</button>
+                  </div>
+                  <form class="chat-form" id="chatForm">
+                    <input id="chatInput" placeholder="Message the group" aria-label="Message the group">
+                    <button type="submit" aria-label="Send">Send</button>
+                  </form>
+                  <div class="typing-indicator" id="typingIndicator">Maya is typing • read receipts on</div>
+                </section>
+              </div>
+              <div class="message-support-grid">
+                <article>
+                  <span>Shared media</span>
+                  <strong>Photos, videos, files, links, locations, and poll history stay organized by chat.</strong>
+                  <div class="mini-action-row">
+                    <button type="button" data-message-action="Open media tab">Media</button>
+                    <button type="button" data-message-action="Open files tab">Files</button>
+                    <button type="button" data-message-action="Open poll history">Polls</button>
+                  </div>
+                </article>
+                <article>
+                  <span>Permissions</span>
+                  <strong>Solo trips use private messages only. Corporate finance/admin chats stay restricted.</strong>
+                  <div class="mini-action-row">
+                    <button type="button" data-message-action="Block conversation">Block</button>
+                    <button type="button" data-message-action="Report conversation">Report</button>
+                    <button type="button" data-message-action="Manage privacy">Privacy</button>
+                  </div>
+                </article>
+                <article>
+                  <span>Notifications</span>
+                  <strong>Mentions, private messages, polls, pinned announcements, payment requests, rides, and reservation reminders open the right chat.</strong>
+                  <div class="mini-action-row">
+                    <button type="button" id="simulateMessageNotificationButton">Simulate notification</button>
+                  </div>
+                </article>
+              </div>
+              <p class="small" id="messageStatus">Messages sync with the selected trip or private conversation. AI replies respect user permissions.</p>
+            </section>
 
             <section class="daily-memory-panel">
               <div class="memory-reminder-hero">
@@ -966,6 +1085,7 @@
                 <h3>AI caption generator</h3>
                 <textarea id="captionText">Watching the sunset over Santorini was unforgettable. #TravelDrip #Santorini #TravelGoals</textarea>
                 <div class="button-row">
+                  <button class="primary-button" type="button" id="generateCaptionButton">Generate caption</button>
                   <button class="ghost-button" type="button" id="regenerateCaptionButton">Regenerate caption</button>
                   <button class="ghost-button" type="button">Edit caption</button>
                 </div>
@@ -1887,13 +2007,13 @@
               <button type="button" data-choice="skip"><span>Skip it</span><strong>1</strong></button>
               <button type="button" data-choice="details"><span>Need more details</span><strong>2</strong></button>
             </div>
-            <div class="messages" id="messages">
+            <div class="messages" id="voteMessages">
               <div class="msg"><strong>Alex:</strong> Can we keep Saturday open after 10?</div>
               <div class="msg"><strong>Sarah:</strong> I like the late seating if the shuttle is included.</div>
               <div class="msg"><strong>Traveldrip:</strong> Poll closes in 18 hours.</div>
             </div>
-            <form class="chat-form" id="chatForm">
-              <input id="chatInput" placeholder="Message the group" aria-label="Message the group">
+            <form class="chat-form" id="voteChatForm">
+              <input id="voteChatInput" placeholder="Message the group" aria-label="Message the group">
               <button type="submit" aria-label="Send">Send</button>
             </form>
           </section>

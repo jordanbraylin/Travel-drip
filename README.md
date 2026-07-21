@@ -81,6 +81,12 @@ The hub supports favorite pickup and drop-off locations, provider launch placeho
 
 Corporate retreat mode should limit employee visibility to their own assigned transportation, pickup time, driver details when available, and pickup/drop-off locations. Finance and event admins can view total transportation costs, vehicle assignments, department spending, vendor invoices, and budget utilization.
 
+## Group chat and private messaging
+
+TravelDrip now includes a dedicated Messages hub with Group Chats and Private Messages tabs. Group conversations show trip/event photos, last messages, unread counts, online-member counts, pinned announcements, attachments, polls, itinerary cards, payment requests, ride-share invitations, and AI Trip Manager responses. Private messages support one-on-one conversations with trip members, friends, teammates, organizers, hosts, vendors, and event staff.
+
+Messaging permissions adapt by trip type: solo trips default to private messaging, group trips automatically create trip chats, corporate retreats can separate announcements, team chats, admin chat, finance chat, transportation chat, and event support, and weddings/events can support custom rooms such as wedding party, family, guests, vendors, and event staff. Production data extends `chat_rooms` and `messages` with participants, shared items, reactions, reports, read state, pinned messages, and room permissions.
+
 ## Smart itinerary notifications
 
 TravelDrip now includes Smart Itinerary Notifications for flight status changes, hotel reminders, transportation updates, itinerary edits, activity changes, payment deadlines, wallet activity, meeting point reminders, weather impacts, emergency announcements, and important travel updates.

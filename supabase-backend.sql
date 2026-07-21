@@ -1518,3 +1518,165 @@ create policy "Users manage own reservation calendar syncs" on public.reservatio
   for all to authenticated
   using (user_id = auth.uid())
   with check (user_id = auth.uid());
+
+alter table public.chat_rooms add column if not exists updated_at timestamptz not null default now();
+alter table public.chat_rooms add column if not exists organization_id uuid references public.organizations(id) on delete set null;
+alter table public.chat_rooms add column if not exists created_by uuid references auth.users(id) on delete set null;
+alter table public.chat_rooms add column if not exists description text;
+alter table public.chat_rooms add column if not exists room_visibility text not null default 'trip_members' check (room_visibility in ('solo_private','trip_members','team','announcement_read_only','admin_only','finance_only','vendors','event_staff','custom'));
+alter table public.chat_rooms add column if not exists is_read_only boolean not null default false;
+alter table public.chat_rooms add column if not exists is_archived boolean not null default false;
+alter table public.chat_rooms add column if not exists last_message_at timestamptz;
+alter table public.chat_rooms add column if not exists metadata jsonb not null default '{}'::jsonb;
+
+drop trigger if exists set_chat_rooms_updated_at on public.chat_rooms;
+create trigger set_chat_rooms_updated_at
+before update on public.chat_rooms
+for each row execute function public.set_updated_at();
+
+alter table public.messages add column if not exists updated_at timestamptz not null default now();
+alter table public.messages add column if not exists parent_message_id uuid references public.messages(id) on delete set null;
+alter table public.messages add column if not exists message_type text not null default 'text' check (message_type in ('text','photo','video','voice','file','location','poll','itinerary_card','payment_request','ai','system'));
+alter table public.messages add column if not exists edited_at timestamptz;
+alter table public.messages add column if not exists deleted_at timestamptz;
+alter table public.messages add column if not exists pinned_at timestamptz;
+alter table public.messages add column if not exists pinned_by uuid references auth.users(id) on delete set null;
+alter table public.messages add column if not exists metadata jsonb not null default '{}'::jsonb;
+
+drop trigger if exists set_messages_updated_at on public.messages;
+create trigger set_messages_updated_at
+before update on public.messages
+for each row execute function public.set_updated_at();
+
+create table if not exists public.chat_room_participants (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  room_id uuid not null references public.chat_rooms(id) on delete cascade,
+  trip_id uuid references public.trips(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  participant_role text not null default 'member' check (participant_role in ('owner','admin','organizer','member','employee','finance','vendor','guest','ai')),
+  notification_level text not null default 'all' check (notification_level in ('all','mentions','muted','none')),
+  can_send_messages boolean not null default true,
+  last_read_message_id uuid references public.messages(id) on delete set null,
+  last_read_at timestamptz,
+  is_blocked boolean not null default false,
+  is_archived boolean not null default false,
+  metadata jsonb not null default '{}'::jsonb,
+  unique (room_id, user_id)
+);
+
+drop trigger if exists set_chat_room_participants_updated_at on public.chat_room_participants;
+create trigger set_chat_room_participants_updated_at
+before update on public.chat_room_participants
+for each row execute function public.set_updated_at();
+
+create table if not exists public.message_reactions (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  message_id uuid not null references public.messages(id) on delete cascade,
+  room_id uuid not null references public.chat_rooms(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  reaction text not null,
+  unique (message_id, user_id, reaction)
+);
+
+create table if not exists public.message_shared_items (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  message_id uuid not null references public.messages(id) on delete cascade,
+  room_id uuid not null references public.chat_rooms(id) on delete cascade,
+  trip_id uuid references public.trips(id) on delete cascade,
+  shared_type text not null check (shared_type in ('photo','video','file','link','location','poll','itinerary_item','payment_request','ride_share','reservation')),
+  title text,
+  url text,
+  storage_path text,
+  metadata jsonb not null default '{}'::jsonb
+);
+
+create table if not exists public.message_reports (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  room_id uuid not null references public.chat_rooms(id) on delete cascade,
+  message_id uuid references public.messages(id) on delete set null,
+  reporter_user_id uuid not null references auth.users(id) on delete cascade,
+  reported_user_id uuid references auth.users(id) on delete set null,
+  reason text not null,
+  status text not null default 'open' check (status in ('open','reviewing','action_taken','dismissed')),
+  metadata jsonb not null default '{}'::jsonb
+);
+
+create index if not exists idx_chat_rooms_trip_type on public.chat_rooms(trip_id, room_type, room_visibility);
+create index if not exists idx_chat_rooms_last_message on public.chat_rooms(last_message_at desc);
+create index if not exists idx_messages_room_created on public.messages(room_id, created_at desc);
+create index if not exists idx_messages_sender on public.messages(sender_user_id, created_at desc);
+create index if not exists idx_chat_room_participants_user on public.chat_room_participants(user_id, notification_level);
+create index if not exists idx_message_shared_items_room on public.message_shared_items(room_id, shared_type, created_at desc);
+create index if not exists idx_message_reports_status on public.message_reports(status, created_at desc);
+
+alter table public.chat_room_participants enable row level security;
+alter table public.message_reactions enable row level security;
+alter table public.message_shared_items enable row level security;
+alter table public.message_reports enable row level security;
+
+drop policy if exists "Users read rooms they participate in" on public.chat_rooms;
+create policy "Users read rooms they participate in" on public.chat_rooms
+  for select to authenticated
+  using (
+    public.is_trip_member(trip_id)
+    or exists (
+      select 1 from public.chat_room_participants crp
+      where crp.room_id = chat_rooms.id and crp.user_id = auth.uid() and crp.is_blocked = false
+    )
+    or public.has_trip_role(trip_id, array['owner','admin','organizer','finance'])
+  );
+
+drop policy if exists "Admins manage expanded chat rooms" on public.chat_rooms;
+create policy "Admins manage expanded chat rooms" on public.chat_rooms
+  for all to authenticated
+  using (public.has_trip_role(trip_id, array['owner','admin','organizer']))
+  with check (public.has_trip_role(trip_id, array['owner','admin','organizer']));
+
+drop policy if exists "Users manage own chat participation" on public.chat_room_participants;
+create policy "Users manage own chat participation" on public.chat_room_participants
+  for all to authenticated
+  using (user_id = auth.uid() or public.has_trip_role(trip_id, array['owner','admin','organizer']))
+  with check (user_id = auth.uid() or public.has_trip_role(trip_id, array['owner','admin','organizer']));
+
+drop policy if exists "Participants add message reactions" on public.message_reactions;
+create policy "Participants add message reactions" on public.message_reactions
+  for all to authenticated
+  using (
+    user_id = auth.uid()
+    or exists (select 1 from public.chat_room_participants crp where crp.room_id = message_reactions.room_id and crp.user_id = auth.uid())
+  )
+  with check (
+    user_id = auth.uid()
+    and exists (select 1 from public.chat_room_participants crp where crp.room_id = message_reactions.room_id and crp.user_id = auth.uid() and crp.is_blocked = false)
+  );
+
+drop policy if exists "Participants read shared message items" on public.message_shared_items;
+create policy "Participants read shared message items" on public.message_shared_items
+  for select to authenticated
+  using (
+    public.is_trip_member(trip_id)
+    or exists (select 1 from public.chat_room_participants crp where crp.room_id = message_shared_items.room_id and crp.user_id = auth.uid() and crp.is_blocked = false)
+  );
+
+drop policy if exists "Participants create shared message items" on public.message_shared_items;
+create policy "Participants create shared message items" on public.message_shared_items
+  for insert to authenticated
+  with check (
+    exists (select 1 from public.chat_room_participants crp where crp.room_id = message_shared_items.room_id and crp.user_id = auth.uid() and crp.can_send_messages = true and crp.is_blocked = false)
+    or public.has_trip_role(trip_id, array['owner','admin','organizer'])
+  );
+
+drop policy if exists "Users create message reports" on public.message_reports;
+create policy "Users create message reports" on public.message_reports
+  for insert to authenticated
+  with check (reporter_user_id = auth.uid());
+
+drop policy if exists "Admins read message reports" on public.message_reports;
+create policy "Admins read message reports" on public.message_reports
+  for select to authenticated
+  using (reporter_user_id = auth.uid() or public.has_trip_role((select cr.trip_id from public.chat_rooms cr where cr.id = message_reports.room_id), array['owner','admin','organizer']));

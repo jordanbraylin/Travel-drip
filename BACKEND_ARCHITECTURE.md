@@ -17,7 +17,7 @@ The backend schema adds:
 - Trip membership, roles, feature flags, and enabled modules
 - Invitations with secure tokens, RSVP tracking, and guest registration support
 - Corporate guest access codes, employee/attendee ID verification, temporary guest sessions, and guest access audit events
-- Schedule, flights, hotels, transportation, ride-share connections, chat, polls, and votes
+- Schedule, flights, hotels, transportation, ride-share connections, group/private chat rooms, message participants, reactions, shared media, reports, polls, and votes
 - Cruise bookings, cabin assignments, port schedules, shore excursions, onboard activities, and dining reservations
 - Reservation and paid excursion records, assigned attendees, reminder preferences, queued reminder notifications, smart departure payloads, and calendar sync status
 - Daily memory reminder preferences, end-of-day prompt events, and organized memory items by trip/day/itinerary
