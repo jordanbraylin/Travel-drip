@@ -599,7 +599,7 @@ function updateDashboardWidgets() {
   });
 
   $$("[data-corporate-nav]").forEach((section) => {
-    section.hidden = tripType !== "corporate";
+    section.hidden = false;
   });
 
   $$("[data-requires-trip-type]").forEach((item) => {
@@ -607,7 +607,7 @@ function updateDashboardWidgets() {
   });
 
   $$("[data-admin-only]").forEach((item) => {
-    item.hidden = tripType === "corporate" && !isAdminRole;
+    item.hidden = !isAdminRole;
   });
 
   const labels = {
