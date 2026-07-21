@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720" role="img" aria-labelledby="title desc">
+  <title id="title">TravelDrip stacked logo</title>
+  <desc id="desc">Stacked TravelDrip logo with icon above the wordmark.</desc>
+  <rect width="720" height="720" rx="110" fill="#F8FDFF"/>
+  <image href="traveldrip-logo-icon.svg" x="160" y="62" width="400" height="400"/>
+  <text x="360" y="540" text-anchor="middle" fill="#081B2D" font-family="Inter, Avenir Next, Arial Rounded MT Bold, Arial, sans-serif" font-size="86" font-weight="900" letter-spacing="-1.5">TravelDrip</text>
+  <path d="M264 579h192" fill="none" stroke="#FF6B4A" stroke-width="13" stroke-linecap="round"/>
+  <path d="M475 582c0 20-16 36-36 36s-36-16-36-36c0-25 36-58 36-58s36 33 36 58z" fill="#FF4FAD"/>
+</svg>

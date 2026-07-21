@@ -181,10 +181,8 @@ img {
   height: 38px;
   flex: 0 0 auto;
   border-radius: 8px;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent),
-    linear-gradient(135deg, var(--reef), var(--sun) 48%, var(--sea));
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+  background: transparent url("icons/icon.svg") center / contain no-repeat;
+  box-shadow: 0 10px 24px rgba(0, 150, 199, 0.22);
 }
 
 .nav {

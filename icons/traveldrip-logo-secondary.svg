@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" role="img" aria-labelledby="title desc">
+  <title id="title">TravelDrip secondary logo</title>
+  <desc id="desc">Secondary TravelDrip logo with a compact icon and rounded startup-style wordmark.</desc>
+  <defs>
+    <linearGradient id="secondaryMark" x1="44" y1="34" x2="228" y2="226" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00A7D8"/>
+      <stop offset=".5" stop-color="#20D7D2"/>
+      <stop offset="1" stop-color="#FF4FAD"/>
+    </linearGradient>
+    <linearGradient id="secondaryWord" x1="276" y1="82" x2="804" y2="178" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0096C7"/>
+      <stop offset=".58" stop-color="#8357FF"/>
+      <stop offset="1" stop-color="#FF4FAD"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(28 28) scale(.68)">
+    <circle cx="150" cy="150" r="132" fill="url(#secondaryMark)"/>
+    <circle cx="150" cy="150" r="96" fill="#F8FDFF"/>
+    <path d="M62 150h176M150 54c31 30 46 62 46 96s-15 66-46 96M150 54c-31 30-46 62-46 96s15 66 46 96" fill="none" stroke="#0096C7" stroke-width="11" stroke-linecap="round"/>
+    <path d="M82 103c42 17 94 17 136 0M82 197c42-17 94-17 136 0" fill="none" stroke="#20D7D2" stroke-width="11" stroke-linecap="round"/>
+    <path d="M235 25l71-28c13-5 25 9 17 20l-40 66 40 33c9 8 4 23-8 23l-65-1-49 64c-8 10-24 4-23-9l7-80-68-44c-11-7-7-24 7-25l78-6 33-13z" fill="#FFFFFF"/>
+    <path d="M196 241c0 26-21 47-47 47s-47-21-47-47c0-33 47-75 47-75s47 42 47 75z" fill="#FF744F"/>
+    <circle cx="149" cy="243" r="13" fill="#FFFFFF"/>
+  </g>
+  <text x="256" y="151" fill="url(#secondaryWord)" font-family="Inter, Avenir Next, Arial Rounded MT Bold, Arial, sans-serif" font-size="82" font-weight="900" letter-spacing="-1.2">TravelDrip</text>
+  <path d="M738 172h80" fill="none" stroke="#FFD45D" stroke-width="10" stroke-linecap="round"/>
+  <path d="M853 171c0 18-15 33-33 33s-33-15-33-33c0-23 33-53 33-53s33 30 33 53z" fill="#FF4FAD"/>
+</svg>
