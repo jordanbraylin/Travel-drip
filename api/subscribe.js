@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { applySecurityHeaders, methodNotAllowed } from "./_security.js";
 
 function getToken(request) {
   const header = request.headers.authorization || "";
@@ -27,16 +28,16 @@ function getRequestBody(request) {
 }
 
 export default async function handler(request, response) {
+  applySecurityHeaders(response);
   if (request.method !== "POST") {
-    response.setHeader("Allow", "POST");
-    response.status(405).json({ error: "Method not allowed" });
+    methodNotAllowed(response, "POST");
     return;
   }
 
   const token = getToken(request);
   const { subscription } = getRequestBody(request);
 
-  if (!token || !subscription?.endpoint) {
+  if (!token || !subscription?.endpoint || typeof subscription.endpoint !== "string") {
     response.status(400).json({ error: "Missing user token or push subscription" });
     return;
   }

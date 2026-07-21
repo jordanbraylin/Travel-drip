@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import webpush from "web-push";
+import { applySecurityHeaders, methodNotAllowed } from "./_security.js";
 
 function getToken(request) {
   const header = request.headers.authorization || "";
@@ -48,9 +49,9 @@ function getNotificationUrl(value) {
 }
 
 export default async function handler(request, response) {
+  applySecurityHeaders(response);
   if (request.method !== "POST") {
-    response.setHeader("Allow", "POST");
-    response.status(405).json({ error: "Method not allowed" });
+    methodNotAllowed(response, "POST");
     return;
   }
 

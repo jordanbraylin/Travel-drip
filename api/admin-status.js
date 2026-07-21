@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { applySecurityHeaders, methodNotAllowed } from "./_security.js";
 
 function getToken(request) {
   const header = request.headers.authorization || "";
@@ -22,13 +23,11 @@ function getSupabaseServerConfig() {
 }
 
 export default async function handler(request, response) {
+  applySecurityHeaders(response);
   if (request.method !== "GET") {
-    response.setHeader("Allow", "GET");
-    response.status(405).json({ error: "Method not allowed" });
+    methodNotAllowed(response, "GET");
     return;
   }
-
-  response.setHeader("Cache-Control", "no-store, max-age=0");
 
   const token = getToken(request);
   const supabaseConfig = getSupabaseServerConfig();

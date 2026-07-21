@@ -1,5 +1,7 @@
+import { applySecurityHeaders } from "./_security.js";
+
 export default function handler(_request, response) {
-  response.setHeader("Cache-Control", "no-store, max-age=0");
+  applySecurityHeaders(response);
   response.status(200).json({
     ok: true,
     app: "Traveldrip",

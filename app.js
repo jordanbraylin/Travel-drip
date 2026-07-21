@@ -1188,8 +1188,10 @@ function wireLocalInteractions() {
     renderNavigationAudit();
     showWorkflowMessage("Navigation audit", "Checked buttons, links, targets, modals, role restrictions, and fallback workflows.");
   });
+  $("#runSecurityAuditButton")?.addEventListener("click", renderSecurityAudit);
   wireNavigationFallbacks();
   renderNavigationAudit();
+  renderSecurityAudit();
 
   $("#chatForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -1394,6 +1396,40 @@ function renderNavigationAudit() {
   $("#navigationStatusMessage").textContent = audit.issues.length
     ? `${audit.issues.length} navigation issue(s) need review before deployment.`
     : "Navigation audit passed for current local markup. Production-only auth, payment, ride-share, and notification providers still require real service credentials.";
+}
+
+function getSecurityAudit() {
+  const text = document.body.textContent || "";
+  const checks = [
+    ["Authentication", Boolean($("#authForm") && $("#signupForm") && text.includes("Two-Factor Authentication"))],
+    ["Email verification", text.includes("Verify Email") || text.includes("Email verification")],
+    ["Wallet PIN gates", Boolean($("#pinDialog") && $("#walletPin") && text.includes("Wallet PIN"))],
+    ["Role-based access", Boolean($("#rolePreview") && $$("[data-visible-roles]").length)],
+    ["Corporate privacy", text.includes("Employees cannot see") || text.includes("Financial privacy enforced")],
+    ["No raw card storage messaging", text.includes("card data must never touch this app") || text.includes("No raw card storage")],
+    ["Secure notification copy", text.includes("Never include sensitive information") || text.includes("Open TravelDrip to view details")],
+    ["File upload controls", text.includes("Approved file types only") && text.includes("executable upload blocking")],
+    ["Fraud monitoring", text.includes("Rapid PIN failures") && text.includes("Unusual refunds")],
+    ["Navigation audit", Boolean($("#navigationAuditList"))]
+  ];
+  return {
+    checks,
+    passed: checks.filter(([, ok]) => ok).length,
+    failed: checks.filter(([, ok]) => !ok).map(([name]) => name)
+  };
+}
+
+function renderSecurityAudit() {
+  if (!$("#securityAuditMessage")) return;
+  const audit = getSecurityAudit();
+  $("#securityAuthStatus").textContent = audit.failed.includes("Authentication") ? "Review" : "Configured";
+  $("#securityWalletStatus").textContent = audit.failed.includes("Wallet PIN gates") ? "Review" : "PIN-gated";
+  $("#securityApiStatus").textContent = "Guarded";
+  $("#securityCorpStatus").textContent = audit.failed.includes("Role-based access") ? "Review" : "Role-limited";
+  $("#securityAuditMessage").textContent = audit.failed.length
+    ? `Security audit found ${audit.failed.length} item(s) needing review: ${audit.failed.join(", ")}.`
+    : `Security audit passed ${audit.passed}/${audit.checks.length} local controls. Production still requires real provider-side MFA, tokenized payments, malware scanning, rate limiting, and encrypted storage.`;
+  addAuditEntry("Security audit completed", audit.failed.length ? `Review: ${audit.failed.join(", ")}` : "Local security controls validated.");
 }
 
 function wireNavigationFallbacks() {

@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=21">
+  <link rel="stylesheet" href="styles.css?v=22">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -38,6 +38,7 @@
         <button type="button" data-target="socialHub">Social Hub</button>
         <button type="button" data-target="enterpriseRbac">Enterprise</button>
         <button type="button" data-target="importantInfo">Important Info</button>
+        <button type="button" data-target="securityCenter">Security</button>
         <a href="admin.html">Admin</a>
       </nav>
       <div class="install-card">
@@ -1011,6 +1012,37 @@
             </div>
           </section>
 
+          <section class="panel security-center" id="securityCenter">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Security & Data Protection</p>
+                <h2>Account, wallet, API, and corporate safeguards</h2>
+              </div>
+              <button class="ghost-button" type="button" id="runSecurityAuditButton">Run security audit</button>
+            </div>
+            <div class="security-status-grid">
+              <article><span>Authentication</span><strong id="securityAuthStatus">Configured</strong><small>Email verification, MFA-ready, session controls</small></article>
+              <article><span>Financial actions</span><strong id="securityWalletStatus">PIN-gated</strong><small>Wallet, refunds, transfers, card details</small></article>
+              <article><span>API protection</span><strong id="securityApiStatus">Guarded</strong><small>Auth, authorization, validation, safe errors</small></article>
+              <article><span>Corporate data</span><strong id="securityCorpStatus">Role-limited</strong><small>Budgets and vendor data hidden from employees</small></article>
+            </div>
+            <div class="security-control-grid">
+              <div><strong>Account security</strong><span>Strong passwords, reset verification, device recognition, session timeout, logout from all devices, and security activity history.</span></div>
+              <div><strong>Payment security</strong><span>PCI-DSS provider required, tokenized payment methods, no raw card storage, chargeback handling, and fraud monitoring.</span></div>
+              <div><strong>Data encryption</strong><span>Personal information, wallet records, travel documents, reservations, emergency contacts, and corporate data require TLS and encryption at rest.</span></div>
+              <div><strong>File upload security</strong><span>Approved file types only, size validation, secure renaming, malware scanning where supported, and executable upload blocking.</span></div>
+              <div><strong>Secure notifications</strong><span>Push/email/SMS notifications never include sensitive balances, budgets, payment cards, or private trip details.</span></div>
+              <div><strong>Secure development</strong><span>Server-side validation, parameterized queries, XSS/CSRF protections, secrets management, and dependency update checks.</span></div>
+            </div>
+            <div class="fraud-signal-list" id="fraudSignalList">
+              <div><strong>Multiple failed logins</strong><span>Monitor and rate-limit suspicious account access attempts.</span><em>Watching</em></div>
+              <div><strong>Rapid PIN failures</strong><span>Lock high-risk wallet actions and require identity review.</span><em>Watching</em></div>
+              <div><strong>Unusual refunds</strong><span>Flag repeated or high-value refund requests before funds move.</span><em>Review</em></div>
+              <div><strong>Impossible travel login</strong><span>New device and location mismatch triggers verification.</span><em>Watching</em></div>
+            </div>
+            <p class="small" id="securityAuditMessage">Security audit checks auth controls, role restrictions, sensitive-notification copy, wallet PIN gates, API hardening, file links, and financial privacy messaging.</p>
+          </section>
+
           <section class="panel">
             <p class="eyebrow">Automated Notifications</p>
             <h2>Money movement alerts</h2>
@@ -1115,6 +1147,7 @@
     <button type="button" data-target="socialHub">Social</button>
     <button type="button" data-target="enterpriseRbac">Corp</button>
     <button type="button" data-target="importantInfo">Info</button>
+    <button type="button" data-target="securityCenter">Security</button>
   </nav>
 
   <dialog class="pin-dialog" id="pinDialog" aria-labelledby="pinTitle">
@@ -1133,6 +1166,6 @@
   </dialog>
 
   <script src="public-config.js?v=1"></script>
-  <script defer src="app.js?v=26"></script>
+  <script defer src="app.js?v=27"></script>
 </body>
 </html>
