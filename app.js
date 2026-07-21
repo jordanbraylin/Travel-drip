@@ -13,6 +13,11 @@ const state = {
     savedDataUrl: localStorage.getItem("traveldripProfilePhoto") || "",
     privacy: localStorage.getItem("traveldripProfilePhotoPrivacy") || "trip_members",
     initials: localStorage.getItem("traveldripProfileInitials") || "JS",
+    cropShape: localStorage.getItem("traveldripProfilePhotoCropShape") || "circle",
+    zoom: Number(localStorage.getItem("traveldripProfilePhotoZoom") || 1),
+    positionX: Number(localStorage.getItem("traveldripProfilePhotoPositionX") || 50),
+    positionY: Number(localStorage.getItem("traveldripProfilePhotoPositionY") || 50),
+    rotation: Number(localStorage.getItem("traveldripProfilePhotoRotation") || 0),
     pendingFileName: ""
   },
   config: {
@@ -1461,7 +1466,7 @@ async function signIn(email, password) {
   if (!error) enterAppPreview();
 }
 
-async function signUp(fullName, email, password) {
+async function signUp(fullName, username, email, password) {
   if (!state.supabase) {
     showAuthSetupMessage();
     return;
@@ -1474,8 +1479,9 @@ async function signUp(fullName, email, password) {
       ...getAuthOptions(),
       data: {
         full_name: fullName,
-        profile_photo_privacy: state.profilePhoto.privacy,
-        profile_photo_setup: Boolean(state.profilePhoto.dataUrl)
+        username,
+        profile_photo_privacy: "trip_members",
+        profile_photo_setup: false
       }
     }
   });
@@ -2532,15 +2538,28 @@ function wireLocalInteractions() {
     localStorage.setItem("traveldripProfileInitials", state.profilePhoto.initials);
     renderProfilePhoto();
   });
-  $("#signupPhotoInput")?.addEventListener("change", (event) => handleProfilePhotoFile(event.target.files?.[0], "Signup upload"));
-  $("#signupCameraInput")?.addEventListener("change", (event) => handleProfilePhotoFile(event.target.files?.[0], "Signup camera"));
-  $("#skipSignupPhotoButton")?.addEventListener("click", () => {
-    state.profilePhoto.dataUrl = "";
-    renderProfilePhoto();
-    $("#authMessage").textContent = "Profile photo skipped. TravelDrip will show your initials until you add a photo later.";
-  });
   $("#profilePhotoInput")?.addEventListener("change", (event) => handleProfilePhotoFile(event.target.files?.[0], "Profile upload"));
   $("#profileCameraInput")?.addEventListener("change", (event) => handleProfilePhotoFile(event.target.files?.[0], "Camera photo"));
+  $("#photoZoomInput")?.addEventListener("input", (event) => {
+    state.profilePhoto.zoom = Number(event.target.value);
+    renderProfilePhoto();
+  });
+  $("#photoPositionXInput")?.addEventListener("input", (event) => {
+    state.profilePhoto.positionX = Number(event.target.value);
+    renderProfilePhoto();
+  });
+  $("#photoPositionYInput")?.addEventListener("input", (event) => {
+    state.profilePhoto.positionY = Number(event.target.value);
+    renderProfilePhoto();
+  });
+  $("#photoRotateInput")?.addEventListener("input", (event) => {
+    state.profilePhoto.rotation = Number(event.target.value);
+    renderProfilePhoto();
+  });
+  $("#photoCropShape")?.addEventListener("change", (event) => {
+    state.profilePhoto.cropShape = event.target.value;
+    renderProfilePhoto();
+  });
   ["dragenter", "dragover"].forEach((eventName) => {
     $("#profilePhotoDropZone")?.addEventListener(eventName, (event) => {
       event.preventDefault();
@@ -2589,12 +2608,24 @@ function wireLocalInteractions() {
     localStorage.setItem("traveldripProfilePhoto", state.profilePhoto.savedDataUrl);
     localStorage.setItem("traveldripProfilePhotoPrivacy", state.profilePhoto.privacy);
     localStorage.setItem("traveldripProfileInitials", state.profilePhoto.initials);
+    localStorage.setItem("traveldripProfilePhotoCropShape", state.profilePhoto.cropShape);
+    localStorage.setItem("traveldripProfilePhotoZoom", String(state.profilePhoto.zoom));
+    localStorage.setItem("traveldripProfilePhotoPositionX", String(state.profilePhoto.positionX));
+    localStorage.setItem("traveldripProfilePhotoPositionY", String(state.profilePhoto.positionY));
+    localStorage.setItem("traveldripProfilePhotoRotation", String(state.profilePhoto.rotation));
     setProfilePhotoMessage("Profile photo settings saved. The avatar now appears across profile, chat, members, reactions, albums, journals, directories, invitations, feeds, and notifications where allowed.");
     addAuditEntry("Profile photo saved", `Privacy: ${state.profilePhoto.privacy}. File: ${state.profilePhoto.pendingFileName || "default avatar"}.`);
     await saveSyncedEvent("profile_photo_saved", {
       hasPhoto: Boolean(state.profilePhoto.savedDataUrl),
       privacy: state.profilePhoto.privacy,
       optimizedPreview: true,
+      editor: {
+        cropShape: state.profilePhoto.cropShape,
+        zoom: state.profilePhoto.zoom,
+        positionX: state.profilePhoto.positionX,
+        positionY: state.profilePhoto.positionY,
+        rotation: state.profilePhoto.rotation
+      },
       moderationStatus: "pending_if_uploaded"
     });
   });
@@ -2735,6 +2766,7 @@ function wireLocalInteractions() {
 
     signUp(
       $("#signupNameInput").value.trim(),
+      $("#signupUsernameInput").value.trim(),
       $("#signupEmailInput").value.trim(),
       password
     );
@@ -2898,6 +2930,10 @@ function renderProfilePhoto() {
   $$("[data-profile-initials]").forEach((avatar) => {
     avatar.textContent = state.profilePhoto.initials;
     avatar.classList.toggle("has-photo", Boolean(state.profilePhoto.dataUrl));
+    avatar.classList.toggle("rounded-square", state.profilePhoto.cropShape === "rounded-square");
+    avatar.style.setProperty("--profile-photo-scale", state.profilePhoto.zoom);
+    avatar.style.setProperty("--profile-photo-rotation", `${state.profilePhoto.rotation}deg`);
+    avatar.style.backgroundPosition = `${state.profilePhoto.positionX}% ${state.profilePhoto.positionY}%`;
     if (state.profilePhoto.dataUrl) {
       avatar.style.backgroundImage = `url("${state.profilePhoto.dataUrl}")`;
     } else {
@@ -2906,7 +2942,13 @@ function renderProfilePhoto() {
   });
   $$("[data-profile-preview]").forEach((preview) => {
     preview.classList.toggle("has-photo", Boolean(state.profilePhoto.dataUrl));
+    preview.classList.toggle("rounded-square", state.profilePhoto.cropShape === "rounded-square");
   });
+  if ($("#photoCropShape")) $("#photoCropShape").value = state.profilePhoto.cropShape;
+  if ($("#photoZoomInput")) $("#photoZoomInput").value = String(state.profilePhoto.zoom);
+  if ($("#photoPositionXInput")) $("#photoPositionXInput").value = String(state.profilePhoto.positionX);
+  if ($("#photoPositionYInput")) $("#photoPositionYInput").value = String(state.profilePhoto.positionY);
+  if ($("#photoRotateInput")) $("#photoRotateInput").value = String(state.profilePhoto.rotation);
   $$("input[name='profilePhotoPrivacy']").forEach((input) => {
     input.checked = input.value === state.profilePhoto.privacy;
   });
@@ -2934,7 +2976,7 @@ function handleProfilePhotoFile(file, source = "upload") {
     state.profilePhoto.dataUrl = String(reader.result || "");
     state.profilePhoto.pendingFileName = file.name;
     renderProfilePhoto();
-    setProfilePhotoMessage(`${source} preview ready. Crop, zoom, rotate, choose privacy, then save changes.`);
+    setProfilePhotoMessage(`${source} preview ready. Crop, reposition, rotate, choose privacy, then save changes.`);
     addAuditEntry("Profile photo previewed", `${file.name} validated for type, size, preview, and moderation-ready upload.`);
   });
   reader.addEventListener("error", () => {

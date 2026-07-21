@@ -5541,7 +5541,6 @@ main {
   background: #fff;
 }
 
-.signup-photo-step,
 .profile-photo-manager,
 .profile-photo-main,
 .profile-photo-tools,
@@ -5549,27 +5548,6 @@ main {
 .profile-photo-policy-grid {
   display: grid;
   gap: 14px;
-}
-
-.signup-photo-step {
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  border: 1px solid rgba(8, 127, 140, 0.16);
-  border-radius: 18px;
-  padding: 12px;
-  background: #f7fbfa;
-}
-
-.signup-photo-step strong,
-.signup-photo-step span {
-  display: block;
-}
-
-.signup-photo-step span {
-  margin: 4px 0 10px;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.4;
 }
 
 .profile-photo-manager {
@@ -5627,6 +5605,12 @@ main {
 
 .profile-photo-avatar.has-photo {
   color: transparent;
+  transform: scale(var(--profile-photo-scale, 1)) rotate(var(--profile-photo-rotation, 0deg));
+}
+
+.profile-photo-preview.rounded-square,
+.profile-photo-avatar.rounded-square {
+  border-radius: 24px;
 }
 
 .profile-photo-avatar.large {
@@ -5662,10 +5646,11 @@ main {
 }
 
 .profile-photo-tools {
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.8fr);
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.65fr) minmax(260px, 0.8fr);
 }
 
 .photo-drop-zone,
+.photo-editor-card,
 .photo-privacy-card,
 .profile-photo-policy-grid div {
   border: 1px solid var(--line);
@@ -5699,8 +5684,45 @@ main {
   gap: 8px;
 }
 
+.photo-editor-card {
+  display: grid;
+  gap: 10px;
+}
+
 .photo-privacy-card h4 {
   margin: 0;
+}
+
+.photo-editor-card h4 {
+  margin: 0;
+}
+
+.photo-editor-card label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.photo-editor-card input[type="range"],
+.photo-editor-card select {
+  width: 100%;
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--ink);
+}
+
+.photo-editor-card select {
+  padding: 0 10px;
+}
+
+.photo-editor-card span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .photo-privacy-card label {
@@ -5759,7 +5781,6 @@ main {
 }
 
 @media (max-width: 680px) {
-  .signup-photo-step,
   .profile-photo-main {
     grid-template-columns: 1fr;
   }
