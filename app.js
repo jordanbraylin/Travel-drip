@@ -27,6 +27,10 @@ const state = {
     vapidPublicKey: ""
   },
   selectedRideProvider: "Careem",
+  liveDestinationIndex: 0,
+  liveDestinationPaused: false,
+  liveDestinationTimer: null,
+  liveDestinationTouchStartX: 0,
   connectedRideAccounts: {
     Careem: { connected: true, account: "Connected rider profile", status: "Account Connected" },
     Uber: { connected: false, account: "", status: "Not connected" },
@@ -190,66 +194,214 @@ const sharedRideMembers = [
 
 const livePlanDestinations = [
   {
+    id: "dubai-uae",
     location: "United Arab Emirates",
+    city: "Dubai",
+    region: "Dubai",
+    country: "United Arab Emirates",
     title: "Dubai long weekend",
     description: "Rooftop dinners, desert rides, beach clubs, and a shared wallet that keeps everyone even.",
     photo: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1600&auto=format&fit=crop",
     alt: "Dubai skyline at sunset",
     knownFor: "Futuristic skylines, desert adventures, luxury hotels, global food halls, and record-setting architecture.",
     funFact: "Dubai is home to the Burj Khalifa, famous worldwide for its record-setting height.",
+    tip: "Book popular rooftop dinners early and confirm modest dress codes for cultural stops.",
+    season: "November to March",
+    greeting: "Marhaba",
+    category: "Luxury city escape",
+    active: true,
+    featured: true,
+    displayOrder: 1,
+    reviewed: "July 2026",
+    exploreCategory: "luxury",
     adventures: ["Dune bashing at sunset", "Dinner in the desert", "Sky-view lounges", "Old Dubai creek walks"]
   },
   {
-    location: "California",
+    id: "california-coast",
+    location: "California, United States",
+    city: "Big Sur",
+    region: "California",
+    country: "United States",
     title: "California coast drive",
     description: "Pacific overlooks, vineyard stops, beach bonfires, and live alerts for every route change.",
     photo: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop",
     alt: "California coastal highway beside turquoise water",
     knownFor: "Pacific Coast Highway drives, beaches, national parks, wineries, film culture, and tech cities.",
     funFact: "California has the highest and lowest points in the contiguous United States.",
+    tip: "Download offline maps before coastal stretches where service can be spotty.",
+    season: "April to October",
+    greeting: "Hey from the coast",
+    category: "Road trip",
+    active: true,
+    featured: true,
+    displayOrder: 2,
+    reviewed: "July 2026",
+    exploreCategory: "weekend",
     adventures: ["Drive Big Sur", "Surf lessons", "Yosemite hikes", "Sunset beach picnics"]
   },
   {
-    location: "Japan",
+    id: "tokyo-japan",
+    location: "Tokyo, Japan",
+    city: "Tokyo",
+    region: "Kanto",
+    country: "Japan",
     title: "Tokyo food sprint",
     description: "Ramen counters, late trains, market mornings, and bill splits that update before the next stop.",
     photo: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1600&auto=format&fit=crop",
     alt: "Tokyo city street with bright signs",
     knownFor: "Sushi, ramen, bullet trains, temples, cherry blossoms, anime culture, and precise hospitality.",
     funFact: "Japan's Shinkansen bullet trains are famous for speed, punctuality, and smooth rides.",
+    tip: "Load a prepaid transit card to make trains, shops, and vending machines easier.",
+    season: "March to May or October to November",
+    greeting: "Konnichiwa",
+    category: "Food and culture",
+    active: true,
+    featured: true,
+    displayOrder: 3,
+    reviewed: "July 2026",
+    exploreCategory: "food",
     adventures: ["Night markets in Tokyo", "Tea ceremony", "Mount Fuji views", "Kyoto shrine walks"]
   },
   {
-    location: "New York",
+    id: "new-york-city",
+    location: "New York City, New York",
+    city: "New York City",
+    region: "New York",
+    country: "United States",
     title: "New York city week",
     description: "Museum slots, dinner reservations, Broadway timing, and meeting point reminders for the whole crew.",
     photo: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=1600&auto=format&fit=crop",
     alt: "New York skyline and city streets",
     knownFor: "Broadway, skyline views, museums, pizza slices, fashion, finance, and nonstop neighborhood energy.",
     funFact: "New York City's subway system is one of the largest rapid transit systems in the world.",
+    tip: "Group nearby neighborhoods together so meals, shows, and museums do not turn into cross-town scrambles.",
+    season: "April to June or September to December",
+    greeting: "Welcome to New York",
+    category: "City adventure",
+    active: true,
+    featured: true,
+    displayOrder: 4,
+    reviewed: "July 2026",
+    exploreCategory: "trending",
     adventures: ["Broadway night", "Central Park picnic", "Rooftop skyline photos", "Brooklyn food crawl"]
   },
   {
-    location: "Greece",
+    id: "santorini-greece",
+    location: "Santorini, Greece",
+    city: "Santorini",
+    region: "Cyclades",
+    country: "Greece",
     title: "Santorini sunset loop",
     description: "Cliffside stays, boat day holds, shared photos, and itinerary changes pushed as they happen.",
     photo: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=1600&auto=format&fit=crop",
     alt: "White buildings on a Santorini cliff above the sea",
     knownFor: "Ancient ruins, island sunsets, clear blue water, Mediterranean food, mythology, and whitewashed villages.",
     funFact: "Santorini's dramatic cliffs were shaped by one of history's major volcanic eruptions.",
+    tip: "Reserve sunset viewpoints and boat tours ahead of time during peak island months.",
+    season: "April to June or September to October",
+    greeting: "Yassas",
+    category: "Island escape",
+    active: true,
+    featured: true,
+    displayOrder: 5,
+    reviewed: "July 2026",
+    exploreCategory: "beaches",
     adventures: ["Caldera boat day", "Oia sunset photos", "Greek cooking class", "Ancient ruins tour"]
   },
   {
-    location: "Florida",
+    id: "miami-florida",
+    location: "Miami, Florida",
+    city: "Miami",
+    region: "Florida",
+    country: "United States",
     title: "Miami friends escape",
     description: "Pool plans, dinner votes, rideshare splits, and wallet approvals that keep the weekend moving.",
     photo: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?q=80&w=1600&auto=format&fit=crop",
     alt: "Tropical beach shoreline with clear water",
     knownFor: "Warm beaches, Latin food, theme parks, Everglades wildlife, nightlife, and cruise departures.",
     funFact: "Florida has more than 1,300 miles of coastline.",
+    tip: "Plan beach time early, then keep evenings flexible for dinner votes and nightlife.",
+    season: "December to May",
+    greeting: "Hola from Miami",
+    category: "Beach and nightlife",
+    active: true,
+    featured: true,
+    displayOrder: 6,
+    reviewed: "July 2026",
+    exploreCategory: "nightlife",
     adventures: ["Airboat ride", "South Beach morning", "Little Havana food stop", "Keys day trip"]
+  },
+  {
+    id: "san-juan-puerto-rico",
+    location: "San Juan, Puerto Rico",
+    city: "San Juan",
+    region: "Puerto Rico",
+    country: "United States",
+    title: "San Juan color run",
+    description: "Old city walks, beach afternoons, salsa nights, and memory prompts after every itinerary day.",
+    photo: "https://images.unsplash.com/photo-1542321993-8fc36217e26d?q=80&w=1600&auto=format&fit=crop",
+    alt: "Colorful buildings in Old San Juan",
+    knownFor: "Colorful colonial streets, beaches, forts, salsa, mofongo, coffee, and lively plazas.",
+    funFact: "Old San Juan is known for blue cobblestone streets brought as ballast on Spanish ships.",
+    tip: "Wear comfortable shoes for Old San Juan hills and keep a beach layer in your day bag.",
+    season: "December to April",
+    greeting: "Bienvenidos",
+    category: "Culture and beach",
+    active: true,
+    featured: true,
+    displayOrder: 7,
+    reviewed: "July 2026",
+    exploreCategory: "hidden",
+    adventures: ["El Morro sunset", "Salsa night", "Beach brunch", "Rainforest day trip"]
+  },
+  {
+    id: "paris-france",
+    location: "Paris, France",
+    city: "Paris",
+    region: "Ile-de-France",
+    country: "France",
+    title: "Paris art and cafe days",
+    description: "Museum passes, cafe routes, shopping notes, and quiet reminders before timed entries.",
+    photo: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=1600&auto=format&fit=crop",
+    alt: "Eiffel Tower and Paris cityscape",
+    knownFor: "Art museums, fashion, bakeries, cafe culture, river walks, gardens, and landmark architecture.",
+    funFact: "The Louvre began as a medieval fortress before becoming one of the world's best-known museums.",
+    tip: "Book timed museum entries and group restaurants in the same arrondissement when possible.",
+    season: "April to June or September to October",
+    greeting: "Bonjour",
+    category: "Romantic city",
+    active: true,
+    featured: true,
+    displayOrder: 8,
+    reviewed: "July 2026",
+    exploreCategory: "shopping",
+    adventures: ["Louvre morning", "Seine walk", "Pastry crawl", "Vintage shopping"]
+  },
+  {
+    id: "bali-indonesia",
+    location: "Bali, Indonesia",
+    city: "Ubud",
+    region: "Bali",
+    country: "Indonesia",
+    title: "Bali wellness week",
+    description: "Rice terraces, surf lessons, sunrise hikes, villa days, and easy private-driver planning.",
+    photo: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=1600&auto=format&fit=crop",
+    alt: "Bali rice terraces and palm trees",
+    knownFor: "Rice terraces, temples, beaches, wellness retreats, surf breaks, and warm hospitality.",
+    funFact: "Bali follows a unique local calendar system used for religious and community events.",
+    tip: "Use private drivers for longer day trips and allow extra time between regions.",
+    season: "April to October",
+    greeting: "Om swastiastu",
+    category: "Wellness adventure",
+    active: true,
+    featured: true,
+    displayOrder: 9,
+    reviewed: "July 2026",
+    exploreCategory: "outdoor",
+    adventures: ["Mount Batur sunrise", "Temple visit", "Surf lesson", "Ubud food walk"]
   }
-];
+].filter((destination) => destination.active && destination.featured)
+  .sort((a, b) => a.displayOrder - b.displayOrder);
 
 const tripTypeConfigs = {
   solo: {
@@ -593,29 +745,83 @@ function startLivePlanRotation() {
   const location = $("#livePlanLocation");
   const title = $("#livePlanTitle");
   const description = $("#livePlanDescription");
+  const dots = $("#destinationDots");
   if (!hero || !photo || !location || !title || !description) return;
 
-  let index = 0;
-  const renderDestination = (nextIndex = index + 1) => {
-    index = (nextIndex + livePlanDestinations.length) % livePlanDestinations.length;
-    const destination = livePlanDestinations[index];
-    hero.classList.add("is-flashing");
+  const chooser = $("#destinationChooser");
+  if (chooser) {
+    chooser.innerHTML = livePlanDestinations.map((destination, index) => `
+      <button type="button" data-destination-index="${index}" aria-pressed="false">${escapeHtml(destination.city)}</button>
+    `).join("");
+  }
+  if (dots) {
+    dots.innerHTML = livePlanDestinations.map((destination, index) => `
+      <button type="button" data-destination-index="${index}" aria-label="Show ${escapeHtml(destination.location)}"></button>
+    `).join("");
+  }
+
+  const renderDestination = (nextIndex = state.liveDestinationIndex + 1) => {
+    state.liveDestinationIndex = (nextIndex + livePlanDestinations.length) % livePlanDestinations.length;
+    const destination = livePlanDestinations[state.liveDestinationIndex];
+    hero.classList.add("is-transitioning");
     window.setTimeout(() => {
       photo.src = destination.photo;
       photo.alt = destination.alt;
-      location.textContent = `Live group plan • ${destination.location}`;
+      location.textContent = `${destination.category} • ${destination.location}`;
       title.textContent = destination.title;
       description.textContent = destination.description;
-      renderDestinationInsights(destination, index);
+      $("#livePlanFunFact").textContent = `Fun fact: ${destination.funFact}`;
+      $("#livePlanTip").textContent = `Tip: ${destination.tip}`;
+      $("#livePlanSeason").textContent = `Best time: ${destination.season}`;
+      $("#livePlanGreeting").textContent = `Greeting: ${destination.greeting}`;
+      $("#livePlanExploreButton").textContent = `Explore ${destination.city}`;
+      renderDestinationInsights(destination, state.liveDestinationIndex);
+      preloadNextDestinationImage();
     }, 180);
-    window.setTimeout(() => hero.classList.remove("is-flashing"), 700);
+    window.setTimeout(() => hero.classList.remove("is-transitioning"), 760);
   };
 
   renderDestinationInsights(livePlanDestinations[0], 0);
-  $$("#destinationChooser button").forEach((button) => {
+  renderDestination(0);
+
+  const resumeRotation = () => {
+    if (state.liveDestinationPaused || state.liveDestinationTimer) return;
+    state.liveDestinationTimer = window.setInterval(() => renderDestination(), 6500);
+  };
+  const stopRotation = () => {
+    if (!state.liveDestinationTimer) return;
+    window.clearInterval(state.liveDestinationTimer);
+    state.liveDestinationTimer = null;
+  };
+  const setPaused = (paused) => {
+    state.liveDestinationPaused = paused;
+    $("#destinationPauseButton")?.setAttribute("aria-pressed", String(paused));
+    if ($("#destinationPauseButton")) $("#destinationPauseButton").textContent = paused ? "Play" : "Pause";
+    paused ? stopRotation() : resumeRotation();
+  };
+
+  $$("#destinationChooser button, #destinationDots button").forEach((button) => {
     button.addEventListener("click", () => renderDestination(Number(button.dataset.destinationIndex)));
   });
-  window.setInterval(renderDestination, 4200);
+  $("#destinationPrevButton")?.addEventListener("click", () => renderDestination(state.liveDestinationIndex - 1));
+  $("#destinationNextButton")?.addEventListener("click", () => renderDestination(state.liveDestinationIndex + 1));
+  $("#destinationPauseButton")?.addEventListener("click", () => setPaused(!state.liveDestinationPaused));
+  $("#livePlanExploreButton")?.addEventListener("click", () => openDestinationExplore("destinations"));
+  $$("[data-destination-action]").forEach((button) => {
+    button.addEventListener("click", () => openDestinationExplore(button.dataset.destinationAction));
+  });
+  hero.addEventListener("mouseenter", stopRotation);
+  hero.addEventListener("mouseleave", resumeRotation);
+  hero.addEventListener("touchstart", (event) => {
+    state.liveDestinationTouchStartX = event.changedTouches[0]?.clientX || 0;
+  }, { passive: true });
+  hero.addEventListener("touchend", (event) => {
+    const endX = event.changedTouches[0]?.clientX || 0;
+    const delta = endX - state.liveDestinationTouchStartX;
+    if (Math.abs(delta) > 44) renderDestination(state.liveDestinationIndex + (delta < 0 ? 1 : -1));
+  }, { passive: true });
+
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) resumeRotation();
 }
 
 function renderDestinationInsights(destination, activeIndex) {
@@ -627,10 +833,73 @@ function renderDestinationInsights(destination, activeIndex) {
   knownFor.textContent = destination.knownFor;
   funFact.textContent = destination.funFact;
   adventures.innerHTML = destination.adventures.map((adventure) => `<span>${escapeHtml(adventure)}</span>`).join("");
+  $("#destinationReviewDate").textContent = `${destination.location} content reviewed ${destination.reviewed}. Active featured destination ID: ${destination.id}.`;
   $$("#destinationChooser button").forEach((button) => {
     const isActive = Number(button.dataset.destinationIndex) === activeIndex;
     button.classList.toggle("active", isActive);
     button.setAttribute("aria-pressed", String(isActive));
+  });
+  $$("#destinationDots button").forEach((button) => {
+    const isActive = Number(button.dataset.destinationIndex) === activeIndex;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-current", isActive ? "true" : "false");
+  });
+}
+
+function preloadNextDestinationImage() {
+  const nextDestination = livePlanDestinations[(state.liveDestinationIndex + 1) % livePlanDestinations.length];
+  if (!nextDestination) return;
+  const image = new Image();
+  image.src = nextDestination.photo;
+}
+
+async function openDestinationExplore(action = "destinations") {
+  const destination = livePlanDestinations[state.liveDestinationIndex] || livePlanDestinations[0];
+  const destinationRouteAction = action === "destinations" ? "overview" : action;
+  if (action === "ai") {
+    history.pushState({ target: "socialHub", destinationId: destination.id, action }, "", getRouteForTarget("socialHub"));
+    renderRoute("socialHub");
+    $("#messageStatus").textContent = `AI Trip Manager opened with ${destination.location}: ${destination.tip}`;
+    addAuditEntry("Destination banner action", `AI Trip Manager opened for ${destination.location}.`);
+    await saveSyncedEvent("destination_banner_action", {
+      destinationId: destination.id,
+      location: destination.location,
+      action,
+      routeCategory: "ai-trip-manager"
+    });
+    return;
+  }
+  const categoryMap = {
+    destinations: destination.exploreCategory || "trending",
+    activities: "activities",
+    hotels: "luxury",
+    restaurants: "food",
+    ai: "trending"
+  };
+  const category = categoryMap[action] || destination.exploreCategory || "trending";
+  if ($("#exploreDestinationInput")) $("#exploreDestinationInput").value = destination.location;
+  if ($("#exploreSearchInput")) $("#exploreSearchInput").value = action === "ai" ? `AI ideas for ${destination.city}` : destination.city;
+  history.pushState(
+    { target: "exploreDrops", category, destinationId: destination.id, action },
+    "",
+    getDestinationExploreRoute(destination, destinationRouteAction)
+  );
+  renderRoute("exploreDrops");
+  showDestinationExploreDetail(destination.id, destinationRouteAction);
+  const actionCopy = {
+    destinations: `Explore destination details opened for ${destination.location}.`,
+    activities: `Activities filtered for ${destination.location}.`,
+    hotels: `Hotels and luxury stays filtered for ${destination.location}.`,
+    restaurants: `Food and restaurant recommendations filtered for ${destination.location}.`,
+    ai: `AI Trip Manager opened with ${destination.location} as the planning context.`
+  };
+  $("#exploreStatusMessage").textContent = actionCopy[action] || `Explore opened for ${destination.location}.`;
+  addAuditEntry("Destination banner action", actionCopy[action] || `Explore opened for ${destination.location}.`);
+  await saveSyncedEvent("destination_banner_action", {
+    destinationId: destination.id,
+    location: destination.location,
+    action,
+    routeCategory: category
   });
 }
 
@@ -726,10 +995,24 @@ function getExploreRoute(categoryKey = getActiveExploreCategory(), itemId = "") 
 function getExploreRouteState(pathname = location.pathname) {
   const parts = normalizeAppPath(pathname).split("/").filter(Boolean);
   if (parts[0] !== "explore") return { category: "trending", itemId: "" };
+  if (parts[1] === "destinations") {
+    return {
+      category: "trending",
+      itemId: "",
+      destinationId: parts[2] ? decodeURIComponent(parts[2]) : "",
+      destinationAction: parts[3] || "overview"
+    };
+  }
   return {
     category: getExploreCategoryFromSlug(parts[1] || "trending"),
     itemId: parts[2] ? decodeURIComponent(parts[2]) : ""
   };
+}
+
+function getDestinationExploreRoute(destination, action = "overview") {
+  if (isFilePreview) return "index.html#exploreDrops";
+  const suffix = action === "overview" || action === "destinations" ? "" : `/${action}`;
+  return `/explore/destinations/${encodeURIComponent(destination.id)}${suffix}`;
 }
 
 function getExploreItems(categoryKey = getActiveExploreCategory()) {
@@ -831,6 +1114,49 @@ function showExploreDetail(itemId) {
     </div>
   `;
   $("#exploreStatusMessage").textContent = `${item.title} detail page opened. Back returns to ${exploreCategories[getActiveExploreCategory()].label} with filters preserved.`;
+}
+
+function showDestinationExploreDetail(destinationId, action = "overview") {
+  const destination = livePlanDestinations.find((item) => item.id === destinationId);
+  if (!destination || !$("#exploreDetailPanel")) return;
+  state.liveDestinationIndex = livePlanDestinations.findIndex((item) => item.id === destination.id);
+  $("#exploreResultsGrid").hidden = true;
+  $("#exploreEmptyState").hidden = true;
+  $("#exploreBackButton").hidden = false;
+  $("#exploreDetailPanel").hidden = false;
+  const actionLabel = {
+    overview: "Destination overview",
+    activities: "Activities",
+    hotels: "Hotels and stays",
+    restaurants: "Food and restaurants"
+  }[action] || "Destination overview";
+  $("#exploreDetailPanel").innerHTML = `
+    <img src="${destination.photo}" alt="${escapeHtml(destination.alt)}">
+    <div>
+      <p class="eyebrow">${escapeHtml(actionLabel)}</p>
+      <h3>${escapeHtml(destination.location)}</h3>
+      <p>${escapeHtml(destination.description)}</p>
+      <div class="explore-card-meta detail">
+        <strong>${escapeHtml(destination.category)}</strong>
+        <small>Best time: ${escapeHtml(destination.season)}</small>
+        <small>${escapeHtml(destination.greeting)}</small>
+        <small>Reviewed ${escapeHtml(destination.reviewed)}</small>
+      </div>
+      <div class="explore-detail-list">
+        <span>Known for: ${escapeHtml(destination.knownFor)}</span>
+        <span>Fun fact: ${escapeHtml(destination.funFact)}</span>
+        <span>Travel tip: ${escapeHtml(destination.tip)}</span>
+        ${destination.adventures.map((adventure) => `<span>${escapeHtml(adventure)}</span>`).join("")}
+      </div>
+      <div class="explore-card-actions">
+        <button type="button" data-destination-action="activities">View Activities</button>
+        <button type="button" data-destination-action="restaurants">View Restaurants</button>
+        <button type="button" data-destination-action="hotels">View Hotels</button>
+        <button type="button" data-destination-action="ai">Ask AI About This Destination</button>
+      </div>
+    </div>
+  `;
+  $("#exploreStatusMessage").textContent = `${destination.location} ${actionLabel.toLowerCase()} opened from the rotating destination banner.`;
 }
 
 async function handleExploreAction(action, itemId) {
@@ -1839,6 +2165,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
     const exploreState = getExploreRouteState();
     renderExplore(exploreState.category);
     if (exploreState.itemId) showExploreDetail(exploreState.itemId);
+    if (exploreState.destinationId) showDestinationExploreDetail(exploreState.destinationId, exploreState.destinationAction);
   }
 
   document.title = `${routeDefinitions[resolvedTarget].label} - Traveldrip`;
@@ -1913,6 +2240,8 @@ function wireLocalInteractions() {
   $("#exploreDetailPanel")?.addEventListener("click", (event) => {
     const actionButton = event.target.closest("[data-explore-action]");
     if (actionButton) handleExploreAction(actionButton.dataset.exploreAction, actionButton.dataset.exploreItem);
+    const destinationButton = event.target.closest("[data-destination-action]");
+    if (destinationButton) openDestinationExplore(destinationButton.dataset.destinationAction);
   });
 
   $("#exploreBackButton")?.addEventListener("click", () => {

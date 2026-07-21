@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=38">
+  <link rel="stylesheet" href="styles.css?v=39">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -248,17 +248,31 @@
         <button class="ghost-button" type="button" id="inlineInstallButton" hidden>Install app</button>
       </section>
 
-      <section class="hero" id="dashboardHome">
+      <section class="hero destination-banner" id="dashboardHome" aria-label="Rotating featured destinations">
         <img id="livePlanPhoto" src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1600&auto=format&fit=crop" alt="Dubai skyline at sunset">
         <div class="hero-copy">
           <p class="eyebrow" id="livePlanLocation">Live group plan • United Arab Emirates</p>
           <h1 id="livePlanTitle">Dubai long weekend</h1>
           <p id="livePlanDescription">Rooftop dinners, desert rides, beach clubs, and a shared wallet that keeps everyone even.</p>
+          <div class="destination-banner-meta">
+            <span id="livePlanFunFact">Fun fact: Dubai is home to the Burj Khalifa, famous worldwide for its record-setting height.</span>
+            <span id="livePlanTip">Tip: Book popular rooftop dinners early and confirm modest dress codes for cultural stops.</span>
+            <span id="livePlanSeason">Best time: November to March</span>
+            <span id="livePlanGreeting">Greeting: Marhaba</span>
+          </div>
           <div class="hero-actions">
-            <button class="primary-button glass" type="button">Open plan</button>
-            <button class="ghost-button glass" type="button">Share board</button>
+            <button class="primary-button glass" type="button" id="livePlanExploreButton">Explore Dubai</button>
+            <button class="ghost-button glass" type="button" data-destination-action="activities">View activities</button>
+            <button class="ghost-button glass" type="button" data-destination-action="restaurants">View restaurants</button>
+            <button class="ghost-button glass" type="button" data-destination-action="ai">Ask AI</button>
           </div>
         </div>
+        <div class="destination-banner-controls" aria-label="Destination carousel controls">
+          <button class="icon-button glass" type="button" id="destinationPrevButton" aria-label="Previous destination">‹</button>
+          <button class="icon-button glass" type="button" id="destinationPauseButton" aria-label="Pause destination rotation" aria-pressed="false">Pause</button>
+          <button class="icon-button glass" type="button" id="destinationNextButton" aria-label="Next destination">›</button>
+        </div>
+        <div class="destination-banner-dots" id="destinationDots" aria-label="Featured destination slides"></div>
       </section>
 
       <nav class="trip-tab-bar" aria-label="Selected trip sections">
@@ -278,6 +292,7 @@
           <div>
             <p class="eyebrow">Choose a location</p>
             <h2>Fun facts and trip inspiration</h2>
+            <p class="small" id="destinationReviewDate">Destination content reviewed July 2026 and should be refreshed as details change.</p>
           </div>
           <div class="destination-chooser" id="destinationChooser" aria-label="Choose a featured destination">
             <button class="active" type="button" data-destination-index="0" aria-pressed="true">UAE</button>
@@ -2402,6 +2417,6 @@
   </dialog>
 
   <script src="public-config.js?v=1"></script>
-  <script defer src="app.js?v=32"></script>
+  <script defer src="app.js?v=33"></script>
 </body>
 </html>
