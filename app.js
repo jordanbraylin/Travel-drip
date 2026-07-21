@@ -43,6 +43,10 @@ const state = {
     Uber: { connected: false, account: "", status: "Not connected" },
     Lyft: { connected: false, account: "", status: "Not connected" },
     Grab: { connected: false, account: "", status: "Not connected" }
+  },
+  aiPlanner: {
+    step: Number(sessionStorage.getItem("traveldripAiPlannerStep") || 0),
+    answers: parseJson(sessionStorage.getItem("traveldripAiPlannerAnswers"), {})
   }
 };
 
@@ -70,9 +74,71 @@ const dayCopy = [
   "Culture and food stops grouped by walking distance."
 ];
 
+const aiPlannerSteps = [
+  {
+    key: "tripType",
+    question: "What type of trip are you planning?",
+    options: ["Solo Travel", "Group Vacation", "Family Vacation", "Couples Getaway", "Cruise", "Corporate Retreat", "Wedding", "Birthday Celebration"]
+  },
+  {
+    key: "destination",
+    question: "Do you already have a destination in mind, or would you like recommendations?",
+    options: ["Miami", "Tokyo", "Santorini", "Dubai", "Recommend destinations", "Open to international travel", "Avoid long flights"]
+  },
+  {
+    key: "budget",
+    question: "What budget should I plan around?",
+    options: ["Under $900 per person", "$1,500 per person", "$3,000 total", "Premium comfort", "Luxury", "Prioritize savings"]
+  },
+  {
+    key: "dates",
+    question: "When do you want to travel?",
+    options: ["Next month", "Summer", "Holiday weekend", "Flexible dates", "5 days", "Long weekend", "Best weather window"]
+  },
+  {
+    key: "travelers",
+    question: "Who is traveling?",
+    options: ["Just me", "2 adults", "Friends group", "Family with kids", "Corporate team", "Cruise group", "Include pets"]
+  },
+  {
+    key: "interests",
+    question: "What should this trip focus on?",
+    options: ["Beaches", "Food and Dining", "Nightlife", "Adventure", "Museums", "Shopping", "Wellness", "Local Culture", "Photography"]
+  },
+  {
+    key: "accommodations",
+    question: "What stay style feels right?",
+    options: ["Hotel", "Resort", "Vacation rental", "Villa", "Boutique hotel", "Cruise cabin", "Ocean view", "Breakfast included"]
+  },
+  {
+    key: "transportation",
+    question: "How should I handle transportation?",
+    options: ["Flights needed", "Airport transfer", "Rental car", "Ride-share", "Public transit", "Walking-friendly", "Business class"]
+  },
+  {
+    key: "dining",
+    question: "Any dining preferences or restrictions?",
+    options: ["Local favorites", "Fine dining", "Street food", "Seafood", "Vegan", "Food allergies", "Reservations", "Under $50 per meal"]
+  },
+  {
+    key: "accessibility",
+    question: "Any accessibility or special requirements?",
+    options: ["Wheelchair access", "Mobility assistance", "Family-friendly", "Quiet hotel", "Accessible transit", "Medical accommodations", "No special requirements"]
+  }
+];
+
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 const isFilePreview = location.protocol === "file:";
+
+function parseJson(value, fallback) {
+  try {
+    return value ? JSON.parse(value) : fallback;
+  } catch (_error) {
+    return fallback;
+  }
+}
+
 const themeLabels = {
   tropical: "Tropical Paradise",
   sunset: "Sunset Escape",
@@ -1203,6 +1269,97 @@ function showDestinationExploreDetail(destinationId, action = "overview") {
   $("#exploreStatusMessage").textContent = `${destination.location} ${actionLabel.toLowerCase()} opened from the rotating destination banner.`;
 }
 
+function saveAiPlannerState() {
+  sessionStorage.setItem("traveldripAiPlannerStep", String(state.aiPlanner.step));
+  sessionStorage.setItem("traveldripAiPlannerAnswers", JSON.stringify(state.aiPlanner.answers));
+}
+
+function getAiPlannerTripMode() {
+  const tripType = state.aiPlanner.answers.tripType || "";
+  if (/corporate|business|conference/i.test(tripType)) return "Corporate policy mode";
+  if (/cruise/i.test(tripType)) return "Cruise-ready";
+  if (/solo/i.test(tripType)) return "Solo concierge";
+  return "Group-ready";
+}
+
+function getAiPlannerPlan() {
+  const answers = state.aiPlanner.answers;
+  const tripType = answers.tripType || "Group Vacation";
+  const destination = answers.destination || "Miami";
+  const budget = answers.budget || "$875/person";
+  const dates = answers.dates || "Flexible dates";
+  const interests = answers.interests || "Food and Dining";
+  const corporate = /corporate|business|conference/i.test(tripType);
+  const cruise = /cruise/i.test(tripType);
+  const solo = /solo/i.test(tripType);
+  return {
+    title: `${destination} ${tripType} draft`,
+    summary: corporate
+      ? "Policy-aware company travel draft with approved hotels, transportation logistics, per-diem guidance, meeting schedules, and team activities."
+      : cruise
+        ? "Cruise planning draft with cabin preferences, embarkation guidance, shore excursions, dining reservations, onboard entertainment, and packing reminders."
+        : solo
+          ? "Personal concierge draft focused on safety, flexible pacing, local recommendations, budget tracking, documents, and memories."
+          : "Collaborative trip draft with invitations, shared budget, polls, group-friendly dining, transportation, wallet contributions, and editable itinerary blocks.",
+    cost: budget.includes("$") ? budget : "$875/person estimate",
+    window: dates,
+    style: interests,
+    mode: getAiPlannerTripMode(),
+    days: corporate
+      ? ["Arrival, policy briefing, hotel check-in", "Meeting blocks, team lunch, approved team-building", "Conference sessions, transport windows, expense closeout"]
+      : cruise
+        ? ["Embarkation, cabin setup, welcome dinner", "Port morning, shore excursion, onboard show", "Sea day wellness, specialty dining, packing reminders"]
+        : ["Arrival, check-in, local dinner", `${interests} anchor activity, lunch, evening experience`, "Flexible morning, favorite stop, departure"]
+  };
+}
+
+function renderAiPlanner() {
+  if (!$("#aiPlannerQuestion")) return;
+  const step = aiPlannerSteps[Math.min(state.aiPlanner.step, aiPlannerSteps.length - 1)];
+  $("#aiPlannerQuestion").textContent = step ? step.question : "Your personalized plan is ready. What would you like to adjust?";
+  $("#aiPlannerReplies").innerHTML = (step?.options || ["Regenerate itinerary", "Create Trip", "Share Trip"]).map((option) => (
+    `<button type="button" data-ai-answer="${escapeHtml(option)}">${escapeHtml(option)}</button>`
+  )).join("");
+
+  const answers = state.aiPlanner.answers;
+  const memory = [
+    ["Trip type", answers.tripType || "Not selected"],
+    ["Destination", answers.destination || "Open to ideas"],
+    ["Budget", answers.budget || "Not set"],
+    ["Dates", answers.dates || "Flexible"],
+    ["Interests", answers.interests || "Waiting"]
+  ];
+  $("#aiPlannerMemory").innerHTML = memory.map(([label, value]) => (
+    `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`
+  )).join("");
+
+  const plan = getAiPlannerPlan();
+  $("#aiTripTitle").textContent = plan.title;
+  $("#aiTripSummary").textContent = plan.summary;
+  $("#aiEstimatedCost").textContent = plan.cost;
+  $("#aiTravelWindow").textContent = plan.window;
+  $("#aiTravelStyle").textContent = plan.style;
+  $("#aiTripMode").textContent = plan.mode;
+  $("#aiItineraryPreview").innerHTML = plan.days.map((day, index) => (
+    `<div><span>Day ${index + 1}</span><strong>${escapeHtml(day)}</strong><small>${index === 0 ? "Estimated until flights, lodging, and reservations are confirmed." : "Editable, removable, and regeneratable before saving."}</small></div>`
+  )).join("");
+}
+
+async function answerAiPlanner(value) {
+  const answer = String(value || "").trim();
+  if (!answer) return;
+  const step = aiPlannerSteps[Math.min(state.aiPlanner.step, aiPlannerSteps.length - 1)];
+  if (step) state.aiPlanner.answers[step.key] = answer;
+  $("#aiPlannerTranscript")?.insertAdjacentHTML("beforeend", `<div><strong>You</strong><span>${escapeHtml(answer)}</span></div>`);
+  state.aiPlanner.step = Math.min(state.aiPlanner.step + 1, aiPlannerSteps.length);
+  saveAiPlannerState();
+  renderAiPlanner();
+  const nextStep = aiPlannerSteps[Math.min(state.aiPlanner.step, aiPlannerSteps.length - 1)];
+  $("#aiPlannerTranscript")?.insertAdjacentHTML("beforeend", `<div class="assistant"><strong>TravelDrip AI</strong><span>${escapeHtml(nextStep ? nextStep.question : "Your draft is ready. You can save, share, regenerate, or create a trip now.")}</span></div>`);
+  $("#aiPlannerStatus").textContent = `Saved ${Object.keys(state.aiPlanner.answers).length} planning answer(s) in this session.`;
+  await saveSyncedEvent("ai_planner_answered", { step: step?.key || "complete", answer, tripMode: getAiPlannerTripMode() });
+}
+
 async function handleExploreAction(action, itemId) {
   const item = findExploreItem(itemId);
   const category = exploreCategories[getActiveExploreCategory()]?.label || "Explore";
@@ -2047,6 +2204,7 @@ async function signOut() {
 
 const routeDefinitions = {
   dashboardHome: { path: "/home", label: "Home Dashboard" },
+  aiTravelPlanner: { path: "/ai-planner", label: "AI Travel Planner" },
   exploreDrops: { path: "/explore", label: "Explore" },
   tripsPanel: { path: "/trips", label: "My Trips" },
   groupBank: { path: "/trips/dubai-weekend/group-bank", label: "Group Bank" },
@@ -2066,6 +2224,8 @@ const routeAliases = {
   "/": "dashboardHome",
   "/index.html": "dashboardHome",
   "/home": "dashboardHome",
+  "/ai-planner": "aiTravelPlanner",
+  "/planner": "aiTravelPlanner",
   "/dashboard": "dashboardHome",
   "/explore": "exploreDrops",
   "/trips": "tripsPanel",
@@ -2335,6 +2495,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
     if (exploreState.itemId) showExploreDetail(exploreState.itemId);
     if (exploreState.destinationId) showDestinationExploreDetail(exploreState.destinationId, exploreState.destinationAction);
   }
+  if (resolvedTarget === "aiTravelPlanner") renderAiPlanner();
 
   updateDashboardWidgets();
   document.title = `${routeDefinitions[resolvedTarget].label} - Traveldrip`;
@@ -3780,6 +3941,65 @@ function wireLocalInteractions() {
     showWorkflowMessage("Report unauthorized access", "Guest session risk report logged without exposing employee ID values.");
   });
   $("#enterAppButton")?.addEventListener("click", enterAppPreview);
+  renderAiPlanner();
+  $("#aiPlannerStartButton")?.addEventListener("click", () => {
+    renderRoute("aiTravelPlanner", { updateHistory: true });
+    $("#aiPlannerStatus").textContent = "AI planning started. Answer one prompt at a time and TravelDrip will build the draft as you go.";
+  });
+  $("#aiPlannerReplies")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-ai-answer]");
+    if (button) answerAiPlanner(button.dataset.aiAnswer);
+  });
+  $("#aiPlannerSendButton")?.addEventListener("click", () => {
+    const input = $("#aiPlannerFreeformInput");
+    answerAiPlanner(input?.value || "");
+    if (input) input.value = "";
+  });
+  $("#aiPlannerFreeformInput")?.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    $("#aiPlannerSendButton")?.click();
+  });
+  $("#aiPlannerDeleteMemoryButton")?.addEventListener("click", async () => {
+    state.aiPlanner = { step: 0, answers: {} };
+    saveAiPlannerState();
+    $("#aiPlannerTranscript").innerHTML = "";
+    renderAiPlanner();
+    $("#aiPlannerStatus").textContent = "Planner memory deleted for this session. Saved preferences can be reviewed or removed in Profile settings.";
+    addAuditEntry("AI planner memory deleted", "Planning session answers were cleared from this device session.");
+    await saveSyncedEvent("ai_planner_memory_deleted", { userControlled: true });
+  });
+  $("#aiSaveProgressButton")?.addEventListener("click", async () => {
+    saveAiPlannerState();
+    $("#aiPlannerStatus").textContent = "Progress saved. Continue Planning will reopen this draft with your answers intact.";
+    addAuditEntry("AI planner progress saved", `${Object.keys(state.aiPlanner.answers).length} answer(s) preserved.`);
+    await saveSyncedEvent("ai_planner_progress_saved", { answers: state.aiPlanner.answers });
+  });
+  $("#aiRegenerateButton")?.addEventListener("click", async () => {
+    const plan = getAiPlannerPlan();
+    $("#aiItineraryPreview").insertAdjacentHTML("beforeend", `<div><span>Alt option</span><strong>${escapeHtml(plan.mode)} refresh with more free time</strong><small>Regenerated section only; original answers remain saved.</small></div>`);
+    $("#aiPlannerStatus").textContent = "Itinerary regenerated with the current answers. You can keep editing before creating the trip.";
+    await saveSyncedEvent("ai_planner_regenerated", { tripMode: plan.mode });
+  });
+  $("#aiCreateTripButton")?.addEventListener("click", async () => {
+    $("#aiPlannerStatus").textContent = "Generated plan handed to guided trip creation. Confirm trip type, dates, travelers, and budget before saving.";
+    addAuditEntry("AI-generated trip started", getAiPlannerPlan().title);
+    await saveSyncedEvent("ai_planner_create_trip", { plan: getAiPlannerPlan(), estimatesOnly: true });
+    renderRoute("tripsPanel", { updateHistory: true });
+  });
+  $("#aiShareTripButton")?.addEventListener("click", async () => {
+    $("#aiPlannerStatus").textContent = "Share workflow opened with invited travelers and coworkers. Nothing is shared without approval.";
+    addAuditEntry("AI planner share opened", "Draft itinerary sharing prepared with privacy controls.");
+    await saveSyncedEvent("ai_planner_share_opened", { privacyControlled: true });
+  });
+  $("#aiExportButton")?.addEventListener("click", async () => {
+    $("#aiPlannerStatus").textContent = "PDF export queued for the generated itinerary, budget estimate, checklist, and day-by-day plan.";
+    await saveSyncedEvent("ai_planner_export_requested", { format: "pdf" });
+  });
+  $("#aiCalendarButton")?.addEventListener("click", async () => {
+    $("#aiPlannerStatus").textContent = "Calendar workflow opened. Confirmed reservations can sync to Apple, Google, or Outlook calendars when providers are connected.";
+    await saveSyncedEvent("ai_planner_calendar_opened", { providerRequired: true });
+  });
   $$("[data-oauth-provider]").forEach((button) => {
     button.addEventListener("click", () => signInWithOAuth(button.dataset.oauthProvider));
   });

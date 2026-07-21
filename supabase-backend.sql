@@ -586,6 +586,60 @@ create table if not exists public.ai_sessions (
   last_message_at timestamptz
 );
 
+create table if not exists public.ai_travel_preferences (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  preference_scope text not null default 'personal' check (preference_scope in ('personal','trip','organization')),
+  trip_id uuid references public.trips(id) on delete cascade,
+  organization_id uuid references public.organizations(id) on delete cascade,
+  destinations jsonb not null default '[]'::jsonb,
+  interests jsonb not null default '[]'::jsonb,
+  budget_patterns jsonb not null default '{}'::jsonb,
+  preferred_airlines jsonb not null default '[]'::jsonb,
+  preferred_hotels jsonb not null default '[]'::jsonb,
+  dining_preferences jsonb not null default '{}'::jsonb,
+  accessibility_needs jsonb not null default '{}'::jsonb,
+  learning_allowed boolean not null default false,
+  deleted_at timestamptz,
+  unique (user_id, preference_scope, trip_id, organization_id)
+);
+
+create table if not exists public.ai_travel_plans (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  ai_session_id uuid references public.ai_sessions(id) on delete set null,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  trip_id uuid references public.trips(id) on delete set null,
+  trip_type text not null,
+  destination text,
+  departure_location text,
+  budget_cents bigint not null default 0,
+  currency text not null default 'USD',
+  starts_on date,
+  ends_on date,
+  answers jsonb not null default '{}'::jsonb,
+  generated_itinerary jsonb not null default '[]'::jsonb,
+  estimated_costs jsonb not null default '{}'::jsonb,
+  checklist jsonb not null default '[]'::jsonb,
+  status text not null default 'draft' check (status in ('draft','saved','converted_to_trip','shared','deleted')),
+  shared_at timestamptz,
+  converted_trip_id uuid references public.trips(id) on delete set null,
+  deleted_at timestamptz
+);
+
+drop trigger if exists set_ai_travel_preferences_updated_at on public.ai_travel_preferences;
+create trigger set_ai_travel_preferences_updated_at
+before update on public.ai_travel_preferences
+for each row execute function public.set_updated_at();
+
+drop trigger if exists set_ai_travel_plans_updated_at on public.ai_travel_plans;
+create trigger set_ai_travel_plans_updated_at
+before update on public.ai_travel_plans
+for each row execute function public.set_updated_at();
+
 create table if not exists public.notifications (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
@@ -647,6 +701,9 @@ create index if not exists idx_wallet_transactions_trip on public.wallet_transac
 create index if not exists idx_trip_virtual_wallets_trip on public.trip_virtual_wallets(trip_id, status);
 create index if not exists idx_trip_wallet_contributions_user on public.trip_wallet_contributions(user_id, created_at desc);
 create index if not exists idx_trip_wallet_contributions_trip on public.trip_wallet_contributions(trip_id, status);
+create index if not exists idx_ai_travel_preferences_user on public.ai_travel_preferences(user_id, preference_scope);
+create index if not exists idx_ai_travel_plans_user on public.ai_travel_plans(user_id, created_at desc);
+create index if not exists idx_ai_travel_plans_trip on public.ai_travel_plans(trip_id, status);
 create index if not exists idx_audit_logs_trip on public.audit_logs(trip_id, created_at desc);
 create index if not exists idx_notifications_user on public.notifications(user_id, created_at desc);
 
@@ -686,6 +743,8 @@ alter table public.documents enable row level security;
 alter table public.media enable row level security;
 alter table public.social_connections enable row level security;
 alter table public.ai_sessions enable row level security;
+alter table public.ai_travel_preferences enable row level security;
+alter table public.ai_travel_plans enable row level security;
 alter table public.notifications enable row level security;
 alter table public.background_jobs enable row level security;
 alter table public.audit_logs enable row level security;
@@ -954,6 +1013,14 @@ create policy "Users manage own social connections" on public.social_connections
 
 drop policy if exists "Users manage own AI sessions" on public.ai_sessions;
 create policy "Users manage own AI sessions" on public.ai_sessions
+  for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+drop policy if exists "Users manage own AI travel preferences" on public.ai_travel_preferences;
+create policy "Users manage own AI travel preferences" on public.ai_travel_preferences
+  for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+drop policy if exists "Users manage own AI travel plans" on public.ai_travel_plans;
+create policy "Users manage own AI travel plans" on public.ai_travel_plans
   for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
 
 drop policy if exists "Users read own notifications" on public.notifications;

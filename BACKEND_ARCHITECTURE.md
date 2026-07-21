@@ -24,6 +24,7 @@ The backend schema adds:
 - Cruise bookings, cabin assignments, port schedules, shore excursions, onboard activities, and dining reservations
 - Reservation and paid excursion records, assigned attendees, reminder preferences, queued reminder notifications, smart departure payloads, and calendar sync status
 - Daily memory reminder preferences, end-of-day prompt events, and organized memory items by trip/day/itinerary
+- AI Travel Planner sessions, saved preference profiles, generated itinerary drafts, estimated costs, checklists, sharing state, deletion controls, and trip-conversion records
 - Personal wallets, one shared Trip Virtual Wallet per eligible trip, trip wallet cards, group banks, contribution ledgers, wallet transactions, receipt scanning records, item claims, ride split participants, idempotency keys, and refund-ready audit data
 - Important information, acknowledgments, documents, media, social connections, AI sessions, notifications, background jobs, saved places, and audit logs
 - Operational readiness tables for scalability test runs, backup/restore evidence, data-retention policies, API performance events, and storage-processing jobs

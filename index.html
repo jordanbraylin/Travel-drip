@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=44">
+  <link rel="stylesheet" href="styles.css?v=45">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -273,6 +273,7 @@
             <span id="livePlanGreeting">Greeting: Marhaba</span>
           </div>
           <div class="hero-actions">
+            <button class="primary-button glass" type="button" data-target="aiTravelPlanner">Plan My Trip with AI</button>
             <button class="primary-button glass" type="button" id="livePlanExploreButton">Explore Dubai</button>
             <button class="ghost-button glass" type="button" data-destination-action="activities">View activities</button>
             <button class="ghost-button glass" type="button" data-destination-action="restaurants">View restaurants</button>
@@ -289,6 +290,7 @@
 
       <nav class="trip-tab-bar" aria-label="Selected trip sections">
         <button class="active" type="button" data-target="dashboardHome">Overview</button>
+        <button type="button" data-target="aiTravelPlanner">AI Planner</button>
         <button type="button" data-target="itineraryAlerts">Itinerary</button>
         <button type="button" data-target="socialHub">Chat</button>
         <button type="button" data-target="rideShareHub">Travel</button>
@@ -542,6 +544,80 @@
               <button class="ghost-button" type="button" data-admin-action="Refund request approved">Approve refund</button>
               <button class="ghost-button" type="button" data-admin-action="Participant removal review started">Remove participant</button>
             </div>
+          </section>
+
+          <section class="panel ai-travel-planner-panel" id="aiTravelPlanner">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">AI Travel Planner</p>
+                <h2>Plan a complete trip with a personal concierge</h2>
+                <p>The planner asks one question at a time, remembers your answers for this session, and turns them into a practical itinerary with estimates clearly labeled.</p>
+              </div>
+              <button class="primary-button" type="button" id="aiPlannerStartButton">Start Planning</button>
+            </div>
+            <div class="ai-planner-shell">
+              <section class="ai-planner-chat" aria-live="polite">
+                <div class="ai-planner-message assistant">
+                  <strong>TravelDrip AI</strong>
+                  <p id="aiPlannerQuestion">What type of trip are you planning?</p>
+                </div>
+                <div class="ai-planner-replies" id="aiPlannerReplies">
+                  <button type="button" data-ai-answer="Solo Travel">Solo Travel</button>
+                  <button type="button" data-ai-answer="Group Vacation">Group Vacation</button>
+                  <button type="button" data-ai-answer="Cruise">Cruise</button>
+                  <button type="button" data-ai-answer="Corporate Retreat">Corporate Retreat</button>
+                </div>
+                <div class="ai-planner-input-row">
+                  <input id="aiPlannerFreeformInput" type="text" placeholder="Or type an answer, like: Miami group trip under $900">
+                  <button class="ghost-button" type="button" id="aiPlannerSendButton">Send</button>
+                </div>
+                <div class="ai-planner-transcript" id="aiPlannerTranscript" aria-label="AI planning conversation"></div>
+              </section>
+
+              <aside class="ai-planner-summary">
+                <h3>Planning Memory</h3>
+                <div class="ai-planner-memory" id="aiPlannerMemory">
+                  <div><span>Trip type</span><strong>Not selected</strong></div>
+                  <div><span>Destination</span><strong>Open to ideas</strong></div>
+                  <div><span>Budget</span><strong>Not set</strong></div>
+                  <div><span>Dates</span><strong>Flexible</strong></div>
+                  <div><span>Interests</span><strong>Waiting</strong></div>
+                </div>
+                <label class="auth-check"><input id="aiPlannerLearnToggle" type="checkbox" checked> Let AI use saved preferences for this plan</label>
+                <button class="ghost-button wide" type="button" id="aiPlannerDeleteMemoryButton">Delete planner memory</button>
+              </aside>
+            </div>
+
+            <section class="ai-generated-trip" id="aiGeneratedTrip">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Generated Plan</p>
+                  <h3 id="aiTripTitle">Miami group weekend draft</h3>
+                  <p id="aiTripSummary">Answer a few prompts to personalize the destination, budget, travel dates, dining, transportation, accessibility needs, and itinerary pace.</p>
+                </div>
+                <span class="compliance-badge" id="aiPlannerEstimateBadge">Estimates only</span>
+              </div>
+              <div class="ai-trip-output-grid">
+                <article><span>Estimated cost</span><strong id="aiEstimatedCost">$875/person</strong><small>Flights, hotel, food, rides, and activities estimated</small></article>
+                <article><span>Best travel window</span><strong id="aiTravelWindow">Flexible dates</strong><small>AI can optimize for price or weather</small></article>
+                <article><span>Travel style</span><strong id="aiTravelStyle">Balanced</strong><small>Savings, convenience, and fun</small></article>
+                <article><span>Trip mode</span><strong id="aiTripMode">Group-ready</strong><small>Invites, polls, wallet, and shared itinerary</small></article>
+              </div>
+              <div class="ai-itinerary-preview" id="aiItineraryPreview">
+                <div><span>Day 1</span><strong>Arrival, hotel check-in, local dinner</strong><small>Travel time and reservations are approximate until booked.</small></div>
+                <div><span>Day 2</span><strong>Beach morning, food tour, rooftop night</strong><small>Group-friendly options with budget and safety notes.</small></div>
+                <div><span>Day 3</span><strong>Brunch, flexible activity, departure</strong><small>Free time stays editable before trip creation.</small></div>
+              </div>
+              <div class="ai-planner-actions">
+                <button class="primary-button" type="button" id="aiCreateTripButton">Create Trip</button>
+                <button class="ghost-button" type="button" id="aiSaveProgressButton">Save Progress</button>
+                <button class="ghost-button" type="button" id="aiRegenerateButton">Regenerate Itinerary</button>
+                <button class="ghost-button" type="button" id="aiShareTripButton">Share Trip</button>
+                <button class="ghost-button" type="button" id="aiExportButton">Export PDF</button>
+                <button class="ghost-button" type="button" id="aiCalendarButton">Add to Calendar</button>
+              </div>
+              <p class="small" id="aiPlannerStatus">No planning session saved yet. AI answers stay private to your account and can be deleted anytime.</p>
+            </section>
           </section>
 
           <section class="panel explore-panel" id="exploreDrops">
@@ -2700,6 +2776,6 @@
   </dialog>
 
   <script src="public-config.js?v=1"></script>
-  <script defer src="app.js?v=37"></script>
+  <script defer src="app.js?v=38"></script>
 </body>
 </html>

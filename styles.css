@@ -2812,6 +2812,152 @@ body.auth-screen main {
   object-fit: cover;
 }
 
+.ai-travel-planner-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.ai-planner-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  gap: 12px;
+}
+
+.ai-planner-chat,
+.ai-planner-summary,
+.ai-generated-trip {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.ai-planner-message {
+  padding: 14px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(0, 188, 212, 0.12), rgba(255, 111, 89, 0.1));
+}
+
+.ai-planner-message strong,
+.ai-planner-message p,
+.ai-planner-summary h3,
+.ai-generated-trip h3 {
+  margin: 0;
+}
+
+.ai-planner-message p {
+  margin-top: 6px;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 850;
+}
+
+.ai-planner-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.ai-planner-replies button,
+.ai-planner-actions button {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.ai-planner-replies button:hover,
+.ai-planner-actions button:hover {
+  border-color: var(--sea);
+  color: var(--sea);
+}
+
+.ai-planner-input-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.ai-planner-input-row input {
+  min-width: 0;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 12px;
+  font: inherit;
+}
+
+.ai-planner-transcript,
+.ai-planner-memory,
+.ai-itinerary-preview {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ai-planner-transcript div,
+.ai-planner-memory div,
+.ai-trip-output-grid article,
+.ai-itinerary-preview div {
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfb;
+}
+
+.ai-planner-transcript .assistant {
+  border-color: rgba(0, 119, 182, 0.18);
+  background: #eefaff;
+}
+
+.ai-planner-transcript strong,
+.ai-planner-transcript span,
+.ai-planner-memory span,
+.ai-planner-memory strong,
+.ai-trip-output-grid span,
+.ai-trip-output-grid strong,
+.ai-trip-output-grid small,
+.ai-itinerary-preview span,
+.ai-itinerary-preview strong,
+.ai-itinerary-preview small {
+  display: block;
+}
+
+.ai-planner-transcript span,
+.ai-planner-memory span,
+.ai-trip-output-grid span,
+.ai-trip-output-grid small,
+.ai-itinerary-preview span,
+.ai-itinerary-preview small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ai-planner-memory strong,
+.ai-trip-output-grid strong,
+.ai-itinerary-preview strong {
+  margin-top: 4px;
+}
+
+.ai-trip-output-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.ai-planner-actions {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
 .explore-detail-list {
   display: flex;
   flex-wrap: wrap;
@@ -5264,6 +5410,10 @@ code {
   .explore-results-grid,
   .explore-skeleton-grid,
   .explore-detail-panel,
+  .ai-planner-shell,
+  .ai-trip-output-grid,
+  .ai-planner-actions,
+  .ai-planner-input-row,
   .right-stack,
   .ledger-stats,
   .bank-overview,

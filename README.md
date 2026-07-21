@@ -103,6 +103,12 @@ TravelDrip now includes Smart Itinerary Notifications for flight status changes,
 
 Travelers can choose alert categories and delivery channels: push, email, SMS where available, and in-app alerts. Emergency announcements remain always-on for traveler safety. Production preference sync is represented in `itinerary_notification_preferences`, while sent/queued itinerary alerts can be recorded in `itinerary_notification_events`.
 
+## AI Travel Planner
+
+TravelDrip now includes an AI Travel Planner route at `/ai-planner` with a prominent Home Dashboard action. The planner asks one question at a time, remembers answers for the current planning session, adapts output for solo, group, cruise, and corporate travel, and generates an editable itinerary preview with estimated costs, travel windows, travel style, and trip-mode guidance.
+
+Planner actions include Start Planning, Save Progress, Regenerate Itinerary, Create Trip, Share Trip, Export PDF, Add to Calendar, and Delete Planner Memory. Production persistence is represented in `ai_travel_preferences` and `ai_travel_plans`; users must be able to review, edit, or delete saved preferences and conversations.
+
 ## Reservation and paid excursion reminders
 
 TravelDrip now includes reminder workflows for confirmed restaurant reservations, paid excursions, cruise activities, and corporate assigned events. The itinerary notification screen shows reminder schedules for confirmation, 24-hour, 2-hour, 30-minute, and smart departure alerts, plus quick actions for viewing reservations, tickets, itinerary details, directions, venue/organizer contact, companion reminders, sharing with trip members, and calendar sync.
