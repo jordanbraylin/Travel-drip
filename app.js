@@ -1229,6 +1229,48 @@ function wireLocalInteractions() {
     });
   });
 
+  $$("[data-trip-type]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const type = button.dataset.tripType;
+      $$("[data-trip-type]").forEach((typeButton) => {
+        const isActive = typeButton === button;
+        typeButton.classList.toggle("active", isActive);
+        typeButton.setAttribute("aria-pressed", String(isActive));
+      });
+
+      const messages = {
+        solo: "Solo Trip selected. Group chat, voting, and shared wallet tools stay hidden until you invite others.",
+        group: "Group Trip selected. Shared itinerary, chat, wallet, expense splits, and voting are available.",
+        corporate: "Corporate Retreat selected. Role-based dashboards, employee privacy, finance controls, and audit reports are available."
+      };
+      $("#soloModeMessage").textContent = messages[type] || messages.solo;
+      addAuditEntry("Trip mode selected", `${button.querySelector("strong")?.textContent || "Trip mode"} mode preview enabled.`);
+      await saveSyncedEvent("trip_mode_selected", { type });
+    });
+  });
+
+  $("#soloRecommendationButton")?.addEventListener("click", async () => {
+    const prompt = "AI suggestion: Spend morning at Tsukiji outer market, walk to teamLab Borderless in the afternoon, use the Ginza line before rush hour, and reserve a ramen counter within 10 minutes of the hotel.";
+    $("#soloAiPrompt").textContent = prompt;
+    addAuditEntry("Solo AI recommendation", "Generated personal itinerary, restaurant, transportation, and route safety suggestion.");
+    await saveSyncedEvent("solo_ai_recommendation", { destination: "Tokyo", budgetCap: 2000 });
+  });
+
+  $("#soloCheckinButton")?.addEventListener("click", async () => {
+    $("#soloCheckinStatus").textContent = "Checked in";
+    $("#soloModeMessage").textContent = "Safety check-in recorded. Trusted contact notifications only send if the traveler enables missed-check-in alerts.";
+    addAuditEntry("Solo safety check-in", "Traveler marked solo trip safety check-in complete.");
+    await saveSyncedEvent("solo_safety_checkin", { status: "checked_in" });
+  });
+
+  $("#convertSoloTripButton")?.addEventListener("click", async () => {
+    const groupButton = $("[data-trip-type='group']");
+    groupButton?.click();
+    $("#soloModeMessage").textContent = "Solo trip converted to Group Trip preview. Existing itinerary, budget, documents, memories, and recommendations stay intact.";
+    addAuditEntry("Solo trip converted", "Group chat, shared itinerary, group wallet, expense splitting, and voting enabled.");
+    await saveSyncedEvent("solo_trip_converted_to_group", { preservesExistingTripData: true });
+  });
+
   $("#privacyToggle")?.addEventListener("change", (event) => {
     $("#memberTable")?.classList.toggle("is-private", !event.target.checked);
   });

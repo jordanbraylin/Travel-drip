@@ -293,14 +293,88 @@
             </article>
           </section>
 
-          <section class="panel" id="tripsPanel">
-            <div class="section-heading compact"><h2>Memory roll</h2><button class="ghost-button" type="button">Export</button></div>
-            <p>Shared photos are grouped by location, restaurant, and activity so the recap is ready before everyone gets home.</p>
-            <div class="memory-grid">
-              <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?q=80&w=500&auto=format&fit=crop" alt="Beach view">
-              <img src="https://images.unsplash.com/photo-1493558103817-58b2924bce98?q=80&w=500&auto=format&fit=crop" alt="Coastal road">
-              <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=500&auto=format&fit=crop" alt="Outdoor table">
-              <img src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?q=80&w=500&auto=format&fit=crop" alt="Travelers walking">
+          <section class="panel solo-mode-panel" id="tripsPanel">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Trip Mode</p>
+                <h2>Plan solo, with friends, or with your company</h2>
+              </div>
+              <button class="ghost-button" type="button" id="convertSoloTripButton">Convert to group trip</button>
+            </div>
+            <div class="trip-type-selector" aria-label="Choose trip type">
+              <button class="active" type="button" data-trip-type="solo" aria-pressed="true">
+                <strong>Solo Trip</strong><span>Private planning, personal budget, concierge-style reminders.</span>
+              </button>
+              <button type="button" data-trip-type="group" aria-pressed="false">
+                <strong>Group Trip</strong><span>Shared itinerary, chat, group wallet, bill splits, and votes.</span>
+              </button>
+              <button type="button" data-trip-type="corporate" aria-pressed="false">
+                <strong>Corporate Retreat</strong><span>Role permissions, company schedules, finance controls, and reports.</span>
+              </button>
+            </div>
+            <p class="small" id="soloModeMessage">Solo Trip selected. Group chat, voting, and shared wallet tools stay hidden until you invite others.</p>
+
+            <div class="solo-dashboard-grid">
+              <article><span>Destination</span><strong>Tokyo, Japan</strong><small>5-day food and culture sprint</small></article>
+              <article><span>Departure countdown</span><strong>18 days</strong><small>Check passport and insurance today</small></article>
+              <article><span>Remaining budget</span><strong>$740</strong><small>$148 daily average available</small></article>
+              <article><span>Safety check-in</span><strong id="soloCheckinStatus">Scheduled</strong><small>Trusted contact alert is user-enabled only</small></article>
+            </div>
+
+            <div class="solo-workspace">
+              <section class="solo-card ai-solo-manager">
+                <h3>AI Solo Trip Manager</h3>
+                <p id="soloAiPrompt">Ask: Build me a 5-day Tokyo itinerary under $2,000 with walkable restaurants and safer evening routes.</p>
+                <div class="button-row">
+                  <button class="primary-button" type="button" id="soloRecommendationButton">Generate recommendation</button>
+                  <button class="ghost-button" type="button" id="soloCheckinButton">Mark safety check-in</button>
+                </div>
+              </section>
+              <section class="solo-card">
+                <h3>Personal budget manager</h3>
+                <div class="solo-budget-list">
+                  <div><span>Flights</span><strong>$620</strong></div>
+                  <div><span>Hotel</span><strong>$880</strong></div>
+                  <div><span>Food</span><strong>$310</strong></div>
+                  <div><span>Transportation</span><strong>$120</strong></div>
+                  <div><span>Activities</span><strong>$220</strong></div>
+                  <div><span>Shopping</span><strong>$110</strong></div>
+                </div>
+              </section>
+              <section class="solo-card">
+                <h3>Transportation hub</h3>
+                <div class="solo-tag-list">
+                  <span>Ride share</span><span>Public transit</span><span>Airport transfer</span><span>Walking directions</span><span>Bike rental</span><span>Car rental</span>
+                </div>
+              </section>
+              <section class="solo-card">
+                <h3>Secure travel documents</h3>
+                <div class="solo-document-list">
+                  <div><strong>Passport</strong><span>Uploaded for offline access</span></div>
+                  <div><strong>Visa</strong><span>Not required for this sample trip</span></div>
+                  <div><strong>Insurance</strong><span>Upload still needed</span></div>
+                  <div><strong>Hotel confirmation</strong><span>Synced and available offline</span></div>
+                </div>
+              </section>
+              <section class="solo-card">
+                <h3>Safety tools</h3>
+                <div class="solo-document-list">
+                  <div><strong>Emergency contacts</strong><span>Trusted contact configured</span></div>
+                  <div><strong>Local emergency number</strong><span>Japan police 110, ambulance/fire 119</span></div>
+                  <div><strong>Embassy details</strong><span>Saved to trip documents</span></div>
+                  <div><strong>Advisories</strong><span>Weather and travel alerts enabled</span></div>
+                </div>
+              </section>
+              <section class="solo-card">
+                <h3>Memories and private sharing</h3>
+                <p>Upload photos, create journals, save favorite places, generate AI recap videos, and share highlights only when you choose.</p>
+                <div class="memory-grid solo-memory-grid">
+                  <img src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?q=80&w=500&auto=format&fit=crop" alt="Tokyo crossing">
+                  <img src="https://images.unsplash.com/photo-1528164344705-47542687000d?q=80&w=500&auto=format&fit=crop" alt="Japanese shrine path">
+                  <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=500&auto=format&fit=crop" alt="Tokyo city lights">
+                  <img src="https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?q=80&w=500&auto=format&fit=crop" alt="Japan mountain view">
+                </div>
+              </section>
             </div>
           </section>
 

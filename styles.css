@@ -1799,6 +1799,140 @@ body.auth-screen main {
   border-radius: 8px;
 }
 
+.trip-type-selector,
+.solo-dashboard-grid,
+.solo-workspace {
+  display: grid;
+  gap: 10px;
+}
+
+.trip-type-selector {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.trip-type-selector button {
+  min-height: 112px;
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: #fbfcfb;
+  color: var(--muted);
+  text-align: left;
+  cursor: pointer;
+}
+
+.trip-type-selector button.active {
+  border-color: rgba(23, 177, 169, 0.58);
+  background: #e8fbf8;
+  color: #1a5554;
+}
+
+.trip-type-selector strong {
+  color: var(--ink);
+  font-size: 16px;
+}
+
+.trip-type-selector span,
+.solo-dashboard-grid small,
+.solo-card p,
+.solo-document-list span {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.solo-dashboard-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 14px 0;
+}
+
+.solo-dashboard-grid article,
+.solo-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfb;
+}
+
+.solo-dashboard-grid article {
+  padding: 12px;
+}
+
+.solo-dashboard-grid span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.solo-dashboard-grid strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--ink);
+  font-size: 20px;
+}
+
+.solo-workspace {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.solo-card {
+  min-width: 0;
+  padding: 14px;
+}
+
+.solo-card h3 {
+  margin: 0 0 8px;
+}
+
+.solo-budget-list,
+.solo-document-list,
+.solo-tag-list {
+  display: grid;
+  gap: 8px;
+}
+
+.solo-budget-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.solo-budget-list div,
+.solo-document-list div {
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+}
+
+.solo-budget-list span,
+.solo-budget-list strong,
+.solo-document-list strong,
+.solo-document-list span {
+  display: block;
+}
+
+.solo-tag-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.solo-tag-list span {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0 10px;
+  background: #eef4f2;
+  color: #27545d;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.ai-solo-manager {
+  background: linear-gradient(135deg, #f0fffb, #fbfcfb);
+}
+
+.solo-memory-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .trip-row {
   display: grid;
   grid-template-columns: 72px minmax(0, 1fr);
@@ -2984,6 +3118,11 @@ code {
   .ride-estimate-grid,
   .alert-category-grid,
   .delivery-preferences,
+  .trip-type-selector,
+  .solo-dashboard-grid,
+  .solo-workspace,
+  .solo-budget-list,
+  .solo-tag-list,
   .social-grid,
   .story-grid,
   .creator-grid,
