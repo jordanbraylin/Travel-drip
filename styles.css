@@ -756,7 +756,8 @@ body.auth-screen main {
 .bank-overview,
 .wallet-breakdown,
 .navigation-status-grid,
-.security-status-grid {
+.security-status-grid,
+.policy-summary-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
@@ -772,7 +773,8 @@ body.auth-screen main {
 .bank-overview article,
 .wallet-breakdown div,
 .navigation-status-grid div,
-.security-status-grid article {
+.security-status-grid article,
+.policy-summary-grid article {
   min-width: 0;
   padding: 12px;
   border: 1px solid var(--line);
@@ -785,7 +787,9 @@ body.auth-screen main {
 .wallet-breakdown span,
 .navigation-status-grid span,
 .security-status-grid span,
-.security-status-grid small {
+.security-status-grid small,
+.policy-summary-grid span,
+.policy-summary-grid small {
   display: block;
   color: var(--muted);
   font-size: 12px;
@@ -795,7 +799,8 @@ body.auth-screen main {
 .bank-overview strong,
 .wallet-breakdown strong,
 .navigation-status-grid strong,
-.security-status-grid strong {
+.security-status-grid strong,
+.policy-summary-grid strong {
   display: block;
   margin-top: 6px;
   font-size: 20px;
@@ -807,7 +812,9 @@ body.auth-screen main {
 .security-list,
 .navigation-audit-list,
 .security-control-grid,
-.fraud-signal-list {
+.fraud-signal-list,
+.copyright-columns,
+.copyright-process {
   display: grid;
   gap: 8px;
 }
@@ -818,7 +825,9 @@ body.auth-screen main {
 .security-list div,
 .navigation-audit-list div,
 .security-control-grid div,
-.fraud-signal-list div {
+.fraud-signal-list div,
+.copyright-columns div,
+.copyright-process div {
   padding: 10px 0;
   border-top: 1px solid var(--line);
 }
@@ -843,7 +852,9 @@ body.auth-screen main {
 .security-control-grid strong,
 .security-control-grid span,
 .fraud-signal-list strong,
-.fraud-signal-list span {
+.fraud-signal-list span,
+.copyright-process strong,
+.copyright-process span {
   display: block;
 }
 
@@ -853,7 +864,9 @@ body.auth-screen main {
 .security-list span,
 .navigation-audit-list span,
 .security-control-grid span,
-.fraud-signal-list span {
+.fraud-signal-list span,
+.copyright-process span,
+.copyright-columns p {
   color: var(--muted);
   font-size: 13px;
   line-height: 1.4;
@@ -865,6 +878,31 @@ body.auth-screen main {
 
 .security-control-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.copyright-columns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 8px;
+}
+
+.copyright-columns h3 {
+  margin: 0 0 6px;
+}
+
+.copyright-columns p {
+  margin: 0;
+}
+
+.copyright-process {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 12px;
+}
+
+.copyright-process div {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #f8faf8;
 }
 
 .fraud-signal-list div {
@@ -2815,6 +2853,9 @@ code {
   .navigation-status-grid,
   .security-status-grid,
   .security-control-grid,
+  .policy-summary-grid,
+  .copyright-columns,
+  .copyright-process,
   .fraud-signal-list div,
   .card-balance-grid,
   .wallet-provisioning,
