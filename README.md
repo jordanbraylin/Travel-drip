@@ -87,6 +87,12 @@ TravelDrip now includes Smart Itinerary Notifications for flight status changes,
 
 Travelers can choose alert categories and delivery channels: push, email, SMS where available, and in-app alerts. Emergency announcements remain always-on for traveler safety. Production preference sync is represented in `itinerary_notification_preferences`, while sent/queued itinerary alerts can be recorded in `itinerary_notification_events`.
 
+## Cruise vacation mode
+
+TravelDrip now supports Cruise Vacation as a guided trip type. The app includes a cruise overview, ship details, cabin assignment, port schedule, shore excursions, onboard schedule, dining reservations, cruise wallet, cruise documents, notifications, AI Cruise Manager, group cruise features, corporate cruise visibility rules, and post-cruise memories.
+
+Production cruise data is represented in `supabase-backend.sql` with `cruise_bookings`, `cruise_cabins`, `cruise_ports`, `cruise_excursions`, `cruise_onboard_activities`, and `cruise_dining_reservations`. Cruise line imports, live excursion availability, ship maps, and onboard account spending require provider integrations before they can be production-live.
+
 ## Enterprise corporate retreat mode
 
 The app now includes a Corporate Retreat RBAC section with role previews for Company Owner, Finance Admin, Retreat Organizer, Team Leader, and Employee. The preview demonstrates financial privacy rules: employees can see personal travel details and schedules, while corporate budgets and payment data are visible only to owner/finance roles.

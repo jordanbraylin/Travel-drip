@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=23">
+  <link rel="stylesheet" href="styles.css?v=24">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -44,6 +44,7 @@
           <button type="button" data-target="itineraryAlerts">Flight Details</button>
           <button type="button" data-target="importantInfo">Hotel Details</button>
           <button type="button" data-target="rideShareHub">Transportation</button>
+          <button type="button" data-target="cruisePanel">Cruise</button>
           <button type="button" data-target="exploreDrops">Activities</button>
           <button type="button" data-target="importantInfo">Documents</button>
           <button type="button" data-target="importantInfo">Important Information</button>
@@ -262,6 +263,7 @@
         <button type="button" data-target="itineraryAlerts">Itinerary</button>
         <button type="button" data-target="socialHub">Chat</button>
         <button type="button" data-target="rideShareHub">Travel</button>
+        <button type="button" data-target="cruisePanel">Cruise</button>
         <button type="button" data-target="walletPanel">Wallet</button>
         <button type="button" data-target="importantInfo">Important Info</button>
         <button type="button" data-target="socialHub">Memories</button>
@@ -322,6 +324,7 @@
               <select id="dashboardTripType">
                 <option value="group">Group Trip</option>
                 <option value="solo">Solo Trip</option>
+                <option value="cruise">Cruise Vacation</option>
                 <option value="corporate">Corporate Retreat</option>
               </select>
             </label>
@@ -329,14 +332,14 @@
           </div>
         </div>
         <div class="widget-grid" id="widgetGrid">
-          <article class="travel-widget upcoming-widget" data-widget="upcoming" data-widget-scope="solo group corporate">
+          <article class="travel-widget upcoming-widget" data-widget="upcoming" data-widget-scope="solo group cruise corporate">
             <div class="widget-toolbar"><span>Upcoming Trip</span><button type="button" data-widget-pin="upcoming">Pin</button><button type="button" data-widget-hide="upcoming">Hide</button></div>
             <h3>Dubai long weekend</h3>
             <p>Departing in <strong>18 days</strong></p>
             <div class="widget-meta"><span>Aug 8 - Aug 11</span><span>JBR Marina</span></div>
             <button class="primary-button" type="button" data-target="tripsPanel">Quick View</button>
           </article>
-          <article class="travel-widget ai-widget is-large" data-widget="ai" data-widget-scope="solo group corporate">
+          <article class="travel-widget ai-widget is-large" data-widget="ai" data-widget-scope="solo group cruise corporate">
             <div class="widget-toolbar"><span>AI Trip Manager</span><button type="button" data-widget-pin="ai">Pin</button><button type="button" data-widget-hide="ai">Hide</button></div>
             <div class="ai-reminder-list">
               <div><strong>Today</strong><span>Confirm rooftop dinner headcount by 6 PM.</span></div>
@@ -346,7 +349,7 @@
             </div>
             <button class="primary-button" type="button" id="askAiWidgetButton">Ask AI</button>
           </article>
-          <article class="travel-widget budget-widget" data-widget="budget" data-widget-scope="solo group corporate" data-finance-widget>
+          <article class="travel-widget budget-widget" data-widget="budget" data-widget-scope="solo group cruise corporate" data-finance-widget>
             <div class="widget-toolbar"><span>Budget Snapshot</span><button type="button" data-widget-pin="budget">Pin</button><button type="button" data-widget-hide="budget">Hide</button></div>
             <h3>$1,250 target</h3>
             <div class="progress-bar"><span style="width: 64%"></span></div>
@@ -359,12 +362,12 @@
             <span class="status-pill">On time</span>
             <button class="ghost-button" type="button" data-target="itineraryAlerts">View Details</button>
           </article>
-          <article class="travel-widget weather-widget" data-widget="weather" data-widget-scope="solo group corporate">
+          <article class="travel-widget weather-widget" data-widget="weather" data-widget-scope="solo group cruise corporate">
             <div class="widget-toolbar"><span>Weather</span><button type="button" data-widget-pin="weather">Pin</button><button type="button" data-widget-hide="weather">Hide</button></div>
             <h3>92°F sunny</h3>
             <p>Pack sunglasses, light layers indoors, and hydrate before afternoon activities.</p>
           </article>
-          <article class="travel-widget memories-widget" data-widget="memories" data-widget-scope="solo group corporate">
+          <article class="travel-widget memories-widget" data-widget="memories" data-widget-scope="solo group cruise corporate">
             <div class="widget-toolbar"><span>Memories</span><button type="button" data-widget-pin="memories">Pin</button><button type="button" data-widget-hide="memories">Hide</button></div>
             <div class="mini-collage">
               <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?q=80&w=300&auto=format&fit=crop" alt="Beach memory">
@@ -382,6 +385,13 @@
               <span>Activities: Yacht vote closes tonight</span>
             </div>
             <button class="ghost-button" type="button" data-target="itineraryAlerts">View All</button>
+          </article>
+          <article class="travel-widget cruise-widget" data-widget="cruise" data-widget-scope="cruise">
+            <div class="widget-toolbar"><span>Cruise</span><button type="button" data-widget-pin="cruise">Pin</button><button type="button" data-widget-hide="cruise">Hide</button></div>
+            <h3>Icon of the Seas</h3>
+            <p>Boarding at PortMiami Terminal A • 11:30 AM</p>
+            <div class="widget-meta"><span>Cabin 11234</span><span>Deck 11</span></div>
+            <button class="ghost-button" type="button" data-target="cruisePanel">Cruise Overview</button>
           </article>
           <article class="travel-widget corporate-widget" data-widget="corporate" data-widget-scope="corporate">
             <div class="widget-toolbar"><span>Corporate Ops</span><button type="button" data-widget-pin="corporate">Pin</button><button type="button" data-widget-hide="corporate">Hide</button></div>
@@ -559,6 +569,9 @@
                   </button>
                   <button type="button" data-trip-type="corporate" aria-pressed="false">
                     <strong>Corporate Retreat / Business Travel</strong><span>Employee invites, role permissions, agendas, assignments, approvals, reporting, and audit logs.</span>
+                  </button>
+                  <button type="button" data-trip-type="cruise" aria-pressed="false">
+                    <strong>Cruise Vacation</strong><span>Ship details, cabin, ports, shore excursions, onboard schedule, dining, cruise wallet, documents, and memories.</span>
                   </button>
                 </div>
               </div>
@@ -747,6 +760,92 @@
                 </div>
               </section>
             </div>
+          </section>
+
+          <section class="panel cruise-panel" id="cruisePanel">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Cruise Vacation</p>
+                <h2>Cruise companion and port planner</h2>
+              </div>
+              <span class="compliance-badge">Cruise-ready</span>
+            </div>
+            <div class="cruise-hero-card">
+              <img src="https://images.unsplash.com/photo-1548574505-5e239809ee19?q=80&w=1200&auto=format&fit=crop" alt="Cruise ship sailing through blue water">
+              <div>
+                <span>7-night Eastern Caribbean</span>
+                <h3>Royal Caribbean • Icon of the Seas</h3>
+                <p>Booking RC-48291 • Sailing Aug 8, 2026 • Returning Aug 15, 2026 • PortMiami Terminal A</p>
+                <div class="cruise-chip-row">
+                  <span>Cabin 11234</span><span>Deck 11</span><span>Ocean balcony</span><span>Boarding 11:30 AM</span>
+                </div>
+              </div>
+            </div>
+            <div class="cruise-overview-grid">
+              <article><span>Countdown</span><strong>18 days</strong><small>Online check-in opens soon</small></article>
+              <article><span>Cabin</span><strong>11234</strong><small>Deck 11 • starboard midship</small></article>
+              <article><span>Onboard budget</span><strong>$1,420</strong><small>$640 remaining after excursions</small></article>
+              <article><span>Next reminder</span><strong>Boarding pass</strong><small>Upload passport and insurance</small></article>
+            </div>
+            <div class="cruise-feature-grid">
+              <section class="cruise-card">
+                <h3>My Cabin</h3>
+                <div class="cabin-map" aria-label="Cabin location map"><span>Deck 11</span><b>11234</b></div>
+                <p>Ocean balcony cabin shared with assigned occupants only. Special accommodation notes stay private to the cabin group and trip admins.</p>
+                <div class="cruise-chip-row"><span>Jordan Taylor</span><span>Sarah Lee</span><span>Near elevators</span></div>
+              </section>
+              <section class="cruise-card">
+                <h3>Port Schedule</h3>
+                <div class="port-list">
+                  <div><strong>Cozumel, Mexico</strong><span>Arrive 8:00 AM • Depart 5:00 PM • Currency MXN</span><small>Snorkeling, beach club, ATV tour, Mayan ruins</small></div>
+                  <div><strong>Nassau, Bahamas</strong><span>Arrive 9:00 AM • Depart 6:00 PM • Currency BSD/USD</span><small>Blue Lagoon, food tour, beach day, local market</small></div>
+                  <div><strong>Perfect Day at CocoCay</strong><span>Arrive 7:00 AM • Depart 4:00 PM • Ship time</span><small>Waterpark, cabanas, snorkeling, balloon ride</small></div>
+                </div>
+              </section>
+              <section class="cruise-card">
+                <h3>Shore Excursions</h3>
+                <div class="excursion-list">
+                  <button type="button" data-cruise-action="Snorkeling saved">Save snorkeling</button>
+                  <button type="button" data-cruise-action="Beach Club added to itinerary">Add Beach Club</button>
+                  <button type="button" data-cruise-action="ATV Tour sent to group vote">Vote on ATV Tour</button>
+                  <button type="button" data-cruise-action="Mayan Ruins cost split opened">Split excursion cost</button>
+                </div>
+              </section>
+              <section class="cruise-card">
+                <h3>Onboard Schedule</h3>
+                <div class="port-list">
+                  <div><strong>Specialty dinner</strong><span>Day 2 • 7:45 PM • Dress code smart casual</span></div>
+                  <div><strong>Aqua show</strong><span>Day 3 • 8:30 PM • Reservation confirmed</span></div>
+                  <div><strong>Fitness class</strong><span>Day 4 • 9:00 AM • Studio B</span></div>
+                  <div><strong>Spa appointment</strong><span>Day 5 • 2:15 PM • Reminder enabled</span></div>
+                </div>
+              </section>
+              <section class="cruise-card">
+                <h3>Cruise Wallet</h3>
+                <div class="cruise-wallet-grid">
+                  <div><span>Cruise fare</span><strong>$2,180</strong></div>
+                  <div><span>Excursions</span><strong>$420</strong></div>
+                  <div><span>Dining</span><strong>$180</strong></div>
+                  <div><span>Onboard spend</span><strong>$260</strong></div>
+                  <div><span>Transportation</span><strong>$140</strong></div>
+                  <div><span>Remaining</span><strong>$640</strong></div>
+                </div>
+              </section>
+              <section class="cruise-card">
+                <h3>AI Cruise Manager</h3>
+                <p id="cruiseAiPrompt">Ask: What time do we arrive in Nassau? Where is my cabin? Which excursions still have availability?</p>
+                <div class="button-row">
+                  <button class="primary-button" type="button" id="cruiseAiButton">Ask Cruise AI</button>
+                  <button class="ghost-button" type="button" data-target="importantInfo">Cruise Documents</button>
+                </div>
+              </section>
+            </div>
+            <div class="cruise-corporate-rules">
+              <div><strong>Group cruise</strong><span>Cabin assignments, group chat, excursion votes, shared photo albums, group wallet, bill split, and ride split are enabled.</span></div>
+              <div><strong>Corporate cruise</strong><span>Employees see only their cabin, travel schedule, event schedule, assigned activities, announcements, important info, and approved photos.</span></div>
+              <div><strong>Admin view</strong><span>Admins manage cabins, budgets, attendance, excursions, corporate events, reports, and audit logs.</span></div>
+            </div>
+            <p class="small" id="cruiseStatusMessage">Cruise notifications include online check-in, boarding, cabin-ready updates, port arrival, excursion meeting times, dining, weather, schedule changes, and disembarkation reminders.</p>
           </section>
 
           <section class="panel social-hub" id="socialHub">

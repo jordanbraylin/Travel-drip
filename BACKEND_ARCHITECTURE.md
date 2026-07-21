@@ -13,11 +13,12 @@ The backend schema adds:
 
 - User profiles and notification preferences
 - Organizations and organization members
-- Unified trip/event records for solo trips, group trips, corporate retreats, weddings, birthdays, family reunions, bachelor/bachelorette trips, anniversaries, conferences, business events, and custom special events
+- Unified trip/event records for solo trips, group trips, corporate retreats, cruise vacations, weddings, birthdays, family reunions, bachelor/bachelorette trips, anniversaries, conferences, business events, and custom special events
 - Trip membership, roles, feature flags, and enabled modules
 - Invitations with secure tokens, RSVP tracking, and guest registration support
 - Corporate guest access codes, employee/attendee ID verification, temporary guest sessions, and guest access audit events
 - Schedule, flights, hotels, transportation, ride-share connections, chat, polls, and votes
+- Cruise bookings, cabin assignments, port schedules, shore excursions, onboard activities, and dining reservations
 - Wallets, group banks, wallet transactions, receipt scanning records, item claims, ride split participants, and refund-ready audit data
 - Important information, acknowledgments, documents, media, social connections, AI sessions, notifications, background jobs, saved places, and audit logs
 

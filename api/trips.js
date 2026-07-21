@@ -19,13 +19,15 @@ const allowedTripTypes = new Set([
   "anniversary",
   "conference",
   "business_event",
-  "special_event"
+  "special_event",
+  "cruise_vacation"
 ]);
 
 const defaultModulesByType = {
   solo_trip: ["overview", "itinerary", "flights", "hotels", "transportation", "budget", "documents", "memories"],
   group_trip: ["overview", "itinerary", "group_chat", "group_bank", "split_bill", "transportation", "documents", "memories"],
   corporate_retreat: ["overview", "employee_schedule", "announcements", "flights", "hotels", "transportation", "important_information", "reports"],
+  cruise_vacation: ["cruise_overview", "cabin", "port_schedule", "shore_excursions", "onboard_schedule", "dining", "transportation", "cruise_wallet", "documents", "memories"],
   default: ["overview", "itinerary", "messages", "important_information", "documents", "memories"]
 };
 
@@ -54,6 +56,18 @@ const featureFlagsByType = {
     announcements: true,
     expense_approvals: true,
     corporate_finance: true
+  },
+  cruise_vacation: {
+    ai_cruise_manager: true,
+    cruise_overview: true,
+    cabin_assignments: true,
+    port_schedule: true,
+    shore_excursions: true,
+    onboard_schedule: true,
+    cruise_wallet: true,
+    group_chat: true,
+    smart_bill_split: true,
+    ride_share_split: true
   },
   default: {
     ai_manager: true,

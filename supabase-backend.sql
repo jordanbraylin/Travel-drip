@@ -1007,3 +1007,220 @@ create policy "Corporate admins read guest access events" on public.guest_access
     (trip_id is not null and public.has_trip_role(trip_id, array['owner','admin','organizer','finance_admin']))
     or (organization_id is not null and public.is_org_member(organization_id, array['owner','admin','finance_admin']))
   );
+
+alter table public.trips
+  drop constraint if exists trips_trip_type_check;
+
+alter table public.trips
+  add constraint trips_trip_type_check check (trip_type in (
+    'solo_trip',
+    'group_trip',
+    'corporate_retreat',
+    'wedding',
+    'birthday',
+    'family_reunion',
+    'bachelor_bachelorette',
+    'anniversary',
+    'conference',
+    'business_event',
+    'special_event',
+    'cruise_vacation'
+  ));
+
+create table if not exists public.cruise_bookings (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  trip_id uuid not null unique references public.trips(id) on delete cascade,
+  cruise_line text not null,
+  ship_name text not null,
+  booking_confirmation text,
+  sailing_date date,
+  return_date date,
+  departure_port text,
+  arrival_port text,
+  number_of_nights integer not null default 0 check (number_of_nights >= 0),
+  departure_terminal text,
+  boarding_time timestamptz,
+  reservation_status text not null default 'planned',
+  travel_agent jsonb not null default '{}'::jsonb,
+  weather_summary jsonb not null default '{}'::jsonb,
+  metadata jsonb not null default '{}'::jsonb
+);
+
+drop trigger if exists set_cruise_bookings_updated_at on public.cruise_bookings;
+create trigger set_cruise_bookings_updated_at
+before update on public.cruise_bookings
+for each row execute function public.set_updated_at();
+
+create table if not exists public.cruise_cabins (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  trip_id uuid not null references public.trips(id) on delete cascade,
+  user_id uuid references auth.users(id) on delete set null,
+  cabin_number text not null,
+  deck_number text,
+  cabin_category text,
+  cabin_type text,
+  location_notes text,
+  occupants jsonb not null default '[]'::jsonb,
+  special_accommodations text,
+  cabin_notes text,
+  visibility text not null default 'assigned_occupants' check (visibility in ('assigned_occupants','trip_admins','members')),
+  unique (trip_id, cabin_number, user_id)
+);
+
+drop trigger if exists set_cruise_cabins_updated_at on public.cruise_cabins;
+create trigger set_cruise_cabins_updated_at
+before update on public.cruise_cabins
+for each row execute function public.set_updated_at();
+
+create table if not exists public.cruise_ports (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  trip_id uuid not null references public.trips(id) on delete cascade,
+  port_name text not null,
+  country text,
+  arrives_at timestamptz,
+  departs_at timestamptz,
+  local_time_zone text,
+  weather_forecast jsonb not null default '{}'::jsonb,
+  port_map_url text,
+  customs_requirements text,
+  emergency_contacts jsonb not null default '{}'::jsonb,
+  currency text,
+  local_transportation jsonb not null default '[]'::jsonb,
+  sort_order integer not null default 100
+);
+
+drop trigger if exists set_cruise_ports_updated_at on public.cruise_ports;
+create trigger set_cruise_ports_updated_at
+before update on public.cruise_ports
+for each row execute function public.set_updated_at();
+
+create table if not exists public.cruise_excursions (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  trip_id uuid not null references public.trips(id) on delete cascade,
+  port_id uuid references public.cruise_ports(id) on delete cascade,
+  title text not null,
+  description text,
+  meeting_location text,
+  starts_at timestamptz,
+  ends_at timestamptz,
+  cost_cents bigint not null default 0 check (cost_cents >= 0),
+  currency text not null default 'USD',
+  status text not null default 'available' check (status in ('available','saved','joined','waitlist','cancelled','sold_out')),
+  group_vote_enabled boolean not null default false,
+  split_cost_enabled boolean not null default false,
+  metadata jsonb not null default '{}'::jsonb
+);
+
+drop trigger if exists set_cruise_excursions_updated_at on public.cruise_excursions;
+create trigger set_cruise_excursions_updated_at
+before update on public.cruise_excursions
+for each row execute function public.set_updated_at();
+
+create table if not exists public.cruise_onboard_activities (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  trip_id uuid not null references public.trips(id) on delete cascade,
+  title text not null,
+  activity_type text not null default 'activity',
+  venue text,
+  starts_at timestamptz,
+  ends_at timestamptz,
+  reservation_status text not null default 'open',
+  dress_code text,
+  cost_cents bigint not null default 0 check (cost_cents >= 0),
+  metadata jsonb not null default '{}'::jsonb
+);
+
+drop trigger if exists set_cruise_onboard_activities_updated_at on public.cruise_onboard_activities;
+create trigger set_cruise_onboard_activities_updated_at
+before update on public.cruise_onboard_activities
+for each row execute function public.set_updated_at();
+
+create table if not exists public.cruise_dining_reservations (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  trip_id uuid not null references public.trips(id) on delete cascade,
+  restaurant_name text not null,
+  dining_type text not null default 'main_dining',
+  reservation_at timestamptz,
+  confirmation_number text,
+  dress_code text,
+  party_size integer not null default 1 check (party_size > 0),
+  status text not null default 'confirmed',
+  metadata jsonb not null default '{}'::jsonb
+);
+
+drop trigger if exists set_cruise_dining_reservations_updated_at on public.cruise_dining_reservations;
+create trigger set_cruise_dining_reservations_updated_at
+before update on public.cruise_dining_reservations
+for each row execute function public.set_updated_at();
+
+create index if not exists idx_cruise_ports_trip_order on public.cruise_ports(trip_id, sort_order);
+create index if not exists idx_cruise_excursions_trip_port on public.cruise_excursions(trip_id, port_id);
+create index if not exists idx_cruise_activities_trip_time on public.cruise_onboard_activities(trip_id, starts_at);
+create index if not exists idx_cruise_dining_trip_time on public.cruise_dining_reservations(trip_id, reservation_at);
+
+alter table public.cruise_bookings enable row level security;
+alter table public.cruise_cabins enable row level security;
+alter table public.cruise_ports enable row level security;
+alter table public.cruise_excursions enable row level security;
+alter table public.cruise_onboard_activities enable row level security;
+alter table public.cruise_dining_reservations enable row level security;
+
+drop policy if exists "Members read cruise bookings" on public.cruise_bookings;
+create policy "Members read cruise bookings" on public.cruise_bookings
+  for select to authenticated using (public.is_trip_member(trip_id));
+
+drop policy if exists "Admins manage cruise bookings" on public.cruise_bookings;
+create policy "Admins manage cruise bookings" on public.cruise_bookings
+  for all to authenticated using (public.has_trip_role(trip_id, array['owner','admin','organizer'])) with check (public.has_trip_role(trip_id, array['owner','admin','organizer']));
+
+drop policy if exists "Travelers read assigned cruise cabins" on public.cruise_cabins;
+create policy "Travelers read assigned cruise cabins" on public.cruise_cabins
+  for select to authenticated using (user_id = auth.uid() or visibility = 'members' and public.is_trip_member(trip_id) or public.has_trip_role(trip_id, array['owner','admin','organizer']));
+
+drop policy if exists "Admins manage cruise cabins" on public.cruise_cabins;
+create policy "Admins manage cruise cabins" on public.cruise_cabins
+  for all to authenticated using (public.has_trip_role(trip_id, array['owner','admin','organizer'])) with check (public.has_trip_role(trip_id, array['owner','admin','organizer']));
+
+drop policy if exists "Members read cruise ports" on public.cruise_ports;
+create policy "Members read cruise ports" on public.cruise_ports
+  for select to authenticated using (public.is_trip_member(trip_id));
+
+drop policy if exists "Admins manage cruise ports" on public.cruise_ports;
+create policy "Admins manage cruise ports" on public.cruise_ports
+  for all to authenticated using (public.has_trip_role(trip_id, array['owner','admin','organizer'])) with check (public.has_trip_role(trip_id, array['owner','admin','organizer']));
+
+drop policy if exists "Members read cruise excursions" on public.cruise_excursions;
+create policy "Members read cruise excursions" on public.cruise_excursions
+  for select to authenticated using (public.is_trip_member(trip_id));
+
+drop policy if exists "Admins manage cruise excursions" on public.cruise_excursions;
+create policy "Admins manage cruise excursions" on public.cruise_excursions
+  for all to authenticated using (public.has_trip_role(trip_id, array['owner','admin','organizer'])) with check (public.has_trip_role(trip_id, array['owner','admin','organizer']));
+
+drop policy if exists "Members read cruise onboard activities" on public.cruise_onboard_activities;
+create policy "Members read cruise onboard activities" on public.cruise_onboard_activities
+  for select to authenticated using (public.is_trip_member(trip_id));
+
+drop policy if exists "Admins manage cruise onboard activities" on public.cruise_onboard_activities;
+create policy "Admins manage cruise onboard activities" on public.cruise_onboard_activities
+  for all to authenticated using (public.has_trip_role(trip_id, array['owner','admin','organizer'])) with check (public.has_trip_role(trip_id, array['owner','admin','organizer']));
+
+drop policy if exists "Members read cruise dining" on public.cruise_dining_reservations;
+create policy "Members read cruise dining" on public.cruise_dining_reservations
+  for select to authenticated using (public.is_trip_member(trip_id));
+
+drop policy if exists "Admins manage cruise dining" on public.cruise_dining_reservations;
+create policy "Admins manage cruise dining" on public.cruise_dining_reservations
+  for all to authenticated using (public.has_trip_role(trip_id, array['owner','admin','organizer'])) with check (public.has_trip_role(trip_id, array['owner','admin','organizer']));

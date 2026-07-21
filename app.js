@@ -204,6 +204,15 @@ const tripTypeConfigs = {
     message: "Corporate Retreat selected. Employees see only assigned travel, schedules, announcements, and important information. Company financial data stays admin-only.",
     enabled: ["Employee invitations", "Role permissions", "Company announcements", "Team schedules", "Event agenda", "Flight assignments", "Hotel assignments", "Transportation schedules", "Activity schedules", "AI Operations Manager", "Corporate reporting", "Admin budgets", "Expense approvals", "Audit logs"],
     hidden: ["Company financial data for employees", "Other employee payment details", "Unauthorized budget controls"]
+  },
+  cruise: {
+    label: "Cruise Vacation",
+    detailsTitle: "Cruise vacation details",
+    travelersHidden: false,
+    aiPrompt: "How can I help plan your cruise? Try: Show me every port stop, cabin detail, and excursion reminder.",
+    message: "Cruise Vacation selected. Ship details, cabin, ports, excursions, onboard schedule, dining, wallet, documents, and cruise memories are enabled.",
+    enabled: ["Cruise overview", "Ship information", "Cabin assignment", "Port schedule", "Shore excursions", "Onboard schedule", "Dining reservations", "Cruise wallet", "Cruise documents", "AI Cruise Manager", "Cruise memories", "Boarding reminders"],
+    hidden: ["Corporate budgets unless authorized", "Other cabin records unless assigned", "Unapproved shared photos", "Private admin reports"]
   }
 };
 
@@ -243,6 +252,18 @@ const invitationConfigs = {
     accepted: 61,
     pending: 19,
     companyLogo: true
+  },
+  cruise: {
+    badge: "Cruise vacation invite",
+    modeCopy: "Cruise organizers can invite cabin mates, family, friends, corporate attendees, vendors, or travel agents while keeping cabin details private.",
+    title: "You're invited to our Caribbean cruise",
+    message: "Join the cruise plan to see ship details, cabin assignments, ports, excursions, onboard activities, dining, and memories.",
+    recipients: ["Cabin mates", "Family", "Friends", "Travel agent", "Corporate attendees", "Vendors"],
+    sent: 8,
+    opened: 6,
+    accepted: 5,
+    pending: 3,
+    companyLogo: false
   }
 };
 
@@ -585,6 +606,7 @@ function updateDashboardWidgets() {
   const labels = {
     solo: "Solo dashboard: personal itinerary, AI recommendations, weather, budget, and documents are prioritized.",
     group: "Group dashboard: chat, polls, shared budget, events, member activity, and notifications are prioritized.",
+    cruise: "Cruise dashboard: ship details, cabin, ports, excursions, onboard schedule, cruise wallet, reminders, and memories are prioritized.",
     corporate: isAdminRole
       ? "Corporate admin dashboard: employee logistics plus budget, approvals, attendance, reports, and audit widgets are visible."
       : "Corporate employee dashboard: flights, hotel, transportation, event schedule, activities, and announcements are visible."
@@ -2070,6 +2092,22 @@ function wireLocalInteractions() {
     $("#soloModeMessage").textContent = "Solo trip converted to Group Trip preview. Existing itinerary, budget, documents, memories, and recommendations stay intact.";
     addAuditEntry("Solo trip converted", "Group chat, shared itinerary, group wallet, expense splitting, and voting enabled.");
     await saveSyncedEvent("solo_trip_converted_to_group", { preservesExistingTripData: true });
+  });
+
+  $$("[data-cruise-action]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const action = button.dataset.cruiseAction;
+      $("#cruiseStatusMessage").textContent = `${action}. Cruise context preserved across itinerary, wallet, chat, and notifications.`;
+      addAuditEntry("Cruise action", action);
+      await saveSyncedEvent("cruise_action", { action });
+    });
+  });
+
+  $("#cruiseAiButton")?.addEventListener("click", async () => {
+    $("#cruiseAiPrompt").textContent = "AI Cruise Manager: You arrive in Nassau at 9:00 AM, snorkeling meets at Deck 4 gangway at 8:40 AM, and Cabin 11234 is on Deck 11 starboard midship.";
+    $("#cruiseStatusMessage").textContent = "AI Cruise Manager answered using ship, cabin, port, excursion, onboard schedule, and wallet context.";
+    addAuditEntry("AI Cruise Manager opened", "Cruise-specific assistant answered cabin, port, excursion, and schedule questions.");
+    await saveSyncedEvent("ai_cruise_manager_opened", { ship: "Icon of the Seas" });
   });
 
   $("#privacyToggle")?.addEventListener("change", (event) => {

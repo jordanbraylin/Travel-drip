@@ -4627,3 +4627,217 @@ main {
     grid-template-columns: 1fr;
   }
 }
+
+.cruise-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.cruise-hero-card {
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.15fr);
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: var(--soft-shadow);
+}
+
+.cruise-hero-card img {
+  width: 100%;
+  height: 100%;
+  min-height: 260px;
+  object-fit: cover;
+}
+
+.cruise-hero-card > div {
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  padding: 22px;
+}
+
+.cruise-hero-card span,
+.cruise-overview-grid span,
+.cruise-wallet-grid span {
+  color: var(--sea);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.cruise-hero-card h3 {
+  margin: 0;
+  font-size: clamp(26px, 4vw, 44px);
+  line-height: 1.05;
+}
+
+.cruise-hero-card p,
+.cruise-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.cruise-chip-row,
+.excursion-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cruise-chip-row span {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0 10px;
+  background: var(--aqua);
+  color: #0b6870;
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.cruise-overview-grid,
+.cruise-feature-grid,
+.cruise-wallet-grid,
+.cruise-corporate-rules {
+  display: grid;
+  gap: 12px;
+}
+
+.cruise-overview-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.cruise-feature-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.cruise-overview-grid article,
+.cruise-card,
+.cruise-corporate-rules div {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 16px;
+  background: #fff;
+  box-shadow: var(--soft-shadow);
+}
+
+.cruise-overview-grid strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 25px;
+}
+
+.cruise-overview-grid small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+}
+
+.cruise-card {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.cruise-card h3 {
+  margin: 0;
+}
+
+.cabin-map {
+  min-height: 150px;
+  display: grid;
+  place-items: center;
+  gap: 6px;
+  border-radius: 20px;
+  background:
+    linear-gradient(90deg, rgba(8, 127, 140, 0.10) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(8, 127, 140, 0.10) 1px, transparent 1px),
+    #eff9f7;
+  background-size: 34px 34px;
+}
+
+.cabin-map b {
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: var(--reef);
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(255, 122, 92, 0.25);
+}
+
+.port-list {
+  display: grid;
+  gap: 9px;
+}
+
+.port-list div {
+  border-radius: 16px;
+  padding: 10px;
+  background: #f7fbfa;
+}
+
+.port-list strong,
+.port-list span,
+.port-list small,
+.cruise-corporate-rules strong,
+.cruise-corporate-rules span {
+  display: block;
+}
+
+.port-list span,
+.port-list small,
+.cruise-corporate-rules span {
+  margin-top: 4px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.excursion-list button {
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 12px;
+  background: #fff;
+  color: #24555d;
+  font-weight: 850;
+}
+
+.cruise-wallet-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.cruise-wallet-grid div {
+  border-radius: 16px;
+  padding: 12px;
+  background: #f7fbfa;
+}
+
+.cruise-wallet-grid strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 20px;
+}
+
+.cruise-corporate-rules {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  .cruise-hero-card,
+  .cruise-overview-grid,
+  .cruise-feature-grid,
+  .cruise-corporate-rules {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .cruise-wallet-grid {
+    grid-template-columns: 1fr;
+  }
+}
