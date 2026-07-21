@@ -717,6 +717,83 @@ body.auth-screen main {
   margin: 18px 0;
 }
 
+.destination-insights {
+  margin-top: 18px;
+}
+
+.destination-chooser {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.destination-chooser button {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 12px;
+  background: #fbfcfb;
+  color: var(--muted);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.destination-chooser button.active {
+  border-color: rgba(23, 177, 169, 0.55);
+  background: #e7fbf8;
+  color: #0f6f6b;
+}
+
+.destination-fact-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(280px, 1.15fr);
+  gap: 10px;
+}
+
+.destination-fact-grid article {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: #fbfcfb;
+}
+
+.destination-fact-grid span {
+  display: block;
+  color: var(--sea);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.destination-fact-grid p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.adventure-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.adventure-tags span {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0 10px;
+  background: #eef4f2;
+  color: #27545d;
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .metrics article {
   min-height: 96px;
   padding: 16px;
@@ -2869,6 +2946,7 @@ code {
   }
 
   .metrics,
+  .destination-fact-grid,
   .destinations,
   .right-stack,
   .ledger-stats,

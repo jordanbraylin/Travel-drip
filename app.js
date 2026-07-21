@@ -119,42 +119,60 @@ const livePlanDestinations = [
     title: "Dubai long weekend",
     description: "Rooftop dinners, desert rides, beach clubs, and a shared wallet that keeps everyone even.",
     photo: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1600&auto=format&fit=crop",
-    alt: "Dubai skyline at sunset"
+    alt: "Dubai skyline at sunset",
+    knownFor: "Futuristic skylines, desert adventures, luxury hotels, global food halls, and record-setting architecture.",
+    funFact: "Dubai is home to the Burj Khalifa, famous worldwide for its record-setting height.",
+    adventures: ["Dune bashing at sunset", "Dinner in the desert", "Sky-view lounges", "Old Dubai creek walks"]
   },
   {
     location: "California",
     title: "California coast drive",
     description: "Pacific overlooks, vineyard stops, beach bonfires, and live alerts for every route change.",
     photo: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop",
-    alt: "California coastal highway beside turquoise water"
+    alt: "California coastal highway beside turquoise water",
+    knownFor: "Pacific Coast Highway drives, beaches, national parks, wineries, film culture, and tech cities.",
+    funFact: "California has the highest and lowest points in the contiguous United States.",
+    adventures: ["Drive Big Sur", "Surf lessons", "Yosemite hikes", "Sunset beach picnics"]
   },
   {
     location: "Japan",
     title: "Tokyo food sprint",
     description: "Ramen counters, late trains, market mornings, and bill splits that update before the next stop.",
     photo: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1600&auto=format&fit=crop",
-    alt: "Tokyo city street with bright signs"
+    alt: "Tokyo city street with bright signs",
+    knownFor: "Sushi, ramen, bullet trains, temples, cherry blossoms, anime culture, and precise hospitality.",
+    funFact: "Japan's Shinkansen bullet trains are famous for speed, punctuality, and smooth rides.",
+    adventures: ["Night markets in Tokyo", "Tea ceremony", "Mount Fuji views", "Kyoto shrine walks"]
   },
   {
     location: "New York",
     title: "New York city week",
     description: "Museum slots, dinner reservations, Broadway timing, and meeting point reminders for the whole crew.",
     photo: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=1600&auto=format&fit=crop",
-    alt: "New York skyline and city streets"
+    alt: "New York skyline and city streets",
+    knownFor: "Broadway, skyline views, museums, pizza slices, fashion, finance, and nonstop neighborhood energy.",
+    funFact: "New York City's subway system is one of the largest rapid transit systems in the world.",
+    adventures: ["Broadway night", "Central Park picnic", "Rooftop skyline photos", "Brooklyn food crawl"]
   },
   {
     location: "Greece",
     title: "Santorini sunset loop",
     description: "Cliffside stays, boat day holds, shared photos, and itinerary changes pushed as they happen.",
     photo: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=1600&auto=format&fit=crop",
-    alt: "White buildings on a Santorini cliff above the sea"
+    alt: "White buildings on a Santorini cliff above the sea",
+    knownFor: "Ancient ruins, island sunsets, clear blue water, Mediterranean food, mythology, and whitewashed villages.",
+    funFact: "Santorini's dramatic cliffs were shaped by one of history's major volcanic eruptions.",
+    adventures: ["Caldera boat day", "Oia sunset photos", "Greek cooking class", "Ancient ruins tour"]
   },
   {
     location: "Florida",
     title: "Miami friends escape",
     description: "Pool plans, dinner votes, rideshare splits, and wallet approvals that keep the weekend moving.",
     photo: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?q=80&w=1600&auto=format&fit=crop",
-    alt: "Tropical beach shoreline with clear water"
+    alt: "Tropical beach shoreline with clear water",
+    knownFor: "Warm beaches, Latin food, theme parks, Everglades wildlife, nightlife, and cruise departures.",
+    funFact: "Florida has more than 1,300 miles of coastline.",
+    adventures: ["Airboat ride", "South Beach morning", "Little Havana food stop", "Keys day trip"]
   }
 ];
 
@@ -194,8 +212,8 @@ function startLivePlanRotation() {
   if (!hero || !photo || !location || !title || !description) return;
 
   let index = 0;
-  const renderDestination = () => {
-    index = (index + 1) % livePlanDestinations.length;
+  const renderDestination = (nextIndex = index + 1) => {
+    index = (nextIndex + livePlanDestinations.length) % livePlanDestinations.length;
     const destination = livePlanDestinations[index];
     hero.classList.add("is-flashing");
     window.setTimeout(() => {
@@ -204,11 +222,32 @@ function startLivePlanRotation() {
       location.textContent = `Live group plan • ${destination.location}`;
       title.textContent = destination.title;
       description.textContent = destination.description;
+      renderDestinationInsights(destination, index);
     }, 180);
     window.setTimeout(() => hero.classList.remove("is-flashing"), 700);
   };
 
+  renderDestinationInsights(livePlanDestinations[0], 0);
+  $$("#destinationChooser button").forEach((button) => {
+    button.addEventListener("click", () => renderDestination(Number(button.dataset.destinationIndex)));
+  });
   window.setInterval(renderDestination, 4200);
+}
+
+function renderDestinationInsights(destination, activeIndex) {
+  const knownFor = $("#destinationKnownFor");
+  const funFact = $("#destinationFunFact");
+  const adventures = $("#destinationAdventures");
+  if (!knownFor || !funFact || !adventures) return;
+
+  knownFor.textContent = destination.knownFor;
+  funFact.textContent = destination.funFact;
+  adventures.innerHTML = destination.adventures.map((adventure) => `<span>${escapeHtml(adventure)}</span>`).join("");
+  $$("#destinationChooser button").forEach((button) => {
+    const isActive = Number(button.dataset.destinationIndex) === activeIndex;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
 }
 
 function getBillInputs() {
