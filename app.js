@@ -2609,12 +2609,6 @@ function wireLocalInteractions() {
     });
   });
 
-  $("#shareEverywhere")?.addEventListener("change", (event) => {
-    $$(".share-options input[type='checkbox']").forEach((checkbox) => {
-      checkbox.checked = event.target.checked;
-    });
-  });
-
   $("#openDailyMemoryButton")?.addEventListener("click", async () => {
     $("#dailyMemoryScreen")?.scrollIntoView({ behavior: "smooth", block: "center" });
     $("#dailyMemoryMessage").textContent = "Today's memory screen opened from the end-of-day reminder. Choose visibility before adding photos, videos, or notes.";
@@ -2669,19 +2663,175 @@ function wireLocalInteractions() {
     });
   });
 
-  $$("[data-connection]").forEach((button) => {
-    button.addEventListener("click", (event) => {
-      event.target.textContent = event.target.textContent === "Connected" ? "Disconnect" : "Connected";
+  function getSelectedSharePlatforms() {
+    return $$("[data-share-platform].active").map((button) => button.dataset.sharePlatform);
+  }
+
+  function updateSocialPreview(message = "") {
+    const caption = $("#captionText")?.value || "";
+    const hashtags = $$("#hashtagList span").map((tag) => tag.textContent);
+    const platforms = getSelectedSharePlatforms();
+    const visibility = $("input[name='contentVisibility']:checked")?.value || "Trip Members";
+
+    if ($("#sharePreviewCaption")) $("#sharePreviewCaption").textContent = caption;
+    if ($("#sharePreviewHashtags")) {
+      $("#sharePreviewHashtags").innerHTML = hashtags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");
+    }
+    if ($("#sharePreviewPlatforms")) {
+      $("#sharePreviewPlatforms").innerHTML = platforms.length
+        ? platforms.map((platform) => `<span>${escapeHtml(platform)}</span>`).join("")
+        : "<span>No platforms selected</span>";
+    }
+    if ($("#sharePreviewVisibility")) $("#sharePreviewVisibility").textContent = visibility;
+    if ($("#selectedPlatformCount")) $("#selectedPlatformCount").textContent = `${platforms.length} selected`;
+    if (message && $("#socialStatus")) $("#socialStatus").textContent = message;
+  }
+
+  function setPlatformCardStatus(card, status) {
+    const statusLabel = card.querySelector(".connection-status");
+    const actions = card.querySelector(".platform-actions");
+    card.dataset.status = status;
+    card.classList.toggle("connected", status === "connected");
+    card.classList.toggle("reconnect", status === "reconnect");
+
+    if (!statusLabel || !actions) return;
+    if (status === "connected") {
+      statusLabel.textContent = "Connected";
+      statusLabel.className = "connection-status connected";
+      actions.innerHTML = `<button type="button" data-social-action="manage" data-social-platform="${escapeHtml(card.dataset.platform)}">Manage</button><button type="button" data-social-action="disconnect" data-social-platform="${escapeHtml(card.dataset.platform)}">Disconnect</button>`;
+      return;
+    }
+    if (status === "reconnect") {
+      statusLabel.textContent = "Reconnect Required";
+      statusLabel.className = "connection-status reconnect";
+      actions.innerHTML = `<button type="button" data-social-action="reconnect" data-social-platform="${escapeHtml(card.dataset.platform)}">Reconnect</button>`;
+      return;
+    }
+    statusLabel.textContent = "Not Connected";
+    statusLabel.className = "connection-status";
+    actions.innerHTML = `<button type="button" data-social-action="connect" data-social-platform="${escapeHtml(card.dataset.platform)}">Connect</button>`;
+  }
+
+  function updateConnectedAccountsSummary() {
+    const connected = $$("[data-platform-card]").filter((card) => card.dataset.status === "connected").length;
+    const pill = $(".connected-accounts-panel .social-pill");
+    if (pill) pill.textContent = `${connected} connected`;
+    if ($("#socialEmptyState")) $("#socialEmptyState").hidden = connected > 0;
+  }
+
+  document.addEventListener("click", async (event) => {
+    const actionButton = event.target.closest("[data-social-action]");
+    if (actionButton) {
+      const platform = actionButton.dataset.socialPlatform || "selected platform";
+      const action = actionButton.dataset.socialAction;
+      const card = $(`[data-platform-card][data-platform='${platform}']`);
+      const messages = {
+        connect: `${platform} authentication flow opened. Connect returns here after approval.`,
+        reconnect: `${platform} reconnect flow opened because authorization needs attention.`,
+        manage: `${platform} settings opened for username, permissions, posting format, and privacy.`,
+        disconnect: `${platform} disconnected after confirmation. You can reconnect anytime.`
+      };
+      if (card && ["connect", "reconnect"].includes(action)) setPlatformCardStatus(card, "connected");
+      if (card && action === "disconnect") setPlatformCardStatus(card, "not-connected");
+      updateConnectedAccountsSummary();
+      updateSocialPreview(messages[action] || `${platform} action opened.`);
+      addAuditEntry("Social account action", `${platform}: ${action}.`);
+      await saveSyncedEvent("social_account_action", { platform, action });
+    }
+
+    const shareButton = event.target.closest("[data-share-platform]");
+    if (shareButton) {
+      const active = !shareButton.classList.contains("active");
+      shareButton.classList.toggle("active", active);
+      shareButton.setAttribute("aria-pressed", String(active));
+      updateSocialPreview(`${shareButton.dataset.sharePlatform} ${active ? "added to" : "removed from"} the share preview.`);
+    }
+  });
+
+  $("#captionText")?.addEventListener("input", () => updateSocialPreview());
+
+  $$("input[name='contentVisibility'], input[name='sharingPreference']").forEach((input) => {
+    input.addEventListener("change", async () => {
+      const visibility = $("input[name='contentVisibility']:checked")?.value || "Trip Members";
+      const preference = $("input[name='sharingPreference']:checked")?.value || "Ask before sharing";
+      updateSocialPreview(`Sharing settings saved: ${visibility}, ${preference}.`);
+      await saveSyncedEvent("social_sharing_settings_updated", { visibility, preference });
     });
   });
 
   $("#generateCaptionButton")?.addEventListener("click", () => {
-    $("#captionText").value = "Dubai nights, desert light, and the kind of group trip everyone talks about after landing home. #TravelDrip #Dubai #TravelTogether";
+    $("#captionText").value = "Santorini sunsets, rooftop laughs, and the kind of trip stories we will be retelling for years.";
+    updateSocialPreview("AI caption generated. Review and edit before sharing.");
+  });
+
+  $("#generateHashtagsButton")?.addEventListener("click", () => {
+    $("#hashtagList").innerHTML = ["#TravelDrip", "#Santorini", "#Vacation", "#TravelTogether", "#IslandViews", "#SharedMemories"].map((tag) => `<span>${tag}</span>`).join("");
+    updateSocialPreview("AI hashtags generated for this trip memory.");
   });
 
   $("#regenerateCaptionButton")?.addEventListener("click", () => {
-    $("#captionText").value = "From rooftop views to desert roads, this crew made Dubai feel unforgettable. #TravelDrip #GroupTravel #DubaiWeekend";
+    $("#captionText").value = "Blue water, golden light, and a day full of moments worth saving.";
+    $("#hashtagList").innerHTML = ["#TravelDrip", "#TravelMemories", "#SantoriniSunset", "#ExploreMore"].map((tag) => `<span>${tag}</span>`).join("");
+    updateSocialPreview("Caption and hashtags regenerated.");
   });
+
+  $("#editCaptionButton")?.addEventListener("click", () => {
+    $("#captionText")?.focus();
+    updateSocialPreview("Caption editor focused. Make changes before sharing.");
+  });
+
+  $("#copyCaptionButton")?.addEventListener("click", async () => {
+    const caption = $("#captionText")?.value || "";
+    try {
+      await navigator.clipboard?.writeText(caption);
+      updateSocialPreview("Caption copied to clipboard.");
+    } catch (_error) {
+      updateSocialPreview("Caption is selected for manual copy.");
+      $("#captionText")?.select();
+    }
+  });
+
+  $("#continueShareButton")?.addEventListener("click", () => {
+    updateSocialPreview("Publishing workflow opened with selected platforms and privacy settings preserved.");
+  });
+
+  $("#editPreviewButton")?.addEventListener("click", () => {
+    $("#captionText")?.focus();
+    updateSocialPreview("Preview edit mode opened.");
+  });
+
+  $("#removePlatformButton")?.addEventListener("click", () => {
+    const activePlatforms = $$("[data-share-platform].active");
+    const last = activePlatforms.at(-1);
+    if (last) {
+      last.classList.remove("active");
+      last.setAttribute("aria-pressed", "false");
+      updateSocialPreview(`${last.dataset.sharePlatform} removed from the preview.`);
+    } else {
+      updateSocialPreview("No selected platform to remove.");
+    }
+  });
+
+  $("#shareNowButton")?.addEventListener("click", async () => {
+    updateSocialPreview("Share request queued. TravelDrip will ask for final confirmation before publishing.");
+    addAuditEntry("Social share requested", `Platforms: ${getSelectedSharePlatforms().join(", ") || "none selected"}.`);
+    await saveSyncedEvent("social_share_requested", { platforms: getSelectedSharePlatforms() });
+  });
+
+  $("#sharePreviewNowButton")?.addEventListener("click", async () => {
+    updateSocialPreview("Preview approved. Publishing flow is ready for final platform confirmation.");
+    addAuditEntry("Social share preview approved", `Platforms: ${getSelectedSharePlatforms().join(", ") || "none selected"}.`);
+    await saveSyncedEvent("social_share_preview_approved", { platforms: getSelectedSharePlatforms() });
+  });
+
+  $("#saveDraftButton")?.addEventListener("click", async () => {
+    updateSocialPreview("Draft saved with caption, hashtags, selected platforms, and privacy settings.");
+    addAuditEntry("Social draft saved", "Travel memory draft saved from Social Media Hub.");
+    await saveSyncedEvent("social_draft_saved", { platforms: getSelectedSharePlatforms() });
+  });
+
+  updateConnectedAccountsSummary();
+  updateSocialPreview();
 
   $("#rolePreview")?.addEventListener("change", updateEnterpriseRole);
   $("#dashboardTripType")?.addEventListener("change", updateDashboardWidgets);
@@ -3358,7 +3508,8 @@ function wireNavigationFallbacks() {
     "[data-target]",
     "[data-day]",
     "[data-admin-action]",
-    "[data-connection]",
+    "[data-social-action]",
+    "[data-share-platform]",
     "[data-choice]",
     "[data-split-mode]",
     "[data-ride-mode]",

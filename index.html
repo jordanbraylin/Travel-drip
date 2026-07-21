@@ -1053,118 +1053,220 @@
               </div>
             </section>
 
-            <div class="social-grid">
-              <section class="social-card">
-                <h3>Connected accounts</h3>
-                <div class="connection-list" id="connectionList">
-                  <div><span class="avatar">IG</span><strong>Instagram</strong><small>@traveldrip_jordan</small><button type="button" data-connection>Connected</button></div>
-                  <div><span class="avatar">TT</span><strong>TikTok</strong><small>Needs reauthorization</small><button type="button" data-connection>Reauthorize</button></div>
-                  <div><span class="avatar">YT</span><strong>YouTube</strong><small>Not connected</small><button type="button" data-connection>Connect</button></div>
-                  <div><span class="avatar">IN</span><strong>LinkedIn</strong><small>Corporate sharing ready</small><button type="button" data-connection>Manage</button></div>
-                </div>
-              </section>
-
-              <section class="social-card">
-                <h3>Share destinations</h3>
-                <div class="share-options">
-                  <label><input type="checkbox" checked> TravelDrip Only</label>
-                  <label><input type="checkbox"> Instagram Feed</label>
-                  <label><input type="checkbox"> Instagram Story</label>
-                  <label><input type="checkbox"> Facebook Post</label>
-                  <label><input type="checkbox"> TikTok</label>
-                  <label><input type="checkbox"> Snapchat</label>
-                  <label><input type="checkbox"> Threads</label>
-                  <label><input type="checkbox"> X</label>
-                  <label><input type="checkbox"> LinkedIn</label>
-                  <label><input type="checkbox"> Pinterest</label>
-                  <label><input type="checkbox"> YouTube Shorts</label>
-                  <label class="share-all"><input type="checkbox" id="shareEverywhere"> Share Everywhere</label>
-                </div>
-              </section>
-            </div>
-
-            <div class="caption-studio">
-              <div>
-                <h3>AI caption generator</h3>
-                <textarea id="captionText">Watching the sunset over Santorini was unforgettable. #TravelDrip #Santorini #TravelGoals</textarea>
-                <div class="button-row">
-                  <button class="primary-button" type="button" id="generateCaptionButton">Generate caption</button>
-                  <button class="ghost-button" type="button" id="regenerateCaptionButton">Regenerate caption</button>
-                  <button class="ghost-button" type="button">Edit caption</button>
-                </div>
-              </div>
-              <div>
-                <h3>AI hashtags</h3>
-                <div class="hashtag-list" id="hashtagList">
-                  <span>#TravelDrip</span><span>#Miami</span><span>#VacationMode</span><span>#TravelTogether</span><span>#BeachLife</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="story-grid">
-              <section class="social-card">
-                <div class="section-heading compact">
-                  <h3>Miami 2027 shared story</h3>
-                  <select id="storyVisibility" aria-label="Group story visibility">
-                    <option>Private</option>
-                    <option>Friends</option>
-                    <option>Public</option>
-                  </select>
-                </div>
-                <div class="story-feed">
-                  <div><strong>Sarah</strong><span>Sunset photo added</span></div>
-                  <div><strong>Alex</strong><span>Yacht video uploaded</span></div>
-                  <div><strong>Mike</strong><span>Restaurant picture shared</span></div>
-                  <div><strong>Group poll</strong><span>Beach club or rooftop?</span></div>
-                </div>
-              </section>
-
-              <section class="social-card">
-                <h3>AI travel reel generator</h3>
-                <p>Build recap reels from photos, videos, maps, music, trip timeline, and top memories.</p>
-                <div class="reel-actions">
-                  <button class="ghost-button" type="button">Preview Reel</button>
-                  <button class="ghost-button" type="button">Edit Reel</button>
-                  <button class="ghost-button" type="button">Download Reel</button>
-                  <button class="primary-button" type="button">Share Reel</button>
-                </div>
-                <label class="privacy-toggle"><input type="checkbox" checked> Add “Created with TravelDrip” branding</label>
-              </section>
-            </div>
-
-            <div class="creator-grid">
-              <section class="social-card">
-                <h3>Public travel profile</h3>
-                <div class="profile-controls">
-                  <label><input type="radio" name="profileVisibility"> Private Profile</label>
-                  <label><input type="radio" name="profileVisibility" checked> Friends Only</label>
-                  <label><input type="radio" name="profileVisibility"> Public Profile</label>
-                </div>
-                <p>Showcase photos, reels, travel journals, saved destinations, travel stats, guides, itineraries, recommendations, local tips, and templates.</p>
-              </section>
-
-              <section class="social-card">
-                <h3>Corporate retreat sharing</h3>
-                <p>Generate branded retreat highlight reels for team activities, workshops, awards, group photos, recruiting campaigns, company pages, and internal portals.</p>
-                <div class="notification-list"><span>LinkedIn</span><span>Company pages</span><span>Internal portals</span><span>Recruiting</span></div>
-              </section>
-            </div>
-
-            <section class="social-card analytics-panel">
+            <section class="social-media-hub" aria-label="Social Media Hub">
               <div class="section-heading compact">
-                <h3>Creator analytics</h3>
-                <p class="small">No content is shared automatically without user authorization.</p>
+                <div>
+                  <p class="eyebrow">Profile / Settings / Connected Accounts</p>
+                  <h2>Social Media Hub</h2>
+                  <p class="small">Connect favorite platforms, generate captions, preview posts, and share travel memories with clear privacy controls.</p>
+                </div>
+                <button class="primary-button" type="button" id="shareNowButton">Share Now</button>
               </div>
-              <div class="analytics-grid">
-                <article><span>Views</span><strong>18.4K</strong></article>
-                <article><span>Likes</span><strong>2.1K</strong></article>
-                <article><span>Shares</span><strong>684</strong></article>
-                <article><span>Comments</span><strong>193</strong></article>
-                <article><span>Saves</span><strong>512</strong></article>
-                <article><span>Followers gained</span><strong>247</strong></article>
-                <article><span>Trips from shares</span><strong>31</strong></article>
-                <article><span>LinkedIn shares</span><strong>42</strong></article>
+
+              <section class="social-empty-state" id="socialEmptyState" hidden>
+                <div>
+                  <p class="eyebrow">No accounts connected</p>
+                  <h3>Connect Your Favorite Platforms</h3>
+                  <p>Share your travel memories directly from TravelDrip to your favorite social networks.</p>
+                </div>
+                <div class="empty-connect-grid">
+                  <button type="button" data-social-action="connect" data-social-platform="Instagram"><span class="brand-mark instagram" aria-label="Instagram logo">IG</span>Connect Instagram</button>
+                  <button type="button" data-social-action="connect" data-social-platform="TikTok"><span class="brand-mark tiktok" aria-label="TikTok logo">♪</span>Connect TikTok</button>
+                  <button type="button" data-social-action="connect" data-social-platform="Facebook"><span class="brand-mark facebook" aria-label="Facebook logo">f</span>Connect Facebook</button>
+                  <button type="button" data-social-action="connect" data-social-platform="Threads"><span class="brand-mark threads" aria-label="Threads logo">@</span>Connect Threads</button>
+                  <button type="button" data-social-action="connect" data-social-platform="Pinterest"><span class="brand-mark pinterest" aria-label="Pinterest logo">P</span>Connect Pinterest</button>
+                </div>
+              </section>
+
+              <div class="social-hub-layout">
+                <section class="social-card connected-accounts-panel">
+                  <div class="social-card-header">
+                    <div>
+                      <p class="eyebrow">Connected Accounts</p>
+                      <h3>Publishing destinations</h3>
+                    </div>
+                    <span class="social-pill">3 connected</span>
+                  </div>
+                  <div class="platform-grid" id="connectionList">
+                    <article class="platform-card connected" data-platform-card data-platform="Instagram" data-status="connected">
+                      <span class="brand-mark instagram" aria-label="Instagram logo">IG</span>
+                      <div><strong>Instagram</strong><small>@jordansmith</small></div>
+                      <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=80&q=70" alt="Instagram profile photo for Jordan Smith">
+                      <span class="connection-status connected">Connected</span>
+                      <div class="platform-actions">
+                        <button type="button" data-social-action="manage" data-social-platform="Instagram">Manage</button>
+                        <button type="button" data-social-action="disconnect" data-social-platform="Instagram">Disconnect</button>
+                      </div>
+                    </article>
+                    <article class="platform-card connected" data-platform-card data-platform="Facebook" data-status="connected">
+                      <span class="brand-mark facebook" aria-label="Facebook logo">f</span>
+                      <div><strong>Facebook</strong><small>Jordan Smith</small></div>
+                      <span class="profile-initials" aria-label="Default Facebook profile avatar">JS</span>
+                      <span class="connection-status connected">Connected</span>
+                      <div class="platform-actions">
+                        <button type="button" data-social-action="manage" data-social-platform="Facebook">Manage</button>
+                        <button type="button" data-social-action="disconnect" data-social-platform="Facebook">Disconnect</button>
+                      </div>
+                    </article>
+                    <article class="platform-card reconnect" data-platform-card data-platform="Threads" data-status="reconnect">
+                      <span class="brand-mark threads" aria-label="Threads logo">@</span>
+                      <div><strong>Threads</strong><small>@jordantravels</small></div>
+                      <span class="profile-initials" aria-label="Default Threads profile avatar">JT</span>
+                      <span class="connection-status reconnect">Reconnect Required</span>
+                      <div class="platform-actions">
+                        <button type="button" data-social-action="reconnect" data-social-platform="Threads">Reconnect</button>
+                      </div>
+                    </article>
+                    <article class="platform-card connected" data-platform-card data-platform="X" data-status="connected">
+                      <span class="brand-mark x" aria-label="X logo">X</span>
+                      <div><strong>X</strong><small>@jordangoes</small></div>
+                      <span class="profile-initials" aria-label="Default X profile avatar">JG</span>
+                      <span class="connection-status connected">Connected</span>
+                      <div class="platform-actions">
+                        <button type="button" data-social-action="manage" data-social-platform="X">Manage</button>
+                        <button type="button" data-social-action="disconnect" data-social-platform="X">Disconnect</button>
+                      </div>
+                    </article>
+                    <article class="platform-card" data-platform-card data-platform="TikTok" data-status="not-connected">
+                      <span class="brand-mark tiktok" aria-label="TikTok logo">♪</span>
+                      <div><strong>TikTok</strong><small>@travelwithjordan</small></div>
+                      <span class="profile-initials" aria-label="Default TikTok profile avatar">TJ</span>
+                      <span class="connection-status">Not Connected</span>
+                      <div class="platform-actions">
+                        <button type="button" data-social-action="connect" data-social-platform="TikTok">Connect</button>
+                      </div>
+                    </article>
+                    <article class="platform-card" data-platform-card data-platform="Snapchat" data-status="not-connected">
+                      <span class="brand-mark snapchat" aria-label="Snapchat logo">SC</span>
+                      <div><strong>Snapchat</strong><small>Not connected</small></div>
+                      <span class="profile-initials" aria-label="Default Snapchat profile avatar">JS</span>
+                      <span class="connection-status">Not Connected</span>
+                      <div class="platform-actions">
+                        <button type="button" data-social-action="connect" data-social-platform="Snapchat">Connect</button>
+                      </div>
+                    </article>
+                    <article class="platform-card" data-platform-card data-platform="LinkedIn" data-status="not-connected">
+                      <span class="brand-mark linkedin" aria-label="LinkedIn logo">in</span>
+                      <div><strong>LinkedIn</strong><small>Corporate sharing ready</small></div>
+                      <span class="profile-initials" aria-label="Default LinkedIn profile avatar">JS</span>
+                      <span class="connection-status">Not Connected</span>
+                      <div class="platform-actions">
+                        <button type="button" data-social-action="connect" data-social-platform="LinkedIn">Connect</button>
+                      </div>
+                    </article>
+                    <article class="platform-card reconnect" data-platform-card data-platform="Pinterest" data-status="reconnect">
+                      <span class="brand-mark pinterest" aria-label="Pinterest logo">P</span>
+                      <div><strong>Pinterest</strong><small>@jordansaves</small></div>
+                      <span class="profile-initials" aria-label="Default Pinterest profile avatar">JP</span>
+                      <span class="connection-status reconnect">Reconnect Required</span>
+                      <div class="platform-actions">
+                        <button type="button" data-social-action="reconnect" data-social-platform="Pinterest">Reconnect</button>
+                      </div>
+                    </article>
+                    <article class="platform-card" data-platform-card data-platform="YouTube" data-status="not-connected">
+                      <span class="brand-mark youtube" aria-label="YouTube logo">▶</span>
+                      <div><strong>YouTube</strong><small>TravelDrip with Jordan</small></div>
+                      <span class="profile-initials" aria-label="Default YouTube profile avatar">TJ</span>
+                      <span class="connection-status">Not Connected</span>
+                      <div class="platform-actions">
+                        <button type="button" data-social-action="connect" data-social-platform="YouTube">Connect</button>
+                      </div>
+                    </article>
+                  </div>
+                </section>
+
+                <section class="social-card quick-share-panel">
+                  <div class="social-card-header">
+                    <div>
+                      <p class="eyebrow">Quick Share</p>
+                      <h3>Select platforms</h3>
+                    </div>
+                    <span class="social-pill" id="selectedPlatformCount">3 selected</span>
+                  </div>
+                  <div class="quick-share-grid" aria-label="Share to social platforms">
+                    <button class="active" type="button" aria-pressed="true" data-share-platform="Instagram"><span class="brand-mark instagram" aria-label="Instagram logo">IG</span>Instagram</button>
+                    <button type="button" aria-pressed="false" data-share-platform="TikTok"><span class="brand-mark tiktok" aria-label="TikTok logo">♪</span>TikTok</button>
+                    <button class="active" type="button" aria-pressed="true" data-share-platform="Facebook"><span class="brand-mark facebook" aria-label="Facebook logo">f</span>Facebook</button>
+                    <button class="active" type="button" aria-pressed="true" data-share-platform="Threads"><span class="brand-mark threads" aria-label="Threads logo">@</span>Threads</button>
+                    <button type="button" aria-pressed="false" data-share-platform="Pinterest"><span class="brand-mark pinterest" aria-label="Pinterest logo">P</span>Pinterest</button>
+                    <button type="button" aria-pressed="false" data-share-platform="LinkedIn"><span class="brand-mark linkedin" aria-label="LinkedIn logo">in</span>LinkedIn</button>
+                    <button type="button" aria-pressed="false" data-share-platform="YouTube"><span class="brand-mark youtube" aria-label="YouTube logo">▶</span>YouTube</button>
+                  </div>
+                </section>
+
+                <section class="social-card ai-caption-panel">
+                  <div class="social-card-header">
+                    <div>
+                      <p class="eyebrow">AI Caption & Hashtags</p>
+                      <h3>Post-ready copy</h3>
+                    </div>
+                    <span class="social-pill">Editable</span>
+                  </div>
+                  <label class="caption-label" for="captionText">Instagram caption preview</label>
+                  <textarea id="captionText">Sunsets, great food, and unforgettable memories in Santorini.</textarea>
+                  <div class="hashtag-list" id="hashtagList">
+                    <span>#TravelDrip</span><span>#Santorini</span><span>#Vacation</span><span>#TravelTogether</span>
+                  </div>
+                  <div class="social-action-row">
+                    <button class="primary-button" type="button" id="generateCaptionButton">Generate Caption</button>
+                    <button class="ghost-button" type="button" id="generateHashtagsButton">Generate Hashtags</button>
+                    <button class="ghost-button" type="button" id="regenerateCaptionButton">Regenerate</button>
+                    <button class="ghost-button" type="button" id="editCaptionButton">Edit</button>
+                    <button class="ghost-button" type="button" id="copyCaptionButton">Copy</button>
+                    <button class="primary-button" type="button" id="continueShareButton">Continue to Share</button>
+                  </div>
+                </section>
+
+                <section class="social-card sharing-settings-panel">
+                  <div class="social-card-header">
+                    <div>
+                      <p class="eyebrow">Privacy & Sharing Settings</p>
+                      <h3>User-approved sharing</h3>
+                    </div>
+                    <span class="social-pill">Ask first</span>
+                  </div>
+                  <fieldset class="privacy-options">
+                    <legend>Content Visibility</legend>
+                    <label><input type="radio" name="contentVisibility" value="Private"> Private</label>
+                    <label><input type="radio" name="contentVisibility" value="Trip Members" checked> Trip Members</label>
+                    <label><input type="radio" name="contentVisibility" value="Friends"> Friends</label>
+                    <label><input type="radio" name="contentVisibility" value="Public"> Public</label>
+                  </fieldset>
+                  <fieldset class="privacy-options">
+                    <legend>Sharing Options</legend>
+                    <label><input type="radio" name="sharingPreference" value="Share manually"> Share manually</label>
+                    <label><input type="radio" name="sharingPreference" value="Ask before sharing" checked> Ask before sharing</label>
+                    <label><input type="radio" name="sharingPreference" value="Never auto-share"> Never auto-share</label>
+                  </fieldset>
+                </section>
+
+                <section class="social-card share-preview-panel">
+                  <div class="social-card-header">
+                    <div>
+                      <p class="eyebrow">Share Preview</p>
+                      <h3>Santorini memory</h3>
+                    </div>
+                    <span class="social-pill" id="sharePreviewVisibility">Trip Members</span>
+                  </div>
+                  <div class="share-preview">
+                    <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=760&q=78" alt="Santorini sunset travel memory preview">
+                    <div>
+                      <p id="sharePreviewCaption">Sunsets, great food, and unforgettable memories in Santorini.</p>
+                      <div class="hashtag-list compact" id="sharePreviewHashtags">
+                        <span>#TravelDrip</span><span>#Santorini</span><span>#Vacation</span><span>#TravelTogether</span>
+                      </div>
+                      <div class="selected-platforms" id="sharePreviewPlatforms" aria-live="polite"></div>
+                    </div>
+                  </div>
+                  <div class="social-action-row">
+                    <button class="ghost-button" type="button" id="editPreviewButton">Edit</button>
+                    <button class="ghost-button" type="button" id="removePlatformButton">Remove Platform</button>
+                    <button class="primary-button" type="button" id="sharePreviewNowButton">Share Now</button>
+                    <button class="ghost-button" type="button" id="saveDraftButton">Save Draft</button>
+                  </div>
+                </section>
               </div>
+              <p class="small" id="socialStatus" aria-live="polite">Social Media Hub ready. No content is shared automatically without your approval.</p>
             </section>
           </section>
 
