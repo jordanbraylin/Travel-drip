@@ -583,6 +583,22 @@ body.auth-screen main {
   box-shadow: 0 8px 22px rgba(25, 47, 56, 0.1);
 }
 
+.auth-support-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.auth-support-actions button {
+  min-height: 38px;
+  border: 1px solid rgba(202, 225, 231, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #dcebee;
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .auth-form label {
   display: grid;
   gap: 6px;
@@ -738,20 +754,23 @@ body.auth-screen main {
 
 .ledger-stats,
 .bank-overview,
-.wallet-breakdown {
+.wallet-breakdown,
+.navigation-status-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
   margin: 12px 0;
 }
 
-.wallet-breakdown {
+.wallet-breakdown,
+.navigation-status-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .ledger-stats article,
 .bank-overview article,
-.wallet-breakdown div {
+.wallet-breakdown div,
+.navigation-status-grid div {
   min-width: 0;
   padding: 12px;
   border: 1px solid var(--line);
@@ -761,7 +780,8 @@ body.auth-screen main {
 
 .ledger-stats span,
 .bank-overview span,
-.wallet-breakdown span {
+.wallet-breakdown span,
+.navigation-status-grid span {
   display: block;
   color: var(--muted);
   font-size: 12px;
@@ -769,7 +789,8 @@ body.auth-screen main {
 
 .ledger-stats strong,
 .bank-overview strong,
-.wallet-breakdown strong {
+.wallet-breakdown strong,
+.navigation-status-grid strong {
   display: block;
   margin-top: 6px;
   font-size: 20px;
@@ -778,7 +799,8 @@ body.auth-screen main {
 .ledger-list,
 .rule-list,
 .audit-list,
-.security-list {
+.security-list,
+.navigation-audit-list {
   display: grid;
   gap: 8px;
 }
@@ -786,7 +808,8 @@ body.auth-screen main {
 .ledger-list div,
 .rule-list div,
 .audit-list div,
-.security-list div {
+.security-list div,
+.navigation-audit-list div {
   padding: 10px 0;
   border-top: 1px solid var(--line);
 }
@@ -805,17 +828,24 @@ body.auth-screen main {
 .audit-list strong,
 .audit-list span,
 .security-list strong,
-.security-list span {
+.security-list span,
+.navigation-audit-list strong,
+.navigation-audit-list span {
   display: block;
 }
 
 .ledger-list span,
 .rule-list span,
 .audit-list span,
-.security-list span {
+.security-list span,
+.navigation-audit-list span {
   color: var(--muted);
   font-size: 13px;
   line-height: 1.4;
+}
+
+.navigation-audit-list .is-warning strong {
+  color: #9a3412;
 }
 
 .button-row,
@@ -2693,6 +2723,10 @@ code {
     margin: 0 auto 32px;
   }
 
+  .auth-support-actions {
+    grid-template-columns: 1fr;
+  }
+
   .topbar,
   .auth-panel,
   .pwa-panel {
@@ -2742,6 +2776,7 @@ code {
   .ledger-stats,
   .bank-overview,
   .wallet-breakdown,
+  .navigation-status-grid,
   .card-balance-grid,
   .wallet-provisioning,
   .control-grid,

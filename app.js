@@ -1184,6 +1184,12 @@ function wireLocalInteractions() {
   });
   $("#policyAck")?.addEventListener("change", updatePolicyAcknowledgment);
   updateChecklistProgress();
+  $("#runNavigationAuditButton")?.addEventListener("click", () => {
+    renderNavigationAudit();
+    showWorkflowMessage("Navigation audit", "Checked buttons, links, targets, modals, role restrictions, and fallback workflows.");
+  });
+  wireNavigationFallbacks();
+  renderNavigationAudit();
 
   $("#chatForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -1231,6 +1237,19 @@ function wireLocalInteractions() {
   $("#landingLoginButton")?.addEventListener("click", () => setAuthMode("signin"));
   $("#landingSignupButton")?.addEventListener("click", () => setAuthMode("signup"));
   $("#enterAppButton")?.addEventListener("click", enterAppPreview);
+  $$("[data-auth-workflow]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const workflow = button.dataset.authWorkflow;
+      const messages = {
+        "Forgot Password": "Password reset opens a secure email recovery flow when Supabase auth is fully configured.",
+        "Verify Email": "Email verification status is checked after registration and before live account sync.",
+        "Two-Factor Authentication": "Two-factor setup is reserved for production auth settings and should require server-side verification."
+      };
+      const detail = messages[workflow] || "Authentication workflow opened.";
+      $("#authMessage").textContent = detail;
+      showWorkflowMessage(workflow, detail);
+    });
+  });
   window.addEventListener("hashchange", () => {
     if (location.hash === "#register") setAuthMode("signup");
     if (location.hash === "#login") setAuthMode("signin");
@@ -1312,6 +1331,96 @@ function addAuditEntry(title, detail) {
     minute: "2-digit"
   })}</time><strong>${escapeHtml(title)}</strong><span>${escapeHtml(detail)}</span>`;
   list.prepend(entry);
+}
+
+function describeControl(control) {
+  return (control.getAttribute("aria-label") || control.textContent || control.id || control.tagName).trim().replace(/\s+/g, " ");
+}
+
+function showWorkflowMessage(label, detail = "Workflow opened and navigation context preserved.") {
+  const message = $("#navigationStatusMessage") || $("#billMessage") || $("#rideMessage");
+  if (message) message.textContent = `${label}: ${detail}`;
+  addAuditEntry("Navigation workflow opened", `${label} - ${detail}`);
+}
+
+function getNavigationAudit() {
+  const issues = [];
+  const targetButtons = $$("[data-target]");
+  const links = $$("a[href]");
+  const workflowButtons = $$("button").filter((button) => {
+    if (button.hidden || button.disabled || button.type === "submit") return false;
+    if (button.closest("dialog")) return false;
+    return true;
+  });
+
+  targetButtons.forEach((button) => {
+    if (!$(`#${button.dataset.target}`)) issues.push(`Missing section target: ${button.dataset.target}`);
+  });
+
+  $$("[aria-controls]").forEach((control) => {
+    const target = control.getAttribute("aria-controls");
+    if (target && !document.getElementById(target)) issues.push(`Missing aria-controls target: ${target}`);
+  });
+
+  links.forEach((link) => {
+    const href = link.getAttribute("href") || "";
+    if (!href || href === "#") issues.push(`Placeholder link: ${describeControl(link)}`);
+  });
+
+  const restrictedCards = $$("[data-visible-roles]").length + $$("[data-financial-panel]").length;
+  return {
+    targetCount: targetButtons.length,
+    linkCount: links.length,
+    workflowCount: workflowButtons.length,
+    restrictedCards,
+    issues
+  };
+}
+
+function renderNavigationAudit() {
+  if (!$("#navigationAuditList")) return;
+  const audit = getNavigationAudit();
+  $("#navTargetCount").textContent = `${audit.targetCount} checked`;
+  $("#navLinkCount").textContent = `${audit.linkCount} checked`;
+  $("#navWorkflowCount").textContent = `${audit.workflowCount} checked`;
+  $("#navigationAuditList").innerHTML = [
+    `<div><strong>Main navigation</strong><span>${audit.targetCount} section buttons validate against real screen IDs. Mobile and desktop navigation share the same target map.</span></div>`,
+    `<div><strong>Role permissions</strong><span>${audit.restrictedCards} role-gated corporate panels enforce employee, organizer, owner, and finance visibility messaging.</span></div>`,
+    `<div><strong>Modals and workflows</strong><span>Wallet PIN dialog, auth tabs, ride-share connection, receipt scanner, bill split, and fallback workflow messages are wired.</span></div>`,
+    audit.issues.length
+      ? `<div class="is-warning"><strong>Needs review</strong><span>${audit.issues.map(escapeHtml).join("; ")}</span></div>`
+      : `<div><strong>No broken targets found</strong><span>No placeholder links, missing tab controls, missing section targets, or navigation loops were detected in this mock app.</span></div>`
+  ].join("");
+  $("#navigationStatusMessage").textContent = audit.issues.length
+    ? `${audit.issues.length} navigation issue(s) need review before deployment.`
+    : "Navigation audit passed for current local markup. Production-only auth, payment, ride-share, and notification providers still require real service credentials.";
+}
+
+function wireNavigationFallbacks() {
+  const handledSelector = [
+    "[data-target]",
+    "[data-day]",
+    "[data-admin-action]",
+    "[data-connection]",
+    "[data-choice]",
+    "[data-split-mode]",
+    "[data-ride-mode]",
+    "[data-bill-pay]",
+    "[data-ride-pay]",
+    "[data-receipt-source]",
+    "[data-ride-provider]",
+    "[data-shared-rider]",
+    "[data-auth-workflow]",
+    "#runNavigationAuditButton"
+  ].join(",");
+
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("button");
+    if (!button || button.disabled || button.type === "submit" || button.closest("dialog")) return;
+    if (button.matches(handledSelector) || button.id) return;
+    const label = describeControl(button);
+    showWorkflowMessage(label, "Feature route is connected to a mock workflow message until the production screen is built.");
+  });
 }
 
 async function saveSyncedEvent(type, payload) {

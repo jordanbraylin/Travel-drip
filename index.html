@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=20">
+  <link rel="stylesheet" href="styles.css?v=21">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -113,6 +113,11 @@
             <label>Password<input id="signupPasswordInput" type="password" autocomplete="new-password" placeholder="Create a password" required minlength="6"></label>
             <button class="primary-button" type="submit">Create account</button>
           </form>
+          <div class="auth-support-actions">
+            <button type="button" data-auth-workflow="Forgot Password">Forgot Password</button>
+            <button type="button" data-auth-workflow="Verify Email">Verify Email</button>
+            <button type="button" data-auth-workflow="Two-Factor Authentication">Two-Factor Authentication</button>
+          </div>
           <p class="small" id="authMessage">Create an account or log in to enable live sync.</p>
         </div>
       </section>
@@ -625,10 +630,10 @@
               <details class="info-section">
                 <summary>Downloads & Attachments</summary>
                 <div class="attachment-list">
-                  <a href="#" download>Retreat agenda PDF</a>
-                  <a href="#" download>Transportation guide</a>
-                  <a href="#" download>Hotel information sheet</a>
-                  <a href="#" download>Activity waiver</a>
+                  <a href="documents/retreat-agenda.pdf" download>Retreat agenda PDF</a>
+                  <a href="documents/transportation-guide.pdf" download>Transportation guide</a>
+                  <a href="documents/hotel-information.pdf" download>Hotel information sheet</a>
+                  <a href="documents/activity-waiver.pdf" download>Activity waiver</a>
                 </div>
               </details>
 
@@ -1063,6 +1068,23 @@
             <p>Three stops are clustered to save 42 minutes of transit on Friday.</p>
           </section>
 
+          <section class="panel navigation-audit-panel">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Navigation QA</p>
+                <h2>Link and workflow validation</h2>
+              </div>
+              <button class="ghost-button" type="button" id="runNavigationAuditButton">Run audit</button>
+            </div>
+            <div class="navigation-status-grid">
+              <div><span>Section targets</span><strong id="navTargetCount">Checking</strong></div>
+              <div><span>Links</span><strong id="navLinkCount">Checking</strong></div>
+              <div><span>Workflow buttons</span><strong id="navWorkflowCount">Checking</strong></div>
+            </div>
+            <div class="navigation-audit-list" id="navigationAuditList" aria-label="Navigation audit results"></div>
+            <p class="small" id="navigationStatusMessage">Navigation audit checks buttons, links, tab targets, modal triggers, role-restricted actions, and fallback workflow messaging.</p>
+          </section>
+
           <section class="panel audit-panel">
             <div class="section-heading compact">
               <div>
@@ -1111,6 +1133,6 @@
   </dialog>
 
   <script src="public-config.js?v=1"></script>
-  <script defer src="app.js?v=25"></script>
+  <script defer src="app.js?v=26"></script>
 </body>
 </html>
