@@ -176,6 +176,36 @@ const livePlanDestinations = [
   }
 ];
 
+const tripTypeConfigs = {
+  solo: {
+    label: "Solo Trip",
+    detailsTitle: "Solo trip details",
+    travelersHidden: true,
+    aiPrompt: "How can I help plan your trip? Try: Build me a 5-day itinerary.",
+    message: "Solo Trip selected. Group chat, voting, and shared wallet tools stay hidden until you invite others.",
+    enabled: ["AI Trip Manager", "Personal itinerary", "Flight management", "Hotel management", "Transportation", "Budget tracker", "Travel documents", "Packing checklist", "Social sharing", "AI recommendations", "Travel journal", "Memories"],
+    hidden: ["Group chat", "Group wallet", "Expense splitting", "Voting", "Group invitations", "Corporate dashboards"]
+  },
+  group: {
+    label: "Group Trip",
+    detailsTitle: "Group trip details",
+    travelersHidden: false,
+    aiPrompt: "How can I help plan your trip? Try: Create a poll for dinner on the first night.",
+    message: "Group Trip selected. Shared itinerary, chat, wallet, expense splits, and voting are available.",
+    enabled: ["Group invitations", "Shared itinerary", "Group chat", "@mentions", "Polls and voting", "Group wallet", "Smart bill splitting", "Ride share splitting", "Shared memories", "AI Trip Manager", "Shared documents", "Group announcements"],
+    hidden: ["Corporate finance dashboards", "Employee-only assignments", "Admin-only budget approvals"]
+  },
+  corporate: {
+    label: "Corporate Retreat / Business Travel",
+    detailsTitle: "Corporate retreat details",
+    travelersHidden: false,
+    aiPrompt: "How can I help plan your trip? Try: Generate a three-day retreat agenda with workshops and team-building activities.",
+    message: "Corporate Retreat selected. Employees see only assigned travel, schedules, announcements, and important information. Company financial data stays admin-only.",
+    enabled: ["Employee invitations", "Role permissions", "Company announcements", "Team schedules", "Event agenda", "Flight assignments", "Hotel assignments", "Transportation schedules", "Activity schedules", "AI Operations Manager", "Corporate reporting", "Admin budgets", "Expense approvals", "Audit logs"],
+    hidden: ["Company financial data for employees", "Other employee payment details", "Unauthorized budget controls"]
+  }
+};
+
 function hideLoader() {
   window.setTimeout(() => $("#loader")?.classList.add("done"), 450);
 }
@@ -248,6 +278,23 @@ function renderDestinationInsights(destination, activeIndex) {
     button.classList.toggle("active", isActive);
     button.setAttribute("aria-pressed", String(isActive));
   });
+}
+
+function renderTripType(type) {
+  const config = tripTypeConfigs[type] || tripTypeConfigs.solo;
+  $$("[data-trip-type]").forEach((typeButton) => {
+    const isActive = typeButton.dataset.tripType === type;
+    typeButton.classList.toggle("active", isActive);
+    typeButton.setAttribute("aria-pressed", String(isActive));
+  });
+
+  $("#soloModeMessage").textContent = config.message;
+  $("#tripDetailsTitle").textContent = config.detailsTitle;
+  $("#tripAiSetupPrompt").textContent = config.aiPrompt;
+  $("#travelerCountField").hidden = config.travelersHidden;
+  $("#tripTravelersInput").value = config.travelersHidden ? "1" : "6";
+  $("#featuresEnabledList").innerHTML = config.enabled.map((feature) => `<span>${escapeHtml(feature)}</span>`).join("");
+  $("#featuresHiddenList").innerHTML = config.hidden.map((feature) => `<span>${escapeHtml(feature)}</span>`).join("");
 }
 
 function getBillInputs() {
@@ -1232,20 +1279,35 @@ function wireLocalInteractions() {
   $$("[data-trip-type]").forEach((button) => {
     button.addEventListener("click", async () => {
       const type = button.dataset.tripType;
-      $$("[data-trip-type]").forEach((typeButton) => {
-        const isActive = typeButton === button;
-        typeButton.classList.toggle("active", isActive);
-        typeButton.setAttribute("aria-pressed", String(isActive));
-      });
-
-      const messages = {
-        solo: "Solo Trip selected. Group chat, voting, and shared wallet tools stay hidden until you invite others.",
-        group: "Group Trip selected. Shared itinerary, chat, wallet, expense splits, and voting are available.",
-        corporate: "Corporate Retreat selected. Role-based dashboards, employee privacy, finance controls, and audit reports are available."
-      };
-      $("#soloModeMessage").textContent = messages[type] || messages.solo;
+      renderTripType(type);
       addAuditEntry("Trip mode selected", `${button.querySelector("strong")?.textContent || "Trip mode"} mode preview enabled.`);
       await saveSyncedEvent("trip_mode_selected", { type });
+    });
+  });
+
+  $("#startTripCreationButton")?.addEventListener("click", () => {
+    $("#guidedTripFlow")?.classList.add("is-open");
+    $("#guidedTripFlow")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    renderTripType($(".trip-type-selector button.active")?.dataset.tripType || "solo");
+  });
+
+  $("#tripCreationForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const type = $(".trip-type-selector button.active")?.dataset.tripType || "solo";
+    const config = tripTypeConfigs[type] || tripTypeConfigs.solo;
+    const tripName = $("#tripNameInput").value.trim() || config.label;
+    $("#soloModeMessage").textContent = `${config.label} created: ${tripName}. TravelDrip configured the right dashboard, permissions, and workflows automatically.`;
+    addAuditEntry("Guided trip created", `${config.label} created with tailored feature set.`);
+    await saveSyncedEvent("guided_trip_created", {
+      type,
+      tripName,
+      destination: $("#tripDestinationInput").value.trim(),
+      startDate: $("#tripStartInput").value,
+      endDate: $("#tripEndInput").value,
+      travelers: Number($("#tripTravelersInput").value || 1),
+      budget: Number($("#tripBudgetInput").value || 0),
+      style: $("#tripStyleInput").value,
+      interests: $("#tripInterestsInput").value.trim()
     });
   });
 
@@ -1264,8 +1326,7 @@ function wireLocalInteractions() {
   });
 
   $("#convertSoloTripButton")?.addEventListener("click", async () => {
-    const groupButton = $("[data-trip-type='group']");
-    groupButton?.click();
+    renderTripType("group");
     $("#soloModeMessage").textContent = "Solo trip converted to Group Trip preview. Existing itinerary, budget, documents, memories, and recommendations stay intact.";
     addAuditEntry("Solo trip converted", "Group chat, shared itinerary, group wallet, expense splitting, and voting enabled.");
     await saveSyncedEvent("solo_trip_converted_to_group", { preservesExistingTripData: true });

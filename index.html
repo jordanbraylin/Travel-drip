@@ -299,20 +299,66 @@
                 <p class="eyebrow">Trip Mode</p>
                 <h2>Plan solo, with friends, or with your company</h2>
               </div>
-              <button class="ghost-button" type="button" id="convertSoloTripButton">Convert to group trip</button>
+              <div class="button-row no-margin">
+                <button class="primary-button" type="button" id="startTripCreationButton">Create Trip</button>
+                <button class="ghost-button" type="button" id="convertSoloTripButton">Convert trip type</button>
+              </div>
             </div>
+            <section class="guided-trip-flow" id="guidedTripFlow" aria-live="polite">
+              <div class="guided-step">
+                <span>Step 1</span>
+                <h3>What type of trip are you planning?</h3>
+                <p>Choose a trip type first so TravelDrip can show the right tools, permissions, and workflows.</p>
+              </div>
+              <div class="guided-step trip-details-step">
+                <span>Step 2</span>
+                <h3 id="tripDetailsTitle">Solo trip details</h3>
+                <form class="trip-creation-form" id="tripCreationForm">
+                  <label>Trip name<input id="tripNameInput" type="text" value="Tokyo solo food sprint"></label>
+                  <label>Destination<input id="tripDestinationInput" type="text" value="Tokyo, Japan"></label>
+                  <label>Start date<input id="tripStartInput" type="date" value="2026-08-08"></label>
+                  <label>End date<input id="tripEndInput" type="date" value="2026-08-13"></label>
+                  <label id="travelerCountField" hidden>Number of travelers<input id="tripTravelersInput" type="number" min="1" value="1"></label>
+                  <label>Budget<input id="tripBudgetInput" type="number" min="0" value="2000"></label>
+                  <label>Travel style<select id="tripStyleInput"><option>Food and culture</option><option>Relaxed luxury</option><option>Adventure</option><option>Business efficient</option></select></label>
+                  <label>Interests<input id="tripInterestsInput" type="text" value="Ramen, museums, safe evening routes"></label>
+                  <label>Cover photo<input id="tripCoverInput" type="file" accept="image/*"></label>
+                  <button class="primary-button" type="submit">Create tailored trip</button>
+                </form>
+              </div>
+              <div class="guided-step">
+                <span>Step 3</span>
+                <h3>AI setup</h3>
+                <p id="tripAiSetupPrompt">How can I help plan your trip? Try: Build me a 5-day itinerary.</p>
+              </div>
+            </section>
             <div class="trip-type-selector" aria-label="Choose trip type">
               <button class="active" type="button" data-trip-type="solo" aria-pressed="true">
-                <strong>Solo Trip</strong><span>Private planning, personal budget, concierge-style reminders.</span>
+                <strong>Solo Trip</strong><span>Private planning, personal budget, AI recommendations, documents, packing, journal, and memories.</span>
               </button>
               <button type="button" data-trip-type="group" aria-pressed="false">
-                <strong>Group Trip</strong><span>Shared itinerary, chat, group wallet, bill splits, and votes.</span>
+                <strong>Group Trip</strong><span>Invites, shared itinerary, chat, @mentions, polls, wallet, bill splits, ride splits, and shared memories.</span>
               </button>
               <button type="button" data-trip-type="corporate" aria-pressed="false">
-                <strong>Corporate Retreat</strong><span>Role permissions, company schedules, finance controls, and reports.</span>
+                <strong>Corporate Retreat / Business Travel</strong><span>Employee invites, role permissions, agendas, assignments, approvals, reporting, and audit logs.</span>
               </button>
             </div>
             <p class="small" id="soloModeMessage">Solo Trip selected. Group chat, voting, and shared wallet tools stay hidden until you invite others.</p>
+
+            <div class="feature-toggle-grid" id="featureToggleGrid">
+              <section>
+                <h3>Features enabled</h3>
+                <div class="solo-tag-list" id="featuresEnabledList">
+                  <span>AI Trip Manager</span><span>Personal itinerary</span><span>Budget tracker</span><span>Travel documents</span><span>Packing checklist</span><span>Memories</span>
+                </div>
+              </section>
+              <section>
+                <h3>Features hidden</h3>
+                <div class="solo-tag-list hidden-feature-list" id="featuresHiddenList">
+                  <span>Group chat</span><span>Group wallet</span><span>Expense splitting</span><span>Voting</span><span>Group invitations</span><span>Corporate dashboards</span>
+                </div>
+              </section>
+            </div>
 
             <div class="solo-dashboard-grid">
               <article><span>Destination</span><strong>Tokyo, Japan</strong><small>5-day food and culture sprint</small></article>
