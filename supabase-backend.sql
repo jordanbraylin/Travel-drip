@@ -1680,3 +1680,74 @@ drop policy if exists "Admins read message reports" on public.message_reports;
 create policy "Admins read message reports" on public.message_reports
   for select to authenticated
   using (reporter_user_id = auth.uid() or public.has_trip_role((select cr.trip_id from public.chat_rooms cr where cr.id = message_reports.room_id), array['owner','admin','organizer']));
+
+alter table public.profiles add column if not exists avatar_storage_path text;
+alter table public.profiles add column if not exists avatar_thumb_url text;
+alter table public.profiles add column if not exists avatar_visibility text not null default 'trip_members' check (avatar_visibility in ('public','friends','trip_members','organization','private'));
+alter table public.profiles add column if not exists avatar_source text not null default 'user_upload' check (avatar_source in ('user_upload','camera','company_directory','company_issued','default_initials'));
+alter table public.profiles add column if not exists avatar_moderation_status text not null default 'not_required' check (avatar_moderation_status in ('not_required','pending','approved','rejected','flagged'));
+alter table public.profiles add column if not exists avatar_metadata jsonb not null default '{}'::jsonb;
+
+create table if not exists public.profile_photo_uploads (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  storage_path text,
+  original_filename text,
+  mime_type text not null check (mime_type in ('image/jpeg','image/jpg','image/png','image/heic','image/webp')),
+  file_size_bytes integer not null check (file_size_bytes > 0 and file_size_bytes <= 5242880),
+  width integer,
+  height integer,
+  crop_settings jsonb not null default '{}'::jsonb,
+  optimized_variants jsonb not null default '{}'::jsonb,
+  upload_source text not null default 'library' check (upload_source in ('library','camera','drag_drop','recent_photo','company_directory','company_issued')),
+  moderation_status text not null default 'pending' check (moderation_status in ('pending','approved','rejected','flagged','not_required')),
+  is_active boolean not null default false,
+  metadata jsonb not null default '{}'::jsonb
+);
+
+drop trigger if exists set_profile_photo_uploads_updated_at on public.profile_photo_uploads;
+create trigger set_profile_photo_uploads_updated_at
+before update on public.profile_photo_uploads
+for each row execute function public.set_updated_at();
+
+create index if not exists idx_profiles_avatar_visibility on public.profiles(avatar_visibility, avatar_moderation_status);
+create index if not exists idx_profile_photo_uploads_user on public.profile_photo_uploads(user_id, created_at desc);
+create index if not exists idx_profile_photo_uploads_moderation on public.profile_photo_uploads(moderation_status, created_at desc);
+
+alter table public.profile_photo_uploads enable row level security;
+
+drop policy if exists "Visible profile photos can be read by allowed viewers" on public.profiles;
+create policy "Visible profile photos can be read by allowed viewers" on public.profiles
+  for select to authenticated
+  using (
+    id = auth.uid()
+    or avatar_visibility = 'public'
+    or (
+      avatar_visibility in ('friends','trip_members')
+      and exists (
+        select 1
+        from public.trip_members viewer
+        join public.trip_members owner_member on owner_member.trip_id = viewer.trip_id
+        where viewer.user_id = auth.uid()
+          and owner_member.user_id = profiles.id
+      )
+    )
+    or (
+      avatar_visibility = 'organization'
+      and exists (
+        select 1
+        from public.organization_members viewer_org
+        join public.organization_members owner_org on owner_org.organization_id = viewer_org.organization_id
+        where viewer_org.user_id = auth.uid()
+          and owner_org.user_id = profiles.id
+      )
+    )
+  );
+
+drop policy if exists "Users manage own profile photo uploads" on public.profile_photo_uploads;
+create policy "Users manage own profile photo uploads" on public.profile_photo_uploads
+  for all to authenticated
+  using (user_id = auth.uid())
+  with check (user_id = auth.uid());

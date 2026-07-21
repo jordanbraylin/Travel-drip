@@ -8,6 +8,13 @@ const state = {
   isAdmin: false,
   adminStatusCheckedFor: "",
   hasEnteredApp: sessionStorage.getItem("traveldripEnteredApp") === "true",
+  profilePhoto: {
+    dataUrl: localStorage.getItem("traveldripProfilePhoto") || "",
+    savedDataUrl: localStorage.getItem("traveldripProfilePhoto") || "",
+    privacy: localStorage.getItem("traveldripProfilePhotoPrivacy") || "trip_members",
+    initials: localStorage.getItem("traveldripProfileInitials") || "JS",
+    pendingFileName: ""
+  },
   config: {
     supabaseUrl: "",
     supabaseAnonKey: "",
@@ -1341,7 +1348,11 @@ async function signUp(fullName, email, password) {
     password,
     options: {
       ...getAuthOptions(),
-      data: { full_name: fullName }
+      data: {
+        full_name: fullName,
+        profile_photo_privacy: state.profilePhoto.privacy,
+        profile_photo_setup: Boolean(state.profilePhoto.dataUrl)
+      }
     }
   });
 
@@ -2347,9 +2358,92 @@ function wireLocalInteractions() {
     showWorkflowMessage("Navigation audit", "Checked buttons, links, targets, modals, role restrictions, and fallback workflows.");
   });
   $("#runSecurityAuditButton")?.addEventListener("click", renderSecurityAudit);
+  $("#signupNameInput")?.addEventListener("input", (event) => {
+    state.profilePhoto.initials = initialsFromName(event.target.value);
+    localStorage.setItem("traveldripProfileInitials", state.profilePhoto.initials);
+    renderProfilePhoto();
+  });
+  $("#signupPhotoInput")?.addEventListener("change", (event) => handleProfilePhotoFile(event.target.files?.[0], "Signup upload"));
+  $("#signupCameraInput")?.addEventListener("change", (event) => handleProfilePhotoFile(event.target.files?.[0], "Signup camera"));
+  $("#skipSignupPhotoButton")?.addEventListener("click", () => {
+    state.profilePhoto.dataUrl = "";
+    renderProfilePhoto();
+    $("#authMessage").textContent = "Profile photo skipped. TravelDrip will show your initials until you add a photo later.";
+  });
+  $("#profilePhotoInput")?.addEventListener("change", (event) => handleProfilePhotoFile(event.target.files?.[0], "Profile upload"));
+  $("#profileCameraInput")?.addEventListener("change", (event) => handleProfilePhotoFile(event.target.files?.[0], "Camera photo"));
+  ["dragenter", "dragover"].forEach((eventName) => {
+    $("#profilePhotoDropZone")?.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      $("#profilePhotoDropZone")?.classList.add("is-dragging");
+    });
+  });
+  ["dragleave", "drop"].forEach((eventName) => {
+    $("#profilePhotoDropZone")?.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      $("#profilePhotoDropZone")?.classList.remove("is-dragging");
+    });
+  });
+  $("#profilePhotoDropZone")?.addEventListener("drop", (event) => {
+    handleProfilePhotoFile(event.dataTransfer?.files?.[0], "Drag and drop");
+  });
+  $$("[data-profile-photo-action]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const action = button.dataset.profilePhotoAction;
+      if (action === "Choose Recent Photo") {
+        state.profilePhoto.dataUrl = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=220&q=80";
+        state.profilePhoto.pendingFileName = "recent-travel-photo.jpg";
+        renderProfilePhoto();
+        setProfilePhotoMessage("Recent photo selected for preview. Save changes to use it as your profile photo.");
+        await saveSyncedEvent("profile_photo_recent_selected", { source: "recent_photo" });
+        return;
+      }
+      state.profilePhoto.dataUrl = "";
+      state.profilePhoto.pendingFileName = "";
+      renderProfilePhoto();
+      setProfilePhotoMessage(action === "Remove Profile Photo"
+        ? "Profile photo removed from preview. Save changes to keep the default initials avatar."
+        : "Default TravelDrip initials avatar restored. Save changes to apply it everywhere.");
+      addAuditEntry("Profile photo action", `${action} selected.`);
+      await saveSyncedEvent("profile_photo_action", { action });
+    });
+  });
+  $$("input[name='profilePhotoPrivacy']").forEach((input) => {
+    input.addEventListener("change", async () => {
+      state.profilePhoto.privacy = input.value;
+      setProfilePhotoMessage(`Privacy updated to ${input.closest("label")?.textContent.trim() || input.value}. Save changes to sync this setting.`);
+      await saveSyncedEvent("profile_photo_privacy_changed", { privacy: input.value });
+    });
+  });
+  $("#photoZoomInput")?.addEventListener("input", renderProfilePhoto);
+  $("#photoRotateInput")?.addEventListener("input", renderProfilePhoto);
+  $("#photoCropShape")?.addEventListener("change", () => {
+    $("#profilePhotoPreview")?.classList.toggle("rounded-square", $("#photoCropShape").value === "Rounded Square");
+    setProfilePhotoMessage("Crop shape preview updated. Save changes to apply the edited photo.");
+  });
+  $("#saveProfilePhotoButton")?.addEventListener("click", async () => {
+    state.profilePhoto.savedDataUrl = state.profilePhoto.dataUrl;
+    localStorage.setItem("traveldripProfilePhoto", state.profilePhoto.savedDataUrl);
+    localStorage.setItem("traveldripProfilePhotoPrivacy", state.profilePhoto.privacy);
+    localStorage.setItem("traveldripProfileInitials", state.profilePhoto.initials);
+    setProfilePhotoMessage("Profile photo settings saved. The avatar now appears across profile, chat, members, reactions, albums, journals, directories, invitations, feeds, and notifications where allowed.");
+    addAuditEntry("Profile photo saved", `Privacy: ${state.profilePhoto.privacy}. File: ${state.profilePhoto.pendingFileName || "default avatar"}.`);
+    await saveSyncedEvent("profile_photo_saved", {
+      hasPhoto: Boolean(state.profilePhoto.savedDataUrl),
+      privacy: state.profilePhoto.privacy,
+      optimizedPreview: true,
+      moderationStatus: "pending_if_uploaded"
+    });
+  });
+  $("#cancelProfilePhotoButton")?.addEventListener("click", () => {
+    state.profilePhoto.dataUrl = state.profilePhoto.savedDataUrl;
+    renderProfilePhoto();
+    setProfilePhotoMessage("Profile photo changes canceled. Your last saved avatar remains active.");
+  });
   wireNavigationFallbacks();
   renderNavigationAudit();
   renderSecurityAudit();
+  renderProfilePhoto();
 
   $("#chatForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -2632,6 +2726,66 @@ function appendMessage(author, text) {
   message.innerHTML = `<strong>${escapeHtml(author)}:</strong> ${escapeHtml(text)}`;
   $("#messages")?.appendChild(message);
   message.scrollIntoView({ block: "nearest" });
+}
+
+function initialsFromName(name) {
+  const parts = String(name || "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (!parts.length) return "JS";
+  return parts.slice(0, 2).map((part) => part[0]?.toUpperCase()).join("");
+}
+
+function renderProfilePhoto() {
+  document.documentElement.style.setProperty("--profile-photo-rotation", `${Number($("#photoRotateInput")?.value || 0)}deg`);
+  document.documentElement.style.setProperty("--profile-photo-scale", `${Number($("#photoZoomInput")?.value || 1)}`);
+  $$("[data-profile-initials]").forEach((avatar) => {
+    avatar.textContent = state.profilePhoto.initials;
+    avatar.classList.toggle("has-photo", Boolean(state.profilePhoto.dataUrl));
+    if (state.profilePhoto.dataUrl) {
+      avatar.style.backgroundImage = `url("${state.profilePhoto.dataUrl}")`;
+    } else {
+      avatar.style.backgroundImage = "";
+    }
+  });
+  $$("[data-profile-preview]").forEach((preview) => {
+    preview.classList.toggle("has-photo", Boolean(state.profilePhoto.dataUrl));
+  });
+  $$("input[name='profilePhotoPrivacy']").forEach((input) => {
+    input.checked = input.value === state.profilePhoto.privacy;
+  });
+}
+
+function setProfilePhotoMessage(message) {
+  const el = $("#profilePhotoMessage");
+  if (el) el.textContent = message;
+}
+
+function handleProfilePhotoFile(file, source = "upload") {
+  if (!file) return;
+  const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/heic", "image/webp"];
+  const allowedExtensions = /\.(jpe?g|png|heic|webp)$/i;
+  if (!allowedTypes.includes(file.type) && !allowedExtensions.test(file.name)) {
+    setProfilePhotoMessage("Unsupported file type. Use JPG, JPEG, PNG, HEIC, or WEBP.");
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    setProfilePhotoMessage("Profile photo is too large. Choose an image under 5 MB.");
+    return;
+  }
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    state.profilePhoto.dataUrl = String(reader.result || "");
+    state.profilePhoto.pendingFileName = file.name;
+    renderProfilePhoto();
+    setProfilePhotoMessage(`${source} preview ready. Crop, zoom, rotate, choose privacy, then save changes.`);
+    addAuditEntry("Profile photo previewed", `${file.name} validated for type, size, preview, and moderation-ready upload.`);
+  });
+  reader.addEventListener("error", () => {
+    setProfilePhotoMessage("Unable to preview that image. Try another JPG, PNG, HEIC, or WEBP file.");
+  });
+  reader.readAsDataURL(file);
 }
 
 function addAuditEntry(title, detail) {

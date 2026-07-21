@@ -87,6 +87,12 @@ TravelDrip now includes a dedicated Messages hub with Group Chats and Private Me
 
 Messaging permissions adapt by trip type: solo trips default to private messaging, group trips automatically create trip chats, corporate retreats can separate announcements, team chats, admin chat, finance chat, transportation chat, and event support, and weddings/events can support custom rooms such as wedding party, family, guests, vendors, and event staff. Production data extends `chat_rooms` and `messages` with participants, shared items, reactions, reports, read state, pinned messages, and room permissions.
 
+## User profile photos
+
+TravelDrip now includes optional profile photo setup during account creation and a full profile-photo manager in the Profile/Security area. Users can upload from their library, take a camera photo, drag and drop on web, preview the avatar, adjust crop shape, zoom, rotate, remove the photo, restore initials, and choose privacy: public, friends only, trip members only, organization only, or private.
+
+Production profile-photo support extends `profiles` with avatar storage, thumbnail, source, visibility, moderation status, and metadata fields. `profile_photo_uploads` records file type, size, crop settings, optimized variants, upload source, and moderation status. Store real images in Supabase Storage or another secure object store, validate file types and size, optimize variants server-side, and never expose private storage paths without an authorized signed URL.
+
 ## Smart itinerary notifications
 
 TravelDrip now includes Smart Itinerary Notifications for flight status changes, hotel reminders, transportation updates, itinerary edits, activity changes, payment deadlines, wallet activity, meeting point reminders, weather impacts, emergency announcements, and important travel updates.

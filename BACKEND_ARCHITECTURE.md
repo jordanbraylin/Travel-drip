@@ -11,7 +11,7 @@ Run these SQL files in order:
 
 The backend schema adds:
 
-- User profiles and notification preferences
+- User profiles, privacy-controlled profile photos, profile photo upload audit records, and notification preferences
 - Organizations and organization members
 - Unified trip/event records for solo trips, group trips, corporate retreats, cruise vacations, weddings, birthdays, family reunions, bachelor/bachelorette trips, anniversaries, conferences, business events, and custom special events
 - Trip membership, roles, feature flags, and enabled modules

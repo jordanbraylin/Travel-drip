@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=27">
+  <link rel="stylesheet" href="styles.css?v=28">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -105,6 +105,7 @@
           <input type="search" placeholder="Cities, stays, restaurants, friends">
         </label>
         <div class="top-actions">
+          <button class="profile-avatar-button" type="button" data-target="securityCenter" aria-label="Open profile photo settings"><span class="profile-photo-avatar" data-profile-initials>JS</span></button>
           <button class="icon-button" type="button" id="notifyButton" aria-label="Enable notifications">Notify</button>
           <button class="ghost-button" type="button" id="signOutButton" hidden>Sign out</button>
           <button class="primary-button" type="button" id="openAuthButton">Sign in</button>
@@ -173,6 +174,20 @@
               <label>Confirm password
                 <span class="password-field"><input id="signupConfirmPasswordInput" type="password" autocomplete="new-password" placeholder="Confirm your password" required minlength="6"><button type="button" data-password-toggle="signupConfirmPasswordInput">Show</button></span>
               </label>
+              <div class="signup-photo-step">
+                <div class="profile-photo-preview" id="signupPhotoPreview" data-profile-preview>
+                  <span class="profile-photo-avatar large" data-profile-initials>JS</span>
+                </div>
+                <div>
+                  <strong>Add a profile photo</strong>
+                  <span>Upload one now, take a photo, or skip and use your initials until later.</span>
+                  <div class="mini-action-row">
+                    <label class="file-action-button">Upload<input id="signupPhotoInput" type="file" accept="image/jpeg,image/jpg,image/png,image/heic,image/webp" hidden></label>
+                    <label class="file-action-button">Take Photo<input id="signupCameraInput" type="file" accept="image/*" capture="user" hidden></label>
+                    <button type="button" id="skipSignupPhotoButton">Skip</button>
+                  </div>
+                </div>
+              </div>
               <label class="auth-check"><input id="termsAgreeInput" type="checkbox" required> I agree to the <button type="button" data-auth-workflow="Terms of Service">Terms of Service</button></label>
               <label class="auth-check"><input id="privacyAgreeInput" type="checkbox" required> I agree to the <button type="button" data-auth-workflow="Privacy Policy">Privacy Policy</button></label>
               <button class="primary-button" type="submit">Create account</button>
@@ -1903,6 +1918,63 @@
               </div>
               <button class="ghost-button" type="button" id="runSecurityAuditButton">Run security audit</button>
             </div>
+            <section class="profile-photo-manager">
+              <div class="profile-photo-main">
+                <div class="profile-photo-preview" id="profilePhotoPreview" data-profile-preview>
+                  <span class="profile-photo-avatar xl" data-profile-initials>JS</span>
+                </div>
+                <div>
+                  <p class="eyebrow">User Profile Photo</p>
+                  <h3>Personalize your TravelDrip account</h3>
+                  <p>Profile photos appear in chats, private messages, trip members, attendee lists, comments, reactions, poll votes, albums, journals, AI mentions, company directories, invitations, feeds, and notifications when your privacy setting allows it.</p>
+                  <div class="mini-action-row">
+                    <label class="file-action-button">Change Profile Photo<input id="profilePhotoInput" type="file" accept="image/jpeg,image/jpg,image/png,image/heic,image/webp" hidden></label>
+                    <label class="file-action-button">Take Photo<input id="profileCameraInput" type="file" accept="image/*" capture="user" hidden></label>
+                    <button type="button" data-profile-photo-action="Choose Recent Photo">Recent Photos</button>
+                    <button type="button" data-profile-photo-action="Remove Profile Photo">Remove</button>
+                    <button type="button" data-profile-photo-action="Restore Default Avatar">Default Avatar</button>
+                  </div>
+                </div>
+              </div>
+              <div class="profile-photo-tools">
+                <div class="photo-drop-zone" id="profilePhotoDropZone">
+                  <strong>Drag and drop a photo</strong>
+                  <span>JPG, JPEG, PNG, HEIC, or WEBP. Max 5 MB. Images are resized and optimized before production storage.</span>
+                </div>
+                <div class="photo-editor-card">
+                  <h4>Photo editor preview</h4>
+                  <label>Crop shape<select id="photoCropShape"><option>Circle</option><option>Rounded Square</option></select></label>
+                  <label>Zoom<input id="photoZoomInput" type="range" min="1" max="3" step="0.1" value="1"></label>
+                  <label>Rotate<input id="photoRotateInput" type="range" min="-180" max="180" step="15" value="0"></label>
+                  <p class="small">Crop, zoom, rotate, and reposition are preview controls. Production saving should process the edited image server-side or in a trusted image pipeline.</p>
+                </div>
+                <div class="photo-privacy-card">
+                  <h4>Privacy</h4>
+                  <label><input type="radio" name="profilePhotoPrivacy" value="public"> Public</label>
+                  <label><input type="radio" name="profilePhotoPrivacy" value="friends"> Friends Only</label>
+                  <label><input type="radio" name="profilePhotoPrivacy" value="trip_members" checked> Trip Members Only</label>
+                  <label><input type="radio" name="profilePhotoPrivacy" value="organization"> Organization Only</label>
+                  <label><input type="radio" name="profilePhotoPrivacy" value="private"> Private - show default avatar to others</label>
+                </div>
+              </div>
+              <div class="profile-photo-appearances">
+                <div><span class="profile-photo-avatar small" data-profile-initials>JS</span><strong>Group Chat</strong></div>
+                <div><span class="profile-photo-avatar small" data-profile-initials>JS</span><strong>Trip Members</strong></div>
+                <div><span class="profile-photo-avatar small" data-profile-initials>JS</span><strong>Poll Votes</strong></div>
+                <div><span class="profile-photo-avatar small" data-profile-initials>JS</span><strong>Company Directory</strong></div>
+                <div><span class="profile-photo-avatar small" data-profile-initials>JS</span><strong>Notifications</strong></div>
+              </div>
+              <div class="profile-photo-policy-grid">
+                <div><strong>Security safeguards</strong><span>File type validation, 5 MB max size, optimization, secure storage path, malware scanning where supported, and moderation-ready status.</span></div>
+                <div><strong>Corporate accounts</strong><span>Companies can allow employee uploads, sync company directory photos, or display company-issued photos when policy requires it.</span></div>
+                <div><strong>Default avatar</strong><span>If no photo is uploaded, TravelDrip shows initials such as JS for Jordan Smith.</span></div>
+              </div>
+              <div class="button-row">
+                <button class="primary-button" type="button" id="saveProfilePhotoButton">Save Changes</button>
+                <button class="ghost-button" type="button" id="cancelProfilePhotoButton">Cancel Changes</button>
+              </div>
+              <p class="small" id="profilePhotoMessage">Default avatar active. Upload, take, drag, or choose privacy before saving.</p>
+            </section>
             <div class="security-status-grid">
               <article><span>Authentication</span><strong id="securityAuthStatus">Configured</strong><small>Email verification, MFA-ready, session controls</small></article>
               <article><span>Financial actions</span><strong id="securityWalletStatus">PIN-gated</strong><small>Wallet, refunds, transfers, card details</small></article>

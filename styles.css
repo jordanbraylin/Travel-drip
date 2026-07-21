@@ -5435,3 +5435,250 @@ main {
     min-height: 0;
   }
 }
+
+.profile-avatar-button {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  padding: 0;
+  background: #fff;
+}
+
+.signup-photo-step,
+.profile-photo-manager,
+.profile-photo-main,
+.profile-photo-tools,
+.profile-photo-appearances,
+.profile-photo-policy-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.signup-photo-step {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  border: 1px solid rgba(8, 127, 140, 0.16);
+  border-radius: 18px;
+  padding: 12px;
+  background: #f7fbfa;
+}
+
+.signup-photo-step strong,
+.signup-photo-step span {
+  display: block;
+}
+
+.signup-photo-step span {
+  margin: 4px 0 10px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.profile-photo-manager {
+  margin-bottom: 20px;
+  border: 1px solid rgba(8, 127, 140, 0.16);
+  border-radius: 28px;
+  padding: 18px;
+  background:
+    linear-gradient(135deg, rgba(223, 247, 245, 0.70), rgba(255, 255, 255, 0.96)),
+    #fff;
+}
+
+.profile-photo-main {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+}
+
+.profile-photo-main h3,
+.profile-photo-main p {
+  margin: 0;
+}
+
+.profile-photo-main p:not(.eyebrow) {
+  margin-top: 8px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.profile-photo-preview {
+  width: 118px;
+  height: 118px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(8, 127, 140, 0.16);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--soft-shadow);
+  overflow: hidden;
+}
+
+.profile-photo-preview.rounded-square {
+  border-radius: 26px;
+}
+
+.profile-photo-avatar {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  background:
+    linear-gradient(135deg, var(--reef), var(--sun), var(--sea));
+  background-position: center;
+  background-size: cover;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.profile-photo-avatar.has-photo {
+  color: transparent;
+  transform: rotate(var(--profile-photo-rotation, 0deg)) scale(var(--profile-photo-scale, 1));
+}
+
+.profile-photo-avatar.large {
+  width: 72px;
+  height: 72px;
+  font-size: 18px;
+}
+
+.profile-photo-avatar.xl {
+  width: 108px;
+  height: 108px;
+  font-size: 30px;
+}
+
+.profile-photo-avatar.small {
+  width: 34px;
+  height: 34px;
+  font-size: 11px;
+}
+
+.file-action-button {
+  min-height: 38px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(8, 127, 140, 0.18);
+  border-radius: 999px;
+  padding: 0 12px;
+  background: #fff;
+  color: #24555d;
+  font-size: 13px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.profile-photo-tools {
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.9fr) minmax(220px, 0.9fr);
+}
+
+.photo-drop-zone,
+.photo-editor-card,
+.photo-privacy-card,
+.profile-photo-policy-grid div {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--soft-shadow);
+}
+
+.photo-drop-zone {
+  min-height: 188px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  border-style: dashed;
+}
+
+.photo-drop-zone.is-dragging {
+  border-color: var(--sea);
+  background: #eefaf6;
+}
+
+.photo-drop-zone span,
+.profile-photo-policy-grid span {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.photo-editor-card,
+.photo-privacy-card {
+  display: grid;
+  gap: 8px;
+}
+
+.photo-editor-card h4,
+.photo-privacy-card h4 {
+  margin: 0;
+}
+
+.photo-editor-card label,
+.photo-privacy-card label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.photo-privacy-card label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border-radius: 14px;
+  padding: 8px 10px;
+  background: #f7fbfa;
+}
+
+.photo-editor-card select,
+.photo-editor-card input[type="range"] {
+  width: 100%;
+}
+
+.profile-photo-appearances,
+.profile-photo-policy-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.profile-photo-appearances div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 10px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.profile-photo-policy-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.profile-photo-policy-grid strong,
+.profile-photo-policy-grid span {
+  display: block;
+}
+
+.profile-photo-policy-grid span {
+  margin-top: 5px;
+}
+
+@media (max-width: 980px) {
+  .profile-photo-tools,
+  .profile-photo-appearances,
+  .profile-photo-policy-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .signup-photo-step,
+  .profile-photo-main {
+    grid-template-columns: 1fr;
+  }
+}
