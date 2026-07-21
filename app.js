@@ -937,21 +937,32 @@ function renderReceiptScanner(bill = getBillInputs()) {
   const receiptSplits = getReceiptSplits(bill);
   const receiptTotal = receiptSplits.reduce((sum, split) => sum + split.total, 0);
   const paidTotal = receiptSplits.filter((split) => split.status === "Paid").reduce((sum, split) => sum + split.total, 0);
+  const diners = splitParticipants.slice(0, bill.diners);
+  const dinerNames = diners.map((person) => person.name);
+  const unassignedItems = receiptItems.filter((item) => !item.diners.some((name) => dinerNames.includes(name)));
 
   $("#receiptExtractedTotal").textContent = currency(bill.total);
   $("#receiptItemList").innerHTML = receiptItems.map((receiptItem, itemIndex) => `
-    <article>
-      <div>
+    <article class="${receiptItem.diners.length ? "" : "needs-assignment"}">
+      <div class="receipt-item-detail">
+        <span class="recognition-chip">${receiptItem.diners.length > 1 ? "Shared" : receiptItem.diners.length === 1 ? "Individual" : "Needs diner"}</span>
         <strong>${escapeHtml(receiptItem.item)}</strong>
-        <span>${currency(receiptItem.price)} • ${receiptItem.diners.length > 1 ? "Shared item" : "Individual item"}</span>
+        <span>${currency(receiptItem.price)} • AI confidence 96% • editable</span>
+        <small>Assigned to: ${receiptItem.diners.length ? escapeHtml(receiptItem.diners.join(", ")) : "No one yet"}</small>
       </div>
-      <div class="receipt-claim-grid">
-        ${splitParticipants.slice(0, bill.diners).map((person) => `
-          <label>
-            <input type="checkbox" data-receipt-item="${itemIndex}" data-receipt-diner="${escapeHtml(person.name)}" ${receiptItem.diners.includes(person.name) ? "checked" : ""}>
-            ${escapeHtml(person.name)}
-          </label>
-        `).join("")}
+      <div class="receipt-claim-panel">
+        <div class="receipt-claim-grid">
+          ${diners.map((person) => `
+            <label>
+              <input type="checkbox" data-receipt-item="${itemIndex}" data-receipt-diner="${escapeHtml(person.name)}" ${receiptItem.diners.includes(person.name) ? "checked" : ""}>
+              ${escapeHtml(person.name)}
+            </label>
+          `).join("")}
+        </div>
+        <div class="receipt-item-actions">
+          <button type="button" data-receipt-assign-all="${itemIndex}">Everyone</button>
+          <button type="button" data-receipt-clear="${itemIndex}">Clear</button>
+        </div>
       </div>
     </article>
   `).join("");
@@ -976,10 +987,32 @@ function renderReceiptScanner(bill = getBillInputs()) {
       const diner = event.target.dataset.receiptDiner;
       if (event.target.checked && !item.diners.includes(diner)) item.diners.push(diner);
       if (!event.target.checked) item.diners = item.diners.filter((name) => name !== diner);
-      renderReceiptScanner(getBillInputs());
+      renderBillSplit();
       $("#billMessage").textContent = `${item.item} assignment updated. Shared items divide evenly across selected travelers.`;
     });
   });
+
+  $$("[data-receipt-assign-all]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const item = receiptItems[Number(button.dataset.receiptAssignAll)];
+      item.diners = [...dinerNames];
+      renderBillSplit();
+      $("#billMessage").textContent = `${item.item} assigned to everyone dining. Shared cost recalculated automatically.`;
+    });
+  });
+
+  $$("[data-receipt-clear]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const item = receiptItems[Number(button.dataset.receiptClear)];
+      item.diners = [];
+      renderBillSplit();
+      $("#billMessage").textContent = `${item.item} cleared. AI review will flag it until a diner is assigned.`;
+    });
+  });
+
+  if (unassignedItems.length && $("#receiptReviewMessage")) {
+    $("#receiptReviewMessage").textContent = `AI item recognition needs review: ${unassignedItems.map((item) => item.item).join(", ")} ${unassignedItems.length === 1 ? "has" : "have"} no diner assigned.`;
+  }
 }
 
 function getRideInputs() {

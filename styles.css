@@ -5947,8 +5947,69 @@ main {
   background: #f7fbfa;
 }
 
+.split-bill-panel .receipt-item-list article.needs-assignment {
+  border-color: rgba(255, 122, 92, 0.38);
+  background: #fff8f4;
+}
+
+.receipt-item-detail {
+  display: grid;
+  gap: 4px;
+}
+
+.receipt-item-detail strong,
+.receipt-item-detail span,
+.receipt-item-detail small {
+  display: block;
+}
+
+.receipt-item-detail small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.recognition-chip {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: #dff7f5;
+  color: var(--sea-dark) !important;
+  font-size: 11px !important;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.needs-assignment .recognition-chip {
+  background: #ffe0d7;
+  color: #9a3a24 !important;
+}
+
+.receipt-claim-panel {
+  display: grid;
+  gap: 8px;
+}
+
 .split-bill-panel .receipt-claim-grid label {
   border-radius: 999px;
+}
+
+.receipt-item-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.receipt-item-actions button {
+  min-height: 32px;
+  border: 1px solid rgba(8, 127, 140, 0.16);
+  border-radius: 999px;
+  padding: 0 10px;
+  background: #fff;
+  color: #24555d;
+  font-size: 12px;
+  font-weight: 850;
 }
 
 .split-bill-panel .receipt-status-list div,
