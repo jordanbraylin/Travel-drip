@@ -10707,25 +10707,60 @@ textarea,
 }
 
 #rideShareHub .travel-section-nav {
-  grid-template-columns: repeat(8, minmax(0, 1fr));
-  gap: 6px;
-  padding: 10px;
-  border: 1px solid rgba(8, 127, 140, 0.1);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 #rideShareHub .travel-section-nav button {
-  min-height: 38px;
-  padding-inline: 7px;
-  border-radius: 10px;
-  font-size: 11px;
-  text-align: center;
+  min-height: 118px;
+  display: grid;
+  align-content: space-between;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.065);
+  text-align: left;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+#rideShareHub .travel-section-nav button:hover,
+#rideShareHub .travel-section-nav button:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.1);
+}
+
+#rideShareHub .travel-section-nav button span {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(8, 189, 184, 0.16), rgba(255, 138, 92, 0.13));
+  font-size: 18px;
+}
+
+#rideShareHub .travel-section-nav button strong {
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.1;
+}
+
+#rideShareHub .travel-section-nav button small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
 #rideShareHub .transport-confirmation-hub {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   max-height: none;
   overflow: visible;
@@ -10737,6 +10772,7 @@ textarea,
 }
 
 #rideShareHub .transport-hub-header {
+  grid-column: 1 / -1;
   padding: 10px;
   border: 1px solid rgba(8, 127, 140, 0.1);
   border-radius: 14px;
@@ -10767,7 +10803,7 @@ textarea,
 }
 
 #rideShareHub .transport-dashboard-grid {
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -10794,6 +10830,16 @@ textarea,
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.055);
+}
+
+#rideShareHub .transport-summary-strip,
+#rideShareHub .transport-search-row,
+#rideShareHub .transport-tabs,
+#rideShareHub .transport-dashboard-grid,
+#rideShareHub .travel-support-grid,
+#rideShareHub .transport-security-grid,
+#rideShareHub #transportMessage {
+  grid-column: 1 / -1;
 }
 
 #rideShareHub .travel-support-grid,
@@ -10838,6 +10884,7 @@ textarea,
   max-height: none;
   overflow: visible;
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   padding: 0;
   border: 0;
@@ -10850,6 +10897,7 @@ textarea,
   position: sticky;
   top: 0;
   z-index: 2;
+  grid-column: 1 / -1;
   padding: 8px;
   border: 1px solid rgba(8, 127, 140, 0.1);
   border-radius: 14px;
@@ -10863,6 +10911,11 @@ textarea,
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+#rideShareHub .ride-provider-section,
+#rideShareHub .ride-two-column-grid {
+  grid-column: 1 / -1;
+}
+
 #rideShareHub .ride-assistant-panel,
 #rideShareHub .corporate-meal-rules {
   display: none;
@@ -10870,7 +10923,12 @@ textarea,
 
 @media (max-width: 1120px) {
   #rideShareHub .travel-section-nav {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #rideShareHub .transport-confirmation-hub,
+  #rideShareHub .ride-hub-redesign {
+    grid-template-columns: 1fr;
   }
 }
 
