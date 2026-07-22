@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=64">
+  <link rel="stylesheet" href="styles.css?v=65">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -39,6 +39,7 @@
         <details class="nav-group" data-consumer-nav open>
           <summary>Primary Navigation</summary>
           <button class="active" type="button" data-target="dashboardHome">Home</button>
+          <button type="button" data-target="letsPlan">Let's Plan</button>
           <button type="button" data-target="exploreDrops">Explore</button>
           <button type="button" data-target="tripsPanel">My Trips</button>
           <button type="button" data-target="socialHub">Messages</button>
@@ -121,14 +122,11 @@
     <main>
       <header class="topbar">
         <button class="icon-button menu-button" type="button" id="sidebarMenuButton" aria-label="Open navigation" aria-expanded="false">Menu</button>
-        <div class="topbar-page-title">
-          <span class="brand-mark mini" aria-hidden="true"></span>
-          <span><small>Current page</small><strong id="currentPageTitle">Home Dashboard</strong></span>
-        </div>
         <label class="search">
           <span aria-hidden="true">Search</span>
           <input id="globalSearchInput" type="search" placeholder="Destinations, trips, flights, hotels, messages">
         </label>
+        <button class="lets-plan-button" type="button" id="letsPlanButton" data-target="letsPlan">✨ Let's Plan</button>
         <div class="top-actions">
           <button class="profile-avatar-button" type="button" data-target="securityCenter" aria-label="Open profile photo settings"><span class="profile-photo-avatar" data-profile-initials>JS</span></button>
           <button class="icon-button" type="button" id="notifyButton" aria-label="Enable notifications">Notify</button>
@@ -560,6 +558,73 @@
 
       <section class="content-grid">
         <div class="main-stack">
+          <section class="panel lets-plan-panel" id="letsPlan">
+            <div class="lets-plan-hero">
+              <p class="eyebrow">Central planning hub</p>
+              <h2>Let's Plan Your Next Adventure!</h2>
+              <p>What would you like to plan today? Start with a trip, celebration, event, cruise, or corporate experience, then invite people, collect RSVPs, build schedules, and manage travel from one workflow.</p>
+              <div class="lets-plan-hero-actions">
+                <button class="primary-button" type="button" data-plan-ai>🤖 Plan with AI</button>
+                <button class="ghost-button" type="button" data-target="tripsPanel">Open guided creation</button>
+              </div>
+            </div>
+
+            <div class="lets-plan-grid" aria-label="Planning options">
+              <section class="lets-plan-group">
+                <span>Personal Travel</span>
+                <div>
+                  <button type="button" data-plan-type="solo"><strong>Solo Trip</strong><small>Personal itinerary, budget, documents, safety, and memories.</small></button>
+                  <button type="button" data-plan-type="group"><strong>Group Vacation</strong><small>Shared itinerary, invites, chat, voting, wallet, and albums.</small></button>
+                  <button type="button" data-plan-type="group"><strong>Family Vacation</strong><small>Family schedules, activities, documents, transportation, and reminders.</small></button>
+                  <button type="button" data-plan-type="group"><strong>Friends Trip</strong><small>Polls, rides, restaurants, split costs, and group memories.</small></button>
+                  <button type="button" data-plan-type="anniversary"><strong>Couples Getaway</strong><small>Hotel, dinner, activities, photos, and celebration recap.</small></button>
+                  <button type="button" data-plan-type="cruise"><strong>Cruise</strong><small>Cabin, ports, excursions, boarding passes, and dining reminders.</small></button>
+                  <button type="button" data-plan-type="solo"><strong>Road Trip</strong><small>Routes, stops, confirmations, tickets, budget, and travel alerts.</small></button>
+                </div>
+              </section>
+
+              <section class="lets-plan-group">
+                <span>Special Events</span>
+                <div>
+                  <button type="button" data-plan-type="wedding"><strong>Wedding</strong><small>Ceremony, reception, hotel block, RSVPs, shuttles, and guests.</small></button>
+                  <button type="button" data-plan-type="birthday"><strong>Birthday</strong><small>Dinner, activities, nightlife, gift notes, contributions, and media.</small></button>
+                  <button type="button" data-plan-type="anniversary"><strong>Anniversary</strong><small>Celebration schedule, guests, hotel, photos, and recap.</small></button>
+                  <button type="button" data-plan-type="bachelor_bachelorette"><strong>Bachelor/Bachelorette</strong><small>Activities, dinner, nightlife, rides, votes, and shared costs.</small></button>
+                  <button type="button" data-plan-type="family_reunion"><strong>Family Reunion</strong><small>Guest import, rooms, meals, announcements, and albums.</small></button>
+                  <button type="button" data-plan-type="graduation_trip"><strong>Graduation Celebration</strong><small>Travel, dinner, celebration schedule, guests, and contributions.</small></button>
+                  <button type="button" data-plan-type="special_event"><strong>Baby Shower</strong><small>Guest list, registry notes, RSVP, schedule, media, and reminders.</small></button>
+                  <button type="button" data-plan-type="special_event"><strong>Bridal Shower</strong><small>Invites, activity plan, gifts, guest updates, and shared album.</small></button>
+                  <button type="button" data-plan-type="church_retreat"><strong>Church Retreat</strong><small>Theme, sessions, worship, meals, transport, and safety contacts.</small></button>
+                  <button type="button" data-plan-type="special_event"><strong>Sports Tournament</strong><small>Teams, schedule, travel, hotels, documents, and announcements.</small></button>
+                  <button type="button" data-plan-type="special_event"><strong>Festival</strong><small>Tickets, hotels, route plans, group chat, and reminders.</small></button>
+                  <button type="button" data-plan-type="special_event"><strong>Special Event</strong><small>Custom modules for guests, schedule, travel, wallet, and media.</small></button>
+                </div>
+              </section>
+
+              <section class="lets-plan-group">
+                <span>Business & Corporate</span>
+                <div>
+                  <button type="button" data-plan-type="corporate"><strong>Corporate Retreat</strong><small>Roles, employee travel, agenda, policy, per diem, and reports.</small></button>
+                  <button type="button" data-plan-type="conference"><strong>Conference</strong><small>Sessions, speakers, sponsors, venue rooms, badges, and hotels.</small></button>
+                  <button type="button" data-plan-type="corporate"><strong>Business Travel</strong><small>Assigned flight, hotel, transport, policy, documents, and expenses.</small></button>
+                  <button type="button" data-plan-type="corporate"><strong>Sales Meeting</strong><small>Agenda, attendees, travel, documents, reminders, and reports.</small></button>
+                  <button type="button" data-plan-type="corporate"><strong>Team Building Event</strong><small>Activities, groups, transportation, announcements, and photos.</small></button>
+                  <button type="button" data-plan-type="corporate"><strong>Executive Meeting</strong><small>Secure agenda, travel assignments, private documents, and audit logs.</small></button>
+                  <button type="button" data-plan-type="corporate"><strong>Training Event</strong><small>Sessions, attendance, documents, reminders, and role access.</small></button>
+                  <button type="button" data-plan-type="corporate"><strong>Company Celebration</strong><small>Invites, schedule, venue, transportation, announcements, and media.</small></button>
+                </div>
+              </section>
+            </div>
+
+            <section class="lets-plan-summary" aria-label="Planning workflow summary">
+              <article><span>Creation</span><strong>Name, type, destination, dates, budget, guests, privacy, and cover photo.</strong></article>
+              <article><span>Invitations</span><strong>Email, username, share link, QR code, preview, draft, or invite later.</strong></article>
+              <article><span>RSVP Dashboard</span><strong>Accept, decline, maybe, guest totals, and organizer response tracking.</strong></article>
+              <article><span>Planning Dashboard</span><strong>Overview, itinerary, travel, guests, messages, polls, budget, wallet, documents, transportation, hotels, flights, memories, and settings.</strong></article>
+            </section>
+            <p class="small" id="letsPlanMessage">Choose a planning option to open the correct guided workflow. Save as Draft keeps unfinished plans available for later.</p>
+          </section>
+
           <section class="panel" data-route-support="groupBank">
             <div class="section-heading compact">
               <div>
@@ -3039,6 +3104,7 @@
 
   <nav class="mobile-nav" aria-label="Mobile navigation">
     <button class="active" type="button" data-target="dashboardHome">Home</button>
+    <button type="button" data-target="letsPlan">Plan</button>
     <button type="button" data-target="exploreDrops">Explore</button>
     <button type="button" data-target="tripsPanel">Trips</button>
     <button type="button" data-target="socialHub">Chat</button>

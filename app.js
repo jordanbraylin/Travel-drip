@@ -3091,6 +3091,7 @@ async function signOut() {
 
 const routeDefinitions = {
   dashboardHome: { path: "/home", label: "Home Dashboard" },
+  letsPlan: { path: "/lets-plan", label: "Let's Plan" },
   aiTravelPlanner: { path: "/ai-planner", label: "AI Travel Planner" },
   exploreDrops: { path: "/explore", label: "Explore" },
   tripsPanel: { path: "/trips", label: "My Trips" },
@@ -3111,6 +3112,9 @@ const routeAliases = {
   "/": "dashboardHome",
   "/index.html": "dashboardHome",
   "/home": "dashboardHome",
+  "/lets-plan": "letsPlan",
+  "/create": "letsPlan",
+  "/plan": "letsPlan",
   "/ai-planner": "aiTravelPlanner",
   "/planner": "aiTravelPlanner",
   "/dashboard": "dashboardHome",
@@ -3407,6 +3411,26 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   document.body.classList.remove("sidebar-open");
   $("#sidebarMenuButton")?.setAttribute("aria-expanded", "false");
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function openPlanningWorkflow(type = "group") {
+  const config = tripTypeConfigs[type] || tripTypeConfigs.group;
+  renderRoute("tripsPanel", { updateHistory: true });
+  $("#guidedTripFlow")?.classList.add("is-open");
+  renderTripType(type);
+  $("#tripDetailsStep")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  if ($("#soloModeMessage")) {
+    $("#soloModeMessage").textContent = `${config.label} workflow opened from Let's Plan. Add details, save as a draft, or continue to invitations and RSVP tracking.`;
+  }
+  if ($("#letsPlanMessage")) {
+    $("#letsPlanMessage").textContent = `${config.label} selected. Guided creation is ready with type-specific fields.`;
+  }
+  addAuditEntry("Let's Plan workflow opened", `${config.label} selected from planning hub.`);
+  saveSyncedEvent("lets_plan_workflow_opened", {
+    type,
+    label: config.label,
+    route: getRouteForTarget("tripsPanel")
+  });
 }
 
 function wireLocalInteractions() {
@@ -5077,6 +5101,25 @@ function wireLocalInteractions() {
     addAuditEntry("AI-generated trip started", getAiPlannerPlan().title);
     await saveSyncedEvent("ai_planner_create_trip", { plan: getAiPlannerPlan(), estimatesOnly: true });
     renderRoute("tripsPanel", { updateHistory: true });
+  });
+
+  $$("[data-plan-type]").forEach((button) => {
+    button.addEventListener("click", () => {
+      openPlanningWorkflow(button.dataset.planType || "group");
+    });
+  });
+
+  $$("[data-plan-ai]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      renderRoute("aiTravelPlanner", { updateHistory: true });
+      renderAiPlanner();
+      if ($("#aiPlannerStatus")) {
+        $("#aiPlannerStatus").textContent = "AI planning opened from Let's Plan. Answer a few questions to build an itinerary, budget, schedule, recommendations, and invitation-ready plan.";
+      }
+      if ($("#letsPlanMessage")) $("#letsPlanMessage").textContent = "AI planning opened.";
+      addAuditEntry("Let's Plan AI opened", "AI planning card opened from the central planning hub.");
+      await saveSyncedEvent("lets_plan_ai_opened", { route: getRouteForTarget("aiTravelPlanner") });
+    });
   });
   $("#aiShareTripButton")?.addEventListener("click", async () => {
     $("#aiPlannerStatus").textContent = "Share workflow opened with invited travelers and coworkers. Nothing is shared without approval.";
