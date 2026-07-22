@@ -10725,15 +10725,15 @@ textarea,
 }
 
 #rideShareHub .transport-confirmation-hub {
-  max-height: 880px;
-  overflow: auto;
-  padding: 12px;
-  border-radius: 18px;
-  border: 1px solid rgba(8, 127, 140, 0.13);
-  background:
-    linear-gradient(180deg, rgba(248, 253, 255, 0.96), rgba(255, 255, 255, 0.92)),
-    #fff;
-  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.08);
+  display: grid;
+  gap: 10px;
+  max-height: none;
+  overflow: visible;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 #rideShareHub .transport-hub-header {
@@ -10759,6 +10759,7 @@ textarea,
   padding: 8px;
   border-radius: 14px;
   background: #fff;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.055);
 }
 
 #rideShareHub .transport-summary-strip small {
@@ -10785,12 +10786,26 @@ textarea,
 #rideShareHub .transport-list-panel,
 #rideShareHub .transport-detail-panel,
 #rideShareHub .transport-timeline-panel,
-#rideShareHub .transport-security-grid,
-#rideShareHub .travel-support-grid {
+#rideShareHub .transport-search-row,
+#rideShareHub .transport-tabs,
+#rideShareHub #transportMessage {
   padding: 10px;
   border: 1px solid rgba(8, 127, 140, 0.1);
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.055);
+}
+
+#rideShareHub .travel-support-grid,
+#rideShareHub .transport-security-grid {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+#rideShareHub .transport-security-grid button {
+  background: #fff;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.055);
 }
 
@@ -10820,15 +10835,15 @@ textarea,
 }
 
 #rideShareHub .ride-hub-redesign {
-  max-height: 760px;
-  overflow: auto;
-  padding: 12px;
-  border: 1px solid rgba(8, 127, 140, 0.13);
-  border-radius: 18px;
-  background:
-    linear-gradient(180deg, rgba(248, 253, 255, 0.96), rgba(255, 255, 255, 0.9)),
-    #fff;
-  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.08);
+  max-height: none;
+  overflow: visible;
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 #rideShareHub .ride-toolbar {
