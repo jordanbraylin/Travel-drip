@@ -9317,3 +9317,134 @@ body[data-travel-theme="miami"] .social-card p {
     min-height: 190px;
   }
 }
+
+/* Compact transportation recommendation and private driver panels */
+.ride-two-column-grid {
+  gap: 12px;
+  align-items: stretch;
+}
+
+.ride-two-column-grid > .ride-clean-card,
+.ride-two-column-grid > .private-driver-panel {
+  min-width: 0;
+  height: 100%;
+  padding: 12px;
+  gap: 10px;
+  border-radius: 12px;
+}
+
+.ride-two-column-grid .ride-card-heading,
+.ride-two-column-grid .private-driver-panel .section-heading.compact {
+  gap: 8px;
+  align-items: start;
+  margin: 0;
+}
+
+.ride-two-column-grid .ride-card-heading h3,
+.ride-two-column-grid .private-driver-panel h3 {
+  font-size: 18px;
+  line-height: 1.18;
+}
+
+.ride-two-column-grid .ride-card-heading .ghost-button,
+.ride-two-column-grid .private-driver-panel .ghost-button {
+  min-height: 34px;
+  padding-inline: 10px;
+}
+
+.ride-two-column-grid .ride-recommendation-grid {
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.ride-two-column-grid .ride-recommendation-grid article {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px 10px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.ride-two-column-grid .ride-recommendation-grid article span,
+.ride-two-column-grid .ride-recommendation-grid article strong,
+.ride-two-column-grid .ride-recommendation-grid article small {
+  grid-column: 1;
+}
+
+.ride-two-column-grid .ride-recommendation-grid article span {
+  border-radius: 8px;
+  padding: 3px 7px;
+}
+
+.ride-two-column-grid .ride-recommendation-grid article button {
+  grid-column: 2;
+  grid-row: 1 / 4;
+  min-height: 34px;
+  white-space: nowrap;
+}
+
+.ride-two-column-grid .private-driver-search {
+  grid-template-columns: minmax(0, 1fr) minmax(120px, 0.42fr) minmax(140px, 0.5fr);
+  gap: 8px;
+}
+
+.ride-two-column-grid .private-driver-search label {
+  gap: 5px;
+}
+
+.ride-two-column-grid .private-driver-search input,
+.ride-two-column-grid .private-driver-search select {
+  min-height: 38px;
+  border-radius: 10px;
+}
+
+.ride-two-column-grid .private-driver-list {
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.ride-two-column-grid .private-driver-list article,
+.ride-two-column-grid .private-driver-empty {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 10px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.ride-two-column-grid .private-driver-list article > b {
+  font-size: 17px;
+  white-space: nowrap;
+}
+
+.ride-two-column-grid .private-driver-actions {
+  grid-column: 1 / -1;
+  gap: 6px;
+}
+
+.ride-two-column-grid .private-driver-actions button {
+  min-height: 32px;
+  border-radius: 9px;
+  padding-inline: 10px;
+}
+
+.ride-two-column-grid #privateDriverMessage {
+  margin: 0;
+}
+
+@media (max-width: 1180px) {
+  .ride-two-column-grid .private-driver-search {
+    grid-template-columns: 1fr;
+  }
+
+  .ride-two-column-grid .ride-recommendation-grid article,
+  .ride-two-column-grid .private-driver-list article,
+  .ride-two-column-grid .private-driver-empty {
+    grid-template-columns: 1fr;
+  }
+
+  .ride-two-column-grid .ride-recommendation-grid article button,
+  .ride-two-column-grid .private-driver-actions {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
