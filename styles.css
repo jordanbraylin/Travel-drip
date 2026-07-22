@@ -9861,3 +9861,195 @@ textarea,
   min-height: 178px;
   gap: 18px;
 }
+
+/* Dense mode v2: auth, dashboard, lists, and tall panels */
+.auth-landing-nav {
+  min-height: 96px;
+  padding: 22px 30px;
+  gap: 16px;
+}
+
+.auth-landing-grid {
+  min-height: calc(100vh - 96px);
+  padding: 22px 30px 30px;
+  gap: 18px;
+}
+
+.auth-carousel {
+  min-height: min(620px, calc(100vh - 156px));
+  border-radius: 18px;
+}
+
+.auth-carousel-overlay {
+  padding: 28px;
+}
+
+.auth-pill {
+  min-height: 34px;
+  margin-bottom: 14px;
+  padding-inline: 12px;
+}
+
+.auth-carousel-overlay > p:not(.auth-pill) {
+  margin-top: 14px;
+}
+
+.auth-carousel blockquote,
+.auth-travel-tags {
+  margin-top: 16px;
+}
+
+.auth-landing .auth-card {
+  max-height: calc(100vh - 156px);
+  padding: 18px;
+  border-radius: 14px;
+}
+
+.auth-link-button,
+.auth-start-button {
+  min-height: 44px;
+  border-radius: 14px;
+  padding-inline: 16px;
+  font-size: 20px;
+}
+
+.hero {
+  min-height: 320px;
+}
+
+.hero-copy {
+  padding: 22px;
+}
+
+.hero-copy p,
+.destination-banner-meta {
+  margin-top: 12px;
+}
+
+.destination-banner-meta {
+  margin-bottom: 12px;
+}
+
+.metrics article,
+.ledger-stats article,
+.bank-overview article,
+.wallet-breakdown div,
+.navigation-status-grid div,
+.security-status-grid article,
+.backend-summary-grid article,
+.go-live-summary-grid article,
+.policy-summary-grid article {
+  padding: 10px;
+}
+
+.trip-row,
+.ledger-list div,
+.member-table div,
+.announcement-list div,
+.faq-list div,
+.rule-list div,
+.audit-log div,
+.shared-wallet-ledger div,
+.card-ledger div,
+.card-rules div,
+.notification-mini-list span,
+.ai-reminder-list div {
+  padding: 8px;
+}
+
+.trip-wallet-card,
+.virtual-card,
+.receipt-command-card,
+.smart-departure-card,
+.reservation-ai-card {
+  min-height: auto;
+}
+
+.virtual-card {
+  min-height: 168px;
+  gap: 16px;
+  padding: 14px;
+}
+
+.card-balance-grid div,
+.wallet-provisioning button,
+.control-grid label,
+.payment-method-grid button {
+  min-height: 38px;
+}
+
+.spending-controls,
+.card-rules,
+.card-ledger,
+.shared-wallet-ledger,
+.ledger-list,
+.rule-list,
+.announcement-list,
+.faq-list,
+.itinerary,
+.member-table {
+  gap: 6px;
+}
+
+.auth-form,
+.funds-form,
+.trip-creation-form,
+.private-driver-search,
+.transport-search-row,
+.ride-toolbar,
+.dashboard-controls {
+  gap: 8px;
+}
+
+@media (min-width: 1180px) {
+  .widget-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .travel-widget.is-large {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 900px) {
+  .auth-landing-nav {
+    min-height: 76px;
+    padding: 14px 16px;
+  }
+
+  .auth-landing-grid {
+    min-height: auto;
+    padding: 14px 16px 18px;
+    gap: 12px;
+  }
+
+  .auth-carousel {
+    min-height: 340px;
+  }
+
+  .auth-carousel-overlay {
+    padding: 20px;
+  }
+
+  .auth-landing .auth-card {
+    max-height: none;
+    padding: 14px;
+  }
+}
+
+@media (max-width: 560px) {
+  .auth-carousel {
+    min-height: 280px;
+    border-radius: 14px;
+  }
+
+  .auth-link-button,
+  .auth-start-button {
+    min-height: 40px;
+    font-size: 17px;
+  }
+
+  .hero {
+    min-height: 280px;
+  }
+}
