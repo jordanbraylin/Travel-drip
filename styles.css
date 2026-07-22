@@ -9535,3 +9535,263 @@ body[data-travel-theme="miami"] .social-card p {
     grid-template-columns: 1fr;
   }
 }
+
+/* Global space optimization pass */
+main {
+  padding: clamp(14px, 2vw, 20px) clamp(14px, 2.2vw, 22px) clamp(20px, 3vw, 28px);
+}
+
+.topbar {
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.global-destination-header {
+  min-height: 88px;
+  margin: -2px 0 12px;
+  padding: 10px;
+  border-radius: 16px;
+}
+
+.global-destination-header img {
+  height: 68px;
+  border-radius: 12px;
+}
+
+.auth-panel,
+.pwa-panel,
+.panel {
+  margin-bottom: 12px;
+}
+
+.panel,
+.auth-panel,
+.pwa-panel,
+.travel-widget,
+.destination-card,
+.metrics article {
+  border-radius: 8px;
+}
+
+.panel {
+  padding: 14px;
+}
+
+.dashboard-widgets,
+.bank-grid,
+.content-grid {
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.widget-grid {
+  gap: 10px;
+}
+
+.travel-widget {
+  min-height: auto;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.main-stack,
+.right-stack,
+.ride-share-panel,
+.ride-hub-redesign,
+.transport-confirmation-hub {
+  gap: 12px;
+}
+
+.section-heading {
+  gap: 10px;
+}
+
+.compact {
+  margin-bottom: 8px;
+}
+
+.ledger-stats,
+.bank-overview,
+.wallet-breakdown,
+.navigation-status-grid,
+.security-status-grid,
+.backend-summary-grid,
+.go-live-summary-grid,
+.policy-summary-grid {
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.transport-confirmation-hub,
+.ride-clean-card,
+.private-driver-panel,
+.transport-list-panel,
+.transport-detail-panel,
+.transport-timeline-panel {
+  padding: 12px;
+}
+
+.transport-summary-strip,
+.transport-search-row,
+.transport-dashboard-grid,
+.transport-security-grid,
+.transport-timeline,
+.ride-overview-grid,
+.ride-two-column-grid,
+.ride-location-grid,
+.ride-entry-grid,
+.ride-estimate-grid,
+.shared-ride-members,
+.payment-method-grid,
+.bill-total-grid {
+  gap: 10px;
+}
+
+.transport-summary-strip button,
+.transport-record-card,
+.transport-timeline button,
+.transport-security-grid button,
+.ride-hub-list article,
+.ride-recommendation-grid article,
+.private-driver-list article,
+.private-driver-empty,
+.shared-ride-members label {
+  padding: 10px;
+}
+
+.transport-summary-strip button,
+.transport-security-grid button {
+  min-height: auto;
+}
+
+.transport-timeline button {
+  min-height: 88px;
+}
+
+.button-row,
+.transport-hub-actions,
+.transport-actions,
+.ride-account-actions,
+.private-driver-actions,
+.global-destination-actions,
+.top-actions,
+.hero-actions {
+  gap: 6px;
+}
+
+.primary-button,
+.ghost-button,
+.light-button,
+.icon-button {
+  min-height: 40px;
+  padding-inline: 12px;
+}
+
+input,
+select,
+textarea,
+.transport-search-row input,
+.transport-search-row select,
+.ride-toolbar input,
+.ride-toolbar select,
+.private-driver-search input,
+.private-driver-search select,
+.ride-destination-row select,
+.ride-location-grid input,
+.ride-entry-grid input {
+  min-height: 40px;
+}
+
+.split-preview,
+.receipt-item-list,
+.receipt-status-list,
+.receipt-history-list,
+.transport-record-list,
+.private-driver-list,
+.ride-hub-list,
+.ride-history-list,
+.ride-notification-list,
+.notification-mini-list,
+.ai-reminder-list {
+  gap: 8px;
+}
+
+.metrics,
+.event-requirements,
+.theme-swatch-grid,
+.travel-badge-grid {
+  gap: 8px;
+}
+
+@media (min-width: 1320px) {
+  .content-grid {
+    grid-template-columns: minmax(0, 1.42fr) minmax(320px, 0.58fr);
+  }
+
+  .bank-grid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+  }
+}
+
+@media (max-width: 900px) {
+  main {
+    padding: 12px 12px 78px;
+  }
+
+  .topbar,
+  .global-destination-header,
+  .auth-panel,
+  .pwa-panel,
+  .panel {
+    margin-bottom: 10px;
+  }
+
+  .global-destination-header {
+    grid-template-columns: 88px minmax(0, 1fr);
+    min-height: auto;
+  }
+
+  .global-destination-header img {
+    width: 88px;
+    height: 58px;
+  }
+
+  .global-destination-actions {
+    grid-column: 1 / -1;
+  }
+
+  .panel,
+  .transport-confirmation-hub,
+  .ride-clean-card,
+  .private-driver-panel {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 560px) {
+  main {
+    padding-inline: 10px;
+  }
+
+  .topbar {
+    gap: 8px;
+  }
+
+  .search {
+    min-height: 40px;
+  }
+
+  .section-heading,
+  .ride-card-heading,
+  .transport-hub-header {
+    gap: 8px;
+  }
+
+  .primary-button,
+  .ghost-button,
+  .light-button,
+  .icon-button {
+    min-height: 38px;
+  }
+}
