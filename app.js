@@ -2856,14 +2856,14 @@ function setAuthMode(mode, scrollIntoView = false) {
       ? "Access your company event"
       : isSignup
         ? "Create your TravelDrip account"
-        : "Sign in to sync your trip data";
+        : "Welcome to TravelDrip";
   }
   if (authCopy) {
     authCopy.textContent = isGuest
       ? "Use your company code plus employee or attendee ID to view only the travel details, schedule, documents, and photos approved for you."
       : isSignup
         ? "Create an account, verify your email, then choose whether you are planning solo, with a group, or for a corporate retreat."
-        : "Use your TravelDrip account to keep solo plans, group memories, corporate retreats, wallets, and live alerts synced across devices.";
+        : "Your next adventure starts here. ✈️🌍";
   }
   if (bottomCopy) bottomCopy.textContent = isGuest ? "Need a full TravelDrip profile?" : isSignup ? "Already have an account?" : "New to TravelDrip?";
   $("#landingSignupButton").hidden = isSignup;
