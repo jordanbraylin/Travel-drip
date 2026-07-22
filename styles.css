@@ -2602,9 +2602,9 @@ body.auth-screen .auth-panel[hidden] {
 .transport-list-panel,
 .transport-detail-panel,
 .transport-timeline-panel,
-.transport-security-grid div {
+.transport-security-grid button {
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: 14px;
   background: rgba(255, 255, 255, 0.88);
 }
 
@@ -2635,6 +2635,19 @@ body.auth-screen .auth-panel[hidden] {
   padding: 12px;
   background: #fff;
   text-align: left;
+}
+
+.transport-timeline button {
+  min-height: 104px;
+  border-radius: 12px;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.transport-timeline button:hover,
+.transport-security-grid button:hover {
+  border-color: rgba(0, 150, 199, 0.32);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+  transform: translateY(-1px);
 }
 
 .transport-record-card {
@@ -2773,22 +2786,51 @@ body.auth-screen .auth-panel[hidden] {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-.transport-security-grid div {
+.transport-security-grid button {
+  display: grid;
+  gap: 6px;
   padding: 12px;
+  min-height: 126px;
+  text-align: left;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.transport-security-grid button strong,
+.transport-security-grid button span {
+  display: block;
+}
+
+.transport-security-grid button strong {
+  font-size: 14px;
+}
+
+.transport-security-grid button span {
+  font-size: 12px;
 }
 
 .transport-timeline-panel {
-  grid-template-columns: minmax(220px, 0.35fr) minmax(0, 1fr);
+  grid-template-columns: minmax(180px, 0.28fr) minmax(0, 1fr);
   align-items: start;
 }
 
 .transport-timeline {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
 }
 
 .transport-timeline button span,
 .transport-timeline button small {
   display: block;
+}
+
+.transport-timeline button span {
+  width: fit-content;
+  border-radius: 8px;
+  padding: 3px 7px;
+  background: #eef9f7;
+  color: var(--sea-dark);
+  font-size: 11px;
+  font-weight: 900;
 }
 
 .ride-destination-row,

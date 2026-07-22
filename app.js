@@ -3853,6 +3853,15 @@ function wireLocalInteractions() {
     $("#transportMessage").textContent = `${record.title} opened from the unified trip timeline. Notification and itinerary deep links preserve trip and traveler context.`;
   });
 
+  $(".transport-security-grid")?.addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-transport-security]");
+    if (!button) return;
+    const topic = button.dataset.transportSecurity;
+    $("#transportMessage").textContent = `${topic} opened. Transportation confirmations keep assigned traveler access, wallet-pass eligibility, secure files, and audit logs attached to each record.`;
+    addAuditEntry("Transportation security control opened", `${topic} reviewed from the confirmation hub.`);
+    await saveSyncedEvent("transport_security_control_opened", { topic });
+  });
+
   $("#transportDetailPanel")?.addEventListener("click", async (event) => {
     const ticketButton = event.target.closest("[data-ticket-action]");
     const walletButton = event.target.closest("[data-wallet-pass]");

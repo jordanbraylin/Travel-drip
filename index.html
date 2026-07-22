@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=54">
+  <link rel="stylesheet" href="styles.css?v=55">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -2237,11 +2237,11 @@
                 </div>
                 <div class="transport-timeline" id="transportTimelineList" aria-label="Transportation timeline"></div>
               </div>
-              <div class="transport-security-grid">
-                <div><strong>Secure storage</strong><span>Production files use private storage, signed URLs, type validation, malware scanning where supported, and expiring links.</span></div>
-                <div><strong>Permissions</strong><span>Travelers see assigned records only. Organizers manage group transportation. Corporate admins follow company policy controls.</span></div>
-                <div><strong>Wallet passes</strong><span>Apple Wallet and Google Wallet actions appear only when the provider and pass format are supported.</span></div>
-                <div><strong>Audit trail</strong><span>Uploads, ticket views, shares, downloads, notification opens, and access revocations are audit logged.</span></div>
+              <div class="transport-security-grid" aria-label="Transportation security controls">
+                <button type="button" data-transport-security="Secure storage"><strong>Secure storage</strong><span>Private storage, signed URLs, file validation, malware scanning where supported, and expiring links.</span></button>
+                <button type="button" data-transport-security="Permissions"><strong>Permissions</strong><span>Travelers see assigned records only. Organizers and corporate admins follow role-based access controls.</span></button>
+                <button type="button" data-transport-security="Wallet passes"><strong>Wallet passes</strong><span>Apple Wallet and Google Wallet actions appear only when provider pass support is available.</span></button>
+                <button type="button" data-transport-security="Audit trail"><strong>Audit trail</strong><span>Uploads, views, shares, downloads, notification opens, and access revocations are logged.</span></button>
               </div>
               <p class="small" id="transportMessage">Choose a transportation tab to review confirmations, tickets, boarding passes, QR codes, and assigned traveler access.</p>
             </section>
@@ -3094,6 +3094,6 @@
   </dialog>
 
   <script src="public-config.js?v=2"></script>
-  <script defer src="app.js?v=46"></script>
+  <script defer src="app.js?v=47"></script>
 </body>
 </html>
