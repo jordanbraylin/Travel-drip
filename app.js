@@ -38,6 +38,10 @@ const state = {
   liveDestinationPaused: false,
   liveDestinationTimer: null,
   liveDestinationTouchStartX: 0,
+  globalDestinationIndex: 1,
+  globalDestinationPaused: false,
+  globalDestinationTimer: null,
+  globalDestinationTouchStartX: 0,
   connectedRideAccounts: {
     Careem: { connected: true, account: "Connected rider profile", status: "Account Connected" },
     Uber: { connected: false, account: "", status: "Not connected" },
@@ -924,6 +928,105 @@ function preloadNextDestinationImage() {
   if (!nextDestination) return;
   const image = new Image();
   image.src = nextDestination.photo;
+}
+
+function getGlobalDestinationContext(target = getTargetFromRoute()) {
+  const contexts = {
+    exploreDrops: { label: "Trending discovery", action: "Explore", actionType: "destinations" },
+    tripsPanel: { label: "Upcoming trip idea", action: "Add to Trip", actionType: "activities" },
+    socialHub: { label: "Photo-worthy destination", action: "Create Story", actionType: "restaurants" },
+    walletPanel: { label: "Budget-friendly idea", action: "Explore Deals", actionType: "destinations" },
+    groupBank: { label: "Shared-trip inspiration", action: "Add to Trip", actionType: "activities" },
+    splitBill: { label: "Food destination", action: "View Restaurants", actionType: "restaurants" },
+    rideShareHub: { label: "Easy transportation city", action: "View Transport", actionType: "activities" },
+    cruisePanel: { label: "Cruise port idea", action: "View Cruise Ideas", actionType: "destinations" },
+    itineraryAlerts: { label: "Itinerary inspiration", action: "View Activities", actionType: "activities" },
+    importantInfo: { label: "Travel-ready destination", action: "View Details", actionType: "destinations" },
+    aiTravelPlanner: { label: "Matches your AI planning answers", action: "Ask AI", actionType: "ai" },
+    enterpriseRbac: { label: "Approved corporate destination", action: "View Policy", actionType: "destinations" },
+    securityCenter: { label: "Personalized inspiration", action: "Explore", actionType: "destinations" },
+    copyrightPolicy: { label: "TravelDrip help", action: "Explore", actionType: "destinations" }
+  };
+  return contexts[target] || contexts.exploreDrops;
+}
+
+function renderGlobalDestinationHeader(target = getTargetFromRoute(), nextIndex = state.globalDestinationIndex) {
+  const header = $("#globalDestinationHeader");
+  if (!header) return;
+  const isHome = target === "dashboardHome";
+  const isAuth = document.body.classList.contains("auth-screen");
+  header.hidden = isHome || isAuth;
+  header.setAttribute("aria-hidden", String(isHome || isAuth));
+  if (isHome || isAuth) return;
+
+  const corporateMode = $("#dashboardTripType")?.value === "corporate" && hasValidCorporateAccess();
+  const destinations = corporateMode
+    ? livePlanDestinations.filter((destination) => /United Arab Emirates|New York|California/.test(destination.location))
+    : livePlanDestinations;
+  const list = destinations.length ? destinations : livePlanDestinations;
+  state.globalDestinationIndex = (nextIndex + list.length) % list.length;
+  const destination = list[state.globalDestinationIndex];
+  const context = getGlobalDestinationContext(target);
+
+  header.classList.add("is-transitioning");
+  window.setTimeout(() => {
+    $("#globalDestinationPhoto").src = destination.photo;
+    $("#globalDestinationPhoto").alt = destination.alt;
+    $("#globalDestinationPage").textContent = context.label;
+    $("#globalDestinationName").textContent = destination.location;
+    $("#globalDestinationPrompt").textContent = corporateMode
+      ? `${destination.city} inspiration is limited to company-approved travel content.`
+      : destination.description;
+    $("#globalDestinationAction").textContent = `${context.action} ${destination.city}`;
+    $("#globalDestinationAction").dataset.destinationAction = context.actionType;
+    $("#globalDestinationAction").dataset.destinationId = destination.id;
+  }, 120);
+  window.setTimeout(() => header.classList.remove("is-transitioning"), 520);
+}
+
+function startGlobalDestinationHeader() {
+  const header = $("#globalDestinationHeader");
+  if (!header) return;
+  $("#globalDestinationPhoto")?.addEventListener("error", () => {
+    header.classList.add("image-fallback");
+    $("#globalDestinationPhoto").alt = "TravelDrip destination inspiration fallback";
+  });
+  $("#globalDestinationPhoto")?.addEventListener("load", () => {
+    header.classList.remove("image-fallback");
+  });
+  renderGlobalDestinationHeader(getTargetFromRoute(), state.globalDestinationIndex);
+  const stop = () => {
+    if (!state.globalDestinationTimer) return;
+    window.clearInterval(state.globalDestinationTimer);
+    state.globalDestinationTimer = null;
+  };
+  const resume = () => {
+    if (state.globalDestinationPaused || state.globalDestinationTimer || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    state.globalDestinationTimer = window.setInterval(() => renderGlobalDestinationHeader(getTargetFromRoute(), state.globalDestinationIndex + 1), 8000);
+  };
+  header.addEventListener("mouseenter", stop);
+  header.addEventListener("mouseleave", resume);
+  header.addEventListener("touchstart", (event) => {
+    state.globalDestinationTouchStartX = event.changedTouches[0]?.clientX || 0;
+  }, { passive: true });
+  header.addEventListener("touchend", (event) => {
+    const endX = event.changedTouches[0]?.clientX || 0;
+    const delta = endX - state.globalDestinationTouchStartX;
+    if (Math.abs(delta) > 44) renderGlobalDestinationHeader(getTargetFromRoute(), state.globalDestinationIndex + (delta < 0 ? 1 : -1));
+  }, { passive: true });
+  $("#globalDestinationPauseButton")?.addEventListener("click", () => {
+    state.globalDestinationPaused = !state.globalDestinationPaused;
+    $("#globalDestinationPauseButton").setAttribute("aria-pressed", String(state.globalDestinationPaused));
+    $("#globalDestinationPauseButton").textContent = state.globalDestinationPaused ? "Play" : "Pause";
+    state.globalDestinationPaused ? stop() : resume();
+  });
+  $("#globalDestinationAction")?.addEventListener("click", () => {
+    const destinationId = $("#globalDestinationAction").dataset.destinationId;
+    const destinationIndex = livePlanDestinations.findIndex((destination) => destination.id === destinationId);
+    if (destinationIndex >= 0) state.liveDestinationIndex = destinationIndex;
+    openDestinationExplore($("#globalDestinationAction").dataset.destinationAction || "destinations");
+  });
+  resume();
 }
 
 async function openDestinationExplore(action = "destinations") {
@@ -1869,6 +1972,7 @@ function updateAuthUi() {
     authPanel.hidden = !showGate;
     document.body.classList.toggle("auth-screen", showGate);
     if (!showGate) authPanel.classList.remove("show-form");
+    renderGlobalDestinationHeader(getTargetFromRoute());
   }
 
   if (location.pathname === "/admin.html") updateAdminUi();
@@ -2498,6 +2602,8 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   if (resolvedTarget === "aiTravelPlanner") renderAiPlanner();
 
   updateDashboardWidgets();
+  if ($("#currentPageTitle")) $("#currentPageTitle").textContent = routeDefinitions[resolvedTarget].label;
+  renderGlobalDestinationHeader(resolvedTarget);
   document.title = `${routeDefinitions[resolvedTarget].label} - Traveldrip`;
   document.body.classList.remove("sidebar-open");
   $("#sidebarMenuButton")?.setAttribute("aria-expanded", "false");
@@ -2511,6 +2617,7 @@ function wireLocalInteractions() {
   updateEnterpriseRole();
   updateDashboardWidgets();
   startLivePlanRotation();
+  startGlobalDestinationHeader();
 
   $$(".tab").forEach((button) => {
     button.addEventListener("click", () => {
@@ -3941,6 +4048,17 @@ function wireLocalInteractions() {
     showWorkflowMessage("Report unauthorized access", "Guest session risk report logged without exposing employee ID values.");
   });
   $("#enterAppButton")?.addEventListener("click", enterAppPreview);
+  $("#globalSearchInput")?.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    const query = event.target.value.trim();
+    if ($("#exploreSearchInput")) $("#exploreSearchInput").value = query;
+    renderRoute("exploreDrops", { updateHistory: true });
+    $("#exploreStatusMessage").textContent = query
+      ? `Search results opened for "${query}" across destinations, trips, flights, hotels, activities, restaurants, messages, documents, and corporate events.`
+      : "Explore opened from global search.";
+    addAuditEntry("Global search opened", query || "Explore opened without a search term.");
+  });
   renderAiPlanner();
   $("#aiPlannerStartButton")?.addEventListener("click", () => {
     renderRoute("aiTravelPlanner", { updateHistory: true });

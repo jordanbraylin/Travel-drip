@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=45">
+  <link rel="stylesheet" href="styles.css?v=46">
   <title>Traveldrip</title>
 </head>
 <body>
@@ -113,9 +113,13 @@
     <main>
       <header class="topbar">
         <button class="icon-button menu-button" type="button" id="sidebarMenuButton" aria-label="Open navigation" aria-expanded="false">Menu</button>
+        <div class="topbar-page-title">
+          <span class="brand-mark mini" aria-hidden="true"></span>
+          <span><small>Current page</small><strong id="currentPageTitle">Home Dashboard</strong></span>
+        </div>
         <label class="search">
           <span aria-hidden="true">Search</span>
-          <input type="search" placeholder="Cities, stays, restaurants, friends">
+          <input id="globalSearchInput" type="search" placeholder="Destinations, trips, flights, hotels, messages">
         </label>
         <div class="top-actions">
           <button class="profile-avatar-button" type="button" data-target="securityCenter" aria-label="Open profile photo settings"><span class="profile-photo-avatar" data-profile-initials>JS</span></button>
@@ -125,6 +129,19 @@
           <button class="ghost-button" type="button" id="openSignupButton">Sign Up</button>
         </div>
       </header>
+
+      <section class="global-destination-header" id="globalDestinationHeader" aria-live="polite" hidden>
+        <img id="globalDestinationPhoto" src="https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?q=80&w=900&auto=format&fit=crop" alt="Venice canal at golden hour">
+        <div class="global-destination-copy">
+          <span id="globalDestinationPage">Explore inspiration</span>
+          <strong id="globalDestinationName">Barcelona, Spain</strong>
+          <p id="globalDestinationPrompt">Explore colorful architecture, Mediterranean beaches, and unforgettable food.</p>
+        </div>
+        <div class="global-destination-actions">
+          <button class="ghost-button glass" type="button" id="globalDestinationAction">Explore Barcelona</button>
+          <button class="icon-button glass" type="button" id="globalDestinationPauseButton" aria-label="Pause destination header rotation" aria-pressed="false">Pause</button>
+        </div>
+      </section>
 
       <section class="auth-panel auth-landing" id="authPanel" hidden>
         <header class="auth-landing-nav">
@@ -2776,6 +2793,6 @@
   </dialog>
 
   <script src="public-config.js?v=1"></script>
-  <script defer src="app.js?v=38"></script>
+  <script defer src="app.js?v=39"></script>
 </body>
 </html>
