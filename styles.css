@@ -9795,3 +9795,36 @@ textarea,
     min-height: 38px;
   }
 }
+
+/* Travel tab right rail cleanup */
+.map-panel {
+  border-radius: 12px;
+}
+
+.map-panel .map {
+  height: 172px;
+}
+
+.map-panel h2,
+.map-panel p {
+  padding-inline: 12px;
+}
+
+.map-panel h2 {
+  margin-top: 10px;
+  margin-bottom: 4px;
+}
+
+.map-panel p {
+  padding-bottom: 12px;
+  line-height: 1.35;
+}
+
+#virtualCard[data-route-support] {
+  gap: 10px;
+}
+
+#virtualCard[data-route-support] .virtual-card {
+  min-height: 178px;
+  gap: 18px;
+}
