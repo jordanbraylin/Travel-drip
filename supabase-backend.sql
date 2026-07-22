@@ -74,6 +74,8 @@ create table if not exists public.trips (
     'bachelor_bachelorette',
     'anniversary',
     'conference',
+    'graduation_trip',
+    'church_retreat',
     'business_event',
     'special_event'
   )),

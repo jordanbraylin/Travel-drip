@@ -1,4 +1,4 @@
-# Connect Traveldrip to Vercel
+# Connect TravelDrip to Vercel
 
 Use `outputs/traveldrip` as the Vercel project root.
 

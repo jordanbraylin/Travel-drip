@@ -6,13 +6,13 @@
   <meta name="theme-color" content="#11222b">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=47">
-  <title>Traveldrip Admin</title>
+  <link rel="stylesheet" href="styles.css?v=49">
+  <title>TravelDrip Admin</title>
 </head>
 <body>
   <div class="loader" id="loader" aria-live="polite">
     <div class="loader-card">
-      <div class="brand-mark pulse" aria-hidden="true"></div>
+      <img class="loader-logo" src="icons/traveldrip-logo-stacked.svg" alt="TravelDrip">
       <h1>Admin</h1>
       <p>Checking permissions...</p>
       <div class="loader-bar"><span></span></div>
@@ -21,8 +21,8 @@
 
   <main class="admin-page">
     <a class="brand admin-brand" href="index.html">
-      <span class="brand-mark" aria-hidden="true"></span>
-      <span><strong>Traveldrip</strong><small>Admin console</small></span>
+      <img class="brand-logo admin-wordmark" src="icons/traveldrip-logo-full.svg" alt="TravelDrip">
+      <span class="brand-copy"><strong>TravelDrip</strong><small>Admin console</small></span>
     </a>
 
     <section class="auth-panel" id="authPanel">
@@ -47,7 +47,7 @@
         <button class="ghost-button" type="button" id="signOutButton">Sign out</button>
       </div>
       <form class="admin-form" id="notifyForm">
-        <label>Title<input id="notifyTitle" maxlength="80" value="Traveldrip update" required></label>
+        <label>Title<input id="notifyTitle" maxlength="80" value="TravelDrip update" required></label>
         <label>Message<textarea id="notifyBody" maxlength="180" required>Dubai vote closes in 18 hours.</textarea></label>
         <label>Link<input id="notifyUrl" value="/" required></label>
         <button class="primary-button" type="submit">Send notification</button>
@@ -56,7 +56,7 @@
     </section>
   </main>
 
-  <script src="public-config.js?v=1"></script>
-  <script defer src="app.js?v=40"></script>
+  <script src="public-config.js?v=2"></script>
+  <script defer src="app.js?v=41"></script>
 </body>
 </html>

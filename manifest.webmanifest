@@ -1,12 +1,16 @@
 {
-  "name": "Traveldrip",
-  "short_name": "Traveldrip",
-  "description": "Group trip planning, voting, wallet tracking, and synced updates.",
+  "name": "TravelDrip",
+  "short_name": "TravelDrip",
+  "description": "AI-powered travel and event planning platform",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#f4fbff",
+  "display_override": ["standalone", "window-controls-overlay", "browser"],
+  "orientation": "portrait-primary",
+  "background_color": "#071116",
   "theme_color": "#0096c7",
+  "categories": ["travel", "productivity", "social"],
+  "lang": "en-US",
   "icons": [
     {
       "src": "icons/icon-192.png",
@@ -25,6 +29,22 @@
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Open TravelDrip",
+      "short_name": "Home",
+      "description": "Open the TravelDrip dashboard",
+      "url": "/home",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Explore trips",
+      "short_name": "Explore",
+      "description": "Discover destinations, restaurants, nightlife, activities, and events",
+      "url": "/explore",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

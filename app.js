@@ -8,6 +8,7 @@ const state = {
   isAdmin: false,
   adminStatusCheckedFor: "",
   hasEnteredApp: sessionStorage.getItem("traveldripEnteredApp") === "true",
+  pendingProtectedTarget: sessionStorage.getItem("traveldripPendingProtectedTarget") || "dashboardHome",
   corporateAccess: {
     verified: sessionStorage.getItem("traveldripCorporateAccessVerified") === "true",
     eventId: sessionStorage.getItem("traveldripCorporateEventId") || "",
@@ -508,6 +509,87 @@ const tripTypeConfigs = {
     enabled: ["Employee invitations", "Role permissions", "Company announcements", "Team schedules", "Event agenda", "Flight assignments", "Hotel assignments", "Transportation schedules", "Activity schedules", "AI Operations Manager", "Corporate reporting", "Admin budgets", "Expense approvals", "Audit logs"],
     hidden: ["Company financial data for employees", "Other employee payment details", "Unauthorized budget controls"]
   },
+  wedding: {
+    label: "Wedding",
+    detailsTitle: "Wedding event details",
+    travelersHidden: false,
+    aiPrompt: "How can I help plan your wedding weekend? Try: Build ceremony, reception, hotel block, and shuttle schedules.",
+    message: "Wedding selected. Ceremony, reception, hotel block, wedding party, RSVP, transportation, shared wallet, and memories are enabled.",
+    enabled: ["Ceremony schedule", "Reception schedule", "Rehearsal dinner", "Wedding party", "Hotel block", "Dress code", "Registry link", "Weekend schedule", "Guest RSVPs", "Transportation", "Shared album"],
+    hidden: ["Corporate finance reports for guests", "Unapproved public media"]
+  },
+  birthday: {
+    label: "Birthday Trip",
+    detailsTitle: "Birthday event details",
+    travelersHidden: false,
+    aiPrompt: "How can I help plan the birthday trip? Try: Create dinner, activity, nightlife, and contribution plans.",
+    message: "Birthday Trip selected. Dinner, activities, nightlife, gift preferences, shared costs, reminders, and media are enabled.",
+    enabled: ["Birthday person", "Milestone", "Main celebration", "Dinner", "Activities", "Nightlife", "Gift preferences", "Contributions", "Media"],
+    hidden: ["Corporate dashboards", "Conference badge tools"]
+  },
+  anniversary: {
+    label: "Anniversary Trip",
+    detailsTitle: "Anniversary event details",
+    travelersHidden: false,
+    aiPrompt: "How can I help plan the anniversary? Try: Build a romantic dinner, hotel, activities, and photo recap plan.",
+    message: "Anniversary Trip selected. Celebration schedule, dinner, hotel, activities, guest list, photos, and recap are enabled.",
+    enabled: ["Celebration dinner", "Hotel stay", "Activities", "Guest list", "Photo album", "Recap", "Reminders"],
+    hidden: ["Conference tracks", "Corporate finance reports"]
+  },
+  family_reunion: {
+    label: "Family Reunion",
+    detailsTitle: "Family reunion details",
+    travelersHidden: false,
+    aiPrompt: "How can I help plan the reunion? Try: Import relatives, assign rooms, build family activities, and send announcements.",
+    message: "Family Reunion selected. Relative import, room assignments, family schedule, announcements, shared photos, and wallet are enabled.",
+    enabled: ["Guest import", "Room assignments", "Family schedule", "Meal planning", "Activities", "Announcements", "Family album", "Shared wallet"],
+    hidden: ["Nightlife-first flows", "Corporate finance reports"]
+  },
+  conference: {
+    label: "Conference",
+    detailsTitle: "Conference event details",
+    travelersHidden: false,
+    aiPrompt: "How can I help plan the conference? Try: Create sessions, speaker tracks, hotel blocks, and shuttle routes.",
+    message: "Conference selected. Sessions, speakers, tracks, sponsors, rooms, badges, hotel blocks, transportation, and agenda updates are enabled.",
+    enabled: ["Sessions", "Speakers", "Tracks", "Sponsors", "Registration", "Venue rooms", "Badges", "Hotel blocks", "Transportation", "Agenda updates"],
+    hidden: ["Leisure-only budget cards", "Unapproved guest financial details"]
+  },
+  graduation_trip: {
+    label: "Graduation Trip",
+    detailsTitle: "Graduation trip details",
+    travelersHidden: false,
+    aiPrompt: "How can I help plan the graduation trip? Try: Add travel, dinner, celebration activities, and contribution tracking.",
+    message: "Graduation Trip selected. Travel plans, guests, dinner, celebration schedule, contributions, photos, and recap are enabled.",
+    enabled: ["Travel plans", "Dinner", "Celebration schedule", "Guest invitations", "Contributions", "Photos", "Completion recap"],
+    hidden: ["Corporate-only policy controls", "Conference badge tools"]
+  },
+  church_retreat: {
+    label: "Church Retreat",
+    detailsTitle: "Church retreat details",
+    travelersHidden: false,
+    aiPrompt: "How can I help plan the church retreat? Try: Build worship, sessions, meal, transportation, and emergency-contact plans.",
+    message: "Church Retreat selected. Theme, ministry group, worship schedule, sessions, meals, transportation groups, and emergency contacts are enabled.",
+    enabled: ["Retreat theme", "Ministry group", "Worship schedule", "Sessions", "Transportation groups", "Meal schedule", "Emergency contacts", "Announcements"],
+    hidden: ["Nightlife modules", "Public media without approval"]
+  },
+  bachelor_bachelorette: {
+    label: "Bachelor / Bachelorette Trip",
+    detailsTitle: "Bachelor or bachelorette details",
+    travelersHidden: false,
+    aiPrompt: "How can I help plan the celebration? Try: Create activities, dinner, nightlife, transportation, and cost split plans.",
+    message: "Bachelor/Bachelorette selected. Group activities, dinner, nightlife, polls, transportation, shared costs, and guest reminders are enabled.",
+    enabled: ["Activities", "Dinner", "Nightlife", "Polls", "Transportation", "Shared costs", "Guest reminders", "Media"],
+    hidden: ["Corporate reports", "Conference sponsor tools"]
+  },
+  special_event: {
+    label: "Special Event",
+    detailsTitle: "Special event details",
+    travelersHidden: false,
+    aiPrompt: "How can I help plan this event? Try: Build a custom schedule, guest list, travel plan, wallet, and recap.",
+    message: "Special Event selected. Custom modules for guests, travel, schedule, wallet, messages, media, notifications, and completion are enabled.",
+    enabled: ["Custom schedule", "Guest list", "Travel records", "Shared wallet", "Messages", "Media", "Notifications", "Completion workflow"],
+    hidden: ["Unauthorized finance data", "Unapproved public media"]
+  },
   cruise: {
     label: "Cruise Vacation",
     detailsTitle: "Cruise vacation details",
@@ -517,6 +599,34 @@ const tripTypeConfigs = {
     enabled: ["Cruise overview", "Ship information", "Cabin assignment", "Port schedule", "Shore excursions", "Onboard schedule", "Dining reservations", "Cruise wallet", "Cruise documents", "AI Cruise Manager", "Cruise memories", "Boarding reminders"],
     hidden: ["Corporate budgets unless authorized", "Other cabin records unless assigned", "Unapproved shared photos", "Private admin reports"]
   }
+};
+
+const eventTypeToApiType = {
+  solo: "solo_trip",
+  group: "group_trip",
+  corporate: "corporate_retreat",
+  cruise: "cruise_vacation",
+  wedding: "wedding",
+  birthday: "birthday",
+  anniversary: "anniversary",
+  family_reunion: "family_reunion",
+  conference: "conference",
+  graduation_trip: "graduation_trip",
+  church_retreat: "church_retreat",
+  bachelor_bachelorette: "bachelor_bachelorette",
+  special_event: "special_event"
+};
+
+const eventSpecificFieldConfigs = {
+  wedding: [["Ceremony date and time", "ceremony_at", "2026-09-12T16:00"], ["Reception date and time", "reception_at", "2026-09-12T19:00"], ["Venue", "venue", "Ocean View Garden"], ["Rehearsal dinner", "rehearsal_dinner", "Friday welcome dinner"], ["Wedding party", "wedding_party", "8 attendants"], ["Hotel block", "hotel_block", "Harbor Suites"], ["Dress code", "dress_code", "Formal beach"], ["Registry link", "registry_link", "https://example.com/registry"], ["Weekend schedule", "weekend_schedule", "Welcome dinner, ceremony, brunch"]],
+  birthday: [["Birthday person", "birthday_person", "Jordan"], ["Age or milestone", "milestone", "30th birthday"], ["Main celebration", "main_celebration", "Rooftop dinner"], ["Dinner", "dinner", "Ocean rooftop"], ["Activities", "activities", "Boat day, spa, nightlife"], ["Nightlife", "nightlife", "Lounge reservations"], ["Gift preferences", "gift_preferences", "Experiences over gifts"]],
+  anniversary: [["Anniversary milestone", "milestone", "10 years"], ["Celebration dinner", "celebration_dinner", "Private chef dinner"], ["Hotel plan", "hotel_plan", "Ocean-view suite"], ["Activities", "activities", "Sunset cruise, photo walk"], ["Guest notes", "guest_notes", "Close family only"]],
+  family_reunion: [["Family name", "family_name", "Johnson Family"], ["Relative import source", "import_source", "CSV"], ["Room assignment plan", "room_plan", "By household"], ["Family schedule", "family_schedule", "Picnic, dinner, games"], ["Meal plan", "meal_plan", "Potluck and catered dinner"], ["Announcements", "announcements", "Welcome message"]],
+  conference: [["Sessions", "sessions", "Opening keynote, workshops"], ["Speakers", "speakers", "Keynote and panel speakers"], ["Tracks", "tracks", "Leadership, Sales, Product"], ["Sponsors", "sponsors", "Gold and community sponsors"], ["Registration details", "registration", "Badge pickup at lobby"], ["Venue rooms", "venue_rooms", "Palm Conference Room"], ["Badge information", "badge_info", "QR badge required"]],
+  graduation_trip: [["Graduate", "graduate", "Jordan"], ["School", "school", "State University"], ["Dinner", "dinner", "Family dinner"], ["Celebration schedule", "celebration_schedule", "Ceremony, dinner, beach day"], ["Contribution plan", "contribution_plan", "Shared activities only"]],
+  church_retreat: [["Retreat theme", "theme", "Renew and Restore"], ["Ministry group", "ministry_group", "Young Adults"], ["Worship schedule", "worship_schedule", "Morning and evening worship"], ["Sessions", "sessions", "Breakouts and prayer groups"], ["Transportation groups", "transportation_groups", "Bus A and Bus B"], ["Meal schedule", "meal_schedule", "Breakfast, lunch, dinner"], ["Emergency contacts", "emergency_contacts", "Retreat safety lead"]],
+  bachelor_bachelorette: [["Guest of honor", "guest_of_honor", "Taylor"], ["Main celebration", "main_celebration", "Dinner and lounge"], ["Activities", "activities", "Boat day, brunch"], ["Nightlife", "nightlife", "VIP table"], ["Transportation plan", "transportation_plan", "Private driver"], ["Cost split plan", "cost_split", "Equal split for shared events"]],
+  special_event: [["Event theme", "theme", "Custom celebration"], ["Primary venue", "venue", "Main venue"], ["Key activities", "activities", "Dinner, photos, group activity"], ["Special instructions", "instructions", "Bring ID and comfortable shoes"]]
 };
 
 const invitationConfigs = {
@@ -555,6 +665,114 @@ const invitationConfigs = {
     accepted: 61,
     pending: 19,
     companyLogo: true
+  },
+  wedding: {
+    badge: "Wedding weekend invite",
+    modeCopy: "Wedding hosts can invite guests, wedding party, family, vendors, and out-of-town travelers with hotel, shuttle, and schedule visibility.",
+    title: "You're invited to our wedding weekend",
+    message: "Join us for the ceremony, reception, hotel block, transportation updates, RSVP details, and shared memories.",
+    recipients: ["Wedding party", "Family", "Friends", "Vendors", "Out-of-town guests"],
+    sent: 86,
+    opened: 72,
+    accepted: 61,
+    pending: 25,
+    companyLogo: false
+  },
+  birthday: {
+    badge: "Birthday celebration invite",
+    modeCopy: "Birthday organizers can invite friends, family, and groups while tracking dinner, activities, contributions, and nightlife plans.",
+    title: "You're invited to the birthday trip",
+    message: "Celebrate with dinner, activities, shared costs, reminders, and a group photo album.",
+    recipients: ["Friends", "Family", "Dinner guests", "Activity group"],
+    sent: 18,
+    opened: 14,
+    accepted: 11,
+    pending: 7,
+    companyLogo: false
+  },
+  anniversary: {
+    badge: "Anniversary invite",
+    modeCopy: "Anniversary hosts can share celebration details, dinner plans, hotel information, activity schedules, and memories.",
+    title: "You're invited to our anniversary celebration",
+    message: "Join us for a special anniversary trip with dinner, activities, travel updates, and photos.",
+    recipients: ["Close family", "Friends", "Dinner guests"],
+    sent: 10,
+    opened: 8,
+    accepted: 6,
+    pending: 4,
+    companyLogo: false
+  },
+  family_reunion: {
+    badge: "Family reunion invite",
+    modeCopy: "Family reunion organizers can import relatives, track households, assign rooms, and send family announcements.",
+    title: "You're invited to the family reunion",
+    message: "Join the family schedule, room planning, activities, meal updates, announcements, and shared album.",
+    recipients: ["Relatives", "Households", "Elders", "Cousins", "Family coordinators"],
+    sent: 54,
+    opened: 42,
+    accepted: 35,
+    pending: 19,
+    companyLogo: false
+  },
+  conference: {
+    badge: "Conference registration invite",
+    modeCopy: "Conference organizers can invite attendees, speakers, sponsors, vendors, and staff with role-appropriate agenda access.",
+    title: "You're invited to the conference",
+    message: "View sessions, speakers, tracks, venue rooms, badge details, hotel blocks, transportation, and agenda updates.",
+    recipients: ["Attendees", "Speakers", "Sponsors", "Staff", "Vendors"],
+    sent: 240,
+    opened: 198,
+    accepted: 166,
+    pending: 74,
+    companyLogo: true
+  },
+  graduation_trip: {
+    badge: "Graduation trip invite",
+    modeCopy: "Graduation organizers can invite family and friends, collect RSVPs, coordinate travel, and share celebration memories.",
+    title: "You're invited to the graduation trip",
+    message: "Join the travel plan, dinner, celebration schedule, contributions, reminders, and photo album.",
+    recipients: ["Family", "Friends", "Classmates", "Dinner guests"],
+    sent: 22,
+    opened: 18,
+    accepted: 15,
+    pending: 7,
+    companyLogo: false
+  },
+  church_retreat: {
+    badge: "Church retreat invite",
+    modeCopy: "Retreat organizers can invite attendees, ministry leaders, volunteers, and drivers while tracking sessions and emergency contacts.",
+    title: "You're invited to the church retreat",
+    message: "View the worship schedule, sessions, meals, transportation groups, emergency contacts, and announcements.",
+    recipients: ["Attendees", "Ministry leaders", "Volunteers", "Drivers", "Staff"],
+    sent: 64,
+    opened: 51,
+    accepted: 44,
+    pending: 20,
+    companyLogo: true
+  },
+  bachelor_bachelorette: {
+    badge: "Celebration trip invite",
+    modeCopy: "Bachelor and bachelorette organizers can invite the group, coordinate activities, vote, split costs, and send reminders.",
+    title: "You're invited to the celebration trip",
+    message: "Join the group plan for dinner, activities, nightlife, transportation, shared costs, polls, and photos.",
+    recipients: ["Wedding party", "Friends", "Activity group"],
+    sent: 14,
+    opened: 13,
+    accepted: 12,
+    pending: 2,
+    companyLogo: false
+  },
+  special_event: {
+    badge: "Special event invite",
+    modeCopy: "Special event hosts can customize invitations, RSVPs, schedules, travel, wallet, media, and reminders for the event.",
+    title: "You're invited to this special event",
+    message: "Join the custom event plan with schedule, travel details, RSVP, reminders, media, and updates.",
+    recipients: ["Guests", "Hosts", "Vendors", "Coordinators"],
+    sent: 20,
+    opened: 15,
+    accepted: 12,
+    pending: 8,
+    companyLogo: false
   },
   cruise: {
     badge: "Cruise vacation invite",
@@ -1102,7 +1320,45 @@ function renderTripType(type) {
   $("#tripTravelersInput").value = config.travelersHidden ? "1" : "6";
   $("#featuresEnabledList").innerHTML = config.enabled.map((feature) => `<span>${escapeHtml(feature)}</span>`).join("");
   $("#featuresHiddenList").innerHTML = config.hidden.map((feature) => `<span>${escapeHtml(feature)}</span>`).join("");
+  renderEventSpecificFields(type);
   renderInvitationSetup(type);
+}
+
+function renderEventSpecificFields(type) {
+  const fields = eventSpecificFieldConfigs[type] || [];
+  const panel = $("#eventSpecificFields");
+  const grid = $("#eventSpecificFieldGrid");
+  if (!panel || !grid) return;
+  panel.hidden = fields.length === 0;
+  grid.innerHTML = fields.map(([label, key, value]) => `
+    <label>${escapeHtml(label)}
+      <input data-event-specific-key="${escapeHtml(key)}" type="${key.endsWith("_at") ? "datetime-local" : "text"}" value="${escapeHtml(value)}">
+    </label>
+  `).join("");
+}
+
+function getEventSpecificDetails() {
+  return Object.fromEntries($$("[data-event-specific-key]").map((input) => [input.dataset.eventSpecificKey, input.value.trim()]));
+}
+
+async function apiRequest(path, options = {}) {
+  if (!state.session?.access_token || isFilePreview) return { skipped: true, reason: "No deployed authenticated API session" };
+  const response = await fetch(path, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${state.session.access_token}`,
+      ...(options.headers || {})
+    }
+  });
+  let data = {};
+  try {
+    data = await response.json();
+  } catch (_error) {
+    data = {};
+  }
+  if (!response.ok) throw new Error(data.error || `Request failed with ${response.status}`);
+  return data;
 }
 
 function updateDashboardWidgets() {
@@ -1965,7 +2221,11 @@ function updateAuthUi() {
     state.hasEnteredApp = true;
     sessionStorage.setItem("traveldripEnteredApp", "true");
   }
-  const showGate = !signedIn && !state.hasEnteredApp;
+  if (!signedIn) {
+    state.hasEnteredApp = false;
+    sessionStorage.removeItem("traveldripEnteredApp");
+  }
+  const showGate = !signedIn;
 
   if (openAuthButton) {
     openAuthButton.textContent = signedIn ? state.session.user.email : "Sign in";
@@ -1977,11 +2237,36 @@ function updateAuthUi() {
   if (authPanel && location.pathname !== "/admin.html") {
     authPanel.hidden = !showGate;
     document.body.classList.toggle("auth-screen", showGate);
+    setAuthenticatedShellVisible(signedIn && !showGate);
     if (!showGate) authPanel.classList.remove("show-form");
     renderGlobalDestinationHeader(getTargetFromRoute());
   }
 
   if (location.pathname === "/admin.html") updateAdminUi();
+}
+
+function setAuthenticatedShellVisible(visible) {
+  [$(".sidebar"), $(".topbar"), $(".mobile-nav"), $("#globalDestinationHeader")].forEach((element) => {
+    if (!element) return;
+    element.hidden = !visible;
+    element.setAttribute("aria-hidden", String(!visible));
+  });
+  document.body.classList.toggle("signed-in-shell", visible);
+  if (!visible) document.body.classList.remove("sidebar-open");
+  $("#sidebarMenuButton")?.setAttribute("aria-expanded", "false");
+}
+
+function rememberProtectedTarget(target) {
+  if (!routeDefinitions[target]) return;
+  state.pendingProtectedTarget = target;
+  sessionStorage.setItem("traveldripPendingProtectedTarget", target);
+}
+
+function consumeProtectedTarget() {
+  const target = routeDefinitions[state.pendingProtectedTarget] ? state.pendingProtectedTarget : "dashboardHome";
+  state.pendingProtectedTarget = "dashboardHome";
+  sessionStorage.removeItem("traveldripPendingProtectedTarget");
+  return target;
 }
 
 async function checkAdminAccess() {
@@ -2040,6 +2325,10 @@ function getInitialAuthMode() {
 
 function setAuthMode(mode, scrollIntoView = false) {
   if (location.pathname === "/admin.html") return;
+  if (state.session?.user && mode !== "guest") {
+    enterAppPreview();
+    return;
+  }
 
   const isSignup = mode === "signup";
   const isGuest = mode === "guest";
@@ -2061,6 +2350,7 @@ function setAuthMode(mode, scrollIntoView = false) {
   state.hasEnteredApp = false;
   sessionStorage.removeItem("traveldripEnteredApp");
   document.body.classList.add("auth-screen");
+  setAuthenticatedShellVisible(false);
   if (authPanel) {
     authPanel.hidden = false;
     authPanel.classList.add("show-form");
@@ -2087,7 +2377,7 @@ function setAuthMode(mode, scrollIntoView = false) {
     authTitle.textContent = isGuest
       ? "Access your company event"
       : isSignup
-        ? "Create your Traveldrip account"
+        ? "Create your TravelDrip account"
         : "Sign in to sync your trip data";
   }
   if (authCopy) {
@@ -2095,7 +2385,7 @@ function setAuthMode(mode, scrollIntoView = false) {
       ? "Use your company code plus employee or attendee ID to view only the travel details, schedule, documents, and photos approved for you."
       : isSignup
         ? "Create an account, verify your email, then choose whether you are planning solo, with a group, or for a corporate retreat."
-        : "Use your Traveldrip account to keep solo plans, group memories, corporate retreats, wallets, and live alerts synced across devices.";
+        : "Use your TravelDrip account to keep solo plans, group memories, corporate retreats, wallets, and live alerts synced across devices.";
   }
   if (bottomCopy) bottomCopy.textContent = isGuest ? "Need a full TravelDrip profile?" : isSignup ? "Already have an account?" : "New to TravelDrip?";
   $("#landingSignupButton").hidden = isSignup;
@@ -2124,11 +2414,13 @@ function enterAppPreview() {
   $("#authPanel")?.classList.remove("show-form");
   if ($("#authPanel")) $("#authPanel").hidden = true;
   document.body.classList.remove("auth-screen");
-  const appRoute = isFilePreview ? "index.html" : "/home";
+  const target = consumeProtectedTarget();
+  const appRoute = getRouteForTarget(target);
   if (location.hash === "#login" || location.hash === "#register" || location.pathname === "/login" || location.pathname === "/register") {
-    history.replaceState({ target: "dashboardHome" }, "", appRoute);
+    history.replaceState({ target }, "", appRoute);
   }
-  renderRoute(getTargetFromRoute(), { replace: true });
+  setAuthenticatedShellVisible(Boolean(state.session?.user));
+  renderRoute(target, { replace: true });
 }
 
 function showAuthSetupMessage() {
@@ -2148,9 +2440,12 @@ async function signIn(email, password) {
     return;
   }
 
-  const { error } = await state.supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await state.supabase.auth.signInWithPassword({ email, password });
   $("#authMessage").textContent = error ? error.message : "Logged in. Your trip data is syncing now.";
-  if (!error) enterAppPreview();
+  if (!error) {
+    state.session = data.session || state.session;
+    enterAppPreview();
+  }
 }
 
 async function signUp(fullName, username, email, password) {
@@ -2179,6 +2474,7 @@ async function signUp(fullName, username, email, password) {
   }
 
   if (data.session) {
+    state.session = data.session;
     $("#authMessage").textContent = "Account created. You are logged in and your trip data is syncing.";
     enterAppPreview();
     return;
@@ -2305,10 +2601,13 @@ async function endGuestAccess() {
 
 async function signOut() {
   if (state.supabase) await state.supabase.auth.signOut();
+  rememberProtectedTarget(getTargetFromRoute());
+  state.session = null;
   state.hasEnteredApp = false;
   sessionStorage.removeItem("traveldripEnteredApp");
   state.isAdmin = false;
   state.adminStatusCheckedFor = "";
+  setAuthMode("signin");
   updateAuthUi();
 }
 
@@ -2539,6 +2838,12 @@ async function verifyCorporateAccessGate() {
 
 function renderRoute(target = getTargetFromRoute(), { updateHistory = false, replace = false } = {}) {
   const resolvedTarget = routeDefinitions[target] ? target : "dashboardHome";
+  if (!state.session?.user && location.pathname !== "/admin.html") {
+    rememberProtectedTarget(resolvedTarget);
+    setAuthMode("signin");
+    if ($("#authMessage")) $("#authMessage").textContent = "Sign in to continue to that TravelDrip page.";
+    return;
+  }
   const requestedCorporatePath = normalizeAppPath(location.pathname).startsWith("/corporate");
   if ((isCorporateTarget(resolvedTarget) || requestedCorporatePath) && resolvedTarget !== "dashboardHome" && !hasValidCorporateAccess()) {
     renderRoute("dashboardHome", { updateHistory: true, replace: true });
@@ -2610,7 +2915,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   updateDashboardWidgets();
   if ($("#currentPageTitle")) $("#currentPageTitle").textContent = routeDefinitions[resolvedTarget].label;
   renderGlobalDestinationHeader(resolvedTarget);
-  document.title = `${routeDefinitions[resolvedTarget].label} - Traveldrip`;
+  document.title = `${routeDefinitions[resolvedTarget].label} - TravelDrip`;
   document.body.classList.remove("sidebar-open");
   $("#sidebarMenuButton")?.setAttribute("aria-expanded", "false");
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -3265,9 +3570,47 @@ function wireLocalInteractions() {
     const type = $(".trip-type-selector button.active")?.dataset.tripType || "solo";
     const config = tripTypeConfigs[type] || tripTypeConfigs.solo;
     const tripName = $("#tripNameInput").value.trim() || config.label;
+    const payload = {
+      tripType: eventTypeToApiType[type] || "group_trip",
+      title: tripName,
+      destination: $("#tripDestinationInput").value.trim(),
+      startsOn: $("#tripStartInput").value,
+      endsOn: $("#tripEndInput").value,
+      budgetCents: Math.round(Number($("#tripBudgetInput").value || 0) * 100),
+      currency: $("#eventCurrencyInput")?.value || "USD",
+      privacy: $("#eventPrivacyInput")?.value || "invite_only",
+      status: $("#eventStatusInput")?.value || "draft",
+      travelerCount: Number($("#tripTravelersInput").value || $("#eventGuestCountInput")?.value || 1),
+      travelStyle: $("#tripStyleInput").value,
+      interests: ($("#tripInterestsInput").value || "").split(",").map((item) => item.trim()).filter(Boolean),
+      eventDetails: {
+        description: $("#eventDescriptionInput")?.value.trim() || "",
+        host: $("#eventHostInput")?.value.trim() || "",
+        guestCount: Number($("#eventGuestCountInput")?.value || 0),
+        rsvpDeadline: $("#eventRsvpDeadlineInput")?.value || "",
+        travelRequired: Boolean($("#eventTravelRequiredInput")?.checked),
+        hotelRequired: Boolean($("#eventHotelRequiredInput")?.checked),
+        transportationRequired: Boolean($("#eventTransportationRequiredInput")?.checked),
+        inviteApprovalRequired: Boolean($("#eventInviteApprovalInput")?.checked),
+        specific: getEventSpecificDetails()
+      }
+    };
+    try {
+      const result = await apiRequest("/api/events", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      if (result.skipped) {
+        $("#soloModeMessage").textContent = `${config.label} configured locally. Sign in on the deployed app to persist this event to Supabase.`;
+      } else {
+        $("#soloModeMessage").textContent = `${config.label} created and saved to Supabase: ${tripName}. Event modules, permissions, audit log, and wallet setup were initialized.`;
+      }
+    } catch (error) {
+      $("#soloModeMessage").textContent = `Event setup could not be saved: ${error.message}. Your form data is still visible so you can retry.`;
+      return;
+    }
     $("#invitationSetupStep").hidden = false;
     renderInvitationSetup(type);
-    $("#soloModeMessage").textContent = `${config.label} created: ${tripName}. TravelDrip configured the right dashboard, permissions, and workflows automatically.`;
     addAuditEntry("Guided trip created", `${config.label} created with tailored feature set.`);
     await saveSyncedEvent("guided_trip_created", {
       type,
@@ -3278,7 +3621,8 @@ function wireLocalInteractions() {
       travelers: Number($("#tripTravelersInput").value || 1),
       budget: Number($("#tripBudgetInput").value || 0),
       style: $("#tripStyleInput").value,
-      interests: $("#tripInterestsInput").value.trim()
+      interests: $("#tripInterestsInput").value.trim(),
+      eventDetails: payload.eventDetails
     });
   });
 
@@ -3296,7 +3640,16 @@ function wireLocalInteractions() {
     const tones = {
       solo: "I created a TravelDrip itinerary so you can follow my plans, see check-ins, and stay connected while I travel.",
       group: "You're invited to an unforgettable TravelDrip adventure with shared plans, RSVP tracking, group memories, and easy updates.",
-      corporate: "You are invited to our company retreat. TravelDrip will keep your assigned travel, agenda, announcements, and important documents organized."
+      corporate: "You are invited to our company retreat. TravelDrip will keep your assigned travel, agenda, announcements, and important documents organized.",
+      wedding: "We would love for you to join our wedding weekend. TravelDrip will keep ceremony, reception, hotel block, shuttle, RSVP, and memory details in one place.",
+      birthday: "You're invited to celebrate with us. TravelDrip will keep dinner, activities, contributions, reminders, and photos organized for the birthday trip.",
+      anniversary: "Please join our anniversary celebration. TravelDrip will keep dinner, travel, activities, reminders, and shared memories organized.",
+      family_reunion: "You're invited to the family reunion. TravelDrip will keep room plans, meals, activities, announcements, RSVP details, and family photos together.",
+      conference: "You're invited to the conference. TravelDrip will keep sessions, speakers, venue rooms, badges, hotels, transportation, and agenda updates organized.",
+      graduation_trip: "You're invited to the graduation trip. TravelDrip will keep travel plans, dinner, celebration schedule, contributions, reminders, and photos organized.",
+      church_retreat: "You're invited to the church retreat. TravelDrip will keep worship, sessions, meals, transportation groups, emergency contacts, and announcements organized.",
+      bachelor_bachelorette: "You're invited to the celebration trip. TravelDrip will keep activities, dinner, nightlife, transportation, polls, shared costs, and photos organized.",
+      special_event: "You're invited to this special event. TravelDrip will keep schedule, travel, RSVP, reminders, media, and updates organized."
     };
     $("#inviteMessageInput").value = tones[type] || tones.solo;
     $("#invitePreviewMessage").textContent = $("#inviteMessageInput").value;
@@ -4580,32 +4933,74 @@ function subscribeToLiveData() {
 async function registerServiceWorker() {
   if (isFilePreview) return;
   if (!("serviceWorker" in navigator)) return;
-  await navigator.serviceWorker.register("/sw.js");
+  const registration = await navigator.serviceWorker.register("/sw.js");
+  registration.addEventListener("updatefound", () => {
+    const worker = registration.installing;
+    if (!worker) return;
+    worker.addEventListener("statechange", () => {
+      if (worker.state === "installed" && navigator.serviceWorker.controller) {
+        $("#updateAvailableBanner")?.removeAttribute("hidden");
+      }
+    });
+  });
+  $("#reloadUpdateButton")?.addEventListener("click", () => {
+    if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
+    window.location.reload();
+  });
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!sessionStorage.getItem("traveldripReloadedForUpdate")) {
+      sessionStorage.setItem("traveldripReloadedForUpdate", "true");
+      window.location.reload();
+    }
+  });
 }
 
 function wireInstallPrompt() {
   let promptEvent;
+  const dismissed = localStorage.getItem("traveldripInstallPromptDismissed") === "true";
   const installButton = $("#installButton");
   const inlineInstallButton = $("#inlineInstallButton");
+  const authInstallButton = $("#authInstallButton");
+  const installButtons = [installButton, inlineInstallButton, authInstallButton].filter(Boolean);
+  const installHelpDialog = $("#installHelpDialog");
 
   window.addEventListener("beforeinstallprompt", (event) => {
     event.preventDefault();
     promptEvent = event;
-    if (installButton) installButton.hidden = false;
-    if (inlineInstallButton) inlineInstallButton.hidden = false;
+    if (!dismissed) installButtons.forEach((button) => { button.hidden = false; });
   });
 
   async function promptInstall() {
-    if (!promptEvent) return;
+    if (!promptEvent) {
+      installHelpDialog?.showModal();
+      return;
+    }
     promptEvent.prompt();
-    await promptEvent.userChoice;
-    if (installButton) installButton.hidden = true;
-    if (inlineInstallButton) inlineInstallButton.hidden = true;
+    const choice = await promptEvent.userChoice;
+    if (choice.outcome === "dismissed") localStorage.setItem("traveldripInstallPromptDismissed", "true");
+    installButtons.forEach((button) => { button.hidden = true; });
     promptEvent = null;
   }
 
-  installButton?.addEventListener("click", promptInstall);
-  inlineInstallButton?.addEventListener("click", promptInstall);
+  installButtons.forEach((button) => button.addEventListener("click", promptInstall));
+  $("#iosInstallHelpButton")?.addEventListener("click", () => installHelpDialog?.showModal());
+  $("#profileInstallHelpButton")?.addEventListener("click", () => installHelpDialog?.showModal());
+  window.addEventListener("appinstalled", () => {
+    localStorage.setItem("traveldripInstalled", "true");
+    installButtons.forEach((button) => { button.hidden = true; });
+  });
+}
+
+function wireConnectivityStatus() {
+  const banner = $("#offlineStatusBanner");
+  if (!banner) return;
+  const update = () => {
+    banner.hidden = navigator.onLine;
+    banner.setAttribute("aria-hidden", String(navigator.onLine));
+  };
+  window.addEventListener("online", update);
+  window.addEventListener("offline", update);
+  update();
 }
 
 function urlBase64ToUint8Array(value) {
@@ -4650,7 +5045,7 @@ async function enableNotifications() {
     body: JSON.stringify({ subscription })
   });
 
-  alert("Notifications are enabled for Traveldrip.");
+  alert("Notifications are enabled for TravelDrip.");
 }
 
 async function sendAdminNotification(event) {
@@ -4682,6 +5077,7 @@ async function init() {
   startAuthCarousel();
   wireLocalInteractions();
   wireInstallPrompt();
+  wireConnectivityStatus();
   await registerServiceWorker();
   await loadConfig();
   updateAuthUi();

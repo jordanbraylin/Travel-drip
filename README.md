@@ -1,6 +1,6 @@
-# Traveldrip
+# TravelDrip
 
-Traveldrip is a Vercel-ready PWA for group trip planning with Supabase auth, realtime trip events, and admin-triggered web push notifications.
+TravelDrip is a Vercel-ready PWA for travel planning with Supabase auth, realtime trip events, and admin-triggered web push notifications.
 
 ## Launch on Vercel
 
@@ -16,9 +16,10 @@ Traveldrip is a Vercel-ready PWA for group trip planning with Supabase auth, rea
 1. Create a free Supabase project.
 2. Open the SQL editor and run `supabase.sql`.
 3. Run `supabase-backend.sql` to add the production backend foundation for trips, events, invitations, RSVP, schedules, wallet ledgers, receipts, role permissions, notifications, and audit logs.
-4. The project URL is already set to `https://bfuiqmmbsgfcnyeneunv.supabase.co`; copy your publishable key into Vercel as `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
-5. Copy your service role key into Vercel as `SUPABASE_SERVICE_ROLE_KEY`. Never put this key in browser code.
-6. Add your admin email to `SUPABASE_ADMIN_EMAILS`.
+4. Run `supabase-event-planning.sql` to add explicit event-planning tables, event-specific RLS, and the expanded event type constraint for weddings, birthdays, anniversaries, reunions, conferences, graduation trips, church retreats, bachelor/bachelorette trips, and special events.
+5. The project URL is already set to `https://bfuiqmmbsgfcnyeneunv.supabase.co`; copy your publishable key into Vercel as `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
+6. Copy your service role key into Vercel as `SUPABASE_SERVICE_ROLE_KEY`. Never put this key in browser code.
+7. Add your admin email to `SUPABASE_ADMIN_EMAILS`.
 7. In Supabase Auth settings, add your Vercel URL to the allowed redirect URLs.
 8. In Supabase Auth providers, make sure Email is enabled. If Confirm email is on, new users must verify their inbox before logging in.
 9. Add these allowed redirect URLs in Supabase Auth URL Configuration:
@@ -59,7 +60,7 @@ The current wallet UI includes the shared Trip Virtual Wallet, Group Bank dashbo
 
 Every eligible group trip, event, cruise, or corporate retreat should have one shared trip wallet, one unique wallet identifier, one masked trip wallet card, one transaction ledger, one contribution ledger, and one audit trail. Member contributions are pooled into the trip wallet balance while each user's contribution history, refundable balance, and refund activity remain separately tracked.
 
-For a real secured wallet, connect the Add funds action to Stripe Checkout, Stripe Payment Intents, or another PCI-compliant provider. Keep card data out of Traveldrip, verify PIN/payment state on a serverless API route, store only provider transaction IDs/idempotency keys, and use Supabase Row Level Security for trip wallet and contribution records.
+For a real secured wallet, connect the Add funds action to Stripe Checkout, Stripe Payment Intents, or another PCI-compliant provider. Keep card data out of TravelDrip, verify PIN/payment state on a serverless API route, store only provider transaction IDs/idempotency keys, and use Supabase Row Level Security for trip wallet and contribution records.
 
 Core rule: users always see their own contributions, and money not committed to deposits, reservations, flights, hotels, activities, or group purchases remains refundable to the original contributor.
 
@@ -145,9 +146,9 @@ For production, organizers/admins should be the only roles allowed to edit `trip
 
 ## Add to home screen
 
-Android Chrome: open Traveldrip, tap the install prompt or the browser menu, then choose Install app.
+Android Chrome: open TravelDrip, tap the install prompt or the browser menu, then choose Install app.
 
-iPhone Safari: open Traveldrip, tap Share, choose Add to Home Screen, then tap Add. iOS notification support requires the app to be added to the home screen first.
+iPhone Safari: open TravelDrip, tap Share, choose Add to Home Screen, then tap Add. iOS notification support requires the app to be added to the home screen first.
 
 ## QA checklist
 

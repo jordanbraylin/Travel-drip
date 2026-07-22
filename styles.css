@@ -165,6 +165,38 @@ img {
   min-width: 0;
 }
 
+.brand-logo-wrap {
+  display: block;
+  width: min(210px, 100%);
+  flex: 0 1 auto;
+}
+
+.brand-logo,
+.auth-brand-logo,
+.loader-logo {
+  display: block;
+  height: auto;
+}
+
+.brand-logo {
+  width: 100%;
+}
+
+.sidebar .brand {
+  min-height: 52px;
+  align-items: flex-start;
+}
+
+.sidebar .brand-copy {
+  display: none;
+}
+
+.loader-logo {
+  width: 116px;
+  margin: 0 auto 10px;
+  filter: drop-shadow(0 18px 28px rgba(0, 150, 199, 0.22));
+}
+
 .brand strong {
   display: block;
   font-size: 24px;
@@ -592,6 +624,31 @@ body.app-routed main > section#dashboardHome.route-screen:not([hidden]) {
   gap: 12px;
 }
 
+.pwa-install-mini {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid rgba(0, 194, 199, 0.22);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #effaff;
+}
+
+.pwa-install-mini span {
+  color: rgba(239, 250, 255, 0.72);
+  line-height: 1.5;
+}
+
+.pwa-install-mini div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pwa-install-mini button {
+  min-height: 40px;
+}
+
 body.auth-screen {
   background: #071116;
 }
@@ -602,15 +659,28 @@ body.auth-screen .shell {
 
 body.auth-screen .sidebar,
 body.auth-screen .topbar,
+body.auth-screen .mobile-nav,
 body.auth-screen .pwa-panel,
 body.auth-screen main > section:not(.auth-panel) {
-  display: none;
+  display: none !important;
 }
 
 body.auth-screen main {
   min-height: 100vh;
   padding: 0;
   overflow: hidden;
+}
+
+body.auth-screen .shell {
+  min-height: 100vh;
+}
+
+body.auth-screen .auth-panel {
+  display: block;
+}
+
+body.auth-screen .auth-panel[hidden] {
+  display: none !important;
 }
 
 .auth-landing {
@@ -643,6 +713,13 @@ body.auth-screen main {
   text-decoration: none;
   font-size: 38px;
   line-height: 1;
+}
+
+.auth-brand-logo {
+  width: clamp(188px, 22vw, 292px);
+  max-height: 84px;
+  object-fit: contain;
+  object-position: left center;
 }
 
 .auth-brand .brand-mark {
@@ -3860,6 +3937,99 @@ input[type="range"] {
   backdrop-filter: blur(4px);
 }
 
+.install-help-dialog {
+  max-width: 480px;
+}
+
+.install-steps {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-left: 22px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.update-available-banner {
+  position: fixed;
+  left: 50%;
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  z-index: 90;
+  width: min(480px, calc(100% - 28px));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  background: rgba(7, 17, 22, 0.92);
+  color: #effaff;
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.26);
+  backdrop-filter: blur(16px);
+}
+
+.update-available-banner[hidden] {
+  display: none !important;
+}
+
+.update-available-banner div {
+  display: grid;
+  gap: 2px;
+}
+
+.update-available-banner span {
+  color: rgba(239, 250, 255, 0.72);
+  font-size: 13px;
+}
+
+.update-available-banner button {
+  min-height: 38px;
+  border: 0;
+  border-radius: 999px;
+  padding: 0 14px;
+  background: var(--reef);
+  color: #071116;
+  font-weight: 850;
+}
+
+.offline-status-banner {
+  position: fixed;
+  left: 50%;
+  top: calc(14px + env(safe-area-inset-top));
+  z-index: 91;
+  width: min(620px, calc(100% - 28px));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 178, 74, 0.36);
+  border-radius: 18px;
+  background: rgba(31, 28, 21, 0.94);
+  color: #fff8e8;
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(16px);
+}
+
+.offline-status-banner[hidden] {
+  display: none !important;
+}
+
+.offline-status-banner span {
+  color: rgba(255, 248, 232, 0.76);
+  line-height: 1.4;
+}
+
+@media (max-width: 640px) {
+  .offline-status-banner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
 .corporate-access-dialog::backdrop {
   background: rgba(7, 17, 22, 0.86);
   backdrop-filter: blur(8px);
@@ -5245,6 +5415,16 @@ input[type="range"] {
 .admin-brand {
   color: var(--ink);
   margin-bottom: 22px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.admin-wordmark {
+  width: min(300px, 72vw);
+}
+
+.admin-brand .brand-copy strong {
+  display: none;
 }
 
 .admin-brand small {
@@ -5360,6 +5540,22 @@ code {
   .auth-brand {
     gap: 10px;
     font-size: 28px;
+  }
+
+  .brand-logo-wrap {
+    width: 42px;
+  }
+
+  .sidebar .brand {
+    min-height: 44px;
+  }
+
+  .auth-brand-logo {
+    width: 208px;
+  }
+
+  .loader-logo {
+    width: 96px;
   }
 
   .auth-brand .brand-mark {
@@ -8182,6 +8378,119 @@ body[data-travel-theme="miami"] .social-card p {
   .theme-studio,
   .theme-swatch-grid,
   .travel-badge-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* TravelDrip brand identity refresh */
+.brand-logo-wrap,
+.brand-logo,
+.auth-brand-logo,
+.loader-logo {
+  min-width: 0;
+}
+
+.sidebar .brand .brand-logo-wrap {
+  width: min(210px, 100%);
+}
+
+.sidebar .brand .brand-copy {
+  display: none;
+}
+
+.auth-brand .auth-brand-logo {
+  width: clamp(188px, 22vw, 292px);
+}
+
+.loader-card .loader-logo {
+  width: 116px;
+  margin: 0 auto 10px;
+}
+
+.admin-brand .admin-wordmark {
+  width: min(300px, 72vw);
+}
+
+.admin-brand .brand-copy {
+  display: block;
+}
+
+.admin-brand .brand-copy strong {
+  display: none;
+}
+
+.admin-brand .brand-copy small {
+  display: block;
+}
+
+@media (max-width: 720px) {
+  .sidebar .brand .brand-logo-wrap {
+    width: 42px;
+  }
+
+  .auth-brand .auth-brand-logo {
+    width: 208px;
+  }
+
+  .loader-card .loader-logo {
+    width: 96px;
+  }
+}
+
+/* Event planning production flow */
+.trip-creation-form textarea {
+  min-height: 96px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  resize: vertical;
+}
+
+.trip-creation-form .wide,
+.event-specific-fields {
+  grid-column: 1 / -1;
+}
+
+.event-requirements {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.event-requirements label {
+  min-height: 48px;
+  align-items: center;
+  grid-template-columns: auto 1fr;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.event-specific-fields {
+  padding: 14px;
+  border: 1px solid rgba(0, 150, 199, 0.22);
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(0, 180, 216, 0.08), rgba(255, 111, 97, 0.08));
+}
+
+.event-specific-fields h4 {
+  margin: 0 0 10px;
+  color: var(--ink);
+}
+
+#eventSpecificFieldGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .event-requirements,
+  #eventSpecificFieldGrid {
     grid-template-columns: 1fr;
   }
 }

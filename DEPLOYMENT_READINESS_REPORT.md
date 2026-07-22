@@ -53,17 +53,17 @@ Navigation status:
 Security status:
 - No committed live private-key patterns were detected in source files.
 - Secret-scan matches are documentation placeholders only, including examples for service-role and VAPID private keys.
-- The pasted Supabase publishable key is not committed into local source files.
-- `public-config.js` contains the Supabase URL but no publishable key, VAPID key, service role key, or private secret.
+- `public-config.js` contains the Supabase URL and browser-safe Supabase publishable key.
+- No VAPID private key, Supabase service role key, or private secret is committed into local source files.
 - `.gitignore` excludes `.env`, `.env.*`, `.vercel`, `node_modules`, `dist`, `coverage`, and logs.
 - `vercel.json` includes security headers: CSP, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, and Permissions-Policy.
 - Permissions-Policy allows same-origin camera and geolocation while keeping microphone disabled.
 - API routes apply no-store/no-sniff/referrer/CSP headers and require Bearer auth where applicable.
 
 Cache and deployment fixes made:
-- `index.html` now loads `styles.css?v=47` and `app.js?v=40`.
-- `admin.html` now loads `styles.css?v=47` and `app.js?v=40`.
-- `sw.js` now uses cache name `traveldrip-v40`.
+- `index.html` now loads `styles.css?v=49`, `public-config.js?v=2`, and `app.js?v=41`.
+- `admin.html` now loads `styles.css?v=49`, `public-config.js?v=2`, and `app.js?v=41`.
+- `sw.js` now uses cache name `traveldrip-v43`.
 
 ## Production Checks Still Required
 

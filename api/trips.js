@@ -18,6 +18,8 @@ const allowedTripTypes = new Set([
   "bachelor_bachelorette",
   "anniversary",
   "conference",
+  "graduation_trip",
+  "church_retreat",
   "business_event",
   "special_event",
   "cruise_vacation"
@@ -27,6 +29,15 @@ const defaultModulesByType = {
   solo_trip: ["overview", "itinerary", "flights", "hotels", "transportation", "budget", "documents", "memories"],
   group_trip: ["overview", "itinerary", "group_chat", "group_bank", "split_bill", "transportation", "documents", "memories"],
   corporate_retreat: ["overview", "employee_schedule", "announcements", "flights", "hotels", "transportation", "important_information", "reports"],
+  wedding: ["overview", "guest_list", "rsvp", "ceremony", "reception", "hotel_block", "transportation", "wallet", "messages", "media", "documents"],
+  birthday: ["overview", "guest_list", "rsvp", "schedule", "activities", "polls", "wallet", "messages", "media", "notifications"],
+  anniversary: ["overview", "guest_list", "rsvp", "schedule", "hotel", "activities", "messages", "media", "notifications"],
+  family_reunion: ["overview", "guest_list", "rsvp", "room_assignments", "meals", "activities", "announcements", "wallet", "media"],
+  conference: ["overview", "registration", "sessions", "speakers", "tracks", "sponsors", "hotel_block", "transportation", "messages", "reports"],
+  graduation_trip: ["overview", "guest_list", "rsvp", "travel", "dinner", "activities", "wallet", "messages", "media", "completion"],
+  church_retreat: ["overview", "guest_list", "rsvp", "worship", "sessions", "meals", "transportation_groups", "announcements", "documents"],
+  bachelor_bachelorette: ["overview", "guest_list", "rsvp", "activities", "dinner", "nightlife", "polls", "wallet", "transportation", "media"],
+  special_event: ["overview", "guest_list", "rsvp", "schedule", "activities", "wallet", "messages", "media", "documents", "completion"],
   cruise_vacation: ["cruise_overview", "cabin", "port_schedule", "shore_excursions", "onboard_schedule", "dining", "transportation", "cruise_wallet", "documents", "memories"],
   default: ["overview", "itinerary", "messages", "important_information", "documents", "memories"]
 };
@@ -57,6 +68,15 @@ const featureFlagsByType = {
     expense_approvals: true,
     corporate_finance: true
   },
+  wedding: { ai_event_planner: true, invitations: true, rsvp: true, hotel_block: true, transportation: true, group_wallet: true, media_approval: true },
+  birthday: { ai_event_planner: true, invitations: true, rsvp: true, activity_voting: true, group_wallet: true, smart_bill_split: true, media: true },
+  anniversary: { ai_event_planner: true, invitations: true, rsvp: true, hotel_management: true, media: true, reminders: true },
+  family_reunion: { ai_event_planner: true, guest_import: true, rsvp: true, room_assignments: true, announcements: true, group_wallet: true, family_album: true },
+  conference: { ai_event_planner: true, registration: true, sessions: true, speakers: true, sponsors: true, role_based_access: true, reports: true },
+  graduation_trip: { ai_event_planner: true, invitations: true, rsvp: true, group_wallet: true, media: true, event_completion: true },
+  church_retreat: { ai_event_planner: true, invitations: true, rsvp: true, sessions: true, meal_schedule: true, transportation_groups: true, emergency_contacts: true },
+  bachelor_bachelorette: { ai_event_planner: true, invitations: true, rsvp: true, activity_voting: true, ride_share_split: true, group_wallet: true, media: true },
+  special_event: { ai_event_planner: true, invitations: true, rsvp: true, schedule: true, group_wallet: true, messages: true, media: true, event_completion: true },
   cruise_vacation: {
     ai_cruise_manager: true,
     cruise_overview: true,
@@ -90,7 +110,7 @@ function tripUsesSharedWallet(tripType) {
 function walletTypeForTrip(tripType) {
   if (tripType === "corporate_retreat" || tripType === "business_event" || tripType === "conference") return "corporate";
   if (tripType === "cruise_vacation") return "cruise";
-  if (tripType === "special_event" || tripType === "wedding" || tripType === "birthday" || tripType === "family_reunion") return "event";
+  if (["special_event", "wedding", "birthday", "family_reunion", "anniversary", "graduation_trip", "church_retreat", "bachelor_bachelorette"].includes(tripType)) return "event";
   return "shared_trip";
 }
 

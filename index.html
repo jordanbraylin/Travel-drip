@@ -4,18 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0096c7">
-  <meta name="description" content="Traveldrip helps groups plan trips, split budgets, vote on plans, and stay synced.">
+  <meta name="description" content="TravelDrip helps travelers plan solo trips, group trips, corporate retreats, budgets, memories, and live updates.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=47">
-  <title>Traveldrip</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="TravelDrip">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="TravelDrip">
+  <link rel="stylesheet" href="styles.css?v=51">
+  <title>TravelDrip</title>
 </head>
 <body>
   <div class="loader" id="loader" aria-live="polite">
     <div class="loader-card">
-      <div class="brand-mark pulse" aria-hidden="true"></div>
-      <h1>Traveldrip</h1>
+      <img class="loader-logo" src="icons/traveldrip-logo-stacked.svg" alt="TravelDrip">
+      <h1>TravelDrip</h1>
       <p>Syncing your group trip...</p>
       <div class="loader-bar"><span></span></div>
     </div>
@@ -23,9 +28,12 @@
 
   <div class="shell">
     <aside class="sidebar" aria-label="Primary">
-      <a class="brand" href="index.html" data-route-link="dashboardHome" aria-label="Traveldrip home">
-        <span class="brand-mark" aria-hidden="true"></span>
-        <span><strong>Traveldrip</strong><small>Group trips, synced</small></span>
+      <a class="brand" href="index.html" data-route-link="dashboardHome" aria-label="TravelDrip home">
+        <picture class="brand-logo-wrap">
+          <source media="(max-width: 720px)" srcset="icons/traveldrip-logo-icon.svg">
+          <img class="brand-logo sidebar-wordmark" src="icons/traveldrip-logo-white.svg" alt="TravelDrip">
+        </picture>
+        <span class="brand-copy"><strong>TravelDrip</strong><small>Plan together. Travel better.</small></span>
       </a>
       <nav class="nav grouped-nav" aria-label="TravelDrip navigation">
         <details class="nav-group" data-consumer-nav open>
@@ -100,7 +108,7 @@
         </details>
       </nav>
       <div class="install-card">
-        <strong>Add Traveldrip to your phone</strong>
+        <strong>Add TravelDrip to your phone</strong>
         <span>Tap install when prompted, or use your browser share menu and choose Add to Home Screen.</span>
         <button class="light-button" type="button" id="installButton" hidden>Install app</button>
       </div>
@@ -145,9 +153,8 @@
 
       <section class="auth-panel auth-landing" id="authPanel" hidden>
         <header class="auth-landing-nav">
-          <a class="auth-brand" href="index.html" aria-label="Traveldrip home">
-            <span class="brand-mark" aria-hidden="true"></span>
-            <strong>Traveldrip</strong>
+          <a class="auth-brand" href="index.html" aria-label="TravelDrip home">
+            <img class="auth-brand-logo" src="icons/traveldrip-logo-white.svg" alt="TravelDrip">
           </a>
           <div class="auth-nav-actions">
             <button class="auth-link-button" type="button" id="showLoginButton" role="tab" aria-controls="authForm" aria-selected="true">Log in</button>
@@ -161,7 +168,7 @@
             <div class="auth-carousel-overlay">
               <p class="auth-pill">Social travel for every kind of trip</p>
               <h1>Discover, plan, travel, and share.</h1>
-              <p id="authCopy">Traveldrip brings solo adventures, group vacations, and corporate retreats into one beautiful travel workspace.</p>
+              <p id="authCopy">TravelDrip brings solo adventures, group vacations, and corporate retreats into one beautiful travel workspace.</p>
               <blockquote id="authQuote">Plan together. Travel better.</blockquote>
               <div class="auth-travel-tags" aria-label="Supported travel styles">
                 <span>Solo trips</span><span>Group memories</span><span>Corporate retreats</span><span>Food finds</span><span>Beach escapes</span>
@@ -264,6 +271,14 @@
             </div>
             <p class="small" id="authMessage">Create an account or log in to enable live sync.</p>
             <p class="auth-bottom-link"><span id="authBottomCopy">New to TravelDrip?</span> <button type="button" id="landingSignupButton">Create your account</button><button type="button" id="landingLoginButton" hidden>I already have an account</button></p>
+            <section class="pwa-install-mini" aria-label="Install TravelDrip">
+              <strong>Install TravelDrip free</strong>
+              <span>Add it to your phone or desktop from the browser. No App Store or Google Play download required.</span>
+              <div>
+                <button class="ghost-button" type="button" id="authInstallButton" hidden>Install TravelDrip</button>
+                <button type="button" id="iosInstallHelpButton">How to add to Home Screen</button>
+              </div>
+            </section>
           </div>
         </div>
       </section>
@@ -271,10 +286,11 @@
       <section class="pwa-panel">
         <div>
           <p class="eyebrow">Progressive Web App</p>
-          <h2>Install Traveldrip for trip alerts</h2>
-          <p>Android: tap Install app when prompted. iPhone: open Share, choose Add to Home Screen, then enable notifications inside the app.</p>
+          <h2>Install TravelDrip for trip alerts</h2>
+          <p>Android and desktop: use Install TravelDrip when prompted. iPhone and iPad: open in Safari, tap Share, choose Add to Home Screen, then tap Add.</p>
         </div>
         <button class="ghost-button" type="button" id="inlineInstallButton" hidden>Install app</button>
+        <button class="light-button" type="button" id="profileInstallHelpButton">iPhone instructions</button>
       </section>
 
       <section class="hero destination-banner" id="dashboardHome" aria-label="Rotating featured destinations">
@@ -725,6 +741,33 @@
                   <button type="button" data-trip-type="corporate" aria-pressed="false">
                     <strong>Corporate Retreat / Business Travel</strong><span>Employee invites, role permissions, agendas, assignments, approvals, reporting, and audit logs.</span>
                   </button>
+                  <button type="button" data-trip-type="wedding" aria-pressed="false">
+                    <strong>Wedding</strong><span>Ceremony, reception, hotel blocks, wedding party, weekend schedule, RSVPs, guests, and memories.</span>
+                  </button>
+                  <button type="button" data-trip-type="birthday" aria-pressed="false">
+                    <strong>Birthday Trip</strong><span>Milestone celebration, dinner, activities, nightlife, gifts, contributions, media, and reminders.</span>
+                  </button>
+                  <button type="button" data-trip-type="anniversary" aria-pressed="false">
+                    <strong>Anniversary Trip</strong><span>Celebration schedule, dinner plans, hotel stay, activities, guest list, photos, and recap.</span>
+                  </button>
+                  <button type="button" data-trip-type="family_reunion" aria-pressed="false">
+                    <strong>Family Reunion</strong><span>Relative import, rooms, family schedule, activities, announcements, albums, and shared wallet.</span>
+                  </button>
+                  <button type="button" data-trip-type="conference" aria-pressed="false">
+                    <strong>Conference</strong><span>Sessions, speakers, tracks, sponsors, venue rooms, badges, hotels, shuttles, and agenda updates.</span>
+                  </button>
+                  <button type="button" data-trip-type="graduation_trip" aria-pressed="false">
+                    <strong>Graduation Trip</strong><span>Travel plans, celebration dinner, activities, guests, contributions, photos, and completion recap.</span>
+                  </button>
+                  <button type="button" data-trip-type="church_retreat" aria-pressed="false">
+                    <strong>Church Retreat</strong><span>Theme, ministry groups, worship schedule, sessions, meals, transportation groups, and safety contacts.</span>
+                  </button>
+                  <button type="button" data-trip-type="bachelor_bachelorette" aria-pressed="false">
+                    <strong>Bachelor / Bachelorette</strong><span>Group activities, dinner, nightlife, polls, transportation, shared costs, and guest reminders.</span>
+                  </button>
+                  <button type="button" data-trip-type="special_event" aria-pressed="false">
+                    <strong>Special Event</strong><span>Custom event modules for travel, guests, invitations, schedule, wallet, media, and notifications.</span>
+                  </button>
                   <button type="button" data-trip-type="cruise" aria-pressed="false">
                     <strong>Cruise Vacation</strong><span>Ship details, cabin, ports, shore excursions, onboard schedule, dining, cruise wallet, documents, and memories.</span>
                   </button>
@@ -734,15 +777,32 @@
                 <span>Step 2</span>
                 <h3 id="tripDetailsTitle">Solo trip details</h3>
                 <form class="trip-creation-form" id="tripCreationForm">
-                  <label>Trip name<input id="tripNameInput" type="text" value="Tokyo solo food sprint"></label>
+                  <label>Event name<input id="tripNameInput" type="text" value="Tokyo solo food sprint"></label>
+                  <label class="wide">Event description<textarea id="eventDescriptionInput">A tailored TravelDrip event with invitations, schedule, travel, wallet, messages, media, and notifications.</textarea></label>
                   <label>Destination<input id="tripDestinationInput" type="text" value="Tokyo, Japan"></label>
                   <label>Start date<input id="tripStartInput" type="date" value="2026-08-08"></label>
                   <label>End date<input id="tripEndInput" type="date" value="2026-08-13"></label>
+                  <label>Host or organizer<input id="eventHostInput" type="text" value="Jordan Smith"></label>
                   <label id="travelerCountField" hidden>Number of travelers<input id="tripTravelersInput" type="number" min="1" value="1"></label>
+                  <label>Guest count<input id="eventGuestCountInput" type="number" min="1" value="24"></label>
                   <label>Budget<input id="tripBudgetInput" type="number" min="0" value="2000"></label>
+                  <label>Currency<select id="eventCurrencyInput"><option value="USD">USD</option><option value="CAD">CAD</option><option value="EUR">EUR</option><option value="GBP">GBP</option></select></label>
                   <label>Travel style<select id="tripStyleInput"><option>Food and culture</option><option>Relaxed luxury</option><option>Adventure</option><option>Business efficient</option></select></label>
                   <label>Interests<input id="tripInterestsInput" type="text" value="Ramen, museums, safe evening routes"></label>
                   <label>Cover photo<input id="tripCoverInput" type="file" accept="image/*"></label>
+                  <label>Privacy<select id="eventPrivacyInput"><option value="invite_only">Invite only</option><option value="approval_required">Approval required</option><option value="private">Private</option><option value="public_link">Public invite link</option></select></label>
+                  <label>RSVP deadline<input id="eventRsvpDeadlineInput" type="date" value="2026-07-30"></label>
+                  <label>Event status<select id="eventStatusInput"><option value="draft">Draft</option><option value="active">Active</option></select></label>
+                  <div class="event-requirements wide" aria-label="Event requirements">
+                    <label><input id="eventTravelRequiredInput" type="checkbox" checked> Travel required</label>
+                    <label><input id="eventHotelRequiredInput" type="checkbox" checked> Hotel required</label>
+                    <label><input id="eventTransportationRequiredInput" type="checkbox" checked> Transportation required</label>
+                    <label><input id="eventInviteApprovalInput" type="checkbox" checked> Approval required to join</label>
+                  </div>
+                  <section class="event-specific-fields wide" id="eventSpecificFields" aria-live="polite">
+                    <h4>Event-specific details</h4>
+                    <div id="eventSpecificFieldGrid"></div>
+                  </section>
                   <button class="primary-button" type="submit">Create tailored trip</button>
                 </form>
               </div>
@@ -2749,6 +2809,36 @@
     <button type="button" data-target="securityCenter">Profile</button>
   </nav>
 
+  <section class="update-available-banner" id="updateAvailableBanner" role="status" aria-live="polite" hidden>
+    <div>
+      <strong>Update available</strong>
+      <span>A fresh TravelDrip version is ready.</span>
+    </div>
+    <button type="button" id="reloadUpdateButton">Reload</button>
+  </section>
+
+  <section class="offline-status-banner" id="offlineStatusBanner" role="status" aria-live="polite" hidden>
+    <strong>Offline mode</strong>
+    <span>Live sync, wallet actions, uploads, and private corporate files are paused until your connection returns.</span>
+  </section>
+
+  <dialog class="pin-dialog install-help-dialog" id="installHelpDialog" aria-labelledby="installHelpTitle">
+    <form method="dialog" class="pin-card">
+      <p class="eyebrow">Install TravelDrip</p>
+      <h2 id="installHelpTitle">Add TravelDrip to your Home Screen</h2>
+      <ol class="install-steps">
+        <li>Open TravelDrip in Safari on iPhone or iPad.</li>
+        <li>Tap the Share icon in the browser toolbar.</li>
+        <li>Choose Add to Home Screen.</li>
+        <li>Tap Add and launch TravelDrip like an app.</li>
+      </ol>
+      <p class="small">Android Chrome, Microsoft Edge, and desktop Chrome can show an Install TravelDrip prompt automatically when available.</p>
+      <div class="dialog-actions">
+        <button class="primary-button" value="close" type="submit">Got it</button>
+      </div>
+    </form>
+  </dialog>
+
   <dialog class="pin-dialog" id="pinDialog" aria-labelledby="pinTitle">
     <form method="dialog" class="pin-card" id="pinForm">
       <p class="eyebrow">Secure confirmation</p>
@@ -2792,7 +2882,7 @@
     </form>
   </dialog>
 
-  <script src="public-config.js?v=1"></script>
-  <script defer src="app.js?v=40"></script>
+  <script src="public-config.js?v=2"></script>
+  <script defer src="app.js?v=43"></script>
 </body>
 </html>
