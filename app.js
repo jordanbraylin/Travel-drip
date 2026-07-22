@@ -270,6 +270,237 @@ const sharedRideMembers = [
   { name: "Alex", status: "Leaving later", splitting: false }
 ];
 
+const transportTypeLabels = {
+  flights: "Flights",
+  trains: "Trains",
+  buses: "Buses",
+  ferries: "Ferries",
+  cruises: "Cruises",
+  shuttles: "Shuttles",
+  rideShare: "Ride Share",
+  rentalCars: "Rental Cars",
+  privateTransfers: "Private Transfers"
+};
+
+const transportRecords = [
+  {
+    id: "flight-dl241",
+    type: "flights",
+    provider: "Delta Air Lines",
+    title: "Delta DL 241",
+    route: "JFK to DXB",
+    confirmation: "TD9K42",
+    ticket: "006-4829137764",
+    departure: "JFK Terminal 4",
+    arrival: "DXB Terminal 3",
+    departureTime: "Jul 24, 2026 10:45 PM",
+    arrivalTime: "Jul 25, 2026 7:55 PM",
+    gate: "B18",
+    seat: "22A",
+    passenger: "Jordan Smith",
+    assignedTo: ["Jordan", "Sarah"],
+    status: "Check-in open",
+    passType: "Boarding pass",
+    accessCode: "QR TD-DL241",
+    documents: ["Boarding pass PDF", "Mobile boarding pass screenshot", "Email confirmation"],
+    wallet: { apple: true, google: true },
+    reminder: "Check-in open now. Boarding reminder 45 minutes before departure.",
+    details: ["Boarding group 3", "Baggage allowance: 1 checked bag, 1 carry-on", "Flight status: on time", "Check-in link ready"]
+  },
+  {
+    id: "train-eurostar-9024",
+    type: "trains",
+    provider: "Eurostar",
+    title: "Eurostar 9024",
+    route: "London St Pancras to Paris Gare du Nord",
+    confirmation: "RAIL-7H2Q",
+    ticket: "EU-449208",
+    departure: "Platform announced 20 minutes before boarding",
+    arrival: "Paris Gare du Nord",
+    departureTime: "Aug 3, 2026 9:01 AM",
+    arrivalTime: "Aug 3, 2026 12:20 PM",
+    gate: "Platform pending",
+    seat: "Coach 8, Seat 42",
+    passenger: "Alex Lee",
+    assignedTo: ["Alex"],
+    status: "Confirmed",
+    passType: "Mobile rail ticket",
+    accessCode: "Barcode EU9024",
+    documents: ["Rail ticket PDF", "Rail pass"],
+    wallet: { apple: true, google: false },
+    reminder: "Boarding instructions available. Platform notification enabled.",
+    details: ["Fare type: standard premier", "Coach 8", "Rail pass attached", "Passport check before boarding"]
+  },
+  {
+    id: "bus-flix-88",
+    type: "buses",
+    provider: "FlixBus",
+    title: "Route 88",
+    route: "Miami Central to Orlando Station",
+    confirmation: "BUS-1208",
+    ticket: "FB-88420",
+    departure: "Bay 4, Miami Central",
+    arrival: "Orlando Bus Terminal",
+    departureTime: "Sep 1, 2026 8:10 AM",
+    arrivalTime: "Sep 1, 2026 12:35 PM",
+    gate: "Bay 4",
+    seat: "12C",
+    passenger: "Mike Rivera",
+    assignedTo: ["Mike", "Priya"],
+    status: "Confirmed",
+    passType: "Mobile bus ticket",
+    accessCode: "QR FB88",
+    documents: ["Bus mobile ticket", "Baggage policy"],
+    wallet: { apple: false, google: false },
+    reminder: "Arrive 20 minutes early. Bay change alerts enabled.",
+    details: ["Baggage policy: one checked bag", "Boarding instructions attached", "Route number 88"]
+  },
+  {
+    id: "ferry-bluewater",
+    type: "ferries",
+    provider: "Bluewater Ferries",
+    title: "Bluewater Ferry",
+    route: "Santorini Port to Mykonos Port",
+    confirmation: "SEA-77A",
+    ticket: "BW-302944",
+    departure: "Athinios Port",
+    arrival: "Mykonos New Port",
+    departureTime: "Sep 8, 2026 11:30 AM",
+    arrivalTime: "Sep 8, 2026 2:05 PM",
+    gate: "Port Gate 2",
+    seat: "Deck lounge B",
+    passenger: "Sarah Kim",
+    assignedTo: ["Sarah", "Jordan", "Alex"],
+    status: "Boarding soon",
+    passType: "Ferry ticket",
+    accessCode: "QR SEA77A",
+    documents: ["Ferry ticket PDF", "Port instructions"],
+    wallet: { apple: false, google: true },
+    reminder: "Embarkation begins 45 minutes before departure.",
+    details: ["Vessel: Aegean Star", "Vehicle: none", "Boarding group B", "Port instructions attached"]
+  },
+  {
+    id: "cruise-oceanic",
+    type: "cruises",
+    provider: "Oceanic Cruise Line",
+    title: "Oceanic Vista",
+    route: "Miami embarkation to Caribbean sailing",
+    confirmation: "CRUISE-4829",
+    ticket: "OC-11234",
+    departure: "PortMiami Terminal A",
+    arrival: "PortMiami Terminal A",
+    departureTime: "Oct 10, 2026 12:00 PM",
+    arrivalTime: "Oct 17, 2026 7:00 AM",
+    gate: "Boarding Group C",
+    seat: "Cabin 11234, Deck 11",
+    passenger: "Jordan Smith",
+    assignedTo: ["Jordan", "Sarah"],
+    status: "Confirmed",
+    passType: "Cruise boarding pass",
+    accessCode: "QR OC4829",
+    documents: ["Cruise ticket", "Luggage tags", "Port documents", "Boarding pass"],
+    wallet: { apple: true, google: true },
+    reminder: "Cruise check-in opens 21 days before sailing.",
+    details: ["Ship: Oceanic Vista", "Cabin 11234", "Deck 11", "Luggage tags ready"]
+  },
+  {
+    id: "shuttle-dxb-zoneb",
+    type: "shuttles",
+    provider: "Marina Grand Shuttle",
+    title: "Airport shuttle Zone B",
+    route: "DXB Terminal 3 to Marina Grand Hotel",
+    confirmation: "SHUT-0912",
+    ticket: "MG-7781",
+    departure: "DXB Terminal 3 Zone B",
+    arrival: "Marina Grand Hotel",
+    departureTime: "Jul 25, 2026 8:35 PM",
+    arrivalTime: "Jul 25, 2026 9:15 PM",
+    gate: "Zone B",
+    seat: "Open seating",
+    passenger: "Corporate Team",
+    assignedTo: ["Corporate Team"],
+    status: "Confirmed",
+    passType: "Transfer voucher",
+    accessCode: "Voucher MG7781",
+    documents: ["Shuttle voucher", "Pickup map"],
+    wallet: { apple: false, google: false },
+    reminder: "Pickup reminder 30 minutes before arrival.",
+    details: ["Driver contact hidden until arrival", "Operator: hotel desk", "Runs every 20 minutes"]
+  },
+  {
+    id: "rideshare-careem-22",
+    type: "rideShare",
+    provider: "Careem",
+    title: "Careem reservation",
+    route: "JBR Hotel Lobby to Dubai Marina Dinner",
+    confirmation: "RIDE-2209",
+    ticket: "CAREEM-3301",
+    departure: "JBR Hotel Lobby",
+    arrival: "Dubai Marina Dinner",
+    departureTime: "Jul 26, 2026 7:15 PM",
+    arrivalTime: "Jul 26, 2026 7:35 PM",
+    gate: "Lobby pickup",
+    seat: "SUV reservation",
+    passenger: "Jordan Smith",
+    assignedTo: ["Jordan", "Sarah", "Mike", "Alex"],
+    status: "Confirmed",
+    passType: "Ride reservation",
+    accessCode: "Reservation RIDE-2209",
+    documents: ["Ride confirmation", "Receipt placeholder"],
+    wallet: { apple: false, google: false },
+    reminder: "Driver assignment notification enabled.",
+    details: ["Vehicle: SUV", "Split fare enabled", "Receipt import ready after ride"]
+  },
+  {
+    id: "rental-hertz-dubai",
+    type: "rentalCars",
+    provider: "Hertz",
+    title: "Hertz rental car",
+    route: "DXB pickup to DXB return",
+    confirmation: "CAR-73HD",
+    ticket: "HZ-882041",
+    departure: "DXB Rental Center",
+    arrival: "DXB Rental Center",
+    departureTime: "Jul 25, 2026 9:30 PM",
+    arrivalTime: "Jul 29, 2026 5:00 PM",
+    gate: "Counter 12",
+    seat: "SUV class",
+    passenger: "Jordan Smith",
+    assignedTo: ["Jordan"],
+    status: "Confirmed",
+    passType: "Rental voucher",
+    accessCode: "Voucher HZ882041",
+    documents: ["Rental voucher", "Insurance details", "Pickup instructions"],
+    wallet: { apple: false, google: true },
+    reminder: "Rental pickup reminder 2 hours before counter time.",
+    details: ["Vehicle class: SUV", "Driver: Jordan Smith", "Loyalty number attached", "Insurance details stored"]
+  },
+  {
+    id: "private-blacklane-dubai",
+    type: "privateTransfers",
+    provider: "Blacklane Dubai",
+    title: "Private transfer",
+    route: "Marina Grand Hotel to Desert Camp",
+    confirmation: "PRV-5542",
+    ticket: "BL-99201",
+    departure: "Marina Grand Hotel",
+    arrival: "Desert Camp Gate",
+    departureTime: "Jul 27, 2026 2:15 PM",
+    arrivalTime: "Jul 27, 2026 3:20 PM",
+    gate: "Hotel valet",
+    seat: "Luxury van",
+    passenger: "Sarah Kim",
+    assignedTo: ["Jordan", "Sarah", "Mike", "Alex", "Priya", "Noah"],
+    status: "Confirmed",
+    passType: "Private transfer voucher",
+    accessCode: "Voucher BL99201",
+    documents: ["Transfer voucher", "Driver contact card", "Special instructions"],
+    wallet: { apple: false, google: false },
+    reminder: "Driver/operator details release 30 minutes before pickup.",
+    details: ["Operator: Blacklane Dubai", "Vehicle: luxury van", "Contact number hidden until pickup", "Special instructions saved"]
+  }
+];
+
 const livePlanDestinations = [
   {
     id: "dubai-uae",
@@ -2155,6 +2386,146 @@ function renderRideSplit() {
   `).join("");
 }
 
+function getActiveTransportType() {
+  return $(".transport-tabs button.active")?.dataset.transportType || "flights";
+}
+
+function getFilteredTransportRecords(type = getActiveTransportType()) {
+  const query = $("#transportSearchInput")?.value.trim().toLowerCase() || "";
+  const traveler = $("#transportTravelerFilter")?.value || "all";
+  const status = $("#transportStatusFilter")?.value || "all";
+  return transportRecords.filter((record) => {
+    if (record.type !== type) return false;
+    const searchText = `${record.provider} ${record.title} ${record.route} ${record.confirmation} ${record.ticket} ${record.passenger} ${record.assignedTo.join(" ")} ${record.status}`.toLowerCase();
+    const matchesQuery = !query || searchText.includes(query);
+    const matchesTraveler = traveler === "all" || record.assignedTo.includes(traveler) || record.passenger === traveler;
+    const matchesStatus = status === "all" || record.status === status;
+    return matchesQuery && matchesTraveler && matchesStatus;
+  });
+}
+
+function renderTransportHub(type = getActiveTransportType(), selectedId = "") {
+  if (!$("#transportTabs")) return;
+  const activeType = transportTypeLabels[type] ? type : "flights";
+  $("#transportTabs").innerHTML = Object.entries(transportTypeLabels).map(([key, label]) => `
+    <button class="${key === activeType ? "active" : ""}" type="button" role="tab" aria-selected="${key === activeType}" data-transport-type="${key}">
+      ${escapeHtml(label)}
+    </button>
+  `).join("");
+
+  const records = getFilteredTransportRecords(activeType);
+  $("#transportActiveType").textContent = transportTypeLabels[activeType];
+  $("#transportListTitle").textContent = `${transportTypeLabels[activeType]} confirmations`;
+  $("#transportRecordCount").textContent = `${records.length} ${records.length === 1 ? "record" : "records"}`;
+  $("#transportRecordList").innerHTML = records.length ? records.map((record) => `
+    <article class="transport-record-card" data-transport-record="${escapeHtml(record.id)}">
+      <div>
+        <span>${escapeHtml(record.status)}</span>
+        <strong>${escapeHtml(record.title)}</strong>
+        <small>${escapeHtml(record.provider)} • ${escapeHtml(record.route)}</small>
+      </div>
+      <div>
+        <b>${escapeHtml(record.departureTime)}</b>
+        <small>${escapeHtml(record.confirmation)} • ${escapeHtml(record.passType)}</small>
+      </div>
+      <button type="button" data-transport-detail="${escapeHtml(record.id)}">Open</button>
+    </article>
+  `).join("") : `
+    <div class="transport-empty-state">
+      <strong>No matching ${escapeHtml(transportTypeLabels[activeType].toLowerCase())}</strong>
+      <span>Try clearing filters, choosing another traveler, or uploading a new confirmation.</span>
+    </div>
+  `;
+
+  const selected = transportRecords.find((record) => record.id === selectedId) || records[0];
+  renderTransportDetail(selected);
+  renderTransportTimeline();
+}
+
+function renderTransportDetail(record) {
+  const panel = $("#transportDetailPanel");
+  if (!panel) return;
+  if (!record) {
+    panel.innerHTML = `
+      <div class="transport-detail-empty">
+        <strong>Select a confirmation</strong>
+        <span>Details, assigned travelers, ticket files, pass status, reminders, and secure sharing controls appear here.</span>
+      </div>
+    `;
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="transport-detail-header">
+      <div>
+        <p class="eyebrow">${escapeHtml(transportTypeLabels[record.type])}</p>
+        <h3>${escapeHtml(record.title)}</h3>
+        <span>${escapeHtml(record.route)}</span>
+      </div>
+      <span class="status-pill">${escapeHtml(record.status)}</span>
+    </div>
+    <div class="transport-pass-card">
+      <div>
+        <span>${escapeHtml(record.passType)}</span>
+        <strong>${escapeHtml(record.accessCode)}</strong>
+        <small>Confirmation ${escapeHtml(record.confirmation)} • Ticket ${escapeHtml(record.ticket)}</small>
+      </div>
+      <div class="mock-qr" aria-label="Mock secure QR code"><span></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="transport-detail-grid">
+      <div><span>Passenger</span><strong>${escapeHtml(record.passenger)}</strong></div>
+      <div><span>Assigned to</span><strong>${escapeHtml(record.assignedTo.join(", "))}</strong></div>
+      <div><span>Departure</span><strong>${escapeHtml(record.departure)}</strong><small>${escapeHtml(record.departureTime)}</small></div>
+      <div><span>Arrival</span><strong>${escapeHtml(record.arrival)}</strong><small>${escapeHtml(record.arrivalTime)}</small></div>
+      <div><span>Gate / platform / bay</span><strong>${escapeHtml(record.gate)}</strong></div>
+      <div><span>Seat / cabin / vehicle</span><strong>${escapeHtml(record.seat)}</strong></div>
+    </div>
+    <div class="transport-document-area">
+      <div class="section-heading compact">
+        <div>
+          <p class="eyebrow">Secure ticket storage</p>
+          <h4>Documents and passes</h4>
+        </div>
+        <button type="button" data-ticket-action="Upload document" data-ticket-record="${escapeHtml(record.id)}">Add file</button>
+      </div>
+      <div class="transport-document-list">
+        ${record.documents.map((documentName) => `
+          <button type="button" data-ticket-action="${escapeHtml(documentName)}" data-ticket-record="${escapeHtml(record.id)}">
+            <strong>${escapeHtml(documentName)}</strong>
+            <span>View secure file</span>
+          </button>
+        `).join("")}
+      </div>
+    </div>
+    <div class="wallet-pass-row">
+      <button type="button" ${record.wallet.apple ? "" : "disabled"} data-wallet-pass="Apple Wallet" data-ticket-record="${escapeHtml(record.id)}">Apple Wallet</button>
+      <button type="button" ${record.wallet.google ? "" : "disabled"} data-wallet-pass="Google Wallet" data-ticket-record="${escapeHtml(record.id)}">Google Wallet</button>
+      <span>${record.wallet.apple || record.wallet.google ? "Eligible pass options shown." : "Wallet pass hidden in production until provider support is available."}</span>
+    </div>
+    <div class="transport-actions">
+      <button type="button" data-transport-action="Share approved ticket" data-ticket-record="${escapeHtml(record.id)}">Share approved ticket</button>
+      <button type="button" data-transport-action="Open notification target" data-ticket-record="${escapeHtml(record.id)}">Test notification route</button>
+      <button type="button" data-transport-action="Revoke access" data-ticket-record="${escapeHtml(record.id)}">Revoke access</button>
+    </div>
+    <div class="transport-detail-notes">
+      ${record.details.map((detail) => `<span>${escapeHtml(detail)}</span>`).join("")}
+      <span>${escapeHtml(record.reminder)}</span>
+    </div>
+  `;
+}
+
+function renderTransportTimeline() {
+  if (!$("#transportTimelineList")) return;
+  const upcoming = transportRecords.slice(0, 7);
+  $("#transportTimelineList").innerHTML = upcoming.map((record) => `
+    <button type="button" data-transport-timeline="${escapeHtml(record.id)}">
+      <span>${escapeHtml(transportTypeLabels[record.type])}</span>
+      <strong>${escapeHtml(record.title)}</strong>
+      <small>${escapeHtml(record.departureTime)} • ${escapeHtml(record.departure)}</small>
+    </button>
+  `).join("");
+}
+
 function currency(value) {
   return `$${Number(value || 0).toLocaleString(undefined, {
     minimumFractionDigits: 2,
@@ -2645,6 +3016,15 @@ const routeAliases = {
   "/trips/dubai-weekend/hotels": "importantInfo",
   "/trips/dubai-weekend/travel": "rideShareHub",
   "/trips/dubai-weekend/transportation": "rideShareHub",
+  "/trips/dubai-weekend/transportation/flights": "rideShareHub",
+  "/trips/dubai-weekend/transportation/trains": "rideShareHub",
+  "/trips/dubai-weekend/transportation/buses": "rideShareHub",
+  "/trips/dubai-weekend/transportation/ferries": "rideShareHub",
+  "/trips/dubai-weekend/transportation/cruises": "rideShareHub",
+  "/trips/dubai-weekend/transportation/shuttles": "rideShareHub",
+  "/trips/dubai-weekend/transportation/ride-share": "rideShareHub",
+  "/trips/dubai-weekend/transportation/rental-cars": "rideShareHub",
+  "/trips/dubai-weekend/transportation/private-transfers": "rideShareHub",
   "/trips/dubai-weekend/ride-share": "rideShareHub",
   "/trips/dubai-weekend/wallet": "walletPanel",
   "/trips/dubai-weekend/my-wallet": "walletPanel",
@@ -2924,6 +3304,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
 function wireLocalInteractions() {
   renderPlan(0);
   renderBillSplit();
+  renderTransportHub("flights");
   renderRideSplit();
   updateEnterpriseRole();
   updateDashboardWidgets();
@@ -3295,6 +3676,73 @@ function wireLocalInteractions() {
   $("#rideDestination")?.addEventListener("change", () => {
     renderRideSplit();
     $("#rideMessage").textContent = `Recommended ride-share providers and private driver companies updated for ${$("#rideDestination").value}.`;
+  });
+
+  $("#transportTabs")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-transport-type]");
+    if (!button) return;
+    renderTransportHub(button.dataset.transportType);
+    $("#transportMessage").textContent = `${transportTypeLabels[button.dataset.transportType]} opened. Each transportation type has its own confirmation list, detail view, tickets, access-pass area, and secure sharing controls.`;
+  });
+
+  ["#transportSearchInput", "#transportTravelerFilter", "#transportStatusFilter"].forEach((selector) => {
+    $(selector)?.addEventListener("input", () => renderTransportHub());
+    $(selector)?.addEventListener("change", () => renderTransportHub());
+  });
+
+  $("#transportRecordList")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-transport-detail]");
+    if (!button) return;
+    renderTransportDetail(transportRecords.find((record) => record.id === button.dataset.transportDetail));
+    $("#transportMessage").textContent = "Confirmation detail opened with assigned traveler context, secure ticket files, pass options, and reminders.";
+  });
+
+  $("#transportTimelineList")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-transport-timeline]");
+    if (!button) return;
+    const record = transportRecords.find((entry) => entry.id === button.dataset.transportTimeline);
+    if (!record) return;
+    renderTransportHub(record.type, record.id);
+    $("#transportMessage").textContent = `${record.title} opened from the unified trip timeline. Notification and itinerary deep links preserve trip and traveler context.`;
+  });
+
+  $("#transportDetailPanel")?.addEventListener("click", async (event) => {
+    const ticketButton = event.target.closest("[data-ticket-action]");
+    const walletButton = event.target.closest("[data-wallet-pass]");
+    const actionButton = event.target.closest("[data-transport-action]");
+    const recordId = ticketButton?.dataset.ticketRecord || walletButton?.dataset.ticketRecord || actionButton?.dataset.ticketRecord;
+    const record = transportRecords.find((entry) => entry.id === recordId);
+    if (!record) return;
+    if (ticketButton) {
+      $("#transportMessage").textContent = `${ticketButton.dataset.ticketAction} opened in the secure ticket viewer for ${record.title}. Production uses signed URLs, file validation, expiring links, malware scanning where supported, and audit logs.`;
+      addAuditEntry("Transportation ticket viewed", `${ticketButton.dataset.ticketAction}: ${record.title}`);
+      await saveSyncedEvent("transport_ticket_viewed", { recordId, action: ticketButton.dataset.ticketAction });
+      return;
+    }
+    if (walletButton) {
+      $("#transportMessage").textContent = `${walletButton.dataset.walletPass} provisioning started for ${record.title}. Unsupported wallet buttons stay disabled until provider pass support is available.`;
+      addAuditEntry("Transportation wallet pass selected", `${walletButton.dataset.walletPass}: ${record.title}`);
+      await saveSyncedEvent("transport_wallet_pass_selected", { recordId, wallet: walletButton.dataset.walletPass });
+      return;
+    }
+    if (actionButton) {
+      const action = actionButton.dataset.transportAction;
+      $("#transportMessage").textContent = `${action} completed for ${record.title}. Assigned traveler permissions, sharing rules, download restrictions, and audit logs remain attached.`;
+      addAuditEntry("Transportation confirmation action", `${action}: ${record.title}`);
+      await saveSyncedEvent("transport_confirmation_action", { recordId, action });
+    }
+  });
+
+  $("#uploadTransportTicketButton")?.addEventListener("click", async () => {
+    $("#transportMessage").textContent = "Upload workflow opened for PDFs, screenshots, mobile passes, QR codes, barcodes, email confirmations, and wallet-pass files. Review extracted fields before saving.";
+    addAuditEntry("Transportation document upload opened", "Multi-transport ticket upload workflow opened.");
+    await saveSyncedEvent("transport_upload_opened", { supportedTypes: Object.values(transportTypeLabels) });
+  });
+
+  $("#scanTransportTicketButton")?.addEventListener("click", async () => {
+    $("#transportMessage").textContent = "Ticket scan simulated. OCR can extract passenger, provider, confirmation number, route, departure time, seat, gate/platform, QR code, and barcode for user review.";
+    addAuditEntry("Transportation ticket scan", "OCR review workflow simulated for paper tickets.");
+    await saveSyncedEvent("transport_ticket_scan", { extractionReviewRequired: true });
   });
 
   $("#privateDriverSearchInput")?.addEventListener("input", renderPrivateDrivers);

@@ -2458,6 +2458,304 @@ body.auth-screen .auth-panel[hidden] {
   gap: 14px;
 }
 
+.transport-confirmation-hub {
+  display: grid;
+  gap: 14px;
+  border: 1px solid rgba(0, 150, 199, 0.18);
+  border-radius: 24px;
+  padding: 16px;
+  background:
+    linear-gradient(135deg, rgba(0, 194, 199, 0.08), rgba(255, 111, 97, 0.08)),
+    #fff;
+  box-shadow: var(--soft-shadow);
+}
+
+.transport-hub-header,
+.transport-search-row,
+.transport-dashboard-grid,
+.transport-security-grid,
+.transport-detail-header,
+.transport-pass-card,
+.transport-actions,
+.wallet-pass-row {
+  display: grid;
+  gap: 12px;
+}
+
+.transport-hub-header {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+}
+
+.transport-hub-header h3,
+.transport-list-panel h3,
+.transport-detail-header h3,
+.transport-timeline-panel h3 {
+  margin: 0;
+}
+
+.transport-hub-header p:not(.eyebrow),
+.transport-detail-empty span,
+.transport-record-card small,
+.transport-security-grid span,
+.transport-detail-header span,
+.transport-document-list span,
+.wallet-pass-row span,
+.transport-detail-notes span,
+.transport-timeline small {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.transport-hub-actions,
+.transport-actions,
+.wallet-pass-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.transport-search-row {
+  grid-template-columns: minmax(0, 1.35fr) minmax(170px, 0.55fr) minmax(160px, 0.45fr);
+}
+
+.transport-search-row label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.transport-search-row input,
+.transport-search-row select {
+  min-width: 0;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0 11px;
+  background: #fff;
+  color: var(--ink);
+}
+
+.transport-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.transport-tabs button {
+  min-height: 38px;
+  border: 1px solid rgba(8, 127, 140, 0.16);
+  border-radius: 999px;
+  padding: 0 13px;
+  background: #fff;
+  color: #24555d;
+  font-weight: 900;
+}
+
+.transport-tabs button.active {
+  border-color: rgba(0, 150, 199, 0.45);
+  background: var(--sea);
+  color: #fff;
+}
+
+.transport-dashboard-grid {
+  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+  align-items: start;
+}
+
+.transport-list-panel,
+.transport-detail-panel,
+.transport-timeline-panel,
+.transport-security-grid div {
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.transport-list-panel,
+.transport-detail-panel,
+.transport-timeline-panel {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.transport-record-list,
+.transport-document-list,
+.transport-timeline,
+.transport-detail-notes {
+  display: grid;
+  gap: 10px;
+}
+
+.transport-record-card,
+.transport-empty-state,
+.transport-timeline button,
+.transport-document-list button {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px;
+  background: #fff;
+  text-align: left;
+}
+
+.transport-record-card {
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 0.65fr) auto;
+  align-items: center;
+}
+
+.transport-record-card span {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: #e9f7f3;
+  color: var(--sea-dark);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.transport-record-card button,
+.transport-document-area button,
+.transport-actions button,
+.wallet-pass-row button {
+  min-height: 36px;
+  border: 1px solid rgba(8, 127, 140, 0.18);
+  border-radius: 999px;
+  padding: 0 12px;
+  background: #fff;
+  color: #24555d;
+  font-weight: 850;
+}
+
+.transport-record-card button {
+  background: var(--reef);
+  color: #071116;
+}
+
+.transport-detail-empty {
+  min-height: 260px;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.transport-detail-header,
+.transport-pass-card {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+}
+
+.transport-pass-card {
+  border-radius: 20px;
+  padding: 16px;
+  background:
+    radial-gradient(circle at top right, rgba(0, 194, 199, 0.28), transparent 34%),
+    linear-gradient(135deg, #071116, #12323b);
+  color: #effaff;
+}
+
+.transport-pass-card span,
+.transport-pass-card small {
+  display: block;
+  color: rgba(239, 250, 255, 0.72);
+}
+
+.transport-pass-card strong {
+  display: block;
+  margin: 6px 0;
+  font-size: 24px;
+}
+
+.mock-qr {
+  width: 86px;
+  aspect-ratio: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 10px;
+  border-radius: 16px;
+  background: #effaff;
+}
+
+.mock-qr span {
+  border-radius: 6px;
+  background: #071116;
+}
+
+.transport-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.transport-detail-grid div,
+.transport-document-area,
+.transport-detail-notes span {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px;
+  background: #fff;
+}
+
+.transport-detail-grid span,
+.transport-detail-grid small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.transport-document-area {
+  display: grid;
+  gap: 10px;
+}
+
+.transport-document-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.transport-document-list button strong,
+.transport-document-list button span {
+  display: block;
+}
+
+.wallet-pass-row {
+  align-items: center;
+}
+
+.wallet-pass-row button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.transport-security-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.transport-security-grid div {
+  padding: 12px;
+}
+
+.transport-timeline-panel {
+  grid-template-columns: minmax(220px, 0.35fr) minmax(0, 1fr);
+  align-items: start;
+}
+
+.transport-timeline {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.transport-timeline button span,
+.transport-timeline button small {
+  display: block;
+}
+
 .ride-destination-row,
 .ride-location-grid,
 .ride-entry-grid,
@@ -8492,5 +8790,49 @@ body[data-travel-theme="miami"] .social-card p {
   .event-requirements,
   #eventSpecificFieldGrid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 980px) {
+  .transport-hub-header,
+  .transport-search-row,
+  .transport-dashboard-grid,
+  .transport-timeline-panel,
+  .transport-security-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .transport-timeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .transport-confirmation-hub {
+    padding: 12px;
+    border-radius: 18px;
+  }
+
+  .transport-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .transport-tabs button {
+    flex: 0 0 auto;
+  }
+
+  .transport-record-card,
+  .transport-detail-header,
+  .transport-pass-card,
+  .transport-detail-grid,
+  .transport-document-list,
+  .transport-timeline {
+    grid-template-columns: 1fr;
+  }
+
+  .mock-qr {
+    width: 72px;
   }
 }

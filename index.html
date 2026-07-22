@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=51">
+  <link rel="stylesheet" href="styles.css?v=52">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -2169,10 +2169,82 @@
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Smart ride share hub</p>
-                <h2>Transportation and fare split</h2>
+                <h2>Transportation, confirmations, tickets, and fare split</h2>
               </div>
-              <span class="compliance-badge">Destination aware</span>
+              <span class="compliance-badge">Secure document ready</span>
             </div>
+            <section class="transport-confirmation-hub" aria-label="Multi-transport confirmation hub">
+              <div class="transport-hub-header">
+                <div>
+                  <p class="eyebrow">Trips &gt; Travel &gt; Transportation</p>
+                  <h3>All confirmations, tickets, boarding passes, and access passes</h3>
+                  <p>Store flights, trains, buses, ferries, cruises, shuttles, ride-share reservations, rental cars, and private transfers in one secure trip organizer.</p>
+                </div>
+                <div class="transport-hub-actions">
+                  <button class="primary-button" type="button" id="uploadTransportTicketButton">Upload ticket</button>
+                  <button class="ghost-button" type="button" id="scanTransportTicketButton">Scan paper ticket</button>
+                </div>
+              </div>
+              <div class="transport-search-row">
+                <label>Search confirmations
+                  <input id="transportSearchInput" type="search" placeholder="Provider, traveler, confirmation, destination, status">
+                </label>
+                <label>Traveler
+                  <select id="transportTravelerFilter">
+                    <option value="all">All assigned travelers</option>
+                    <option>Jordan</option>
+                    <option>Sarah</option>
+                    <option>Mike</option>
+                    <option>Alex</option>
+                    <option>Corporate Team</option>
+                  </select>
+                </label>
+                <label>Status
+                  <select id="transportStatusFilter">
+                    <option value="all">All statuses</option>
+                    <option>Confirmed</option>
+                    <option>Check-in open</option>
+                    <option>Boarding soon</option>
+                    <option>Delayed</option>
+                    <option>Completed</option>
+                    <option>Cancelled</option>
+                  </select>
+                </label>
+              </div>
+              <div class="transport-tabs" id="transportTabs" role="tablist" aria-label="Transportation confirmation types"></div>
+              <div class="transport-dashboard-grid">
+                <div class="transport-list-panel">
+                  <div class="section-heading compact">
+                    <div>
+                      <p class="eyebrow" id="transportActiveType">Flights</p>
+                      <h3 id="transportListTitle">Flight confirmations</h3>
+                    </div>
+                    <span class="status-pill" id="transportRecordCount">0 records</span>
+                  </div>
+                  <div class="transport-record-list" id="transportRecordList" aria-label="Transportation records"></div>
+                </div>
+                <aside class="transport-detail-panel" id="transportDetailPanel" aria-label="Selected transportation detail">
+                  <div class="transport-detail-empty">
+                    <strong>Select a confirmation</strong>
+                    <span>Details, assigned travelers, ticket files, pass status, reminders, and secure sharing controls appear here.</span>
+                  </div>
+                </aside>
+              </div>
+              <div class="transport-timeline-panel">
+                <div>
+                  <p class="eyebrow">Unified trip timeline</p>
+                  <h3>Automatically added itinerary items</h3>
+                </div>
+                <div class="transport-timeline" id="transportTimelineList" aria-label="Transportation timeline"></div>
+              </div>
+              <div class="transport-security-grid">
+                <div><strong>Secure storage</strong><span>Production files use private storage, signed URLs, type validation, malware scanning where supported, and expiring links.</span></div>
+                <div><strong>Permissions</strong><span>Travelers see assigned records only. Organizers manage group transportation. Corporate admins follow company policy controls.</span></div>
+                <div><strong>Wallet passes</strong><span>Apple Wallet and Google Wallet actions appear only when the provider and pass format are supported.</span></div>
+                <div><strong>Audit trail</strong><span>Uploads, ticket views, shares, downloads, notification opens, and access revocations are audit logged.</span></div>
+              </div>
+              <p class="small" id="transportMessage">Choose a transportation tab to review confirmations, tickets, boarding passes, QR codes, and assigned traveler access.</p>
+            </section>
             <div class="ride-destination-row">
               <label>Destination
                 <select id="rideDestination">
@@ -2883,6 +2955,6 @@
   </dialog>
 
   <script src="public-config.js?v=2"></script>
-  <script defer src="app.js?v=43"></script>
+  <script defer src="app.js?v=44"></script>
 </body>
 </html>
