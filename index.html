@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=65">
+  <link rel="stylesheet" href="styles.css?v=66">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -126,7 +126,7 @@
           <span aria-hidden="true">Search</span>
           <input id="globalSearchInput" type="search" placeholder="Destinations, trips, flights, hotels, messages">
         </label>
-        <button class="lets-plan-button" type="button" id="letsPlanButton" data-target="letsPlan">✨ Let's Plan</button>
+        <button class="lets-plan-button" type="button" id="letsPlanButton" data-target="letsPlan" aria-label="Open Let's Plan"><span aria-hidden="true">✨</span><strong>Let's Plan</strong></button>
         <div class="top-actions">
           <button class="profile-avatar-button" type="button" data-target="securityCenter" aria-label="Open profile photo settings"><span class="profile-photo-avatar" data-profile-initials>JS</span></button>
           <button class="icon-button" type="button" id="notifyButton" aria-label="Enable notifications">Notify</button>
@@ -3104,7 +3104,7 @@
 
   <nav class="mobile-nav" aria-label="Mobile navigation">
     <button class="active" type="button" data-target="dashboardHome">Home</button>
-    <button type="button" data-target="letsPlan">Plan</button>
+    <button type="button" data-target="letsPlan">Let's Plan</button>
     <button type="button" data-target="exploreDrops">Explore</button>
     <button type="button" data-target="tripsPanel">Trips</button>
     <button type="button" data-target="socialHub">Chat</button>
