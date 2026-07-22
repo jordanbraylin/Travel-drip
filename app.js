@@ -2863,7 +2863,7 @@ function setAuthMode(mode, scrollIntoView = false) {
       ? "Use your company code plus employee or attendee ID to view only the travel details, schedule, documents, and photos approved for you."
       : isSignup
         ? "Create an account, verify your email, then choose whether you are planning solo, with a group, or for a corporate retreat."
-        : "Your next adventure starts here. ✈️🌍";
+        : "Plan unforgettable vacations, destination weddings, birthdays, corporate retreats, cruises, and group adventures, all in one place. Organize itineraries, invite friends and family, manage shared budgets, store tickets and boarding passes, receive real-time travel updates, and relive every memory together.";
   }
   if (bottomCopy) bottomCopy.textContent = isGuest ? "Need a full TravelDrip profile?" : isSignup ? "Already have an account?" : "New to TravelDrip?";
   $("#landingSignupButton").hidden = isSignup;
