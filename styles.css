@@ -2565,6 +2565,40 @@ body.auth-screen .auth-panel[hidden] {
   align-items: start;
 }
 
+.transport-confirmation-hub,
+.transport-dashboard-grid,
+.transport-list-panel,
+.transport-detail-panel,
+.transport-record-card,
+.transport-detail-header,
+.transport-pass-card,
+.transport-detail-grid,
+.transport-document-area,
+.transport-document-list,
+.transport-timeline-panel {
+  min-width: 0;
+}
+
+.transport-list-panel *,
+.transport-detail-panel * {
+  min-width: 0;
+}
+
+.transport-record-card strong,
+.transport-record-card small,
+.transport-record-card b,
+.transport-detail-panel h3,
+.transport-detail-panel h4,
+.transport-detail-panel strong,
+.transport-detail-panel small,
+.transport-detail-panel span,
+.transport-document-list button,
+.transport-actions button,
+.wallet-pass-row button {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
 .transport-list-panel,
 .transport-detail-panel,
 .transport-timeline-panel,
@@ -2669,7 +2703,8 @@ body.auth-screen .auth-panel[hidden] {
 .transport-pass-card strong {
   display: block;
   margin: 6px 0;
-  font-size: 24px;
+  font-size: clamp(18px, 2.4vw, 24px);
+  line-height: 1.08;
 }
 
 .mock-qr {
@@ -8790,6 +8825,36 @@ body[data-travel-theme="miami"] .social-card p {
   .event-requirements,
   #eventSpecificFieldGrid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1180px) {
+  .transport-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .transport-detail-empty {
+    min-height: 180px;
+  }
+}
+
+@media (max-width: 820px) {
+  .transport-record-card {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .transport-record-card > div:nth-child(2) {
+    grid-column: 1 / -1;
+  }
+
+  .transport-pass-card,
+  .transport-detail-header,
+  .wallet-pass-row {
+    grid-template-columns: 1fr;
+  }
+
+  .wallet-pass-row {
+    align-items: stretch;
   }
 }
 
