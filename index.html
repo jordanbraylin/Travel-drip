@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=55">
+  <link rel="stylesheet" href="styles.css?v=56">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -2168,22 +2168,28 @@
           <section class="panel ride-share-panel" id="rideShareHub">
             <div class="section-heading compact">
               <div>
-                <p class="eyebrow">Smart ride share hub</p>
-                <h2>Transportation, confirmations, tickets, and fare split</h2>
+                <p class="eyebrow">Transportation center</p>
+                <h2>Routes, confirmations, tickets, drivers, and fare split</h2>
               </div>
-              <span class="compliance-badge">Secure document ready</span>
+              <span class="compliance-badge">Trip-ready</span>
             </div>
             <section class="transport-confirmation-hub" aria-label="Multi-transport confirmation hub">
               <div class="transport-hub-header">
                 <div>
                   <p class="eyebrow">Trips &gt; Travel &gt; Transportation</p>
-                  <h3>All confirmations, tickets, boarding passes, and access passes</h3>
-                  <p>Store flights, trains, buses, ferries, cruises, shuttles, ride-share reservations, rental cars, and private transfers in one secure trip organizer.</p>
+                  <h3>Everything moving the trip, in one place</h3>
+                  <p>Manage flight confirmations, ground transportation, boarding passes, tickets, wallet passes, driver bookings, and reminder routes without crowding the itinerary.</p>
                 </div>
                 <div class="transport-hub-actions">
                   <button class="primary-button" type="button" id="uploadTransportTicketButton">Upload ticket</button>
                   <button class="ghost-button" type="button" id="scanTransportTicketButton">Scan paper ticket</button>
                 </div>
+              </div>
+              <div class="transport-summary-strip" aria-label="Transportation summary">
+                <button type="button" data-transport-summary="Open confirmations"><span>Confirmations</span><strong>12 saved</strong><small>Flights, trains, rides, shuttles</small></button>
+                <button type="button" data-transport-summary="Review reminders"><span>Reminders</span><strong>3 due soon</strong><small>Check-in, pickup, boarding</small></button>
+                <button type="button" data-transport-summary="View assigned travelers"><span>Travelers</span><strong>4 assigned</strong><small>Personal and group access</small></button>
+                <button type="button" data-transport-summary="Review passes"><span>Wallet passes</span><strong>2 eligible</strong><small>Apple and Google Wallet</small></button>
               </div>
               <div class="transport-search-row">
                 <label>Search confirmations
@@ -3094,6 +3100,6 @@
   </dialog>
 
   <script src="public-config.js?v=2"></script>
-  <script defer src="app.js?v=47"></script>
+  <script defer src="app.js?v=48"></script>
 </body>
 </html>

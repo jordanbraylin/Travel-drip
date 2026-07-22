@@ -2460,17 +2460,16 @@ body.auth-screen .auth-panel[hidden] {
 
 .transport-confirmation-hub {
   display: grid;
-  gap: 14px;
-  border: 1px solid rgba(0, 150, 199, 0.18);
-  border-radius: 24px;
+  gap: 16px;
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 16px;
   padding: 16px;
-  background:
-    linear-gradient(135deg, rgba(0, 194, 199, 0.08), rgba(255, 111, 97, 0.08)),
-    #fff;
-  box-shadow: var(--soft-shadow);
+  background: #f8fcfb;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.06);
 }
 
 .transport-hub-header,
+.transport-summary-strip,
 .transport-search-row,
 .transport-dashboard-grid,
 .transport-security-grid,
@@ -2485,6 +2484,10 @@ body.auth-screen .auth-panel[hidden] {
 .transport-hub-header {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: start;
+  padding: 14px;
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 14px;
+  background: #fff;
 }
 
 .transport-hub-header h3,
@@ -2495,6 +2498,7 @@ body.auth-screen .auth-panel[hidden] {
 }
 
 .transport-hub-header p:not(.eyebrow),
+.transport-summary-strip small,
 .transport-detail-empty span,
 .transport-record-card small,
 .transport-security-grid span,
@@ -2515,8 +2519,49 @@ body.auth-screen .auth-panel[hidden] {
   gap: 8px;
 }
 
+.transport-summary-strip {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.transport-summary-strip button {
+  display: grid;
+  gap: 5px;
+  min-height: 92px;
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.transport-summary-strip button:hover,
+.transport-summary-strip button:focus-visible {
+  border-color: rgba(0, 150, 199, 0.32);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+  transform: translateY(-1px);
+}
+
+.transport-summary-strip span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.transport-summary-strip strong {
+  font-size: 20px;
+  letter-spacing: 0;
+}
+
 .transport-search-row {
   grid-template-columns: minmax(0, 1.35fr) minmax(170px, 0.55fr) minmax(160px, 0.45fr);
+  padding: 12px;
+  border: 1px solid rgba(8, 127, 140, 0.1);
+  border-radius: 12px;
+  background: #fff;
 }
 
 .transport-search-row label {
@@ -2532,7 +2577,7 @@ body.auth-screen .auth-panel[hidden] {
   min-width: 0;
   min-height: 42px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 10px;
   padding: 0 11px;
   background: #fff;
   color: var(--ink);
@@ -2542,14 +2587,18 @@ body.auth-screen .auth-panel[hidden] {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  padding: 4px;
+  border: 1px solid rgba(8, 127, 140, 0.1);
+  border-radius: 12px;
+  background: #fff;
 }
 
 .transport-tabs button {
   min-height: 38px;
-  border: 1px solid rgba(8, 127, 140, 0.16);
-  border-radius: 999px;
+  border: 1px solid transparent;
+  border-radius: 10px;
   padding: 0 13px;
-  background: #fff;
+  background: transparent;
   color: #24555d;
   font-weight: 900;
 }
@@ -2603,9 +2652,9 @@ body.auth-screen .auth-panel[hidden] {
 .transport-detail-panel,
 .transport-timeline-panel,
 .transport-security-grid button {
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 12px;
+  background: #fff;
 }
 
 .transport-list-panel,
@@ -2631,7 +2680,7 @@ body.auth-screen .auth-panel[hidden] {
   display: grid;
   gap: 8px;
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 12px;
   background: #fff;
   text-align: left;
@@ -2653,14 +2702,20 @@ body.auth-screen .auth-panel[hidden] {
 .transport-record-card {
   grid-template-columns: minmax(0, 1fr) minmax(160px, 0.65fr) auto;
   align-items: center;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.transport-record-card:hover {
+  border-color: rgba(0, 150, 199, 0.28);
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.06);
 }
 
 .transport-record-card span {
   display: inline-flex;
   width: fit-content;
-  border-radius: 999px;
+  border-radius: 8px;
   padding: 4px 8px;
-  background: #e9f7f3;
+  background: #eef9f7;
   color: var(--sea-dark);
   font-size: 11px;
   font-weight: 900;
@@ -2672,7 +2727,7 @@ body.auth-screen .auth-panel[hidden] {
 .wallet-pass-row button {
   min-height: 36px;
   border: 1px solid rgba(8, 127, 140, 0.18);
-  border-radius: 999px;
+  border-radius: 10px;
   padding: 0 12px;
   background: #fff;
   color: #24555d;
@@ -2699,11 +2754,11 @@ body.auth-screen .auth-panel[hidden] {
 }
 
 .transport-pass-card {
-  border-radius: 20px;
+  border-radius: 12px;
   padding: 16px;
   background:
-    radial-gradient(circle at top right, rgba(0, 194, 199, 0.28), transparent 34%),
-    linear-gradient(135deg, #071116, #12323b);
+    linear-gradient(90deg, rgba(0, 150, 199, 0.16), transparent 34%),
+    #071116;
   color: #effaff;
 }
 
@@ -2727,7 +2782,7 @@ body.auth-screen .auth-panel[hidden] {
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
   padding: 10px;
-  border-radius: 16px;
+  border-radius: 10px;
   background: #effaff;
 }
 
@@ -2746,7 +2801,7 @@ body.auth-screen .auth-panel[hidden] {
 .transport-document-area,
 .transport-detail-notes span {
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 12px;
   background: #fff;
 }
@@ -2790,7 +2845,7 @@ body.auth-screen .auth-panel[hidden] {
   display: grid;
   gap: 6px;
   padding: 12px;
-  min-height: 126px;
+  min-height: 118px;
   text-align: left;
   color: var(--ink);
   cursor: pointer;
@@ -2812,6 +2867,10 @@ body.auth-screen .auth-panel[hidden] {
 .transport-timeline-panel {
   grid-template-columns: minmax(180px, 0.28fr) minmax(0, 1fr);
   align-items: start;
+}
+
+.transport-timeline-panel > div:first-child {
+  padding: 4px 0;
 }
 
 .transport-timeline {
@@ -8902,6 +8961,7 @@ body[data-travel-theme="miami"] .social-card p {
 
 @media (max-width: 980px) {
   .transport-hub-header,
+  .transport-summary-strip,
   .transport-search-row,
   .transport-dashboard-grid,
   .transport-timeline-panel,
@@ -8917,7 +8977,7 @@ body[data-travel-theme="miami"] .social-card p {
 @media (max-width: 680px) {
   .transport-confirmation-hub {
     padding: 12px;
-    border-radius: 18px;
+    border-radius: 14px;
   }
 
   .transport-tabs {

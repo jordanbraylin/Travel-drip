@@ -3832,6 +3832,15 @@ function wireLocalInteractions() {
     $("#transportMessage").textContent = `${transportTypeLabels[button.dataset.transportType]} opened. Each transportation type has its own confirmation list, detail view, tickets, access-pass area, and secure sharing controls.`;
   });
 
+  $(".transport-summary-strip")?.addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-transport-summary]");
+    if (!button) return;
+    const action = button.dataset.transportSummary;
+    $("#transportMessage").textContent = `${action} opened. Transportation keeps confirmation records, assigned travelers, reminders, wallet passes, and secure documents connected to the current trip.`;
+    addAuditEntry("Transportation summary opened", action);
+    await saveSyncedEvent("transport_summary_opened", { action });
+  });
+
   ["#transportSearchInput", "#transportTravelerFilter", "#transportStatusFilter"].forEach((selector) => {
     $(selector)?.addEventListener("input", () => renderTransportHub());
     $(selector)?.addEventListener("change", () => renderTransportHub());
