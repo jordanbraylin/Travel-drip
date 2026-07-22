@@ -2584,6 +2584,8 @@ async function loadConfig() {
 
 function updateAuthUi() {
   const signedIn = Boolean(state.session?.user);
+  const previewAccess = isFilePreview && state.hasEnteredApp;
+  const appAccess = signedIn || previewAccess;
   const openAuthButton = $("#openAuthButton");
   const openSignupButton = $("#openSignupButton");
   const signOutButton = $("#signOutButton");
@@ -2592,23 +2594,23 @@ function updateAuthUi() {
     state.hasEnteredApp = true;
     sessionStorage.setItem("traveldripEnteredApp", "true");
   }
-  if (!signedIn) {
+  if (!signedIn && !previewAccess) {
     state.hasEnteredApp = false;
     sessionStorage.removeItem("traveldripEnteredApp");
   }
-  const showGate = !signedIn;
+  const showGate = !appAccess;
 
   if (openAuthButton) {
     openAuthButton.textContent = signedIn ? state.session.user.email : "Sign in";
     openAuthButton.hidden = signedIn;
   }
 
-  if (openSignupButton) openSignupButton.hidden = signedIn;
-  if (signOutButton) signOutButton.hidden = !signedIn;
+  if (openSignupButton) openSignupButton.hidden = appAccess;
+  if (signOutButton) signOutButton.hidden = !appAccess;
   if (authPanel && location.pathname !== "/admin.html") {
     authPanel.hidden = !showGate;
     document.body.classList.toggle("auth-screen", showGate);
-    setAuthenticatedShellVisible(signedIn && !showGate);
+    setAuthenticatedShellVisible(appAccess && !showGate);
     if (!showGate) authPanel.classList.remove("show-form");
     renderGlobalDestinationHeader(getTargetFromRoute());
   }
@@ -2790,7 +2792,7 @@ function enterAppPreview() {
   if (location.hash === "#login" || location.hash === "#register" || location.pathname === "/login" || location.pathname === "/register") {
     history.replaceState({ target }, "", appRoute);
   }
-  setAuthenticatedShellVisible(Boolean(state.session?.user));
+  setAuthenticatedShellVisible(Boolean(state.session?.user) || isFilePreview);
   renderRoute(target, { replace: true });
 }
 
@@ -3218,7 +3220,8 @@ async function verifyCorporateAccessGate() {
 
 function renderRoute(target = getTargetFromRoute(), { updateHistory = false, replace = false } = {}) {
   const resolvedTarget = routeDefinitions[target] ? target : "dashboardHome";
-  if (!state.session?.user && location.pathname !== "/admin.html") {
+  const previewAccess = isFilePreview && state.hasEnteredApp;
+  if (!state.session?.user && !previewAccess && location.pathname !== "/admin.html") {
     rememberProtectedTarget(resolvedTarget);
     setAuthMode("signin");
     if ($("#authMessage")) $("#authMessage").textContent = "Sign in to continue to that TravelDrip page.";
