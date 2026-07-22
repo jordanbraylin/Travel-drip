@@ -9862,6 +9862,35 @@ textarea,
   gap: 18px;
 }
 
+/* Smaller Smart route card */
+.right-stack .map-panel {
+  border-radius: 10px;
+}
+
+.right-stack .map-panel .map {
+  height: 118px;
+}
+
+.right-stack .map-panel h2 {
+  margin: 7px 0 2px;
+  padding-inline: 10px;
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.right-stack .map-panel p {
+  margin: 0;
+  padding: 0 10px 10px;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.right-stack .map-panel .pin {
+  width: 24px;
+  height: 24px;
+  font-size: 11px;
+}
+
 /* Dense mode v2: auth, dashboard, lists, and tall panels */
 .auth-landing-nav {
   min-height: 96px;
