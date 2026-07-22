@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=67">
+  <link rel="stylesheet" href="styles.css?v=68">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -2234,17 +2234,45 @@
           <section class="panel ride-share-panel" id="rideShareHub">
             <div class="section-heading compact">
               <div>
-                <p class="eyebrow">Transportation center</p>
-                <h2>Routes, confirmations, tickets, drivers, and fare split</h2>
+                <p class="eyebrow">Travel</p>
+                <h2>Travel hub</h2>
+                <p>Flights, hotels, tickets, transportation, confirmations, and documents organized in one clean place.</p>
               </div>
               <span class="compliance-badge">Trip-ready</span>
             </div>
+            <section class="travel-overview-card" aria-label="Travel overview">
+              <div>
+                <span>Next Trip</span>
+                <strong>Miami → Tokyo</strong>
+                <small>Jul 18 • Departs in 5 days</small>
+              </div>
+              <div>
+                <span>Weather</span>
+                <strong>82°F, light rain</strong>
+                <small>Pack a jacket for arrival evening.</small>
+              </div>
+              <div>
+                <span>Status</span>
+                <strong>Ready</strong>
+                <small>12 confirmations saved • 3 reminders soon</small>
+              </div>
+            </section>
+            <nav class="travel-section-nav" aria-label="Travel sections">
+              <button type="button" data-travel-section="flights">✈️ Flights</button>
+              <button type="button" data-travel-section="trains">🚆 Trains</button>
+              <button type="button" data-travel-section="buses">🚌 Buses</button>
+              <button type="button" data-travel-section="ferries">🚢 Ferries & Cruises</button>
+              <button type="button" data-travel-section="rideShare">🚗 Transportation</button>
+              <button type="button" data-travel-section="hotels">🏨 Hotels</button>
+              <button type="button" data-travel-section="tickets">🎫 Tickets & Boarding Passes</button>
+              <button type="button" data-travel-section="documents">📄 Travel Documents</button>
+            </nav>
             <section class="transport-confirmation-hub" aria-label="Multi-transport confirmation hub">
               <div class="transport-hub-header">
                 <div>
-                  <p class="transport-route-chip">Trips &gt; Travel &gt; Transportation</p>
-                  <h3>Transportation documents and routes</h3>
-                  <p>Upload confirmations, scan tickets, manage passes, and keep every ride, flight, shuttle, and driver booking connected to the itinerary.</p>
+                  <p class="transport-route-chip">Trips &gt; Travel</p>
+                  <h3>Confirmations and tickets</h3>
+                  <p>Search saved travel records, open details, view tickets, and keep each confirmation connected to the itinerary.</p>
                 </div>
                 <div class="transport-hub-actions">
                   <button class="primary-button" type="button" id="uploadTransportTicketButton">Upload</button>
@@ -2304,10 +2332,66 @@
               </div>
               <div class="transport-timeline-panel">
                 <div>
-                  <p class="eyebrow">Unified trip timeline</p>
-                  <h3>Automatically added itinerary items</h3>
+                  <p class="eyebrow">Travel timeline</p>
+                  <h3>Chronological trip movement</h3>
                 </div>
                 <div class="transport-timeline" id="transportTimelineList" aria-label="Transportation timeline"></div>
+              </div>
+              <div class="travel-support-grid">
+                <section class="travel-support-card" id="hotelCenter">
+                  <div class="section-heading compact">
+                    <div>
+                      <p class="eyebrow">Hotels</p>
+                      <h3>Hotel reservations</h3>
+                    </div>
+                    <button class="ghost-button" type="button" data-travel-section="hotels">View hotels</button>
+                  </div>
+                  <div class="travel-row-list">
+                    <article><span>Marina Grand Hotel</span><strong>Jul 25 - Jul 29</strong><small>Reservation HMG-4912 • Deluxe King • Dubai Marina</small></article>
+                    <article><span>Tokyo Station Hotel</span><strong>Aug 8 - Aug 13</strong><small>Reservation TSH-2088 • Queen Room • Chiyoda City</small></article>
+                  </div>
+                </section>
+                <section class="travel-support-card" id="ticketCenter">
+                  <div class="section-heading compact">
+                    <div>
+                      <p class="eyebrow">Ticket Center</p>
+                      <h3>Tickets and boarding passes</h3>
+                    </div>
+                    <button class="ghost-button" type="button" data-travel-section="tickets">View tickets</button>
+                  </div>
+                  <div class="travel-row-list">
+                    <article><span>Flight boarding pass</span><strong>Jordan Smith • Delta DL 241</strong><small>QR available • Apple Wallet and Google Wallet eligible</small></article>
+                    <article><span>Cruise boarding pass</span><strong>Oceanic Vista • Cabin 11234</strong><small>QR available • Luggage tags attached</small></article>
+                  </div>
+                </section>
+                <section class="travel-support-card" id="documentCenter">
+                  <div class="section-heading compact">
+                    <div>
+                      <p class="eyebrow">Document Center</p>
+                      <h3>Travel documents</h3>
+                    </div>
+                    <button class="ghost-button" type="button" data-travel-section="documents">View documents</button>
+                  </div>
+                  <div class="travel-row-list">
+                    <article><span>Passport</span><strong>Uploaded</strong><small>Private storage • Shared with assigned traveler only</small></article>
+                    <article><span>Travel insurance</span><strong>Needed</strong><small>Upload before departure for offline access</small></article>
+                  </div>
+                </section>
+                <section class="travel-support-card travel-map-card" id="travelMapCenter">
+                  <div class="section-heading compact">
+                    <div>
+                      <p class="eyebrow">Map</p>
+                      <h3>Travel map</h3>
+                    </div>
+                    <button class="ghost-button" type="button" id="expandTravelMapButton">Expand Map</button>
+                  </div>
+                  <div class="travel-map-preview" aria-label="Travel map preview">
+                    <span>Current location</span>
+                    <i></i>
+                    <span>Hotel</span>
+                    <span>Next destination</span>
+                  </div>
+                </section>
               </div>
               <div class="transport-security-grid" aria-label="Transportation security controls">
                 <button type="button" data-transport-security="Secure storage"><strong>Secure storage</strong><span>Private storage, signed URLs, file validation, malware scanning where supported, and expiring links.</span></button>
@@ -3167,6 +3251,6 @@
   </dialog>
 
   <script src="public-config.js?v=2"></script>
-  <script defer src="app.js?v=52"></script>
+  <script defer src="app.js?v=53"></script>
 </body>
 </html>

@@ -3856,6 +3856,40 @@ function wireLocalInteractions() {
     $("#transportMessage").textContent = `${transportTypeLabels[button.dataset.transportType]} opened. Each transportation type has its own confirmation list, detail view, tickets, access-pass area, and secure sharing controls.`;
   });
 
+  $$(".travel-section-nav [data-travel-section], .travel-support-card [data-travel-section]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const section = button.dataset.travelSection;
+      const targetType = section === "ferries" ? "ferries" : section;
+      const panelMap = {
+        hotels: "#hotelCenter",
+        tickets: "#ticketCenter",
+        documents: "#documentCenter"
+      };
+      if (transportTypeLabels[targetType]) {
+        renderTransportHub(targetType);
+        $("#transportRecordList")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        $("#transportMessage").textContent = `${transportTypeLabels[targetType]} opened from the Travel section navigation. Search, filters, tickets, and details stay connected to this trip.`;
+      } else {
+        const panel = $(panelMap[section] || "#transportRecordList");
+        panel?.scrollIntoView({ behavior: "smooth", block: "start" });
+        const label = section === "tickets" ? "Ticket Center" : section === "documents" ? "Document Center" : "Hotel reservations";
+        $("#transportMessage").textContent = `${label} opened from the Travel section navigation. Back returns to the Travel overview with current filters preserved.`;
+      }
+      addAuditEntry("Travel section opened", `${section} opened from Travel hub navigation.`);
+      await saveSyncedEvent("travel_section_opened", { section });
+    });
+  });
+
+  $("#expandTravelMapButton")?.addEventListener("click", () => {
+    const mapCard = $("#travelMapCenter");
+    mapCard?.classList.toggle("is-expanded");
+    const expanded = mapCard?.classList.contains("is-expanded");
+    $("#expandTravelMapButton").textContent = expanded ? "Collapse Map" : "Expand Map";
+    $("#transportMessage").textContent = expanded
+      ? "Travel map expanded with current location, next destination, hotels, transportation, and activities."
+      : "Travel map returned to compact overview.";
+  });
+
   $(".transport-summary-strip")?.addEventListener("click", async (event) => {
     const button = event.target.closest("[data-transport-summary]");
     if (!button) return;
