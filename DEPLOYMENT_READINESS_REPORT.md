@@ -42,6 +42,7 @@ Navigation status:
 - Message send/receive notification logic is present for in-app notifications and browser notifications when permission is granted.
 - AI Travel Planner is available from the Home Dashboard and `/ai-planner`, with adaptive conversation prompts, session memory, generated itinerary preview, estimate labels, save/regenerate/create/share/export/calendar actions, and user-controlled memory deletion.
 - A compact rotating global destination header appears on internal app tabs, keeps Home/auth screens clear, preserves search/account/notification controls, adapts copy by page, pauses on hover, supports mobile swipe, and routes destination actions to Explore or AI Planner.
+- Home destination banner pause control is now a compact corner icon with accessible pause/resume labels, tooltip text, reduced-motion support, and no overlap with destination text, action buttons, arrows, or slide indicators.
 - The Wallet tab now presents one shared Trip Virtual Wallet per eligible trip, with a unique wallet ID, masked trip wallet card, shared balance totals, member contribution ledger, and PIN-gated contribution updates.
 - The Home dashboard rotating destination banner includes active reviewed destinations, fun facts, travel tips, best-season notes, local greetings, pause/previous/next controls, slide indicators, mobile swipe support, and Explore routing.
 - Corporate Mode now separates the business-travel workspace from consumer trip planning, with dedicated corporate navigation, role previews, policy controls, activity voting, per-diem, virtual card, expense, notification, and acceptance-checklist surfaces.
@@ -60,9 +61,9 @@ Security status:
 - API routes apply no-store/no-sniff/referrer/CSP headers and require Bearer auth where applicable.
 
 Cache and deployment fixes made:
-- `index.html` now loads `styles.css?v=46` and `app.js?v=39`.
-- `admin.html` now loads `styles.css?v=46` and `app.js?v=39`.
-- `sw.js` now uses cache name `traveldrip-v39`.
+- `index.html` now loads `styles.css?v=47` and `app.js?v=40`.
+- `admin.html` now loads `styles.css?v=47` and `app.js?v=40`.
+- `sw.js` now uses cache name `traveldrip-v40`.
 
 ## Production Checks Still Required
 

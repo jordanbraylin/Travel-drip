@@ -1191,8 +1191,30 @@ body.auth-screen main {
   color: #fff;
 }
 
-.destination-banner-controls #destinationPauseButton {
-  min-width: 76px;
+#destinationPauseButton {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 4;
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  border-color: rgba(255, 255, 255, 0.42);
+  background: rgba(7, 23, 31, 0.48);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(12px);
+  font-size: 15px;
+  line-height: 1;
+}
+
+#destinationPauseButton:hover,
+#destinationPauseButton:focus-visible {
+  background: rgba(7, 23, 31, 0.72);
+  transform: translateY(-1px);
 }
 
 .destination-banner-dots {
@@ -5495,6 +5517,22 @@ code {
   .destination-banner-controls {
     right: 14px;
     bottom: 14px;
+  }
+
+  #destinationPauseButton {
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+    min-height: 32px;
+    font-size: 13px;
+  }
+
+  #destinationPauseButton::before {
+    content: "";
+    position: absolute;
+    inset: -6px;
   }
 
   .destination-banner-dots {

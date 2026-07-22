@@ -872,8 +872,13 @@ function startLivePlanRotation() {
   };
   const setPaused = (paused) => {
     state.liveDestinationPaused = paused;
-    $("#destinationPauseButton")?.setAttribute("aria-pressed", String(paused));
-    if ($("#destinationPauseButton")) $("#destinationPauseButton").textContent = paused ? "Play" : "Pause";
+    const pauseButton = $("#destinationPauseButton");
+    if (pauseButton) {
+      pauseButton.setAttribute("aria-pressed", String(paused));
+      pauseButton.setAttribute("aria-label", paused ? "Resume destination slideshow" : "Pause destination slideshow");
+      pauseButton.setAttribute("title", paused ? "Resume slideshow" : "Pause slideshow");
+      pauseButton.textContent = paused ? "▶" : "Ⅱ";
+    }
     paused ? stopRotation() : resumeRotation();
   };
 
@@ -898,7 +903,8 @@ function startLivePlanRotation() {
     if (Math.abs(delta) > 44) renderDestination(state.liveDestinationIndex + (delta < 0 ? 1 : -1));
   }, { passive: true });
 
-  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) resumeRotation();
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) setPaused(true);
+  else resumeRotation();
 }
 
 function renderDestinationInsights(destination, activeIndex) {
