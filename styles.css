@@ -10668,14 +10668,20 @@ textarea,
   }
 }
 
-/* Shorter Travel tab */
+/* Travel tab widget layout */
 #rideShareHub {
-  gap: 8px;
+  gap: 10px;
+  padding-bottom: 12px;
 }
 
 #rideShareHub > .section-heading {
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(8, 127, 140, 0.1);
+  padding: 12px;
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(8, 189, 184, 0.12), rgba(255, 138, 92, 0.08)),
+    #fff;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.07);
 }
 
 #rideShareHub .travel-overview-card,
@@ -10686,8 +10692,10 @@ textarea,
 }
 
 #rideShareHub .travel-overview-card {
-  padding: 9px;
-  border-radius: 12px;
+  padding: 10px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
 }
 
 #rideShareHub .travel-overview-card strong {
@@ -10701,6 +10709,11 @@ textarea,
 #rideShareHub .travel-section-nav {
   grid-template-columns: repeat(8, minmax(0, 1fr));
   gap: 6px;
+  padding: 10px;
+  border: 1px solid rgba(8, 127, 140, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
 }
 
 #rideShareHub .travel-section-nav button {
@@ -10714,12 +10727,20 @@ textarea,
 #rideShareHub .transport-confirmation-hub {
   max-height: 880px;
   overflow: auto;
-  padding: 10px;
-  border-radius: 12px;
+  padding: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(8, 127, 140, 0.13);
+  background:
+    linear-gradient(180deg, rgba(248, 253, 255, 0.96), rgba(255, 255, 255, 0.92)),
+    #fff;
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.08);
 }
 
 #rideShareHub .transport-hub-header {
-  padding-bottom: 8px;
+  padding: 10px;
+  border: 1px solid rgba(8, 127, 140, 0.1);
+  border-radius: 14px;
+  background: #fff;
 }
 
 #rideShareHub .transport-hub-header h3,
@@ -10736,6 +10757,8 @@ textarea,
 #rideShareHub .transport-summary-strip button {
   min-height: 58px;
   padding: 8px;
+  border-radius: 14px;
+  background: #fff;
 }
 
 #rideShareHub .transport-summary-strip small {
@@ -10744,6 +10767,7 @@ textarea,
 
 #rideShareHub .transport-dashboard-grid {
   grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
 }
 
 #rideShareHub .transport-record-list,
@@ -10758,6 +10782,18 @@ textarea,
   overflow: auto;
 }
 
+#rideShareHub .transport-list-panel,
+#rideShareHub .transport-detail-panel,
+#rideShareHub .transport-timeline-panel,
+#rideShareHub .transport-security-grid,
+#rideShareHub .travel-support-grid {
+  padding: 10px;
+  border: 1px solid rgba(8, 127, 140, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.055);
+}
+
 #rideShareHub .transport-detail-grid,
 #rideShareHub .transport-document-list,
 #rideShareHub .travel-support-grid,
@@ -10770,7 +10806,8 @@ textarea,
 #rideShareHub .ride-clean-card,
 #rideShareHub .private-driver-panel {
   padding: 10px;
-  border-radius: 12px;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.055);
 }
 
 #rideShareHub .travel-row-list article,
@@ -10785,10 +10822,13 @@ textarea,
 #rideShareHub .ride-hub-redesign {
   max-height: 760px;
   overflow: auto;
-  padding: 10px;
-  border: 1px solid rgba(8, 127, 140, 0.12);
-  border-radius: 14px;
-  background: rgba(248, 253, 255, 0.72);
+  padding: 12px;
+  border: 1px solid rgba(8, 127, 140, 0.13);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(248, 253, 255, 0.96), rgba(255, 255, 255, 0.9)),
+    #fff;
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.08);
 }
 
 #rideShareHub .ride-toolbar {
@@ -10796,6 +10836,10 @@ textarea,
   top: 0;
   z-index: 2;
   padding: 8px;
+  border: 1px solid rgba(8, 127, 140, 0.1);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.055);
 }
 
 #rideShareHub .ride-entry-grid,
