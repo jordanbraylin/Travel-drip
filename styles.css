@@ -904,6 +904,16 @@ body.auth-screen .auth-panel[hidden] {
   font-size: 14px;
 }
 
+.auth-sync-note {
+  margin: 9px 0 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(8, 189, 184, 0.08);
+  color: #506971;
+  font-size: 12px;
+  line-height: 1.42;
+}
+
 .auth-switch {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
