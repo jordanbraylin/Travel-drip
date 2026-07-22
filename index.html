@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=52">
+  <link rel="stylesheet" href="styles.css?v=53">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -2245,6 +2245,65 @@
               </div>
               <p class="small" id="transportMessage">Choose a transportation tab to review confirmations, tickets, boarding passes, QR codes, and assigned traveler access.</p>
             </section>
+            <section class="ride-hub-redesign" aria-label="Smart ride share hub workspace">
+              <div class="ride-toolbar" aria-label="Ride share search and filters">
+                <label>Search transportation
+                  <input id="rideHubSearchInput" type="search" placeholder="Search rides, drivers, routes, receipts">
+                </label>
+                <label>Filter
+                  <select id="rideHubFilter">
+                    <option value="all">All transportation</option>
+                    <option value="upcoming">Upcoming rides</option>
+                    <option value="providers">Providers</option>
+                    <option value="group">Group rides</option>
+                    <option value="history">Ride history</option>
+                  </select>
+                </label>
+                <label>Sort
+                  <select id="rideHubSort">
+                    <option value="recommended">Recommended</option>
+                    <option value="soonest">Soonest</option>
+                    <option value="lowest">Lowest estimate</option>
+                    <option value="fastest">Fastest pickup</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="ride-overview-grid">
+                <section class="ride-clean-card">
+                  <div class="ride-card-heading">
+                    <div>
+                      <p class="eyebrow">Upcoming rides</p>
+                      <h3>Booked and planned transportation</h3>
+                    </div>
+                    <span class="status-pill">Live trip</span>
+                  </div>
+                  <div class="ride-hub-list" id="upcomingRideList" aria-label="Upcoming rides"></div>
+                </section>
+                <section class="ride-clean-card ride-map-card">
+                  <div class="ride-card-heading">
+                    <div>
+                      <p class="eyebrow">Map</p>
+                      <h3>Pickup, route, and drop-off preview</h3>
+                    </div>
+                    <button class="ghost-button" type="button" id="expandRideMapButton">Expand map</button>
+                  </div>
+                  <div class="ride-map-preview" aria-label="Route preview map">
+                    <span class="ride-map-pin pickup">Pickup</span>
+                    <span class="ride-map-route"></span>
+                    <span class="ride-map-pin dropoff">Drop-off</span>
+                  </div>
+                </section>
+              </div>
+
+              <section class="ride-clean-card ride-provider-section">
+                <div class="ride-card-heading">
+                  <div>
+                    <p class="eyebrow">Available ride providers</p>
+                    <h3>Destination-aware transportation</h3>
+                  </div>
+                  <span class="status-pill">OAuth ready</span>
+                </div>
             <div class="ride-destination-row">
               <label>Destination
                 <select id="rideDestination">
@@ -2276,6 +2335,15 @@
                 <button class="ghost-button" type="button" id="disconnectRideAccountButton">Disconnect</button>
               </div>
             </div>
+              </section>
+              <section class="ride-clean-card">
+                <div class="ride-card-heading">
+                  <div>
+                    <p class="eyebrow">Route setup</p>
+                    <h3>Pickup, drop-off, passengers, and estimate</h3>
+                  </div>
+                  <button class="ghost-button" type="button" data-ride-hub-action="View Route">View route</button>
+                </div>
             <div class="ride-location-grid">
               <label>Favorite pickup<input id="ridePickup" value="JBR Hotel Lobby"></label>
               <label>Drop-off<input id="rideDropoff" value="Dubai Marina Dinner"></label>
@@ -2286,6 +2354,18 @@
               <div><span>Wait time</span><strong id="rideWait">8 min</strong></div>
               <div><span>Estimate</span><strong id="rideEstimate">$18-$22</strong></div>
             </div>
+              </section>
+              <div class="ride-two-column-grid">
+                <section class="ride-clean-card">
+                  <div class="ride-card-heading">
+                    <div>
+                      <p class="eyebrow">Recommended transportation</p>
+                      <h3>Best options for this destination</h3>
+                    </div>
+                    <button class="ghost-button" type="button" data-ride-hub-action="Refresh Recommendations">Refresh</button>
+                  </div>
+                  <div class="ride-recommendation-grid" id="rideRecommendationGrid" aria-label="Recommended transportation options"></div>
+                </section>
             <section class="private-driver-panel">
               <div class="section-heading compact">
                 <div>
@@ -2320,12 +2400,39 @@
               <div id="privateDriverList" class="private-driver-list" aria-label="Private driver companies"></div>
               <p class="small" id="privateDriverMessage">Private driver companies update based on the selected destination. Booking requires provider confirmation.</p>
             </section>
+              </div>
+              <section class="ride-clean-card">
+                <div class="ride-card-heading">
+                  <div>
+                    <p class="eyebrow">Transportation timeline</p>
+                    <h3>Route changes, pickup windows, and payment milestones</h3>
+                  </div>
+                  <button class="ghost-button" type="button" data-ride-hub-action="Open Timeline">Open timeline</button>
+                </div>
+                <div class="ride-timeline-list" id="rideTimelineList" aria-label="Trip transportation timeline"></div>
+              </section>
+              <section class="ride-clean-card">
+                <div class="ride-card-heading">
+                  <div>
+                    <p class="eyebrow">Quick actions</p>
+                    <h3>Book, share, import, or ask AI</h3>
+                  </div>
+                </div>
             <div class="button-row">
               <button class="primary-button" type="button" id="launchRideButton">Launch provider</button>
               <button class="primary-button" type="button" id="shareRideButton">Share ride</button>
               <button class="ghost-button" type="button" id="importRideReceiptButton">Import receipt</button>
               <button class="ghost-button" type="button" id="rideAdviceButton">AI ride advice</button>
             </div>
+              </section>
+              <section class="ride-clean-card">
+                <div class="ride-card-heading">
+                  <div>
+                    <p class="eyebrow">Group transportation</p>
+                    <h3>Coordinate passengers and split fares</h3>
+                  </div>
+                  <button class="ghost-button" type="button" data-ride-hub-action="Notify Group">Notify group</button>
+                </div>
             <div class="shared-ride-panel">
               <div>
                 <p class="eyebrow">Shared ride</p>
@@ -2334,6 +2441,14 @@
               </div>
               <div id="sharedRideMembers" class="shared-ride-members" aria-label="Shared ride members"></div>
             </div>
+              </section>
+              <section class="ride-clean-card">
+                <div class="ride-card-heading">
+                  <div>
+                    <p class="eyebrow">Fare split</p>
+                    <h3>Review receipt totals and payment status</h3>
+                  </div>
+                </div>
             <div class="ride-entry-grid">
               <label>Total fare<input id="rideFare" type="number" min="0" step="0.01" value="48.00" inputmode="decimal"></label>
               <label>Taxes<input id="rideTax" type="number" min="0" step="0.01" value="2.80" inputmode="decimal"></label>
@@ -2352,6 +2467,29 @@
               <div><span>Remaining</span><strong id="rideRemaining">$63.05</strong></div>
             </div>
             <div class="split-preview" id="rideSplitPreview" aria-label="Ride split preview"></div>
+              </section>
+              <div class="ride-two-column-grid">
+                <section class="ride-clean-card">
+                  <div class="ride-card-heading">
+                    <div>
+                      <p class="eyebrow">Ride history</p>
+                      <h3>Receipts and previous splits</h3>
+                    </div>
+                    <button class="ghost-button" type="button" data-ride-hub-action="Ride History">View all</button>
+                  </div>
+                  <div class="ride-history-list" id="rideHistoryList" aria-label="Ride history"></div>
+                </section>
+                <section class="ride-clean-card">
+                  <div class="ride-card-heading">
+                    <div>
+                      <p class="eyebrow">Notifications</p>
+                      <h3>Transportation alerts</h3>
+                    </div>
+                    <button class="ghost-button" type="button" data-ride-hub-action="Notifications">Manage</button>
+                  </div>
+                  <div class="ride-notification-list" id="rideNotificationList" aria-label="Ride notifications"></div>
+                </section>
+              </div>
             <div class="ride-assistant-panel">
               <div><strong>AI Transportation Assistant</strong><span id="rideAssistantCopy">Ask for fastest airport ride, least expensive provider, SUV vs two cars, safety notes, traffic, and local availability.</span></div>
               <div><strong>Notifications</strong><span>Account connected, ride booked, driver assigned/arriving, ride started/ended, receipt ready, amount ready, and expense paid.</span></div>
@@ -2370,6 +2508,7 @@
               <div><strong>Admin transportation view</strong><span>Finance and event admins can review costs, vehicle assignments, invoices, departments, and budget utilization.</span></div>
               <div><strong>Private employee details</strong><span>Employees cannot see company transportation budget, total expenses, or other employees' payment details.</span></div>
             </div>
+            </section>
           </section>
 
           <section class="panel itinerary-alerts-panel" id="itineraryAlerts">
@@ -2955,6 +3094,6 @@
   </dialog>
 
   <script src="public-config.js?v=2"></script>
-  <script defer src="app.js?v=45"></script>
+  <script defer src="app.js?v=46"></script>
 </body>
 </html>

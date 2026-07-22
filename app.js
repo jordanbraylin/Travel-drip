@@ -270,6 +270,34 @@ const sharedRideMembers = [
   { name: "Alex", status: "Leaving later", splitting: false }
 ];
 
+const rideHubItems = {
+  upcoming: [
+    { title: "Dinner transfer", meta: "Today 7:15 PM • JBR Hotel Lobby to Dubai Marina", status: "Ready to book", estimate: "$18-$22", tag: "Group ride" },
+    { title: "Airport return", meta: "Tomorrow 10:30 AM • Hotel to DXB Terminal 3", status: "Reminder set", estimate: "$34-$42", tag: "Private transfer" },
+    { title: "Beach club pickup", meta: "Friday 1:00 PM • Marina walk to Palm Jumeirah", status: "Voting open", estimate: "$21-$28", tag: "Shared ride" }
+  ],
+  recommendations: [
+    { title: "Fastest pickup", meta: "Careem Comfort • 8 min wait • best for four travelers", cta: "Book ride" },
+    { title: "Best group value", meta: "SUV or van recommended over two standard cars", cta: "Compare fares" },
+    { title: "Private driver", meta: "Hourly driver works best for dinner, nightlife, and return ride", cta: "Search drivers" }
+  ],
+  timeline: [
+    { time: "6:40 PM", title: "Time-to-leave alert", detail: "Traffic check runs before dinner transfer." },
+    { time: "7:15 PM", title: "Pickup window", detail: "Passengers meet at JBR Hotel Lobby." },
+    { time: "After ride", title: "Receipt and split", detail: "Import receipt, confirm fare, and notify passengers." }
+  ],
+  history: [
+    { title: "Museum district ride", meta: "Careem • 4 passengers • Split completed", total: "$41.20" },
+    { title: "Airport arrival transfer", meta: "Private van • Receipt stored", total: "$96.00" },
+    { title: "Lunch shuttle", meta: "Marked paid outside app", total: "$28.50" }
+  ],
+  notifications: [
+    { title: "Driver arriving", meta: "Push and in-app alert are enabled for booked rides." },
+    { title: "Fare ready", meta: "Passengers receive payment notification after receipt import." },
+    { title: "Route changed", meta: "Group members are notified when pickup or drop-off changes." }
+  ]
+};
+
 const transportTypeLabels = {
   flights: "Flights",
   trains: "Trains",
@@ -2386,6 +2414,83 @@ function renderRideSplit() {
   `).join("");
 }
 
+function getFilteredRideHubItems(items) {
+  const query = $("#rideHubSearchInput")?.value.trim().toLowerCase() || "";
+  const filter = $("#rideHubFilter")?.value || "all";
+  const sort = $("#rideHubSort")?.value || "recommended";
+  const filtered = items.filter((item) => {
+    const text = `${item.title} ${item.meta || ""} ${item.detail || ""} ${item.status || ""} ${item.tag || ""}`.toLowerCase();
+    return !query || text.includes(query);
+  });
+  if (filter !== "all" && filter !== "upcoming") return filtered;
+  if (sort === "lowest") return [...filtered].reverse();
+  return filtered;
+}
+
+function renderRideHubSections() {
+  const upcoming = $("#upcomingRideList");
+  if (!upcoming) return;
+  const destination = $("#rideDestination")?.value || "United Arab Emirates";
+  const provider = state.selectedRideProvider || "Careem";
+  const upcomingItems = getFilteredRideHubItems(rideHubItems.upcoming);
+  upcoming.innerHTML = upcomingItems.length ? upcomingItems.map((item, index) => `
+    <article>
+      <div>
+        <span>${escapeHtml(item.tag)}</span>
+        <strong>${escapeHtml(item.title)}</strong>
+        <small>${escapeHtml(item.meta)}</small>
+      </div>
+      <b>${escapeHtml(item.estimate)}</b>
+      <button type="button" data-ride-hub-action="Book Ride" data-ride-index="${index}">${escapeHtml(item.status)}</button>
+    </article>
+  `).join("") : `
+    <div class="ride-empty-state">
+      <strong>No matching rides</strong>
+      <span>Try changing the search, filter, destination, or budget preference.</span>
+    </div>
+  `;
+
+  if ($("#rideRecommendationGrid")) {
+    $("#rideRecommendationGrid").innerHTML = rideHubItems.recommendations.map((item) => `
+      <article>
+        <span>${escapeHtml(destination)}</span>
+        <strong>${escapeHtml(item.title)}</strong>
+        <small>${escapeHtml(item.meta.replace("Careem", provider))}</small>
+        <button type="button" data-ride-recommendation="${escapeHtml(item.cta)}">${escapeHtml(item.cta)}</button>
+      </article>
+    `).join("");
+  }
+
+  if ($("#rideTimelineList")) {
+    $("#rideTimelineList").innerHTML = rideHubItems.timeline.map((item) => `
+      <button type="button" data-ride-timeline="${escapeHtml(item.title)}">
+        <span>${escapeHtml(item.time)}</span>
+        <strong>${escapeHtml(item.title)}</strong>
+        <small>${escapeHtml(item.detail)}</small>
+      </button>
+    `).join("");
+  }
+
+  if ($("#rideHistoryList")) {
+    $("#rideHistoryList").innerHTML = rideHubItems.history.map((item) => `
+      <button type="button" data-ride-history="${escapeHtml(item.title)}">
+        <strong>${escapeHtml(item.title)}</strong>
+        <span>${escapeHtml(item.meta)}</span>
+        <b>${escapeHtml(item.total)}</b>
+      </button>
+    `).join("");
+  }
+
+  if ($("#rideNotificationList")) {
+    $("#rideNotificationList").innerHTML = rideHubItems.notifications.map((item) => `
+      <button type="button" data-ride-notification="${escapeHtml(item.title)}">
+        <strong>${escapeHtml(item.title)}</strong>
+        <span>${escapeHtml(item.meta)}</span>
+      </button>
+    `).join("");
+  }
+}
+
 function getActiveTransportType() {
   return $(".transport-tabs button.active")?.dataset.transportType || "flights";
 }
@@ -3309,6 +3414,7 @@ function wireLocalInteractions() {
   renderBillSplit();
   renderTransportHub("flights");
   renderRideSplit();
+  renderRideHubSections();
   updateEnterpriseRole();
   updateDashboardWidgets();
   startLivePlanRotation();
@@ -3678,7 +3784,45 @@ function wireLocalInteractions() {
 
   $("#rideDestination")?.addEventListener("change", () => {
     renderRideSplit();
+    renderRideHubSections();
     $("#rideMessage").textContent = `Recommended ride-share providers and private driver companies updated for ${$("#rideDestination").value}.`;
+  });
+
+  ["#rideHubSearchInput", "#rideHubFilter", "#rideHubSort"].forEach((selector) => {
+    $(selector)?.addEventListener("input", () => {
+      renderRideHubSections();
+      $("#rideMessage").textContent = "Ride hub results updated. Search and filters preserve the current destination and selected provider.";
+    });
+    $(selector)?.addEventListener("change", () => {
+      renderRideHubSections();
+      $("#rideMessage").textContent = "Ride hub filters updated with route, provider, group, and history context.";
+    });
+  });
+
+  $(".ride-hub-redesign")?.addEventListener("click", async (event) => {
+    const hubButton = event.target.closest("[data-ride-hub-action]");
+    const recommendationButton = event.target.closest("[data-ride-recommendation]");
+    const timelineButton = event.target.closest("[data-ride-timeline]");
+    const historyButton = event.target.closest("[data-ride-history]");
+    const notificationButton = event.target.closest("[data-ride-notification]");
+    if (!hubButton && !recommendationButton && !timelineButton && !historyButton && !notificationButton) return;
+    let action = hubButton?.dataset.rideHubAction || recommendationButton?.dataset.rideRecommendation || "";
+    if (!action && timelineButton) action = `Timeline: ${timelineButton.dataset.rideTimeline}`;
+    if (!action && historyButton) action = `History: ${historyButton.dataset.rideHistory}`;
+    if (!action && notificationButton) action = `Notification: ${notificationButton.dataset.rideNotification}`;
+    $("#rideMessage").textContent = `${action} opened in Smart Ride Share Hub with destination, route, passengers, provider, and trip context preserved.`;
+    addAuditEntry("Ride hub action", `${action} selected.`);
+    await saveSyncedEvent("ride_hub_action", { action, provider: state.selectedRideProvider, destination: $("#rideDestination")?.value });
+  });
+
+  $("#expandRideMapButton")?.addEventListener("click", () => {
+    const mapCard = $(".ride-map-card");
+    mapCard?.classList.toggle("is-expanded");
+    const expanded = mapCard?.classList.contains("is-expanded");
+    $("#expandRideMapButton").textContent = expanded ? "Collapse map" : "Expand map";
+    $("#rideMessage").textContent = expanded
+      ? "Map expanded with pickup, route, and drop-off context."
+      : "Map returned to compact ride hub view.";
   });
 
   $("#transportTabs")?.addEventListener("click", (event) => {
@@ -3811,6 +3955,7 @@ function wireLocalInteractions() {
     if (!button) return;
     state.selectedRideProvider = button.dataset.rideProvider;
     renderRideSplit();
+    renderRideHubSections();
     const account = state.connectedRideAccounts[state.selectedRideProvider];
     $("#rideMessage").textContent = account?.connected
       ? `${state.selectedRideProvider} selected and connected. You can launch the official provider app, start a ride, or share trip details.`

@@ -8836,3 +8836,317 @@ body[data-travel-theme="miami"] .social-card p {
     width: 72px;
   }
 }
+
+/* Smart ride share hub redesign */
+.ride-hub-redesign {
+  display: grid;
+  gap: 14px;
+}
+
+.ride-toolbar,
+.ride-overview-grid,
+.ride-two-column-grid,
+.ride-card-heading,
+.ride-hub-list article,
+.ride-recommendation-grid,
+.ride-timeline-list,
+.ride-history-list,
+.ride-notification-list {
+  display: grid;
+  gap: 12px;
+}
+
+.ride-toolbar {
+  grid-template-columns: minmax(0, 1.2fr) minmax(150px, 0.4fr) minmax(150px, 0.4fr);
+  padding: 12px;
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.06);
+}
+
+.ride-toolbar label,
+.ride-clean-card label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.ride-toolbar input,
+.ride-toolbar select {
+  min-width: 0;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0 11px;
+  background: #fff;
+  color: var(--ink);
+}
+
+.ride-overview-grid,
+.ride-two-column-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.ride-clean-card,
+.ride-account-panel,
+.shared-ride-panel,
+.private-driver-panel,
+.ride-assistant-panel > div {
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.06);
+}
+
+.ride-clean-card {
+  display: grid;
+  gap: 14px;
+  padding: 14px;
+}
+
+.ride-card-heading {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+}
+
+.ride-card-heading h3,
+.ride-clean-card h3,
+.private-driver-panel h3 {
+  margin: 0;
+}
+
+.ride-card-heading .ghost-button,
+.ride-map-card .ghost-button {
+  min-height: 36px;
+  border-radius: 10px;
+}
+
+.ride-hub-list article,
+.ride-recommendation-grid article,
+.ride-timeline-list button,
+.ride-history-list button,
+.ride-notification-list button,
+.ride-empty-state {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 12px;
+  text-align: left;
+}
+
+.ride-hub-list article {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+}
+
+.ride-hub-list span,
+.ride-recommendation-grid span {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: #e9f7f3;
+  color: var(--sea-dark);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.ride-hub-list small,
+.ride-recommendation-grid small,
+.ride-timeline-list small,
+.ride-history-list span,
+.ride-notification-list span,
+.ride-empty-state span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ride-hub-list button,
+.ride-recommendation-grid button,
+.ride-timeline-list button,
+.ride-history-list button,
+.ride-notification-list button {
+  min-height: 36px;
+  border: 1px solid rgba(8, 127, 140, 0.16);
+  border-radius: 10px;
+  background: #fff;
+  color: #24555d;
+  font-weight: 850;
+}
+
+.ride-hub-list article > button,
+.ride-recommendation-grid button {
+  background: var(--reef);
+  color: #071116;
+}
+
+.ride-map-preview {
+  position: relative;
+  min-height: 232px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 150, 199, 0.14);
+  border-radius: 14px;
+  background:
+    linear-gradient(90deg, rgba(8, 127, 140, 0.08) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(8, 127, 140, 0.08) 1px, transparent 1px),
+    radial-gradient(circle at 28% 32%, rgba(255, 111, 97, 0.26), transparent 16%),
+    radial-gradient(circle at 72% 66%, rgba(0, 180, 216, 0.28), transparent 18%),
+    #f7fcfb;
+  background-size: 42px 42px, 42px 42px, auto, auto, auto;
+}
+
+.ride-map-card.is-expanded .ride-map-preview {
+  min-height: 360px;
+}
+
+.ride-map-pin {
+  position: absolute;
+  z-index: 2;
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: #071116;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: 0 10px 24px rgba(7, 17, 22, 0.18);
+}
+
+.ride-map-pin.pickup {
+  left: 12%;
+  top: 24%;
+}
+
+.ride-map-pin.dropoff {
+  right: 12%;
+  bottom: 22%;
+}
+
+.ride-map-route {
+  position: absolute;
+  inset: 34% 18% 34% 18%;
+  border-top: 4px dashed rgba(0, 150, 199, 0.62);
+  transform: rotate(17deg);
+  transform-origin: center;
+}
+
+.ride-recommendation-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ride-recommendation-grid article {
+  display: grid;
+  gap: 8px;
+}
+
+.ride-timeline-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ride-timeline-list button,
+.ride-history-list button,
+.ride-notification-list button {
+  display: grid;
+  gap: 6px;
+}
+
+.ride-timeline-list button span {
+  color: var(--sea-dark);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.ride-history-list button {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.ride-history-list button span {
+  grid-column: 1 / -1;
+}
+
+.ride-notification-list {
+  grid-template-columns: 1fr;
+}
+
+.ride-destination-row,
+.ride-location-grid,
+.ride-entry-grid {
+  gap: 10px;
+}
+
+.ride-destination-row select,
+.ride-location-grid input,
+.ride-entry-grid input {
+  min-height: 42px;
+  border-radius: 10px;
+}
+
+.ride-provider-list button,
+.shared-ride-members label,
+.private-driver-list article,
+.private-driver-empty,
+.ride-estimate-grid div,
+.bill-total-grid div {
+  border-radius: 12px;
+}
+
+.ride-estimate-grid div {
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 12px;
+}
+
+.ride-account-panel,
+.shared-ride-panel,
+.private-driver-panel {
+  padding: 14px;
+}
+
+.private-driver-panel {
+  background: #fff;
+}
+
+@media (max-width: 1080px) {
+  .ride-toolbar,
+  .ride-overview-grid,
+  .ride-two-column-grid,
+  .ride-recommendation-grid,
+  .ride-timeline-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .ride-card-heading,
+  .ride-hub-list article,
+  .ride-destination-row,
+  .ride-account-panel,
+  .shared-ride-panel,
+  .ride-location-grid,
+  .ride-entry-grid,
+  .ride-estimate-grid,
+  .shared-ride-members,
+  .ride-assistant-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .ride-account-actions {
+    justify-content: start;
+  }
+
+  .ride-clean-card,
+  .ride-toolbar {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .ride-map-preview {
+    min-height: 190px;
+  }
+}
