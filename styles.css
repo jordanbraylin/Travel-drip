@@ -10667,3 +10667,174 @@ textarea,
     text-align: center;
   }
 }
+
+/* Shorter Travel tab */
+#rideShareHub {
+  gap: 8px;
+}
+
+#rideShareHub > .section-heading {
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(8, 127, 140, 0.1);
+}
+
+#rideShareHub .travel-overview-card,
+#rideShareHub .travel-section-nav,
+#rideShareHub .transport-confirmation-hub,
+#rideShareHub .ride-hub-redesign {
+  margin-bottom: 0;
+}
+
+#rideShareHub .travel-overview-card {
+  padding: 9px;
+  border-radius: 12px;
+}
+
+#rideShareHub .travel-overview-card strong {
+  font-size: 16px;
+}
+
+#rideShareHub .travel-overview-card small {
+  font-size: 12px;
+}
+
+#rideShareHub .travel-section-nav {
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 6px;
+}
+
+#rideShareHub .travel-section-nav button {
+  min-height: 38px;
+  padding-inline: 7px;
+  border-radius: 10px;
+  font-size: 11px;
+  text-align: center;
+}
+
+#rideShareHub .transport-confirmation-hub {
+  max-height: 880px;
+  overflow: auto;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+#rideShareHub .transport-hub-header {
+  padding-bottom: 8px;
+}
+
+#rideShareHub .transport-hub-header h3,
+#rideShareHub .travel-support-card h3,
+#rideShareHub .ride-clean-card h3,
+#rideShareHub .private-driver-panel h3 {
+  font-size: 17px;
+}
+
+#rideShareHub .transport-hub-header p:not(.transport-route-chip) {
+  font-size: 12px;
+}
+
+#rideShareHub .transport-summary-strip button {
+  min-height: 58px;
+  padding: 8px;
+}
+
+#rideShareHub .transport-summary-strip small {
+  display: none;
+}
+
+#rideShareHub .transport-dashboard-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+#rideShareHub .transport-record-list,
+#rideShareHub .transport-detail-panel,
+#rideShareHub .transport-timeline,
+#rideShareHub .ride-hub-list,
+#rideShareHub .private-driver-list,
+#rideShareHub .ride-history-list,
+#rideShareHub .ride-notification-list,
+#rideShareHub .split-preview {
+  max-height: 320px;
+  overflow: auto;
+}
+
+#rideShareHub .transport-detail-grid,
+#rideShareHub .transport-document-list,
+#rideShareHub .travel-support-grid,
+#rideShareHub .ride-overview-grid,
+#rideShareHub .ride-two-column-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#rideShareHub .travel-support-card,
+#rideShareHub .ride-clean-card,
+#rideShareHub .private-driver-panel {
+  padding: 10px;
+  border-radius: 12px;
+}
+
+#rideShareHub .travel-row-list article,
+#rideShareHub .transport-record-card,
+#rideShareHub .transport-timeline button,
+#rideShareHub .ride-hub-list article,
+#rideShareHub .private-driver-list article,
+#rideShareHub .shared-ride-members label {
+  padding: 8px;
+}
+
+#rideShareHub .ride-hub-redesign {
+  max-height: 760px;
+  overflow: auto;
+  padding: 10px;
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 14px;
+  background: rgba(248, 253, 255, 0.72);
+}
+
+#rideShareHub .ride-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 8px;
+}
+
+#rideShareHub .ride-entry-grid,
+#rideShareHub .ride-location-grid,
+#rideShareHub .private-driver-search {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+#rideShareHub .ride-assistant-panel,
+#rideShareHub .corporate-meal-rules {
+  display: none;
+}
+
+@media (max-width: 1120px) {
+  #rideShareHub .travel-section-nav {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  #rideShareHub .travel-section-nav,
+  #rideShareHub .travel-overview-card,
+  #rideShareHub .transport-summary-strip,
+  #rideShareHub .transport-search-row,
+  #rideShareHub .transport-detail-grid,
+  #rideShareHub .transport-document-list,
+  #rideShareHub .travel-support-grid,
+  #rideShareHub .ride-toolbar,
+  #rideShareHub .ride-overview-grid,
+  #rideShareHub .ride-two-column-grid,
+  #rideShareHub .ride-entry-grid,
+  #rideShareHub .ride-location-grid,
+  #rideShareHub .private-driver-search {
+    grid-template-columns: 1fr;
+  }
+
+  #rideShareHub .transport-confirmation-hub,
+  #rideShareHub .ride-hub-redesign {
+    max-height: none;
+    overflow: visible;
+  }
+}
