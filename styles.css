@@ -11080,3 +11080,100 @@ body.auth-screen .auth-carousel blockquote {
     display: grid;
   }
 }
+
+/* Travel Hub compact tile dashboard */
+#rideShareHub {
+  background: transparent;
+}
+
+#rideShareHub > .section-heading {
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.045);
+}
+
+#rideShareHub .travel-overview-card {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(8, 127, 140, 0.11);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.045);
+}
+
+#rideShareHub .travel-overview-card div {
+  min-height: 74px;
+  padding: 8px;
+  border: 1px solid rgba(8, 127, 140, 0.08);
+  border-radius: 10px;
+  background: rgba(248, 253, 255, 0.7);
+}
+
+#rideShareHub .travel-section-nav {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#rideShareHub .travel-section-nav button {
+  min-height: 132px;
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.045);
+}
+
+#rideShareHub .travel-section-nav button span {
+  background: rgba(8, 127, 140, 0.08);
+}
+
+#rideShareHub .travel-section-nav button.active {
+  border-color: rgba(0, 150, 199, 0.45);
+  box-shadow: 0 12px 24px rgba(0, 150, 199, 0.12);
+}
+
+#rideShareHub .travel-selected-tile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.045);
+}
+
+#rideShareHub .travel-selected-tile h3,
+#rideShareHub .travel-selected-tile p {
+  margin: 0;
+}
+
+#rideShareHub .travel-selected-tile p:not(.eyebrow) {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+#rideShareHub .transport-confirmation-hub,
+#rideShareHub .ride-hub-redesign {
+  display: none;
+}
+
+@media (max-width: 1120px) {
+  #rideShareHub .travel-overview-card,
+  #rideShareHub .travel-section-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  #rideShareHub .travel-overview-card,
+  #rideShareHub .travel-section-nav {
+    grid-template-columns: 1fr;
+  }
+
+  #rideShareHub .travel-selected-tile {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

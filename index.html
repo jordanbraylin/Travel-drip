@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=74">
+  <link rel="stylesheet" href="styles.css?v=75">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -2256,6 +2256,16 @@
                 <strong>Ready</strong>
                 <small>12 confirmations saved • 3 reminders soon</small>
               </div>
+              <div>
+                <span>Confirmations</span>
+                <strong>12 saved</strong>
+                <small>Flights, hotels, tickets, rides</small>
+              </div>
+              <div>
+                <span>Missing items</span>
+                <strong>1 needed</strong>
+                <small>Travel insurance before departure</small>
+              </div>
             </section>
             <nav class="travel-section-nav" aria-label="Travel sections">
               <button type="button" data-travel-section="flights" aria-label="Open Flights"><span>✈️</span><strong>Flights</strong><small>Upcoming flight • Miami to Tokyo</small></button>
@@ -2267,6 +2277,14 @@
               <button type="button" data-travel-section="buses" aria-label="Open Buses"><span>🚌</span><strong>Buses</strong><small>Group shuttle • passenger list</small></button>
               <button type="button" data-travel-section="ferries" aria-label="Open Ferries and Cruises"><span>🚢</span><strong>Cruises</strong><small>Boarding pass • luggage tags</small></button>
             </nav>
+            <section class="travel-selected-tile" id="travelSelectedTile" aria-live="polite">
+              <div>
+                <p class="eyebrow">Selected travel page</p>
+                <h3 id="travelSelectedTitle">Choose a travel tile</h3>
+                <p id="travelSelectedSummary">Open Flights, Hotels, Transportation, Tickets, or Documents from the tile grid. Detailed records stay on their dedicated pages instead of crowding the Travel Hub.</p>
+              </div>
+              <span class="status-pill" id="travelSelectedRoute">Travel overview</span>
+            </section>
             <section class="transport-confirmation-hub" aria-label="Multi-transport confirmation hub">
               <div class="transport-hub-header">
                 <div>
@@ -3251,6 +3269,6 @@
   </dialog>
 
   <script src="public-config.js?v=2"></script>
-  <script defer src="app.js?v=54"></script>
+  <script defer src="app.js?v=55"></script>
 </body>
 </html>

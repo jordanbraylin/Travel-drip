@@ -1600,6 +1600,63 @@ function getEventSpecificDetails() {
   return Object.fromEntries($$("[data-event-specific-key]").map((input) => [input.dataset.eventSpecificKey, input.value.trim()]));
 }
 
+const travelTileDestinations = {
+  flights: {
+    title: "Flights",
+    route: "/trips/dubai-weekend/transportation/flights",
+    summary: "2 upcoming flights. Next departure: Miami to Tokyo in 5 days. Full flight records open on the Flights page."
+  },
+  hotels: {
+    title: "Hotels",
+    route: "/trips/dubai-weekend/transportation/hotels",
+    summary: "2 confirmed hotel reservations. Check-in details, room notes, and confirmation files open on the Hotels page."
+  },
+  trains: {
+    title: "Trains",
+    route: "/trips/dubai-weekend/transportation/trains",
+    summary: "2 saved train tickets. Station, platform, fare, and transfer details open on the Trains page."
+  },
+  buses: {
+    title: "Buses",
+    route: "/trips/dubai-weekend/transportation/buses",
+    summary: "Group shuttle and bus assignments are ready. Passenger lists and pickup details open on the Buses page."
+  },
+  ferries: {
+    title: "Cruises and ferries",
+    route: "/trips/dubai-weekend/transportation/ferries",
+    summary: "Cruise boarding pass, ferry times, luggage tags, and port notes open on the Cruises and Ferries page."
+  },
+  rideShare: {
+    title: "Transportation",
+    route: "/trips/dubai-weekend/transportation/ride-share",
+    summary: "Airport pickup is scheduled. Ride-share, private driver, route, and fare split tools open on the Transportation page."
+  },
+  tickets: {
+    title: "Tickets",
+    route: "/trips/dubai-weekend/transportation/tickets",
+    summary: "Wallet passes and QR codes are available. Boarding passes and event tickets open in Ticket Center."
+  },
+  documents: {
+    title: "Travel documents",
+    route: "/trips/dubai-weekend/transportation/documents",
+    summary: "Passport, insurance, and confirmations are organized. Secure uploads open in Document Center."
+  }
+};
+
+function showTravelTileDestination(section) {
+  const destination = travelTileDestinations[section] || travelTileDestinations.rideShare;
+  if ($("#travelSelectedTitle")) $("#travelSelectedTitle").textContent = destination.title;
+  if ($("#travelSelectedSummary")) $("#travelSelectedSummary").textContent = destination.summary;
+  if ($("#travelSelectedRoute")) $("#travelSelectedRoute").textContent = destination.route;
+  $$(".travel-section-nav [data-travel-section]").forEach((button) => {
+    const active = button.dataset.travelSection === section;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+  history.pushState({ target: "rideShareHub", travelSection: section }, "", destination.route);
+  return destination;
+}
+
 function validateTripDateRanges() {
   const start = $("#tripStartInput");
   const end = $("#tripEndInput");
@@ -3156,12 +3213,15 @@ const routeAliases = {
   "/trips/dubai-weekend/travel": "rideShareHub",
   "/trips/dubai-weekend/transportation": "rideShareHub",
   "/trips/dubai-weekend/transportation/flights": "rideShareHub",
+  "/trips/dubai-weekend/transportation/hotels": "rideShareHub",
   "/trips/dubai-weekend/transportation/trains": "rideShareHub",
   "/trips/dubai-weekend/transportation/buses": "rideShareHub",
   "/trips/dubai-weekend/transportation/ferries": "rideShareHub",
   "/trips/dubai-weekend/transportation/cruises": "rideShareHub",
   "/trips/dubai-weekend/transportation/shuttles": "rideShareHub",
   "/trips/dubai-weekend/transportation/ride-share": "rideShareHub",
+  "/trips/dubai-weekend/transportation/tickets": "rideShareHub",
+  "/trips/dubai-weekend/transportation/documents": "rideShareHub",
   "/trips/dubai-weekend/transportation/rental-cars": "rideShareHub",
   "/trips/dubai-weekend/transportation/private-transfers": "rideShareHub",
   "/trips/dubai-weekend/ride-share": "rideShareHub",
@@ -3888,21 +3948,15 @@ function wireLocalInteractions() {
     button.addEventListener("click", async () => {
       const section = button.dataset.travelSection;
       const targetType = section === "ferries" ? "ferries" : section;
-      const panelMap = {
-        hotels: "#hotelCenter",
-        tickets: "#ticketCenter",
-        documents: "#documentCenter"
-      };
+      const destination = showTravelTileDestination(section);
       if (transportTypeLabels[targetType]) {
         renderTransportHub(targetType);
-        $("#transportRecordList")?.scrollIntoView({ behavior: "smooth", block: "start" });
-        $("#transportMessage").textContent = `${transportTypeLabels[targetType]} opened from the Travel section navigation. Search, filters, tickets, and details stay connected to this trip.`;
+        $("#transportMessage").textContent = `${transportTypeLabels[targetType]} opened from the Travel tile grid. Detailed tables stay on ${destination.route}.`;
       } else {
-        const panel = $(panelMap[section] || "#transportRecordList");
-        panel?.scrollIntoView({ behavior: "smooth", block: "start" });
         const label = section === "tickets" ? "Ticket Center" : section === "documents" ? "Document Center" : "Hotel reservations";
-        $("#transportMessage").textContent = `${label} opened from the Travel section navigation. Back returns to the Travel overview with current filters preserved.`;
+        $("#transportMessage").textContent = `${label} opened from the Travel tile grid. Detailed records stay on ${destination.route}.`;
       }
+      $("#travelSelectedTile")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
       addAuditEntry("Travel section opened", `${section} opened from Travel hub navigation.`);
       await saveSyncedEvent("travel_section_opened", { section });
     });
