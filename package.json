@@ -7,6 +7,7 @@
     "dev": "vercel dev",
     "serve": "python3 -m http.server 4173",
     "validate:pwa": "node scripts/validate-pwa.js",
+    "verify:qa": "node scripts/verify-links-search-booking.js",
     "audit:files": "grep -R \"SUPABASE_SERVICE_ROLE_KEY\\|VAPID_PRIVATE_KEY\\|sk-\\|password\" -n --exclude-dir=node_modules . || true"
   },
   "dependencies": {

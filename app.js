@@ -1600,6 +1600,34 @@ function getEventSpecificDetails() {
   return Object.fromEntries($$("[data-event-specific-key]").map((input) => [input.dataset.eventSpecificKey, input.value.trim()]));
 }
 
+function validateTripDateRanges() {
+  const start = $("#tripStartInput");
+  const end = $("#tripEndInput");
+  const eventRsvp = $("#eventRsvpDeadlineInput");
+  const inviteDeadline = $("#inviteDeadlineInput");
+  const message = $("#soloModeMessage") || $("#invitationStatusMessage");
+  const startValue = start?.value || "";
+  const endValue = end?.value || "";
+  const invalidEndDate = Boolean(startValue && endValue && endValue < startValue);
+
+  if (end) {
+    end.setCustomValidity(invalidEndDate ? "End date cannot be before start date." : "");
+  }
+
+  [eventRsvp, inviteDeadline].forEach((deadline) => {
+    if (!deadline) return;
+    const invalidDeadline = Boolean(endValue && deadline.value && deadline.value > endValue);
+    deadline.setCustomValidity(invalidDeadline ? "RSVP deadline should be on or before the trip end date." : "");
+  });
+
+  if (message) {
+    if (invalidEndDate) message.textContent = "Invalid date range: end date cannot be before start date.";
+    else if ([eventRsvp, inviteDeadline].some((deadline) => deadline?.validationMessage)) message.textContent = "Review RSVP deadline: it should be on or before the trip end date.";
+  }
+
+  return !invalidEndDate && ![eventRsvp, inviteDeadline].some((deadline) => deadline?.validationMessage);
+}
+
 async function apiRequest(path, options = {}) {
   if (!state.session?.access_token || isFilePreview) return { skipped: true, reason: "No deployed authenticated API session" };
   const response = await fetch(path, {
@@ -4239,6 +4267,10 @@ function wireLocalInteractions() {
 
   $("#tripCreationForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (!validateTripDateRanges()) {
+      event.target.reportValidity();
+      return;
+    }
     const type = $(".trip-type-selector button.active")?.dataset.tripType || "solo";
     const config = tripTypeConfigs[type] || tripTypeConfigs.solo;
     const tripName = $("#tripNameInput").value.trim() || config.label;
@@ -4298,13 +4330,16 @@ function wireLocalInteractions() {
     });
   });
 
-  ["#inviteTitleInput", "#inviteMessageInput", "#tripNameInput", "#tripDestinationInput", "#tripStartInput", "#tripEndInput"].forEach((selector) => {
-    $(selector)?.addEventListener("input", () => {
+  ["#inviteTitleInput", "#inviteMessageInput", "#tripNameInput", "#tripDestinationInput", "#tripStartInput", "#tripEndInput", "#eventRsvpDeadlineInput", "#inviteDeadlineInput"].forEach((selector) => {
+    const updateInvitePreview = () => {
+      validateTripDateRanges();
       $("#invitePreviewTitle").textContent = $("#tripNameInput").value.trim() || $("#inviteTitleInput").value.trim();
       $("#invitePreviewMessage").textContent = $("#inviteMessageInput").value.trim() || "Invitation message preview.";
       $("#invitePreviewDestination").textContent = $("#tripDestinationInput").value.trim() || "Destination";
       $("#invitePreviewDates").textContent = `${$("#tripStartInput").value || "Start date"} - ${$("#tripEndInput").value || "End date"}`;
-    });
+    };
+    $(selector)?.addEventListener("input", updateInvitePreview);
+    $(selector)?.addEventListener("change", updateInvitePreview);
   });
 
   $("#aiInviteCopyButton")?.addEventListener("click", async () => {

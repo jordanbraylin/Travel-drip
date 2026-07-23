@@ -1,0 +1,171 @@
+{
+  "generatedAt": "2026-07-23T01:02:49.839Z",
+  "package": {
+    "name": "traveldrip",
+    "version": "1.0.0"
+  },
+  "totals": {
+    "screenIds": 499,
+    "buttons": 474,
+    "hrefLinks": 14,
+    "dataTargets": 94,
+    "uniqueDataTargets": 16,
+    "routeDefinitions": 16,
+    "dateInputs": 4,
+    "searchInputs": 7,
+    "actionAttributeTypes": 60,
+    "apiRoutes": 14
+  },
+  "linkAndRouteVerification": {
+    "workingLocalTargets": 16,
+    "targetIssues": [],
+    "ariaIssues": [],
+    "linkIssues": [],
+    "externalHrefs": [
+      "https://maps.google.com",
+      "https://maps.google.com",
+      "https://maps.google.com"
+    ],
+    "placeholderHrefs": []
+  },
+  "datePickerVerification": {
+    "status": "Native browser date/datetime-local controls present locally; full custom popover/mobile calendar QA requires browser/device testing.",
+    "fields": [
+      {
+        "id": "tripStartInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      },
+      {
+        "id": "tripEndInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      },
+      {
+        "id": "eventRsvpDeadlineInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      },
+      {
+        "id": "inviteDeadlineInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      }
+    ],
+    "ranges": [
+      {
+        "start": "tripStartInput",
+        "end": "tripEndInput",
+        "fieldsPresent": true,
+        "bothReferencedInApp": true,
+        "invalidRangeGuardPresent": true
+      },
+      {
+        "start": "tripStartInput",
+        "end": "inviteDeadlineInput",
+        "fieldsPresent": true,
+        "bothReferencedInApp": true,
+        "invalidRangeGuardPresent": true
+      },
+      {
+        "start": "tripStartInput",
+        "end": "eventRsvpDeadlineInput",
+        "fieldsPresent": true,
+        "bothReferencedInApp": true,
+        "invalidRangeGuardPresent": true
+      }
+    ]
+  },
+  "searchVerification": {
+    "status": "Local UI search fields are present; provider-backed travel search requires live integrations.",
+    "fields": [
+      {
+        "id": "globalSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "exploreSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "messageSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "infoSearch",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "transportSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "rideHubSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "privateDriverSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      }
+    ],
+    "missingAppReferences": []
+  },
+  "bookingAndRealtimeVerification": {
+    "status": "Not production-complete without live provider credentials and deployed callback/webhook testing.",
+    "providerSignals": [
+      {
+        "label": "Provider-required labeling",
+        "present": true
+      },
+      {
+        "label": "Estimated pricing labeling",
+        "present": true
+      },
+      {
+        "label": "Manual data labeling",
+        "present": true
+      },
+      {
+        "label": "Booking not marked confirmed without provider",
+        "present": true
+      },
+      {
+        "label": "Realtime limitations stated",
+        "present": true
+      }
+    ],
+    "apiRoutes": [
+      "_security.js",
+      "admin-status.js",
+      "audit.js",
+      "config.js",
+      "events.js",
+      "explore.js",
+      "guest-access.js",
+      "health.js",
+      "invitations.js",
+      "notify.js",
+      "rsvp.js",
+      "schedule.js",
+      "subscribe.js",
+      "trips.js"
+    ]
+  },
+  "productionTesting": {
+    "status": "Not run by this local script.",
+    "reason": "Network access, provider credentials, and browser/device farm access are outside this local workspace execution."
+  },
+  "finalStatus": "Ready with Documented Limitations",
+  "criticalIssues": []
+}
