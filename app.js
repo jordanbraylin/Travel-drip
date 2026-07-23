@@ -1636,6 +1636,11 @@ const travelTileDestinations = {
     route: "/trips/dubai-weekend/transportation/tickets",
     summary: "Wallet passes and QR codes are available. Boarding passes and event tickets open in Ticket Center."
   },
+  boarding: {
+    title: "Boarding information",
+    route: "/trips/dubai-weekend/transportation/boarding",
+    summary: "Boarding pass is ready. Gate B18, boarding group 3, seat 14A, and check-in reminders open on the Boarding Info page."
+  },
   documents: {
     title: "Travel documents",
     route: "/trips/dubai-weekend/transportation/documents",
@@ -3221,6 +3226,7 @@ const routeAliases = {
   "/trips/dubai-weekend/transportation/shuttles": "rideShareHub",
   "/trips/dubai-weekend/transportation/ride-share": "rideShareHub",
   "/trips/dubai-weekend/transportation/tickets": "rideShareHub",
+  "/trips/dubai-weekend/transportation/boarding": "rideShareHub",
   "/trips/dubai-weekend/transportation/documents": "rideShareHub",
   "/trips/dubai-weekend/transportation/rental-cars": "rideShareHub",
   "/trips/dubai-weekend/transportation/private-transfers": "rideShareHub",
