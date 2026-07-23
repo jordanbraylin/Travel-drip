@@ -11014,3 +11014,69 @@ body.auth-screen .auth-carousel blockquote {
     line-height: 1.4;
   }
 }
+
+/* Travel tab tile split */
+@media (min-width: 1121px) {
+  #rideShareHub .transport-confirmation-hub,
+  #rideShareHub .ride-hub-redesign {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  #rideShareHub .transport-hub-header,
+  #rideShareHub .transport-summary-strip,
+  #rideShareHub .transport-search-row,
+  #rideShareHub .transport-tabs,
+  #rideShareHub .transport-dashboard-grid,
+  #rideShareHub .travel-support-grid,
+  #rideShareHub .transport-security-grid,
+  #rideShareHub #transportMessage,
+  #rideShareHub .ride-toolbar,
+  #rideShareHub .ride-provider-section,
+  #rideShareHub .ride-two-column-grid {
+    grid-column: auto;
+  }
+
+  #rideShareHub .transport-summary-strip,
+  #rideShareHub .transport-search-row,
+  #rideShareHub .transport-dashboard-grid,
+  #rideShareHub .travel-support-grid,
+  #rideShareHub .ride-toolbar,
+  #rideShareHub .ride-overview-grid,
+  #rideShareHub .ride-provider-section,
+  #rideShareHub .ride-two-column-grid {
+    grid-column: span 2;
+  }
+
+  #rideShareHub .transport-summary-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #rideShareHub .transport-tabs,
+  #rideShareHub .transport-security-grid {
+    grid-template-columns: 1fr;
+    align-content: start;
+  }
+
+  #rideShareHub .transport-dashboard-grid,
+  #rideShareHub .travel-support-grid,
+  #rideShareHub .ride-overview-grid,
+  #rideShareHub .ride-two-column-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #rideShareHub .transport-timeline-panel,
+  #rideShareHub #transportMessage,
+  #rideShareHub .ride-clean-card,
+  #rideShareHub .private-driver-panel {
+    min-height: 100%;
+  }
+
+  #rideShareHub .transport-hub-header,
+  #rideShareHub .transport-tabs,
+  #rideShareHub #transportMessage,
+  #rideShareHub .ride-clean-card,
+  #rideShareHub .private-driver-panel {
+    display: grid;
+  }
+}
