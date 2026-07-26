@@ -12877,6 +12877,423 @@ body.auth-screen .auth-carousel blockquote {
   }
 }
 
+/* Section 58 cleanup: flatter chat rows, compact wallet sections, itinerary dashboard */
+.trip-tab-bar {
+  gap: 7px;
+}
+
+.trip-tab-bar button {
+  border-radius: 12px;
+  min-height: 38px;
+}
+
+#socialHub .messages-hub,
+#socialHub .conversation-list,
+#socialHub .chat-workspace,
+#socialHub .conversation-details-panel,
+#socialHub .message-support-grid article {
+  border-radius: 14px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.055);
+}
+
+#socialHub .messages-hub {
+  padding: 14px;
+  background: #fff;
+}
+
+#socialHub .conversation-list {
+  gap: 0;
+  padding: 0;
+  overflow: hidden auto;
+}
+
+#socialHub .conversation-card {
+  min-height: 72px;
+  border: 0;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 0;
+  padding: 10px 12px;
+  background: #fff;
+}
+
+#socialHub .conversation-card:last-child {
+  border-bottom: 0;
+}
+
+#socialHub .conversation-card.active,
+#socialHub .conversation-card:hover,
+#socialHub .conversation-card:focus-visible {
+  background: #f8fafc;
+  outline: none;
+}
+
+#socialHub .conversation-card img,
+#socialHub .message-avatar {
+  border-radius: 12px;
+}
+
+#socialHub .message-tabs,
+.memories-toolbar {
+  border-radius: 14px;
+}
+
+#socialHub .message-tabs button,
+.memories-toolbar button {
+  border-radius: 10px;
+}
+
+#socialHub .chat-tool-row button,
+#socialHub .chat-form input,
+#socialHub .chat-form button,
+#socialHub .pinned-message,
+#socialHub .pinned-message button,
+.chat-detail-actions button,
+.chat-danger-actions button {
+  border-radius: 10px;
+}
+
+.wallet-section-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.wallet-section-card-grid article {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  background: #fff;
+  padding: 14px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.055);
+}
+
+.wallet-section-card-grid span {
+  color: #64748b;
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.wallet-section-card-grid strong {
+  color: #0f172a;
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+.wallet-section-card-grid small {
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.wallet-section-card-grid button {
+  justify-self: start;
+  min-height: 34px;
+  border: 0;
+  border-radius: 10px;
+  background: #eef7f5;
+  color: #174650;
+  padding: 0 12px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+#walletPanel .trip-wallet-card,
+#walletPanel .wallet-total,
+#walletPanel .wallet-breakdown div,
+#walletPanel .wallet-action-grid button,
+#walletPanel .shared-wallet-ledger,
+#walletPanel .funds-form,
+#walletPanel .range-wrap {
+  border-radius: 14px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.055);
+}
+
+#walletPanel .trip-wallet-card,
+#walletPanel .wallet-total,
+#walletPanel .shared-wallet-ledger {
+  margin-top: 12px;
+}
+
+#walletPanel .wallet-action-grid {
+  gap: 10px;
+}
+
+#walletPanel .wallet-action-grid button {
+  min-height: auto;
+  padding: 12px;
+}
+
+#walletPanel .wallet-breakdown {
+  gap: 10px;
+}
+
+#walletPanel .shared-wallet-ledger {
+  max-height: 260px;
+  overflow: auto;
+}
+
+.itinerary-dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0 12px;
+}
+
+.itinerary-card,
+.itinerary-timeline-dashboard,
+.upcoming-reservation-grid article {
+  min-width: 0;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.96);
+  padding: 15px;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+}
+
+.itinerary-card {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.itinerary-card--featured {
+  grid-column: span 2;
+  color: #fff;
+  background:
+    linear-gradient(135deg, rgba(12, 34, 50, 0.78), rgba(8, 127, 140, 0.72)),
+    url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1100&auto=format&fit=crop") center/cover;
+}
+
+.itinerary-card span,
+.upcoming-reservation-grid span {
+  color: #64748b;
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.itinerary-card--featured span,
+.itinerary-card--featured p {
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.itinerary-card h3,
+.itinerary-timeline-dashboard h3,
+.upcoming-reservation-grid strong {
+  margin: 0;
+  color: #0f172a;
+  overflow-wrap: anywhere;
+}
+
+.itinerary-card--featured h3 {
+  color: #fff;
+  font-size: clamp(1.45rem, 2.4vw, 2.2rem);
+}
+
+.itinerary-card p,
+.upcoming-reservation-grid small {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.itinerary-action-row,
+.upcoming-reservation-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.itinerary-card button,
+.itinerary-action-row button,
+.upcoming-reservation-grid button {
+  width: fit-content;
+  min-height: 34px;
+  border: 0;
+  border-radius: 10px;
+  background: #eef7f5;
+  color: #174650;
+  padding: 0 12px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.itinerary-card--featured button {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.route-preview-line {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #e0f7fa, #fff7ed);
+  padding: 0 18px;
+}
+
+.route-preview-line::before {
+  content: "";
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  top: 50%;
+  height: 3px;
+  border-radius: 999px;
+  background: #0891b2;
+}
+
+.route-preview-line i {
+  position: relative;
+  z-index: 1;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #0f172a;
+}
+
+.weather-orb {
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 35% 35%, #facc15 0 28%, transparent 29%),
+    radial-gradient(circle at 62% 62%, #67e8f9 0 38%, #0ea5e9 39% 100%);
+  box-shadow: 0 12px 26px rgba(14, 165, 233, 0.28);
+}
+
+.trip-progress-track {
+  height: 10px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.trip-progress-track i {
+  display: block;
+  width: var(--w);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #00c2c7, #ff8a5c);
+}
+
+.itinerary-timeline-dashboard {
+  display: grid;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.itinerary-timeline-list {
+  display: grid;
+  gap: 8px;
+}
+
+.itinerary-timeline-list details {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.itinerary-timeline-list summary {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.itinerary-timeline-list summary::-webkit-details-marker {
+  display: none;
+}
+
+.itinerary-timeline-list time {
+  color: #475569;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.itinerary-timeline-list strong {
+  color: #0f172a;
+  overflow-wrap: anywhere;
+}
+
+.itinerary-timeline-list em {
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #166534;
+  padding: 5px 9px;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.itinerary-timeline-list p {
+  margin: 0;
+  padding: 0 12px 12px 54px;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.upcoming-reservation-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 12px 0;
+}
+
+.upcoming-reservation-grid article {
+  display: grid;
+  gap: 7px;
+}
+
+@media (max-width: 1080px) {
+  .itinerary-dashboard,
+  .upcoming-reservation-grid,
+  .wallet-section-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .itinerary-card--featured {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .trip-tab-bar {
+    gap: 6px;
+  }
+
+  .itinerary-dashboard,
+  .upcoming-reservation-grid,
+  .wallet-section-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .itinerary-timeline-list summary {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .itinerary-timeline-list time,
+  .itinerary-timeline-list em {
+    grid-column: 2;
+  }
+
+  .itinerary-timeline-list p {
+    padding-left: 12px;
+  }
+}
+
 #rideShareHub .travel-overview-card .travel-summary-tile {
   position: relative;
   min-height: 96px;

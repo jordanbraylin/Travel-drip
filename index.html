@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=84">
+  <link rel="stylesheet" href="styles.css?v=85">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -323,14 +323,14 @@
 
       <nav class="trip-tab-bar" aria-label="Selected trip sections">
         <button class="active" type="button" data-target="dashboardHome">Overview</button>
-        <button type="button" data-target="aiTravelPlanner">AI Planner</button>
-        <button type="button" data-target="itineraryAlerts">Itinerary</button>
-        <button type="button" data-target="socialHub">Chat</button>
         <button type="button" data-target="rideShareHub">Travel</button>
+        <button type="button" data-target="aiTravelPlanner">Planning</button>
+        <button type="button" data-target="itineraryAlerts">Itinerary</button>
         <button type="button" data-target="eventsPanel">Events</button>
         <button type="button" data-target="walletPanel">Wallet</button>
-        <button type="button" data-target="importantInfo">Important Info</button>
         <button type="button" data-target="memoriesPanel">Memories</button>
+        <button type="button" data-target="socialHub">Chat</button>
+        <button type="button" data-target="importantInfo">Important Info</button>
         <button type="button" data-target="securityCenter">Settings</button>
       </nav>
 
@@ -2275,6 +2275,15 @@
                 <button type="button" id="walletPreviewRefundButton">Request Refund</button>
                 <button type="button" data-wallet-action="Add Payment Method">Add Payment Method</button>
               </div>
+              <section class="wallet-section-card-grid" aria-label="Trip wallet sections">
+                <article><span>Wallet Overview</span><strong>$3,880 available</strong><small>$6,400 deposited • $2,520 spent • $3,880 remaining</small><button type="button" data-wallet-section="overview">Open Overview</button></article>
+                <article><span>Virtual Card</span><strong>Locked • $380 spendable</strong><small>Freeze, unfreeze, add to wallet, and card controls require Wallet PIN.</small><button type="button" id="walletSectionCardButton">Open Card</button></article>
+                <article><span>Contributions</span><strong>8 members • 84% funded</strong><small>$920 outstanding across 3 travelers.</small><button type="button" data-target="groupBank">View Contributions</button></article>
+                <article><span>Split Bills</span><strong>2 active bills</strong><small>1 pending restaurant receipt • 1 paid ride split.</small><button type="button" data-target="splitBill">Create Bill</button></article>
+                <article><span>Payment Requests</span><strong>3 outstanding</strong><small>2 sent • 1 received • reminders ready.</small><button type="button" data-wallet-section="requests">View Requests</button></article>
+                <article><span>Refunds</span><strong>$380 available</strong><small>1 pending review • 2 completed refunds.</small><button type="button" id="walletSectionRefundButton">Request Refund</button></article>
+                <article><span>Recent Transactions</span><strong>12 records</strong><small>Chronological wallet feed with method, category, amount, and status.</small><button type="button" data-wallet-section="transactions">View Feed</button></article>
+              </section>
             </section>
             <div class="trip-wallet-card">
               <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=900&auto=format&fit=crop" alt="Miami beach trip wallet cover">
@@ -3247,11 +3256,93 @@
           <section class="panel itinerary-alerts-panel" id="itineraryAlerts">
             <div class="section-heading compact">
               <div>
-                <p class="eyebrow">Smart itinerary notifications</p>
-                <h2>Stay on schedule when plans change</h2>
+                <p class="eyebrow">Itinerary Dashboard</p>
+                <h2>Today, routes, reservations, and alerts</h2>
+                <p>A cleaner travel dashboard for the selected trip. Notification settings, reminders, reservations, and existing itinerary details remain available below.</p>
               </div>
               <span class="compliance-badge">Real-time ready</span>
             </div>
+            <section class="itinerary-dashboard" aria-label="Itinerary home dashboard">
+              <article class="itinerary-card itinerary-card--featured">
+                <span>Today's Schedule</span>
+                <h3>Catamaran Cruise → Winery Tour</h3>
+                <p>Current activity ends in 42 minutes. Next pickup is at Ammoudi Bay at 3:10 PM.</p>
+                <div class="itinerary-action-row">
+                  <button type="button" data-itinerary-dashboard-action="View Day">View Day</button>
+                  <button type="button" data-itinerary-dashboard-action="Add Activity">Add Activity</button>
+                </div>
+              </article>
+              <article class="itinerary-card smart-route-card">
+                <span>Smart Route</span>
+                <h3>Hotel → Marina → Winery</h3>
+                <div class="route-preview-line" aria-hidden="true"><i></i><i></i><i></i></div>
+                <p>Optimized for light rain, traffic, and group pickup timing. Estimated travel time: 48 minutes.</p>
+                <button type="button" data-target="rideShareHub">Open Maps</button>
+              </article>
+              <article class="itinerary-card weather-snapshot-card">
+                <span>Weather Snapshot</span>
+                <div class="weather-orb" aria-hidden="true"></div>
+                <h3>82°F • Light rain</h3>
+                <p>Travel advisory: bring a light jacket and allow extra walking time near the marina.</p>
+                <button type="button" data-target="rideShareHub" data-travel-section="weather">Full Weather</button>
+              </article>
+              <article class="itinerary-card">
+                <span>Transportation Status</span>
+                <h3>Shuttle confirmed</h3>
+                <p>Driver arriving at 3:05 PM. Ride-share backup and public transit alternatives are ready.</p>
+                <button type="button" data-target="rideShareHub">Book Transportation</button>
+              </article>
+              <article class="itinerary-card">
+                <span>Travel Alerts</span>
+                <h3>3 active alerts</h3>
+                <p>Gate reminder, rain advisory, and dinner reservation departure alert are queued.</p>
+                <button type="button" id="itineraryDashboardAlertButton">Send Test Alert</button>
+              </article>
+              <article class="itinerary-card">
+                <span>Trip Progress</span>
+                <h3>Day 3 of 7</h3>
+                <div class="trip-progress-track"><i style="--w:43%"></i></div>
+                <p>Current destination: Santorini. Upcoming destination: Athens.</p>
+                <button type="button" data-itinerary-dashboard-action="View Progress">View Progress</button>
+              </article>
+            </section>
+            <section class="itinerary-timeline-dashboard" aria-label="Interactive trip timeline">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Trip Timeline</p>
+                  <h3>Day 3 itinerary</h3>
+                </div>
+                <div class="itinerary-action-row">
+                  <button type="button" data-itinerary-dashboard-action="View Boarding Pass">Boarding Pass</button>
+                  <button type="button" data-target="importantInfo">Documents</button>
+                  <button type="button" data-itinerary-dashboard-action="Upload Confirmation">Upload Confirmation</button>
+                </div>
+              </div>
+              <div class="itinerary-timeline-list">
+                <details open>
+                  <summary><span>🍳</span><time>8:30 AM</time><strong>Breakfast at Blue Cafe</strong><em>Complete</em></summary>
+                  <p>Oia terrace table. Receipt attached to Smart Bill Split.</p>
+                </details>
+                <details open>
+                  <summary><span>⛵</span><time>11:00 AM</time><strong>Catamaran Cruise</strong><em>In progress</em></summary>
+                  <p>Meeting point Marina Dock B. Check-in closes 30 minutes before departure.</p>
+                </details>
+                <details>
+                  <summary><span>🍷</span><time>3:30 PM</time><strong>Winery Tour</strong><em>Upcoming</em></summary>
+                  <p>Transportation confirmed. Wear comfortable shoes for the walking portion.</p>
+                </details>
+                <details>
+                  <summary><span>🍽️</span><time>7:45 PM</time><strong>Sunset Dinner</strong><em>Reserved</em></summary>
+                  <p>Ocean Rooftop Grill. Time-to-leave alert will calculate based on traffic and weather.</p>
+                </details>
+              </div>
+            </section>
+            <section class="upcoming-reservation-grid" aria-label="Upcoming reservations">
+              <article><span>Flight</span><strong>Delta DL 241</strong><small>MIA → HND • Gate B18 • Seat 14A</small><button type="button" data-target="rideShareHub" data-travel-section="boarding">View Boarding Pass</button></article>
+              <article><span>Hotel</span><strong>Tokyo Station Hotel</strong><small>Check-in 3:00 PM • confirmation saved</small><button type="button" data-target="rideShareHub" data-travel-section="hotels">View Hotel</button></article>
+              <article><span>Restaurant</span><strong>Ocean Rooftop Grill</strong><small>7:30 PM • leave by 6:55 PM</small><button type="button" data-reservation-action="View Reservation">View Reservation</button></article>
+              <article><span>Activity</span><strong>Catamaran Sunset Cruise</strong><small>5:00 PM • check-in closes 4:30 PM</small><button type="button" data-reservation-action="View Excursion Details">View Details</button></article>
+            </section>
             <p class="security-note">TravelDrip keeps every traveler informed across friends, family, and corporate retreat trips with push, email, SMS where available, and in-app alerts.</p>
             <div class="alert-category-grid">
               <label><input type="checkbox" data-alert-category="Flights" checked> Flight delays, cancellations, gate changes, check-in reminders</label>

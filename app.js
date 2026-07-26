@@ -4506,6 +4506,19 @@ function wireLocalInteractions() {
     });
   });
 
+  $("#itineraryDashboardAlertButton")?.addEventListener("click", () => {
+    $("#simulateAlertButton")?.click();
+  });
+
+  $$("[data-itinerary-dashboard-action]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const action = button.dataset.itineraryDashboardAction;
+      $("#alertMessage").textContent = `${action} opened from the itinerary dashboard. Timeline, reservations, route, weather, and alerts stay on this page.`;
+      addAuditEntry("Itinerary dashboard action", `${action} selected.`);
+      await saveSyncedEvent("itinerary_dashboard_action", { action });
+    });
+  });
+
   $$("[data-reservation-action]").forEach((button) => {
     button.addEventListener("click", async () => {
       const action = button.dataset.reservationAction;
@@ -5441,6 +5454,14 @@ function wireLocalInteractions() {
   });
 
   $("#walletPreviewRefundButton")?.addEventListener("click", () => {
+    $("#requestRefundButton")?.click();
+  });
+
+  $("#walletSectionCardButton")?.addEventListener("click", () => {
+    $("#walletPreviewCardButton")?.click();
+  });
+
+  $("#walletSectionRefundButton")?.addEventListener("click", () => {
     $("#requestRefundButton")?.click();
   });
 
