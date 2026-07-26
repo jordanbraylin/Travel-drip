@@ -1926,6 +1926,31 @@ async function apiRequest(path, options = {}) {
   return data;
 }
 
+async function ghlRequest(payload = {}) {
+  if (isFilePreview || !state.session?.access_token) return { skipped: true, reason: "CRM sync requires a deployed authenticated session" };
+  if ($("#ghlSyncEnabled") && !$("#ghlSyncEnabled").checked && payload.action !== "test-connection") {
+    return { skipped: true, reason: "Automatic CRM sync is disabled" };
+  }
+  const response = await fetch("/api/ghl-sync", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${state.session.access_token}`
+    },
+    body: JSON.stringify(payload)
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || "CRM sync failed");
+  return data;
+}
+
+function queueGhlSync(payload = {}) {
+  if (isFilePreview || !state.session?.access_token) return;
+  ghlRequest(payload).catch((error) => {
+    addAuditEntry("GoHighLevel sync queued for retry", error.message);
+  });
+}
+
 function updateDashboardWidgets() {
   const tripType = $("#dashboardTripType")?.value || "group";
   const role = $("#rolePreview")?.value || "employee";
@@ -3236,6 +3261,7 @@ async function signIn(email, password) {
   $("#authMessage").textContent = error ? error.message : "Logged in. Your trip data is syncing now.";
   if (!error) {
     state.session = data.session || state.session;
+    queueGhlSync({ eventType: "user_login", tags: ["Trip Planning"] });
     enterAppPreview();
   }
 }
@@ -3268,6 +3294,14 @@ async function signUp(fullName, username, email, password) {
   if (data.session) {
     state.session = data.session;
     $("#authMessage").textContent = "Account created. You are logged in and your trip data is syncing.";
+    queueGhlSync({
+      eventType: "user_registration_completed",
+      fullName,
+      username,
+      email,
+      userType: "traveler",
+      tags: ["New Traveler", "Trip Planning"]
+    });
     enterAppPreview();
     return;
   }
@@ -5310,6 +5344,41 @@ function wireLocalInteractions() {
     $("#installPwaButton")?.click();
     if ($("#settingsStatusMessage")) $("#settingsStatusMessage").textContent = "Install prompt opened when supported by this browser.";
   });
+  $("#ghlTestConnectionButton")?.addEventListener("click", async () => {
+    const button = $("#ghlTestConnectionButton");
+    button.disabled = true;
+    if ($("#ghlConnectionStatus")) $("#ghlConnectionStatus").textContent = "Testing the server-side GoHighLevel connection...";
+    try {
+      const result = await ghlRequest({ action: "test-connection" });
+      if ($("#ghlConnectionStatus")) $("#ghlConnectionStatus").textContent = result.message || "GoHighLevel connection verified.";
+    } catch (error) {
+      if ($("#ghlConnectionStatus")) $("#ghlConnectionStatus").textContent = error.message;
+    } finally {
+      button.disabled = false;
+    }
+  });
+  $("#ghlSyncTestContactButton")?.addEventListener("click", async () => {
+    const button = $("#ghlSyncTestContactButton");
+    button.disabled = true;
+    if ($("#ghlLastSyncStatus")) $("#ghlLastSyncStatus").textContent = "Syncing the signed-in test contact...";
+    try {
+      const result = await ghlRequest({
+        eventType: "admin_test_contact_sync",
+        fullName: "Jordan Smith",
+        username: "jordan",
+        tripType: "Group Trip",
+        tripName: "TravelDrip test trip",
+        destination: "Dubai",
+        tripStatus: "planning",
+        tags: ["Trip Planning"]
+      });
+      if ($("#ghlLastSyncStatus")) $("#ghlLastSyncStatus").textContent = `Last sync succeeded ${new Date(result.syncedAt || Date.now()).toLocaleString()}.`;
+    } catch (error) {
+      if ($("#ghlLastSyncStatus")) $("#ghlLastSyncStatus").textContent = `${error.message} Retry from Admin when configured.`;
+    } finally {
+      button.disabled = false;
+    }
+  });
   $("#sidebarMenuButton")?.addEventListener("click", () => {
     const open = !document.body.classList.contains("sidebar-open");
     document.body.classList.toggle("sidebar-open", open);
@@ -6385,6 +6454,30 @@ async function saveSyncedEvent(type, payload) {
     payload,
     user_id: state.session.user.id
   });
+  const crmEventTypes = new Set([
+    "guided_trip_created",
+    "trip_invitations_sent",
+    "reservation_reminder_action",
+    "wallet_payment",
+    "refund_requested",
+    "trip_invitations_skipped",
+    "daily_memory_action",
+    "corporate_access_admin_action"
+  ]);
+  if (crmEventTypes.has(type)) {
+    queueGhlSync({
+      eventType: type === "guided_trip_created" ? "trip_created" : type,
+      tripName: payload.tripName,
+      tripType: payload.type || payload.tripType,
+      destination: payload.destination,
+      departureDate: payload.startDate,
+      returnDate: payload.endDate,
+      travelerCount: payload.travelers,
+      budget: payload.budget,
+      tripStatus: payload.status || "planning",
+      tags: [payload.type, payload.tripType, type === "refund_requested" ? "Refund Requested" : "Trip Planning"]
+    });
+  }
 }
 
 function subscribeToLiveData() {

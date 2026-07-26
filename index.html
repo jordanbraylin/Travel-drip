@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-    <link rel="stylesheet" href="styles.css?v=105">
+    <link rel="stylesheet" href="styles.css?v=106">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -4062,6 +4062,9 @@
                   <div class="settings-row"><div><strong>Ride-share connections</strong><span>Uber, Lyft, Grab, Careem, Bolt, and destination providers.</span></div><button type="button" data-target="rideShareHub">Manage</button></div>
                   <div class="settings-row"><div><strong>Social connections</strong><span>Instagram, TikTok, Facebook, Threads, LinkedIn, Pinterest, YouTube, and X.</span></div><button type="button" data-target="socialHub">Manage</button></div>
                   <div class="settings-row" data-admin-only><div><strong>Production providers</strong><span>Email, SMS, payments, maps, flight data, hotel data, AI, monitoring, and storage credentials.</span></div><button type="button" data-corporate-access-admin="Review Provider Integrations">Review</button></div>
+                  <div class="settings-row" data-admin-only><div><strong>GoHighLevel CRM</strong><span id="ghlConnectionStatus">Connection status is available to administrators. API credentials remain server-side.</span></div><button type="button" id="ghlTestConnectionButton">Test connection</button></div>
+                  <div class="settings-row" data-admin-only><div><strong>CRM activity sync</strong><span id="ghlLastSyncStatus">Sync contacts, tags, trip fields, opportunities, and workflows without blocking TravelDrip.</span></div><button type="button" id="ghlSyncTestContactButton">Sync test contact</button></div>
+                  <div class="settings-row" data-admin-only><div><strong>Automatic CRM syncing</strong><span>Registration and qualifying trip activity can be retried from Admin when GoHighLevel is unavailable.</span></div><label class="settings-toggle"><input type="checkbox" id="ghlSyncEnabled" checked><span></span></label></div>
                 </section>
                 <section class="settings-section" data-settings-panel="data">
                   <div><p class="eyebrow">Data and Privacy Management</p><h3>Exports, cache, privacy requests, and account deletion</h3><p>Data-management controls are centralized in Admin.</p></div>

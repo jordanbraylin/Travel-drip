@@ -16,6 +16,10 @@ export default function handler(_request, response) {
     guestAccessPepperConfigured: Boolean(process.env.GUEST_ACCESS_PEPPER),
     vapidSubjectConfigured: Boolean(process.env.VAPID_SUBJECT),
     vapidPublicKeyConfigured: Boolean(process.env.VAPID_PUBLIC_KEY),
-    vapidPrivateKeyConfigured: Boolean(process.env.VAPID_PRIVATE_KEY)
+    vapidPrivateKeyConfigured: Boolean(process.env.VAPID_PRIVATE_KEY),
+    ghlApiKeyConfigured: Boolean(process.env.GHL_API_KEY),
+    ghlLocationConfigured: Boolean(process.env.GHL_LOCATION_ID),
+    ghlPipelineConfigured: Boolean(process.env.GHL_PIPELINE_ID),
+    ghlWorkflowConfigured: Boolean(process.env.GHL_DEFAULT_WORKFLOW_ID)
   });
 }
