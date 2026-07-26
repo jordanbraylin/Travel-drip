@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=87">
+    <link rel="stylesheet" href="styles.css?v=88">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -102,9 +102,9 @@
         </details>
         <details class="nav-group">
           <summary>Account</summary>
-          <button type="button" data-target="securityCenter">Profile</button>
-          <button type="button" data-target="securityCenter">Settings</button>
-          <button type="button" data-target="securityCenter">Security</button>
+          <button type="button" data-target="myProfile">My Profile</button>
+          <button type="button" data-target="adminPanel">Admin</button>
+          <button type="button" data-target="adminPanel" data-settings-section="security">Security</button>
           <button type="button" data-target="copyrightPolicy">Help & Support</button>
           <a href="admin.html">Admin</a>
         </details>
@@ -129,7 +129,7 @@
         </label>
         <button class="lets-plan-button" type="button" id="letsPlanButton" data-target="letsPlan" aria-label="Open Let's Plan"><span aria-hidden="true">✨</span><strong>Let's Plan</strong></button>
         <div class="top-actions">
-          <button class="profile-avatar-button" type="button" data-target="securityCenter" aria-label="Open profile photo settings"><span class="profile-photo-avatar" data-profile-initials>JS</span></button>
+          <button class="profile-avatar-button" type="button" data-target="myProfile" aria-label="Open My Profile"><span class="profile-photo-avatar" data-profile-initials>JS</span></button>
           <button class="icon-button" type="button" id="notifyButton" aria-label="Enable notifications">Notify</button>
           <button class="ghost-button" type="button" id="signOutButton" hidden>Sign out</button>
           <button class="primary-button" type="button" id="openAuthButton">Sign in</button>
@@ -331,7 +331,7 @@
         <button type="button" data-target="memoriesPanel">Memories</button>
         <button type="button" data-target="socialHub">Chat</button>
         <button type="button" data-target="importantInfo">Important Info</button>
-        <button type="button" data-target="securityCenter">Settings</button>
+        <button type="button" data-target="adminPanel">Settings</button>
       </nav>
 
       <section class="panel corporate-mode-home" id="corporateHome" hidden aria-label="Corporate travel home">
@@ -3543,143 +3543,28 @@
             </div>
           </section>
 
-          <section class="panel security-center" id="securityCenter">
-            <div class="section-heading compact">
+          <section class="panel my-profile-panel" id="myProfile">
+            <div class="profile-hero-card">
+              <div class="profile-photo-preview" id="profilePhotoPreview" data-profile-preview>
+                <span class="profile-photo-avatar xl" data-profile-initials>JS</span>
+              </div>
               <div>
-                <p class="eyebrow">Security & Data Protection</p>
-                <h2>Settings</h2>
-                <p>Account, profile, notifications, privacy, security, payments, travel preferences, accessibility, and app preferences in standard rows.</p>
-              </div>
-              <button class="ghost-button" type="button" id="runSecurityAuditButton">Run security audit</button>
-            </div>
-            <section class="settings-shell" aria-label="Settings workspace">
-              <aside class="settings-nav-panel">
-                <label>Search settings
-                  <input id="settingsSearchInput" type="search" placeholder="Notifications, Wallet PIN, privacy">
-                </label>
-                <button class="active" type="button" data-settings-section="account">Account</button>
-                <button type="button" data-settings-section="profile">Profile</button>
-                <button type="button" data-settings-section="notifications">Notifications</button>
-                <button type="button" data-settings-section="privacy">Privacy</button>
-                <button type="button" data-settings-section="security">Security</button>
-                <button type="button" data-settings-section="payments">Payments</button>
-                <button type="button" data-settings-section="travel">Travel Preferences</button>
-                <button type="button" data-settings-section="accessibility">Accessibility</button>
-                <button type="button" data-settings-section="app">App Preferences</button>
-              </aside>
-              <div class="settings-main-panel">
-                <section class="settings-section active" data-settings-panel="account">
-                  <div><p class="eyebrow">Account</p><h3>Profile and account access</h3><p>Name, username, email, password, and account status stay readable in rows.</p></div>
-                  <div class="settings-row"><div><strong>Name</strong><span>Jordan Smith</span></div><button type="button" data-profile-photo-action="Edit Name">Edit</button></div>
-                  <div class="settings-row"><div><strong>Username</strong><span>@jordansmith</span></div><button type="button" data-profile-photo-action="Edit Username">Edit</button></div>
-                  <div class="settings-row"><div><strong>Email</strong><span>jordan@example.com</span></div><button type="button" data-auth-workflow="Verify Email">Verify</button></div>
-                  <div class="settings-row"><div><strong>Account status</strong><span>Active • email verification supported when Supabase is configured.</span></div><span class="status-pill">Active</span></div>
-                </section>
-                <section class="settings-section" data-settings-panel="profile">
-                  <div><p class="eyebrow">Profile</p><h3>Photo and display controls</h3><p>Profile photo setup remains optional and available after account creation.</p></div>
-                  <div class="settings-row"><div><strong>Profile photo</strong><span>Default initials avatar active until a photo is saved.</span></div><button type="button" data-profile-photo-action="Choose Recent Photo">Change</button></div>
-                  <div class="settings-row"><div><strong>Photo visibility</strong><span>Trip Members Only</span></div><button type="button" data-settings-section="privacy">Privacy</button></div>
-                </section>
-                <section class="settings-section" data-settings-panel="notifications">
-                  <div><p class="eyebrow">Notifications</p><h3>Travel, wallet, chat, memories, and event alerts</h3><p>Rows keep toggles away from descriptions on every screen size.</p></div>
-                  <div class="settings-row"><div><strong>Push notifications</strong><span>Device alerts for itinerary changes and messages.</span></div><label class="settings-toggle"><input type="checkbox" checked><span></span></label></div>
-                  <div class="settings-row"><div><strong>Booking notifications</strong><span>Flights, hotels, restaurants, activities, cruises, and transportation reminders.</span></div><label class="settings-toggle"><input type="checkbox" checked><span></span></label></div>
-                  <div class="settings-row"><div><strong>Wallet notifications</strong><span>Payment requests, refunds, deposits, and card activity.</span></div><label class="settings-toggle"><input type="checkbox" checked><span></span></label></div>
-                  <div class="settings-row"><div><strong>Memories notifications</strong><span>Likes, comments, replies, and shared albums.</span></div><label class="settings-toggle"><input type="checkbox" checked><span></span></label></div>
-                </section>
-                <section class="settings-section" data-settings-panel="privacy">
-                  <div><p class="eyebrow">Privacy</p><h3>Visibility and data permissions</h3><p>Profile, trips, events, albums, blocking, and data permissions are separated.</p></div>
-                  <div class="settings-row"><div><strong>Profile visibility</strong><span>Trip Members Only</span></div><select aria-label="Profile visibility"><option>Trip Members Only</option><option>Friends Only</option><option>Private</option><option>Public</option></select></div>
-                  <div class="settings-row"><div><strong>Album visibility</strong><span>Media privacy controls likes and comments.</span></div><select aria-label="Album visibility"><option>Trip Members</option><option>Selected Users</option><option>Private</option></select></div>
-                  <div class="settings-row"><div><strong>Blocked users</strong><span>No blocked users in this preview.</span></div><button type="button" data-message-action="Manage privacy">Manage</button></div>
-                </section>
-                <section class="settings-section" data-settings-panel="security">
-                  <div><p class="eyebrow">Security</p><h3>Authentication and trusted access</h3><p>Two-factor authentication, Wallet PIN, login activity, trusted devices, and recovery options.</p></div>
-                  <div class="settings-row"><div><strong>Two-factor authentication</strong><span>Optional second step for sensitive account access.</span></div><label class="settings-toggle"><input type="checkbox"><span></span></label></div>
-                  <div class="settings-row"><div><strong>Wallet PIN</strong><span>Required for adding funds, refunds, transfers, trip payments, and card details.</span></div><button type="button" data-wallet-section="security">Manage</button></div>
-                  <div class="settings-row"><div><strong>Trusted devices</strong><span>2 active sessions in this preview.</span></div><button type="button" data-profile-photo-action="Review Devices">Review</button></div>
-                </section>
-                <section class="settings-section" data-settings-panel="payments">
-                  <div><p class="eyebrow">Payments</p><h3>Wallet, refunds, billing, and virtual card</h3><p>Payment methods, refund preferences, wallet security, and card settings.</p></div>
-                  <div class="settings-row"><div><strong>Payment methods</strong><span>Debit card and TravelDrip Wallet preview available.</span></div><button type="button" data-target="walletPanel">Open Wallet</button></div>
-                  <div class="settings-row"><div><strong>Refund preferences</strong><span>Unused eligible funds return to original method or TravelDrip Wallet.</span></div><button type="button" data-target="walletPanel">Manage</button></div>
-                </section>
-                <section class="settings-section" data-settings-panel="travel">
-                  <div><p class="eyebrow">Travel Preferences</p><h3>Flight, hotel, transport, and weather defaults</h3><p>Preferred airport, seat, hotel style, ride share, and weather units.</p></div>
-                  <div class="settings-row"><div><strong>Preferred airport</strong><span>Miami International Airport (MIA)</span></div><button type="button" data-travel-focus="flights">Edit</button></div>
-                  <div class="settings-row"><div><strong>Seat preference</strong><span>Window seat</span></div><select aria-label="Seat preference"><option>Window</option><option>Aisle</option><option>No preference</option></select></div>
-                  <div class="settings-row"><div><strong>Weather units</strong><span>Fahrenheit</span></div><select aria-label="Weather units"><option>Fahrenheit</option><option>Celsius</option></select></div>
-                </section>
-                <section class="settings-section" data-settings-panel="accessibility">
-                  <div><p class="eyebrow">Accessibility</p><h3>Motion, text, contrast, and captions</h3><p>Accessible controls stay row-based with full-width mobile behavior.</p></div>
-                  <div class="settings-row"><div><strong>Reduced motion</strong><span>Respect device preference for animations.</span></div><label class="settings-toggle"><input type="checkbox"><span></span></label></div>
-                  <div class="settings-row"><div><strong>Text size</strong><span>Default</span></div><select aria-label="Text size"><option>Default</option><option>Large</option><option>Extra Large</option></select></div>
-                  <div class="settings-row"><div><strong>High contrast</strong><span>Increase contrast for text and controls.</span></div><label class="settings-toggle"><input type="checkbox"><span></span></label></div>
-                </section>
-                <section class="settings-section" data-settings-panel="app">
-                  <div><p class="eyebrow">App Preferences</p><h3>Theme, install, and app behavior</h3><p>Theme controls, app install settings, offline behavior, and account support.</p></div>
-                  <div class="settings-row"><div><strong>App theme</strong><span>Tropical Paradise</span></div><select id="settingsThemeSelector" aria-label="App theme mirror"><option value="tropical">Tropical Paradise</option><option value="sunset">Sunset Escape</option><option value="ocean">Ocean Breeze</option><option value="miami">Miami Nights</option><option value="cruise">Cruise Life</option><option value="festival">Festival Vibes</option></select></div>
-                  <div class="settings-row"><div><strong>Install app</strong><span>Add TravelDrip free from the browser on mobile or desktop.</span></div><button type="button" id="settingsInstallButton">Install</button></div>
-                </section>
-                <p class="small" id="settingsStatusMessage">Settings rows are visible and controls stay aligned across desktop and mobile.</p>
-              </div>
-            </section>
-            <section class="theme-studio" aria-label="TravelDrip theme settings">
-              <div>
-                <p class="eyebrow">Theme Studio</p>
-                <h3>Tropical Social Edition</h3>
-                <p>Personalize TravelDrip with vibrant themes inspired by beaches, sunsets, cruises, festivals, and social travel memories.</p>
-              </div>
-              <label>App theme
-                <select id="themeSelector">
-                  <option value="tropical">Tropical Paradise</option>
-                  <option value="sunset">Sunset Escape</option>
-                  <option value="ocean">Ocean Breeze</option>
-                  <option value="miami">Miami Nights</option>
-                  <option value="cruise">Cruise Life</option>
-                  <option value="festival">Festival Vibes</option>
-                </select>
-              </label>
-              <div class="theme-swatch-grid" aria-label="Theme previews">
-                <button class="active" type="button" data-theme-choice="tropical"><span></span>Tropical Paradise</button>
-                <button type="button" data-theme-choice="sunset"><span></span>Sunset Escape</button>
-                <button type="button" data-theme-choice="ocean"><span></span>Ocean Breeze</button>
-                <button type="button" data-theme-choice="miami"><span></span>Miami Nights</button>
-                <button type="button" data-theme-choice="cruise"><span></span>Cruise Life</button>
-                <button type="button" data-theme-choice="festival"><span></span>Festival Vibes</button>
-              </div>
-              <p class="small" id="themeStatus">Tropical Paradise is active. Animations stay subtle and respect reduced-motion settings.</p>
-            </section>
-            <section class="travel-badge-panel" aria-label="Travel badges">
-              <div class="section-heading compact">
-                <div>
-                  <p class="eyebrow">Travel Badges</p>
-                  <h3>Social profile energy</h3>
+                <p class="eyebrow">My Profile</p>
+                <h2>Jordan Smith</h2>
+                <p>Traveler, food lover, itinerary organizer, and memory keeper. My Profile only stores personal profile details, public preferences, visibility choices, and profile photo controls.</p>
+                <div class="profile-completion-track" aria-label="Profile completion">
+                  <span><strong>82%</strong> complete</span>
+                  <i><b style="--w:82%"></b></i>
                 </div>
-                <span class="status-pill">10 badges</span>
               </div>
-              <div class="travel-badge-grid">
-                <span>🏝 Beach Lover</span>
-                <span>✈️ Frequent Flyer</span>
-                <span>🚢 Cruise Captain</span>
-                <span>🌍 World Explorer</span>
-                <span>🍣 Foodie Traveler</span>
-                <span>🏕 Adventure Seeker</span>
-                <span>🏔 Mountain Climber</span>
-                <span>🌃 Nightlife Expert</span>
-                <span>💼 Business Traveler</span>
-                <span>👨‍👩‍👧 Family Planner</span>
-              </div>
-            </section>
+              <button class="primary-button" type="button" id="profileHeroSaveButton">Save Profile</button>
+            </div>
             <section class="profile-photo-manager">
               <div class="profile-photo-main">
-                <div class="profile-photo-preview" id="profilePhotoPreview" data-profile-preview>
-                  <span class="profile-photo-avatar xl" data-profile-initials>JS</span>
-                </div>
                 <div>
                   <p class="eyebrow">Profile > My Profile > Edit Profile</p>
                   <h3>Profile photo</h3>
-                  <p>Profile photos appear in chats, private messages, trip members, attendee lists, comments, reactions, poll votes, albums, journals, AI mentions, company directories, invitations, feeds, and notifications when your privacy setting allows it.</p>
+                  <p>Upload, take, crop, rotate, reposition, preview, replace, or remove your photo. No security, wallet, billing, role, or system settings live in this personal profile area.</p>
                   <div class="mini-action-row">
                     <label class="file-action-button">Change Profile Photo<input id="profilePhotoInput" type="file" accept="image/jpeg,image/jpg,image/png,image/heic,image/webp" hidden></label>
                     <label class="file-action-button">Take Photo<input id="profileCameraInput" type="file" accept="image/*" capture="user" hidden></label>
@@ -3743,6 +3628,178 @@
               </div>
               <p class="small" id="profilePhotoMessage">Default avatar active. Upload, take, drag, or choose privacy before saving.</p>
             </section>
+            <section class="profile-personal-grid" aria-label="Personal profile details">
+              <article>
+                <p class="eyebrow">Basic Information</p>
+                <label>Full name<input id="profileFullNameInput" value="Jordan Smith"></label>
+                <label>Username<input id="profileUsernameInput" value="@jordansmith"></label>
+                <label>Display name<input value="Jordan"></label>
+                <label>Bio<textarea rows="3">Planning unforgettable trips, events, and shared memories with TravelDrip.</textarea></label>
+              </article>
+              <article>
+                <p class="eyebrow">Public Profile Details</p>
+                <label>Interests<input value="Food, beaches, nightlife, cruises, hidden gems"></label>
+                <label>Languages<input value="English, Spanish"></label>
+                <label>Personal links<input value="instagram.com/jordansmith"></label>
+                <label>Location<input value="Miami, Florida"></label>
+              </article>
+              <article>
+                <p class="eyebrow">Profile Visibility</p>
+                <label>Who can view my profile<select><option>Trip Members Only</option><option>Friends Only</option><option>Public</option><option>Private</option></select></label>
+                <label>Email visibility<select><option>Hidden</option><option>Trip organizers only</option><option>Trip members</option></select></label>
+                <label>Birthday visibility<select><option>Hidden</option><option>Month and day only</option><option>Friends only</option></select></label>
+                <label><input type="checkbox" checked> Allow my profile to appear in trip-member search</label>
+              </article>
+            </section>
+            <section class="travel-badge-panel" aria-label="Travel badges">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Travel Badges</p>
+                  <h3>Public travel interests</h3>
+                </div>
+                <span class="status-pill">10 badges</span>
+              </div>
+              <div class="travel-badge-grid">
+                <span>Beach Lover</span>
+                <span>Frequent Flyer</span>
+                <span>Cruise Captain</span>
+                <span>World Explorer</span>
+                <span>Foodie Traveler</span>
+                <span>Adventure Seeker</span>
+                <span>Mountain Climber</span>
+                <span>Nightlife Expert</span>
+                <span>Business Traveler</span>
+                <span>Family Planner</span>
+              </div>
+            </section>
+          </section>
+
+          <section class="panel admin-panel" id="adminPanel">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Admin</p>
+                <h2>Settings, security, permissions, and system controls</h2>
+                <p>Administrative controls are separated from My Profile. Regular users see personal account controls; organizers and admins see role-appropriate trip, event, wallet, and platform controls.</p>
+              </div>
+              <button class="ghost-button" type="button" id="runSecurityAuditButton">Run security audit</button>
+            </div>
+            <section class="settings-shell admin-settings-shell" aria-label="Admin settings workspace">
+              <aside class="settings-nav-panel">
+                <label>Search admin settings
+                  <input id="settingsSearchInput" type="search" placeholder="Security, roles, Wallet PIN, integrations">
+                </label>
+                <button class="active" type="button" data-settings-section="account">Account Management</button>
+                <button type="button" data-settings-section="security">Security</button>
+                <button type="button" data-settings-section="roles">Roles & Permissions</button>
+                <button type="button" data-settings-section="notifications">Notifications</button>
+                <button type="button" data-settings-section="privacy">Privacy</button>
+                <button type="button" data-settings-section="payments">Payments & Wallet</button>
+                <button type="button" data-settings-section="app">App Preferences</button>
+                <button type="button" data-settings-section="accessibility">Accessibility</button>
+                <button type="button" data-settings-section="integrations">Integrations</button>
+                <button type="button" data-settings-section="data">Data Management</button>
+              </aside>
+              <div class="settings-main-panel">
+                <section class="settings-section active" data-settings-panel="account">
+                  <div><p class="eyebrow">Account Management</p><h3>Credentials and account status</h3><p>Email, password, connected accounts, recovery, and account lifecycle controls live here instead of My Profile.</p></div>
+                  <div class="settings-row"><div><strong>Account email</strong><span>jordan@example.com</span></div><button type="button" data-auth-workflow="Verify Email">Verify</button></div>
+                  <div class="settings-row"><div><strong>Password management</strong><span>Reset password and enforce strong credentials.</span></div><button type="button" data-auth-workflow="Reset Password">Manage</button></div>
+                  <div class="settings-row"><div><strong>Connected accounts</strong><span>Google, Apple, Microsoft, and social sign-in connections.</span></div><button type="button" data-target="socialHub">Manage</button></div>
+                  <div class="settings-row"><div><strong>Account status</strong><span>Active account with recovery configured.</span></div><span class="status-pill">Active</span></div>
+                </section>
+                <section class="settings-section" data-settings-panel="security">
+                  <div><p class="eyebrow">Security</p><h3>Authentication and trusted access</h3><p>Two-factor authentication, Wallet PIN, login activity, trusted devices, active sessions, recovery methods, and security alerts.</p></div>
+                  <div class="settings-row"><div><strong>Two-factor authentication</strong><span>Optional second step for sensitive account access.</span></div><label class="settings-toggle"><input type="checkbox"><span></span></label></div>
+                  <div class="settings-row"><div><strong>Wallet PIN</strong><span>Required for adding funds, refunds, transfers, trip payments, and card details.</span></div><button type="button" data-wallet-section="security">Manage</button></div>
+                  <div class="settings-row"><div><strong>Trusted devices</strong><span>2 active sessions in this preview.</span></div><button type="button" data-profile-photo-action="Review Devices">Review</button></div>
+                  <div class="settings-row"><div><strong>Security alerts</strong><span>Notify on new devices, unusual refunds, rapid PIN failures, and impossible travel login.</span></div><label class="settings-toggle"><input type="checkbox" checked><span></span></label></div>
+                </section>
+                <section class="settings-section" data-settings-panel="roles">
+                  <div><p class="eyebrow">Roles and Permissions</p><h3>User, organizer, event, wallet, and content access</h3><p>Controls are role-limited; restricted admin settings are not exposed to unauthorized users.</p></div>
+                  <div class="settings-row"><div><strong>User role</strong><span>Traveler with trip organizer permissions.</span></div><span class="status-pill">Organizer</span></div>
+                  <div class="settings-row" data-admin-only><div><strong>System administrator</strong><span>Platform-level users, roles, permissions, and integration configuration.</span></div><button type="button" data-corporate-access-admin="Review System Roles">Review</button></div>
+                  <div class="settings-row"><div><strong>Trip permissions</strong><span>Invite members, edit trip details, approve shared wallet requests.</span></div><button type="button" data-target="tripsPanel">Manage</button></div>
+                  <div class="settings-row"><div><strong>Event permissions</strong><span>Guest management, RSVPs, event schedule edits, and announcements.</span></div><button type="button" data-target="eventsPanel">Manage</button></div>
+                </section>
+                <section class="settings-section" data-settings-panel="notifications">
+                  <div><p class="eyebrow">Notifications</p><h3>Email, push, booking, event, wallet, chat, memories, and security alerts</h3><p>Notification controls belong in Admin so the personal profile stays clean.</p></div>
+                  <div class="settings-row"><div><strong>Push notifications</strong><span>Device alerts for itinerary changes and messages.</span></div><label class="settings-toggle"><input type="checkbox" checked><span></span></label></div>
+                  <div class="settings-row"><div><strong>Booking notifications</strong><span>Flights, hotels, restaurants, activities, cruises, and transportation reminders.</span></div><label class="settings-toggle"><input type="checkbox" checked><span></span></label></div>
+                  <div class="settings-row"><div><strong>Wallet notifications</strong><span>Payment requests, refunds, deposits, and card activity.</span></div><label class="settings-toggle"><input type="checkbox" checked><span></span></label></div>
+                  <div class="settings-row"><div><strong>Chat notifications</strong><span>Message sent and received notifications.</span></div><label class="settings-toggle"><input type="checkbox" checked><span></span></label></div>
+                  <div class="settings-row"><div><strong>Memories notifications</strong><span>Likes, comments, replies, and shared albums.</span></div><label class="settings-toggle"><input type="checkbox" checked><span></span></label></div>
+                </section>
+                <section class="settings-section" data-settings-panel="privacy">
+                  <div><p class="eyebrow">Privacy</p><h3>Trip, event, album, search, blocking, and data sharing</h3><p>Administrative privacy settings stay here; personal profile visibility remains editable from My Profile.</p></div>
+                  <div class="settings-row"><div><strong>Trip privacy</strong><span>Invite-only trips require approval before joining.</span></div><select aria-label="Trip privacy"><option>Invite only</option><option>Approval required</option><option>Public link</option></select></div>
+                  <div class="settings-row"><div><strong>Event privacy</strong><span>Guest lists and corporate event details follow role permissions.</span></div><select aria-label="Event privacy"><option>Organizer controlled</option><option>Guests only</option><option>Private</option></select></div>
+                  <div class="settings-row"><div><strong>Album privacy</strong><span>Media privacy controls likes, comments, and sharing.</span></div><select aria-label="Album visibility"><option>Trip Members</option><option>Selected Users</option><option>Private</option></select></div>
+                  <div class="settings-row"><div><strong>Blocking and reporting</strong><span>No blocked users in this preview.</span></div><button type="button" data-message-action="Manage privacy">Manage</button></div>
+                </section>
+                <section class="settings-section" data-settings-panel="payments">
+                  <div><p class="eyebrow">Payments and Wallet Administration</p><h3>Payment methods, refunds, wallet security, virtual cards, and spending limits</h3><p>Financial administration is separate from personal profile editing.</p></div>
+                  <div class="settings-row"><div><strong>Payment methods</strong><span>Debit card and TravelDrip Wallet preview available.</span></div><button type="button" data-target="walletPanel">Open Wallet</button></div>
+                  <div class="settings-row"><div><strong>Refund preferences</strong><span>Unused eligible funds return to original method or TravelDrip Wallet.</span></div><button type="button" data-target="walletPanel">Manage</button></div>
+                  <div class="settings-row"><div><strong>Virtual card controls</strong><span>Freeze, reveal, wallet pass, and transaction permission controls.</span></div><button type="button" data-target="walletPanel">Review</button></div>
+                  <div class="settings-row"><div><strong>Spending limits</strong><span>Organizer and finance-admin controlled where supported.</span></div><span class="status-pill">Role gated</span></div>
+                </section>
+                <section class="settings-section" data-settings-panel="app">
+                  <div><p class="eyebrow">App Preferences</p><h3>Language, time zone, currency, weather, default views, and navigation</h3><p>App-wide preferences are managed from Admin, not My Profile.</p></div>
+                  <div class="settings-row"><div><strong>App theme</strong><span>Tropical Paradise</span></div><select id="settingsThemeSelector" aria-label="App theme mirror"><option value="tropical">Tropical Paradise</option><option value="sunset">Sunset Escape</option><option value="ocean">Ocean Breeze</option><option value="miami">Miami Nights</option><option value="cruise">Cruise Life</option><option value="festival">Festival Vibes</option></select></div>
+                  <div class="settings-row"><div><strong>Currency display</strong><span>US Dollar</span></div><select aria-label="Currency display"><option>USD</option><option>EUR</option><option>GBP</option><option>JPY</option></select></div>
+                  <div class="settings-row"><div><strong>Weather units</strong><span>Fahrenheit</span></div><select aria-label="Weather units"><option>Fahrenheit</option><option>Celsius</option></select></div>
+                  <div class="settings-row"><div><strong>Install app</strong><span>Add TravelDrip free from the browser on mobile or desktop.</span></div><button type="button" id="settingsInstallButton">Install</button></div>
+                </section>
+                <section class="settings-section" data-settings-panel="accessibility">
+                  <div><p class="eyebrow">Accessibility</p><h3>Motion, text, contrast, captions, and keyboard support</h3><p>Controls stay row-based with full-width mobile behavior.</p></div>
+                  <div class="settings-row"><div><strong>Reduced motion</strong><span>Respect device preference for animations.</span></div><label class="settings-toggle"><input type="checkbox"><span></span></label></div>
+                  <div class="settings-row"><div><strong>Text size</strong><span>Default</span></div><select aria-label="Text size"><option>Default</option><option>Large</option><option>Extra Large</option></select></div>
+                  <div class="settings-row"><div><strong>High contrast</strong><span>Increase contrast for text and controls.</span></div><label class="settings-toggle"><input type="checkbox"><span></span></label></div>
+                  <div class="settings-row"><div><strong>Keyboard navigation</strong><span>Visible focus indicators and accessible controls.</span></div><span class="status-pill">Enabled</span></div>
+                </section>
+                <section class="settings-section" data-settings-panel="integrations">
+                  <div><p class="eyebrow">Integrations</p><h3>Calendar, email, ride-share, payment, social, and travel providers</h3><p>Provider connections remain categorized and permission aware.</p></div>
+                  <div class="settings-row"><div><strong>Calendar connections</strong><span>Apple, Google, and Outlook calendar sync.</span></div><button type="button" data-calendar-provider="Google Calendar">Connect</button></div>
+                  <div class="settings-row"><div><strong>Ride-share connections</strong><span>Uber, Lyft, Grab, Careem, Bolt, and destination providers.</span></div><button type="button" data-target="rideShareHub">Manage</button></div>
+                  <div class="settings-row"><div><strong>Social connections</strong><span>Instagram, TikTok, Facebook, Threads, LinkedIn, Pinterest, YouTube, and X.</span></div><button type="button" data-target="socialHub">Manage</button></div>
+                  <div class="settings-row" data-admin-only><div><strong>Production providers</strong><span>Email, SMS, payments, maps, flight data, hotel data, AI, monitoring, and storage credentials.</span></div><button type="button" data-corporate-access-admin="Review Provider Integrations">Review</button></div>
+                </section>
+                <section class="settings-section" data-settings-panel="data">
+                  <div><p class="eyebrow">Data and Privacy Management</p><h3>Exports, cache, privacy requests, and account deletion</h3><p>Data-management controls are centralized in Admin.</p></div>
+                  <div class="settings-row"><div><strong>Export data</strong><span>Download account, trips, memories, documents, and wallet summaries where permitted.</span></div><button type="button" data-profile-photo-action="Export Data">Export</button></div>
+                  <div class="settings-row"><div><strong>Clear cached data</strong><span>Remove local previews and offline cache from this device.</span></div><button type="button" data-profile-photo-action="Clear Cache">Clear</button></div>
+                  <div class="settings-row"><div><strong>Privacy request history</strong><span>No open requests in this preview.</span></div><span class="status-pill">Clear</span></div>
+                  <div class="settings-row danger-row"><div><strong>Delete or deactivate account</strong><span>Requires identity verification and retention review.</span></div><button type="button" data-auth-workflow="Delete Account">Review</button></div>
+                </section>
+                <p class="small" id="settingsStatusMessage">Admin categories are separated from My Profile. Rows remain readable and controls stay aligned across desktop and mobile.</p>
+              </div>
+            </section>
+            <section class="theme-studio" aria-label="TravelDrip theme settings">
+              <div>
+                <p class="eyebrow">Theme Studio</p>
+                <h3>Tropical Social Edition</h3>
+                <p>Theme and app appearance settings are administrative preferences, not personal profile content.</p>
+              </div>
+              <label>App theme
+                <select id="themeSelector">
+                  <option value="tropical">Tropical Paradise</option>
+                  <option value="sunset">Sunset Escape</option>
+                  <option value="ocean">Ocean Breeze</option>
+                  <option value="miami">Miami Nights</option>
+                  <option value="cruise">Cruise Life</option>
+                  <option value="festival">Festival Vibes</option>
+                </select>
+              </label>
+              <div class="theme-swatch-grid" aria-label="Theme previews">
+                <button class="active" type="button" data-theme-choice="tropical"><span></span>Tropical Paradise</button>
+                <button type="button" data-theme-choice="sunset"><span></span>Sunset Escape</button>
+                <button type="button" data-theme-choice="ocean"><span></span>Ocean Breeze</button>
+                <button type="button" data-theme-choice="miami"><span></span>Miami Nights</button>
+                <button type="button" data-theme-choice="cruise"><span></span>Cruise Life</button>
+                <button type="button" data-theme-choice="festival"><span></span>Festival Vibes</button>
+              </div>
+              <p class="small" id="themeStatus">Tropical Paradise is active. Animations stay subtle and respect reduced-motion settings.</p>
+            </section>
             <div class="security-status-grid">
               <article><span>Authentication</span><strong id="securityAuthStatus">Configured</strong><small>Email verification, MFA-ready, session controls</small></article>
               <article><span>Financial actions</span><strong id="securityWalletStatus">PIN-gated</strong><small>Wallet, refunds, transfers, card details</small></article>
@@ -3766,7 +3823,7 @@
             <p class="small" id="securityAuditMessage">Security audit checks auth controls, role restrictions, sensitive-notification copy, wallet PIN gates, API hardening, file links, and financial privacy messaging.</p>
           </section>
 
-          <section class="panel backend-readiness-panel" id="backendReadiness" data-route-support="securityCenter">
+          <section class="panel backend-readiness-panel" id="backendReadiness" data-route-support="adminPanel">
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Backend Scalability</p>
@@ -3794,7 +3851,7 @@
               <div data-backend-status="blocked"><strong>Security and privacy tests</strong><span>RLS, auth, password reset, sessions, file access, corporate permissions, rate limits, vulnerability scans, and pen tests must pass before launch.</span></div>
             </div>
             <div class="backend-actions">
-              <button class="primary-button" type="button" data-target="securityCenter">Review security controls</button>
+              <button class="primary-button" type="button" data-target="adminPanel" data-settings-section="security">Review security controls</button>
               <button class="ghost-button" type="button" data-target="groupBank">Review financial data</button>
               <button class="ghost-button" type="button" data-target="enterpriseRbac">Review corporate RLS</button>
               <button class="ghost-button" type="button" data-target="socialHub">Review media and messages</button>
@@ -3891,7 +3948,7 @@
             <p>Three stops are clustered to save 42 minutes of transit on Friday.</p>
           </section>
 
-          <section class="panel navigation-audit-panel" data-route-support="securityCenter">
+          <section class="panel navigation-audit-panel" data-route-support="adminPanel">
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Navigation QA</p>
@@ -3908,7 +3965,7 @@
             <p class="small" id="navigationStatusMessage">Navigation audit checks buttons, links, tab targets, modal triggers, role-restricted actions, and fallback workflow messaging.</p>
           </section>
 
-          <section class="panel go-live-panel" id="goLiveReadiness" data-route-support="securityCenter">
+          <section class="panel go-live-panel" id="goLiveReadiness" data-route-support="adminPanel">
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Production Readiness</p>
@@ -3933,7 +3990,7 @@
               <div data-go-live-status="review"><strong>Accessibility and performance</strong><span>Responsive UI and reduced-motion support are present; full device/browser testing still needs completion.</span></div>
             </div>
             <div class="go-live-actions">
-              <button class="primary-button" type="button" data-target="securityCenter">Review security</button>
+              <button class="primary-button" type="button" data-target="adminPanel" data-settings-section="security">Review security</button>
               <button class="ghost-button" type="button" data-target="walletPanel">Review wallet</button>
               <button class="ghost-button" type="button" data-target="itineraryAlerts">Review notifications</button>
               <button class="ghost-button" type="button" data-target="socialHub">Review messaging</button>
@@ -3966,7 +4023,8 @@
     <button type="button" data-target="exploreDrops">Explore</button>
     <button type="button" data-target="tripsPanel">Trips</button>
     <button type="button" data-target="socialHub">Chat</button>
-    <button type="button" data-target="securityCenter">Profile</button>
+    <button type="button" data-target="myProfile">Profile</button>
+    <button type="button" data-target="adminPanel">Admin</button>
   </nav>
 
   <section class="update-available-banner" id="updateAvailableBanner" role="status" aria-live="polite" hidden>

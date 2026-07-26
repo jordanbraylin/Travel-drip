@@ -13649,12 +13649,127 @@ body.auth-screen .auth-carousel blockquote {
   transform: translateX(20px);
 }
 
-#securityCenter .theme-studio,
-#securityCenter .travel-badge-panel,
-#securityCenter .profile-photo-manager,
-#securityCenter .security-list,
-#securityCenter .audit-grid,
-#securityCenter .backend-readiness-grid {
+.my-profile-panel,
+.admin-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.profile-hero-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 18px;
+  border: 1px solid rgba(8, 127, 140, 0.14);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(20, 184, 166, 0.14), rgba(249, 115, 22, 0.12)),
+    #fff;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+}
+
+.profile-hero-card h2,
+.profile-hero-card p {
+  margin: 0;
+}
+
+.profile-hero-card p:not(.eyebrow) {
+  color: #475569;
+  line-height: 1.5;
+}
+
+.profile-completion-track {
+  display: grid;
+  gap: 7px;
+  margin-top: 12px;
+  max-width: 420px;
+}
+
+.profile-completion-track span {
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.profile-completion-track i {
+  display: block;
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.12);
+}
+
+.profile-completion-track b {
+  display: block;
+  width: var(--w, 0%);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #06b6d4, #f97316);
+}
+
+.profile-personal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.profile-personal-grid article {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.055);
+}
+
+.profile-personal-grid label {
+  display: grid;
+  gap: 6px;
+  color: #334155;
+  font-weight: 800;
+}
+
+.profile-personal-grid input,
+.profile-personal-grid textarea,
+.profile-personal-grid select {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #0f172a;
+  padding: 9px 11px;
+  font: inherit;
+}
+
+.admin-panel .settings-nav-panel button {
+  min-height: 40px;
+}
+
+.admin-panel [data-admin-only] {
+  border-color: rgba(249, 115, 22, 0.22);
+  background: rgba(255, 247, 237, 0.72);
+}
+
+.danger-row {
+  border-color: rgba(220, 38, 38, 0.18);
+}
+
+.danger-row button {
+  color: #991b1b;
+  border-color: rgba(220, 38, 38, 0.24);
+  background: #fef2f2;
+}
+
+#myProfile .travel-badge-panel,
+#myProfile .profile-photo-manager,
+#adminPanel .theme-studio,
+#adminPanel .security-list,
+#adminPanel .audit-grid,
+#adminPanel .backend-readiness-grid {
   border-radius: 14px;
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.055);
 }
@@ -13672,6 +13787,8 @@ body.auth-screen .auth-carousel blockquote {
 
 @media (max-width: 760px) {
   .settings-shell,
+  .profile-hero-card,
+  .profile-personal-grid,
   .travel-itinerary-dashboard,
   .travel-reservation-sections,
   .travel-itinerary-section dl {
@@ -13737,6 +13854,10 @@ body {
 .memory-album-grid article,
 .event-experience-card,
 .social-card,
+.my-profile-panel,
+.admin-panel,
+.profile-hero-card,
+.profile-personal-grid article,
 .settings-shell,
 .settings-nav-panel,
 .settings-main-panel,
@@ -13907,6 +14028,7 @@ textarea {
 .platform-grid,
 .event-experience-grid,
 .events-dashboard-grid,
+.profile-personal-grid,
 .settings-shell,
 .reservation-reminder-grid,
 .ride-two-column-grid,
@@ -14021,6 +14143,7 @@ textarea {
   .memory-album-grid,
   .platform-grid,
   .event-experience-grid,
+  .profile-personal-grid,
   .reservation-reminder-grid,
   .ride-recommendation-grid,
   .private-driver-list {

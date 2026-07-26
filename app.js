@@ -1427,7 +1427,8 @@ function getGlobalDestinationContext(target = getTargetFromRoute()) {
     importantInfo: { label: "Travel-ready destination", action: "View Details", actionType: "destinations" },
     aiTravelPlanner: { label: "Matches your AI planning answers", action: "Ask AI", actionType: "ai" },
     enterpriseRbac: { label: "Approved corporate destination", action: "View Policy", actionType: "destinations" },
-    securityCenter: { label: "Personalized inspiration", action: "Explore", actionType: "destinations" },
+    myProfile: { label: "Personalized inspiration", action: "Explore", actionType: "destinations" },
+    adminPanel: { label: "Admin settings", action: "Review", actionType: "settings" },
     copyrightPolicy: { label: "TravelDrip help", action: "Explore", actionType: "destinations" }
   };
   return contexts[target] || contexts.exploreDrops;
@@ -3331,7 +3332,8 @@ const routeDefinitions = {
   socialHub: { path: "/messages", label: "Messages" },
   memoriesPanel: { path: "/memories", label: "Memories" },
   enterpriseRbac: { path: "/corporate", label: "Corporate" },
-  securityCenter: { path: "/profile", label: "Profile & Settings" },
+  myProfile: { path: "/profile/my-profile", label: "My Profile" },
+  adminPanel: { path: "/admin", label: "Admin" },
   copyrightPolicy: { path: "/settings/help", label: "Help & Copyright" }
 };
 
@@ -3396,7 +3398,7 @@ const routeAliases = {
   "/trips/dubai-weekend/documents": "importantInfo",
   "/trips/dubai-weekend/important-information": "importantInfo",
   "/trips/dubai-weekend/memories": "memoriesPanel",
-  "/trips/dubai-weekend/settings": "securityCenter",
+  "/trips/dubai-weekend/settings": "adminPanel",
   "/trips/dubai-weekend/cruise": "rideShareHub",
   "/messages": "socialHub",
   "/messages/group": "socialHub",
@@ -3418,23 +3420,34 @@ const routeAliases = {
   "/corporate/finance": "enterpriseRbac",
   "/corporate/reports": "enterpriseRbac",
   "/corporate/audit-logs": "enterpriseRbac",
-  "/profile": "securityCenter",
-  "/profile/my-profile": "securityCenter",
-  "/profile/edit": "securityCenter",
-  "/profile/privacy": "securityCenter",
-  "/profile/notifications": "securityCenter",
+  "/profile": "myProfile",
+  "/profile/my-profile": "myProfile",
+  "/profile/edit": "myProfile",
+  "/profile/privacy": "myProfile",
+  "/profile/notifications": "adminPanel",
   "/profile/connected-accounts": "socialHub",
   "/profile/ride-share-connections": "rideShareHub",
   "/profile/social-media-connections": "socialHub",
   "/profile/wallet-settings": "walletPanel",
-  "/profile/security": "securityCenter",
+  "/profile/security": "adminPanel",
   "/profile/travel-statistics": "tripsPanel",
-  "/settings": "securityCenter",
-  "/settings/notifications": "securityCenter",
-  "/settings/privacy": "securityCenter",
-  "/settings/security": "securityCenter",
+  "/settings": "adminPanel",
+  "/settings/notifications": "adminPanel",
+  "/settings/privacy": "adminPanel",
+  "/settings/security": "adminPanel",
   "/settings/help": "copyrightPolicy",
-  "/settings/navigation-audit": "securityCenter"
+  "/settings/navigation-audit": "adminPanel",
+  "/admin": "adminPanel",
+  "/admin/account": "adminPanel",
+  "/admin/security": "adminPanel",
+  "/admin/roles": "adminPanel",
+  "/admin/notifications": "adminPanel",
+  "/admin/privacy": "adminPanel",
+  "/admin/payments": "adminPanel",
+  "/admin/app-preferences": "adminPanel",
+  "/admin/accessibility": "adminPanel",
+  "/admin/integrations": "adminPanel",
+  "/admin/data-management": "adminPanel"
 };
 
 const sectionRouteIds = Object.keys(routeDefinitions);
@@ -5234,6 +5247,11 @@ function wireLocalInteractions() {
     localStorage.setItem("traveldripProfileInitials", state.profilePhoto.initials);
     renderProfilePhoto();
   });
+  $("#profileFullNameInput")?.addEventListener("input", (event) => {
+    state.profilePhoto.initials = initialsFromName(event.target.value);
+    localStorage.setItem("traveldripProfileInitials", state.profilePhoto.initials);
+    renderProfilePhoto();
+  });
   $("#profilePhotoInput")?.addEventListener("change", (event) => handleProfilePhotoFile(event.target.files?.[0], "Profile upload"));
   $("#profileCameraInput")?.addEventListener("change", (event) => handleProfilePhotoFile(event.target.files?.[0], "Camera photo"));
   $("#photoZoomInput")?.addEventListener("input", (event) => {
@@ -5324,6 +5342,9 @@ function wireLocalInteractions() {
       },
       moderationStatus: "pending_if_uploaded"
     });
+  });
+  $("#profileHeroSaveButton")?.addEventListener("click", () => {
+    $("#saveProfilePhotoButton")?.click();
   });
   $("#cancelProfilePhotoButton")?.addEventListener("click", () => {
     state.profilePhoto.dataUrl = state.profilePhoto.savedDataUrl;
