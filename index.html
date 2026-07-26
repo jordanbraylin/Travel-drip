@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=80">
+  <link rel="stylesheet" href="styles.css?v=81">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -550,6 +550,32 @@
                 <button class="ghost-button" type="button" data-target="tripsPanel">Open guided creation</button>
               </div>
             </div>
+            <section class="event-experience-grid" aria-label="Interactive event planning cards">
+              <button class="event-experience-card" type="button" data-event-card="Birthday" style="--event-image:url('https://images.unsplash.com/photo-1464349153735-7db50ed83c84?q=80&w=900&auto=format&fit=crop')">
+                <span>Birthday</span>
+                <strong>Miami birthday weekend</strong>
+                <small>18 guests • 72% RSVP • $2,900 budget</small>
+                <i>3 days left</i>
+              </button>
+              <button class="event-experience-card" type="button" data-event-card="Wedding" style="--event-image:url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=900&auto=format&fit=crop')">
+                <span>Wedding</span>
+                <strong>Santorini ceremony</strong>
+                <small>86 guests • hotel block ready • sunny</small>
+                <i>42 days left</i>
+              </button>
+              <button class="event-experience-card" type="button" data-event-card="Corporate Retreat" style="--event-image:url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=900&auto=format&fit=crop')">
+                <span>Corporate Retreat</span>
+                <strong>Dubai leadership offsite</strong>
+                <small>44 attendees • travel assigned • 5 tasks</small>
+                <i>Policy controlled</i>
+              </button>
+              <button class="event-experience-card" type="button" data-event-card="Cruise Party" style="--event-image:url('https://images.unsplash.com/photo-1548574505-5e239809ee19?q=80&w=900&auto=format&fit=crop')">
+                <span>Cruise Party</span>
+                <strong>Caribbean sailing crew</strong>
+                <small>Cabins, ports, boarding docs, shore plans</small>
+                <i>Boarding soon</i>
+              </button>
+            </section>
 
             <div class="lets-plan-grid" aria-label="Planning options">
               <section class="lets-plan-group">
@@ -2027,6 +2053,12 @@
               <div><span>Available balance</span><strong id="tripAvailableBalance">$3,880</strong></div>
               <div><span>Pending transactions</span><strong id="tripPendingTransactions">$380</strong></div>
             </div>
+            <div class="wallet-action-grid" aria-label="Wallet and split bill actions">
+              <button type="button" data-target="splitBill"><span>Food & Bill Splitter</span><strong>Start split</strong><small>Restaurant receipts, itemized totals, taxes, and tips.</small></button>
+              <button type="button" data-wallet-action="Payment Requests"><span>Payment Requests</span><strong>3 pending</strong><small>Upcoming group payments and approvals.</small></button>
+              <button type="button" data-wallet-action="Trip Contributions"><span>Trip Contributions</span><strong>$6,400</strong><small>Member deposits and refundable balances.</small></button>
+              <button type="button" data-wallet-action="Recent Transactions"><span>Recent Transactions</span><strong>12 records</strong><small>Completed, pending, and audit-logged payments.</small></button>
+            </div>
             <label class="range-wrap" for="deposit">Per-person deposit: <strong id="depositValue">$800</strong><input id="deposit" type="range" min="500" max="1200" step="50" value="800"></label>
             <form class="funds-form" id="fundsForm">
               <label>Add funds
@@ -2310,6 +2342,7 @@
                   <button type="button" data-travel-quick="Add Hotel">Add Hotel</button>
                   <button type="button" data-travel-quick="Compare Transportation">Compare Transportation</button>
                   <button type="button" data-travel-quick="Upload Ticket">Upload Ticket</button>
+                  <button type="button" data-target="splitBill">Food & Bill Splitter</button>
                   <button type="button" data-travel-quick="Add Cruise">Add Cruise</button>
                 </div>
               </div>
@@ -2352,6 +2385,7 @@
                   <div class="visual-pass-grid">
                     <article class="visual-pass-card visual-pass-card--flight">
                       <div class="pass-topline"><span>Flight boarding pass</span><strong>Checked In</strong></div>
+                      <div class="pass-provider"><b>DELTA</b><span>Sky Priority</span></div>
                       <div class="pass-route"><b>MIA</b><i></i><b>HND</b></div>
                       <h4>Delta DL 241</h4>
                       <dl>
@@ -2359,8 +2393,11 @@
                         <div><dt>Gate</dt><dd>B18</dd></div>
                         <div><dt>Seat</dt><dd>14A</dd></div>
                         <div><dt>Boarding</dt><dd>Group 3</dd></div>
+                        <div><dt>Terminal</dt><dd>D</dd></div>
+                        <div><dt>Cabin</dt><dd>Comfort+</dd></div>
                       </dl>
                       <div class="official-code" aria-label="Official provider QR code available"></div>
+                      <div class="barcode-strip" aria-hidden="true"></div>
                       <div class="pass-actions">
                         <button type="button" data-pass-action="View Boarding Pass">View</button>
                         <button type="button" data-pass-action="Save Offline">Save offline</button>
@@ -2412,7 +2449,8 @@
                     <div><span>Humidity</span><strong>74%</strong></div>
                     <div><span>UV</span><strong>4</strong></div>
                   </div>
-                  <p>Forecast preview is labeled until a live weather provider is connected. Last updated: prototype data.</p>
+                  <p><strong>Automation ready:</strong> connects to trip destination, hotel, cruise port, or event venue when a weather provider key is configured.</p>
+                  <p class="weather-source-line">Forecast source: Provider unavailable • Last updated: Awaiting live API • Timezone: Asia/Tokyo</p>
                   <button class="ghost-button" type="button" data-travel-section="weather">View Weather</button>
                 </aside>
                 <aside class="travel-map-dashboard" id="travelMapsDashboard" aria-label="Travel maps dashboard">

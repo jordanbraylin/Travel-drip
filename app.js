@@ -4916,6 +4916,27 @@ function wireLocalInteractions() {
     document.body.classList.toggle("sidebar-open", open);
     $("#sidebarMenuButton").setAttribute("aria-expanded", String(open));
   });
+  const navGroups = $$(".grouped-nav .nav-group");
+  const storedNavSummary = localStorage.getItem("traveldripExpandedNavGroup");
+  if (storedNavSummary) {
+    navGroups.forEach((group) => {
+      group.open = group.querySelector("summary")?.textContent?.trim() === storedNavSummary;
+    });
+  } else {
+    navGroups.forEach((group, index) => {
+      group.open = index === 0;
+    });
+  }
+  navGroups.forEach((group) => {
+    group.addEventListener("toggle", () => {
+      if (!group.open) return;
+      const summary = group.querySelector("summary")?.textContent?.trim() || "";
+      localStorage.setItem("traveldripExpandedNavGroup", summary);
+      navGroups.forEach((otherGroup) => {
+        if (otherGroup !== group) otherGroup.open = false;
+      });
+    });
+  });
   $(".sidebar")?.addEventListener("click", (event) => {
     if (!event.target.closest("[data-target], a")) return;
     document.body.classList.remove("sidebar-open");
@@ -5308,6 +5329,38 @@ function wireLocalInteractions() {
   $$("[data-plan-type]").forEach((button) => {
     button.addEventListener("click", () => {
       openPlanningWorkflow(button.dataset.planType || "group");
+    });
+  });
+
+  $$("[data-event-card]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const label = button.dataset.eventCard;
+      const type = /wedding/i.test(label)
+        ? "wedding"
+        : /birthday/i.test(label)
+          ? "birthday"
+          : /corporate/i.test(label)
+            ? "corporate"
+            : /cruise/i.test(label)
+              ? "cruise"
+              : "special_event";
+      openPlanningWorkflow(type);
+      if ($("#letsPlanMessage")) {
+        $("#letsPlanMessage").textContent = `${label} event dashboard opened with RSVP progress, budget, travel, split bills, tasks, memories, and AI planning widgets.`;
+      }
+      addAuditEntry("Event card opened", `${label} selected from interactive Events dashboard.`);
+      await saveSyncedEvent("event_card_opened", { label, type });
+    });
+  });
+
+  $$("[data-wallet-action]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const action = button.dataset.walletAction;
+      if ($("#walletMessage")) {
+        $("#walletMessage").textContent = `${action} opened from Wallet. Split bills, payment requests, pending payments, completed payments, and trip contributions remain one click away.`;
+      }
+      addAuditEntry("Wallet action opened", `${action} opened from wallet action grid.`);
+      await saveSyncedEvent("wallet_action_opened", { action });
     });
   });
 
