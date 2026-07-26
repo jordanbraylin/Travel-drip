@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-    <link rel="stylesheet" href="styles.css?v=89">
+    <link rel="stylesheet" href="styles.css?v=90">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -3696,27 +3696,118 @@
           </section>
 
           <section class="panel my-profile-panel" id="myProfile">
-            <div class="profile-hero-card">
-              <div class="profile-photo-preview" id="profilePhotoPreview" data-profile-preview>
-                <span class="profile-photo-avatar xl" data-profile-initials>JS</span>
-              </div>
-              <div>
-                <p class="eyebrow">My Profile</p>
-                <h2>Jordan Smith</h2>
-                <p>Traveler, food lover, itinerary organizer, and memory keeper. My Profile only stores personal profile details, public preferences, visibility choices, and profile photo controls.</p>
+            <div class="profile-social-hero">
+              <img id="profileCoverImage" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1400&auto=format&fit=crop" alt="Sunny beach cover for Jordan's travel profile">
+              <div class="profile-social-overlay">
+                <div class="profile-photo-preview profile-social-avatar" id="profilePhotoPreview" data-profile-preview>
+                  <span class="profile-photo-avatar xl" data-profile-initials>JS</span>
+                </div>
+                <div>
+                  <p class="eyebrow">My Travel Identity</p>
+                  <h2>Welcome back, Jordan!</h2>
+                  <p>@jordansmith • Miami, Florida</p>
+                  <strong>Ready for your next adventure?</strong>
+                </div>
                 <div class="profile-completion-track" aria-label="Profile completion">
                   <span><strong>82%</strong> complete</span>
                   <i><b style="--w:82%"></b></i>
                 </div>
               </div>
-              <button class="primary-button" type="button" id="profileHeroSaveButton">Save Profile</button>
             </div>
+            <section class="profile-quick-actions" aria-label="Profile quick actions">
+              <button class="primary-button" type="button" id="profileHeroSaveButton">Edit Profile</button>
+              <button type="button" data-target="tripsPanel">My Trips</button>
+              <button type="button" data-target="eventsPanel">My Events</button>
+              <button type="button" data-target="memoriesPanel">Memories</button>
+              <button type="button" data-profile-photo-action="Share Profile">Share Profile</button>
+              <button type="button" data-target="socialHub">Invite Friends</button>
+            </section>
+            <section class="profile-card-grid" aria-label="Profile summary">
+              <article class="profile-identity-card">
+                <span class="profile-photo-avatar large" data-profile-initials>JS</span>
+                <div>
+                  <p class="eyebrow">Profile Card</p>
+                  <h3>Jordan Smith</h3>
+                  <p>@jordansmith</p>
+                  <strong>Planning unforgettable trips, events, and shared memories with TravelDrip.</strong>
+                </div>
+                <dl>
+                  <div><dt>Home</dt><dd>Miami, Florida</dd></div>
+                  <div><dt>Languages</dt><dd>English, Spanish</dd></div>
+                  <div><dt>Member since</dt><dd>2026</dd></div>
+                  <div><dt>Connections</dt><dd>128 travel friends</dd></div>
+                </dl>
+              </article>
+              <article>
+                <p class="eyebrow">About Me</p>
+                <h3>Food, beaches, nightlife, cruises, hidden gems</h3>
+                <p>Travel style: flexible plans, local restaurants, photo-worthy views, and group memories. Favorite destinations include Miami, Tokyo, Dubai, and Santorini.</p>
+                <p>Fun travel fact: Jordan always saves the first sunset photo from every trip.</p>
+              </article>
+            </section>
+            <section class="profile-stats-grid" aria-label="My travel stats">
+              <article><span>Countries</span><strong>12</strong><small>Visited</small></article>
+              <article><span>Cities</span><strong>38</strong><small>Explored</small></article>
+              <article><span>Upcoming</span><strong>4</strong><small>Trips</small></article>
+              <article><span>Completed</span><strong>9</strong><small>Trips</small></article>
+              <article><span>Events</span><strong>6</strong><small>Created</small></article>
+              <article><span>Memories</span><strong>214</strong><small>Saved</small></article>
+              <article><span>Photos</span><strong>486</strong><small>Uploaded</small></article>
+              <article><span>Miles</span><strong>42K</strong><small>Traveled</small></article>
+            </section>
+            <section class="profile-adventure-grid" aria-label="My adventures">
+              <article>
+                <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=700&auto=format&fit=crop" alt="Tokyo skyline">
+                <span>Upcoming Trip</span>
+                <strong>Miami to Tokyo Adventure</strong>
+                <small>Jul 18 - Jul 28 • 4 travelers</small>
+                <button type="button" data-target="rideShareHub">Open Trip</button>
+              </article>
+              <article>
+                <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=700&auto=format&fit=crop" alt="Dubai skyline">
+                <span>Recent Trip</span>
+                <strong>Dubai Weekend</strong>
+                <small>Memories saved • wallet reconciled</small>
+                <button type="button" data-target="memoriesPanel">View Memories</button>
+              </article>
+              <article>
+                <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?q=80&w=700&auto=format&fit=crop" alt="Beach destination">
+                <span>Favorite Destination</span>
+                <strong>Caribbean Cruise</strong>
+                <small>Ports, beaches, shore excursions</small>
+                <button type="button" data-target="cruisePanel">Open Cruise</button>
+              </article>
+            </section>
+            <section class="profile-memory-preview" aria-label="Memories preview">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Memories Preview</p>
+                  <h3>Recent photos and albums</h3>
+                </div>
+                <div class="mini-action-row">
+                  <button type="button" data-target="memoriesPanel">View All</button>
+                  <button type="button" data-memory-action="Upload Memory">Upload</button>
+                </div>
+              </div>
+              <div class="profile-memory-gallery">
+                <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=500&auto=format&fit=crop" alt="Travel meal memory">
+                <img src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?q=80&w=500&auto=format&fit=crop" alt="Beach memory">
+                <img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=500&auto=format&fit=crop" alt="Desert road trip memory">
+                <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=500&auto=format&fit=crop" alt="Group celebration memory">
+              </div>
+            </section>
+            <section class="profile-connections-grid" aria-label="Friends and connections">
+              <article><span class="profile-photo-avatar small">SL</span><strong>Sarah Lee</strong><small>3 shared trips</small></article>
+              <article><span class="profile-photo-avatar small">MA</span><strong>Mike Adams</strong><small>2 shared events</small></article>
+              <article><span class="profile-photo-avatar small">AR</span><strong>Alex Rivera</strong><small>5 shared memories</small></article>
+              <article><span class="profile-photo-avatar small">TJ</span><strong>Taylor Jones</strong><small>Upcoming cruise</small></article>
+            </section>
             <section class="profile-photo-manager">
               <div class="profile-photo-main">
                 <div>
-                  <p class="eyebrow">Profile > My Profile > Edit Profile</p>
-                  <h3>Profile photo</h3>
-                  <p>Upload, take, crop, rotate, reposition, preview, replace, or remove your photo. No security, wallet, billing, role, or system settings live in this personal profile area.</p>
+                  <p class="eyebrow">Profile Photo</p>
+                  <h3>Edit your profile photo</h3>
+                  <p>Upload, take, crop, rotate, zoom, reposition, replace, or remove your photo. Account security and password controls live in Admin.</p>
                   <div class="mini-action-row">
                     <label class="file-action-button">Change Profile Photo<input id="profilePhotoInput" type="file" accept="image/jpeg,image/jpg,image/png,image/heic,image/webp" hidden></label>
                     <label class="file-action-button">Take Photo<input id="profileCameraInput" type="file" accept="image/*" capture="user" hidden></label>
@@ -3753,8 +3844,15 @@
                   </label>
                   <span>Preview updates here before saving. Photo setup remains optional and only lives in My Profile.</span>
                 </div>
-                <div class="photo-privacy-card">
-                  <h4>Privacy</h4>
+                <div class="cover-photo-card">
+                  <h4>Cover photo</h4>
+                  <label class="file-action-button">Upload Cover<input id="profileCoverInput" type="file" accept="image/jpeg,image/jpg,image/png,image/heic,image/webp" hidden></label>
+                  <button type="button" data-cover-photo-action="Use Beach Cover">Beach Cover</button>
+                  <button type="button" data-cover-photo-action="Remove Cover">Remove Cover</button>
+                  <span>Use a favorite destination, group memory, or travel moment as your profile banner.</span>
+                </div>
+                <div class="photo-audience-card">
+                  <h4>Profile photo audience</h4>
                   <label><input type="radio" name="profilePhotoPrivacy" value="public"> Public</label>
                   <label><input type="radio" name="profilePhotoPrivacy" value="friends"> Friends Only</label>
                   <label><input type="radio" name="profilePhotoPrivacy" value="trip_members" checked> Trip Members Only</label>
@@ -3770,7 +3868,7 @@
                 <div><span class="profile-photo-avatar small" data-profile-initials>JS</span><strong>Notifications</strong></div>
               </div>
               <div class="profile-photo-policy-grid">
-                <div><strong>Security safeguards</strong><span>File type validation, 5 MB max size, optimization, secure storage path, malware scanning where supported, and moderation-ready status.</span></div>
+                <div><strong>Upload guidance</strong><span>JPG, JPEG, PNG, HEIC, or WEBP. Max 5 MB. TravelDrip previews the image before saving.</span></div>
                 <div><strong>Corporate accounts</strong><span>Companies can allow employee uploads, sync company directory photos, or display company-issued photos when policy requires it.</span></div>
                 <div><strong>Default avatar</strong><span>If no photo is uploaded, TravelDrip shows initials such as JS for Jordan Smith.</span></div>
               </div>
@@ -3796,11 +3894,11 @@
                 <label>Location<input value="Miami, Florida"></label>
               </article>
               <article>
-                <p class="eyebrow">Profile Visibility</p>
-                <label>Who can view my profile<select><option>Trip Members Only</option><option>Friends Only</option><option>Public</option><option>Private</option></select></label>
-                <label>Email visibility<select><option>Hidden</option><option>Trip organizers only</option><option>Trip members</option></select></label>
-                <label>Birthday visibility<select><option>Hidden</option><option>Month and day only</option><option>Friends only</option></select></label>
-                <label><input type="checkbox" checked> Allow my profile to appear in trip-member search</label>
+                <p class="eyebrow">Profile Preferences</p>
+                <label>Public profile visibility<select><option>Trip Members Only</option><option>Friends Only</option><option>Public</option><option>Private</option></select></label>
+                <label>Travel style<select><option>Food, beaches, and hidden gems</option><option>Luxury and wellness</option><option>Adventure and outdoors</option><option>Family-friendly</option></select></label>
+                <label>Favorite destination<input value="Tokyo, Japan"></label>
+                <label>Fun travel fact<input value="I save the first sunset photo from every trip."></label>
               </article>
             </section>
             <section class="travel-badge-panel" aria-label="Travel badges">
@@ -3841,7 +3939,7 @@
                   <input id="settingsSearchInput" type="search" placeholder="Security, roles, Wallet PIN, integrations">
                 </label>
                 <button class="active" type="button" data-settings-section="account">Account Management</button>
-                <button type="button" data-settings-section="security">Security</button>
+                <button type="button" data-settings-section="security">Password & Security</button>
                 <button type="button" data-settings-section="roles">Roles & Permissions</button>
                 <button type="button" data-settings-section="notifications">Notifications</button>
                 <button type="button" data-settings-section="privacy">Privacy</button>
@@ -3855,15 +3953,18 @@
                 <section class="settings-section active" data-settings-panel="account">
                   <div><p class="eyebrow">Account Management</p><h3>Credentials and account status</h3><p>Email, password, connected accounts, recovery, and account lifecycle controls live here instead of My Profile.</p></div>
                   <div class="settings-row"><div><strong>Account email</strong><span>jordan@example.com</span></div><button type="button" data-auth-workflow="Verify Email">Verify</button></div>
-                  <div class="settings-row"><div><strong>Password management</strong><span>Reset password and enforce strong credentials.</span></div><button type="button" data-auth-workflow="Reset Password">Manage</button></div>
+                  <div class="settings-row"><div><strong>Password management</strong><span>Reset password, change password, and enforce strong credentials.</span></div><button type="button" data-auth-workflow="Reset Password">Manage</button></div>
                   <div class="settings-row"><div><strong>Connected accounts</strong><span>Google, Apple, Microsoft, and social sign-in connections.</span></div><button type="button" data-target="socialHub">Manage</button></div>
                   <div class="settings-row"><div><strong>Account status</strong><span>Active account with recovery configured.</span></div><span class="status-pill">Active</span></div>
                 </section>
                 <section class="settings-section" data-settings-panel="security">
-                  <div><p class="eyebrow">Security</p><h3>Authentication and trusted access</h3><p>Two-factor authentication, Wallet PIN, login activity, trusted devices, active sessions, recovery methods, and security alerts.</p></div>
+                  <div><p class="eyebrow">Password & Security</p><h3>Authentication and trusted access</h3><p>Password changes, two-factor authentication, Wallet PIN, login activity, trusted devices, active sessions, recovery methods, and security alerts.</p></div>
+                  <div class="settings-row"><div><strong>Change Password</strong><span>Update the account password after identity verification.</span></div><button type="button" data-auth-workflow="Reset Password">Change</button></div>
                   <div class="settings-row"><div><strong>Two-factor authentication</strong><span>Optional second step for sensitive account access.</span></div><label class="settings-toggle"><input type="checkbox"><span></span></label></div>
                   <div class="settings-row"><div><strong>Wallet PIN</strong><span>Required for adding funds, refunds, transfers, trip payments, and card details.</span></div><button type="button" data-wallet-section="security">Manage</button></div>
+                  <div class="settings-row"><div><strong>Login activity</strong><span>Review recent sign-ins, locations, and authentication events.</span></div><button type="button" data-profile-photo-action="Review Login Activity">Review</button></div>
                   <div class="settings-row"><div><strong>Trusted devices</strong><span>2 active sessions in this preview.</span></div><button type="button" data-profile-photo-action="Review Devices">Review</button></div>
+                  <div class="settings-row"><div><strong>Recovery methods</strong><span>Email recovery and backup verification methods.</span></div><button type="button" data-profile-photo-action="Review Recovery Methods">Manage</button></div>
                   <div class="settings-row"><div><strong>Security alerts</strong><span>Notify on new devices, unusual refunds, rapid PIN failures, and impossible travel login.</span></div><label class="settings-toggle"><input type="checkbox" checked><span></span></label></div>
                 </section>
                 <section class="settings-section" data-settings-panel="roles">

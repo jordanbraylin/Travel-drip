@@ -29,6 +29,10 @@ const state = {
     rotation: Number(localStorage.getItem("traveldripProfilePhotoRotation") || 0),
     pendingFileName: ""
   },
+  profileCover: {
+    dataUrl: localStorage.getItem("traveldripProfileCover") || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1400&auto=format&fit=crop",
+    savedDataUrl: localStorage.getItem("traveldripProfileCover") || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1400&auto=format&fit=crop"
+  },
   config: {
     supabaseUrl: "",
     supabaseAnonKey: "",
@@ -3423,7 +3427,7 @@ const routeAliases = {
   "/profile": "myProfile",
   "/profile/my-profile": "myProfile",
   "/profile/edit": "myProfile",
-  "/profile/privacy": "myProfile",
+  "/profile/privacy": "adminPanel",
   "/profile/notifications": "adminPanel",
   "/profile/connected-accounts": "socialHub",
   "/profile/ride-share-connections": "rideShareHub",
@@ -3439,6 +3443,7 @@ const routeAliases = {
   "/settings/navigation-audit": "adminPanel",
   "/admin": "adminPanel",
   "/admin/account": "adminPanel",
+  "/admin/password-security": "adminPanel",
   "/admin/security": "adminPanel",
   "/admin/roles": "adminPanel",
   "/admin/notifications": "adminPanel",
@@ -5289,6 +5294,27 @@ function wireLocalInteractions() {
   $("#profilePhotoDropZone")?.addEventListener("drop", (event) => {
     handleProfilePhotoFile(event.dataTransfer?.files?.[0], "Drag and drop");
   });
+  $("#profileCoverInput")?.addEventListener("change", (event) => handleProfileCoverFile(event.target.files?.[0]));
+  $$("[data-cover-photo-action]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const action = button.dataset.coverPhotoAction;
+      if (action === "Use Beach Cover") {
+        state.profileCover.dataUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1400&auto=format&fit=crop";
+        state.profileCover.savedDataUrl = state.profileCover.dataUrl;
+        localStorage.setItem("traveldripProfileCover", state.profileCover.savedDataUrl);
+        renderProfileCover();
+        setProfilePhotoMessage("Beach cover saved for your My Profile header.");
+        await saveSyncedEvent("profile_cover_updated", { source: "default_beach_cover" });
+        return;
+      }
+      state.profileCover.dataUrl = "";
+      state.profileCover.savedDataUrl = "";
+      localStorage.removeItem("traveldripProfileCover");
+      renderProfileCover();
+      setProfilePhotoMessage("Cover photo removed. Your profile header now uses the default TravelDrip gradient.");
+      await saveSyncedEvent("profile_cover_removed", { source: "my_profile" });
+    });
+  });
   $$("[data-profile-photo-action]").forEach((button) => {
     button.addEventListener("click", async () => {
       const action = button.dataset.profilePhotoAction;
@@ -5357,6 +5383,7 @@ function wireLocalInteractions() {
   renderBackendReadiness();
   renderGoLiveAudit();
   renderProfilePhoto();
+  renderProfileCover();
 
   $("#chatForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -5780,7 +5807,7 @@ function wireLocalInteractions() {
         "Verify Email": "Email verification status is checked after registration and before live account sync.",
         "Two-Factor Authentication": "Two-factor setup appears after sign-in when production auth requires an extra verification step.",
         "Terms of Service": "Terms of Service opens the TravelDrip usage, payment, content, and account rules in the legal policy area.",
-        "Privacy Policy": "Privacy Policy opens the TravelDrip privacy, security, and data protection guidance in the security center."
+        "Privacy Policy": "Privacy Policy opens the TravelDrip privacy, security, and data protection guidance in Admin."
       };
       const detail = messages[workflow] || "Authentication workflow opened.";
       $("#authMessage").textContent = detail;
@@ -5908,6 +5935,45 @@ function renderProfilePhoto() {
 function setProfilePhotoMessage(message) {
   const el = $("#profilePhotoMessage");
   if (el) el.textContent = message;
+}
+
+function renderProfileCover() {
+  const cover = $("#profileCoverImage");
+  if (!cover) return;
+  if (state.profileCover.dataUrl) {
+    cover.src = state.profileCover.dataUrl;
+    cover.hidden = false;
+  } else {
+    cover.removeAttribute("src");
+    cover.hidden = true;
+  }
+}
+
+function handleProfileCoverFile(file) {
+  if (!file) return;
+  const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/heic", "image/webp"];
+  const allowedExtensions = /\.(jpe?g|png|heic|webp)$/i;
+  if (!allowedTypes.includes(file.type) && !allowedExtensions.test(file.name)) {
+    setProfilePhotoMessage("Unsupported cover type. Use JPG, JPEG, PNG, HEIC, or WEBP.");
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    setProfilePhotoMessage("Cover photo is too large. Choose an image under 5 MB.");
+    return;
+  }
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    state.profileCover.dataUrl = String(reader.result || "");
+    state.profileCover.savedDataUrl = state.profileCover.dataUrl;
+    localStorage.setItem("traveldripProfileCover", state.profileCover.savedDataUrl);
+    renderProfileCover();
+    setProfilePhotoMessage(`${file.name} is now your profile cover photo.`);
+    addAuditEntry("Profile cover updated", `${file.name} validated for type, size, and profile cover preview.`);
+  });
+  reader.addEventListener("error", () => {
+    setProfilePhotoMessage("Unable to preview that cover photo. Try another JPG, PNG, HEIC, or WEBP file.");
+  });
+  reader.readAsDataURL(file);
 }
 
 function handleProfilePhotoFile(file, source = "upload") {
