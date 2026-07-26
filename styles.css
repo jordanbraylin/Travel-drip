@@ -4530,6 +4530,102 @@ input[type="range"] {
   }
 }
 
+/* Section 74: final overlap guard after all legacy dashboard layers */
+body.app-routed main > section.panel:not([hidden]),
+body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome) {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: clamp(14px, 1.8vw, 20px) !important;
+  align-items: start !important;
+  width: 100% !important;
+  max-width: none !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) > .section-heading,
+body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome) > .section-heading {
+  grid-column: 1 / -1 !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+
+/* Only actual route-level widgets receive a card; parent shells stay transparent. */
+body.app-routed main > section.panel:not([hidden]) > :where(section, article, div, form):not(.section-heading):not([hidden]) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) > :where(.travel-settings-shell, .wallet-redesign-shell, .settings-shell, .admin-settings-shell, .memories-gallery-shell) {
+  display: contents !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(.travel-settings-main, .wallet-home-grid, .wallet-dashboard-sections, .settings-main-panel) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(.travel-dashboard-sections, .travel-booking-summary, .travel-transport-summary, .travel-focus-grid, .travel-provider-cards, .wallet-dashboard-header, .wallet-home-grid, .wallet-trip-card-grid, .wallet-dashboard-sections, .wallet-section-card-grid, .wallet-action-grid, .info-status-grid, .important-info-grid, .security-status-grid, .security-control-grid, .backend-summary-grid, .backend-readiness-grid, .audit-grid, .memory-gallery-grid, .memory-album-grid, .platform-grid, .messages-layout, .message-support-grid) {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: clamp(14px, 1.8vw, 20px) !important;
+  align-items: start !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(.travel-dashboard-sections > *, .travel-booking-summary > *, .travel-transport-summary > *, .travel-focus-grid > *, .travel-provider-cards > *, .wallet-dashboard-header > *, .wallet-home-grid > *, .wallet-trip-card-grid > *, .wallet-dashboard-sections > *, .wallet-section-card-grid > *, .wallet-action-grid > *, .info-status-grid > *, .important-info-grid > *, .security-status-grid > *, .security-control-grid > *, .backend-summary-grid > *, .backend-readiness-grid > *, .audit-grid > *, .memory-gallery-grid > *, .memory-album-grid > *, .platform-grid > *, .messages-layout > *, .message-support-grid > *) {
+  grid-column: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere;
+}
+
+body.app-routed main :where(.trip-tab-bar, .tabs, .message-tabs, .split-mode-tabs, .transport-tabs, .explore-tabs, .event-dashboard-tabs, .travel-section-nav, .pass-filter-row, .travel-pass-filters, .travel-search-suggestions) {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center;
+  max-width: 100%;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+body.app-routed main :where(.trip-tab-bar button, .tabs .tab, .message-tabs button, .split-mode-tabs button, .transport-tabs button, .explore-tabs button, .event-dashboard-tabs button, .travel-section-nav button, .pass-filter-row button, .travel-pass-filters button, .travel-search-suggestions button) {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: max-content !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 1100px) {
+  body.app-routed main > section.panel:not([hidden]),
+  body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome),
+  body.app-routed main > section.panel:not([hidden]) :where(.travel-dashboard-sections, .travel-booking-summary, .travel-transport-summary, .travel-focus-grid, .travel-provider-cards, .wallet-dashboard-header, .wallet-home-grid, .wallet-trip-card-grid, .wallet-dashboard-sections, .wallet-section-card-grid, .wallet-action-grid, .info-status-grid, .important-info-grid, .security-status-grid, .security-control-grid, .backend-summary-grid, .backend-readiness-grid, .audit-grid, .memory-gallery-grid, .memory-album-grid, .platform-grid, .messages-layout, .message-support-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  body.app-routed main > section.panel:not([hidden]),
+  body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome),
+  body.app-routed main > section.panel:not([hidden]) :where(.travel-dashboard-sections, .travel-booking-summary, .travel-transport-summary, .travel-focus-grid, .travel-provider-cards, .wallet-dashboard-header, .wallet-home-grid, .wallet-trip-card-grid, .wallet-dashboard-sections, .wallet-section-card-grid, .wallet-action-grid, .info-status-grid, .important-info-grid, .security-status-grid, .security-control-grid, .backend-summary-grid, .backend-readiness-grid, .audit-grid, .memory-gallery-grid, .memory-album-grid, .platform-grid, .messages-layout, .message-support-grid) {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 /* Section 73: independent widgets without an oversized tab wrapper */
 body.app-routed main > section.panel:not([hidden]),
 body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome) {
@@ -18506,6 +18602,85 @@ body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome) {
   #itineraryAlerts :where(.itinerary-dashboard, .travel-itinerary-dashboard, .upcoming-reservation-grid, .reservation-reminder-grid, .alert-category-grid, .delivery-preferences),
   #myProfile :where(.profile-card-grid, .profile-stats-grid, .profile-adventure-grid, .profile-connections-grid, .profile-personal-grid, .profile-photo-policy-grid),
   #adminPanel :where(.settings-shell, .admin-settings-shell, .security-status-grid, .security-control-grid, .fraud-signal-list, .backend-summary-grid, .backend-readiness-grid, .audit-grid) {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Section 75: last-pass wrapper removal and overlap protection */
+body.app-routed main > section.panel:not([hidden]),
+body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome) {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: clamp(14px, 1.8vw, 20px) !important;
+  align-items: start !important;
+  width: 100% !important;
+  max-width: none !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) > .section-heading,
+body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome) > .section-heading {
+  grid-column: 1 / -1 !important;
+  margin: 0 !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) > :where(.travel-settings-shell, .wallet-redesign-shell, .settings-shell, .admin-settings-shell, .memories-gallery-shell) {
+  display: contents !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(.travel-dashboard-sections, .travel-booking-summary, .travel-transport-summary, .travel-focus-grid, .travel-provider-cards, .wallet-dashboard-header, .wallet-home-grid, .wallet-trip-card-grid, .wallet-dashboard-sections, .wallet-section-card-grid, .wallet-action-grid, .info-status-grid, .important-info-grid, .security-status-grid, .security-control-grid, .backend-summary-grid, .backend-readiness-grid, .audit-grid, .memory-gallery-grid, .memory-album-grid, .platform-grid, .messages-layout, .message-support-grid) {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: clamp(14px, 1.8vw, 20px) !important;
+  align-items: start !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(.travel-dashboard-sections > *, .travel-booking-summary > *, .travel-transport-summary > *, .travel-focus-grid > *, .travel-provider-cards > *, .wallet-dashboard-header > *, .wallet-home-grid > *, .wallet-trip-card-grid > *, .wallet-dashboard-sections > *, .wallet-section-card-grid > *, .wallet-action-grid > *, .info-status-grid > *, .important-info-grid > *, .security-status-grid > *, .security-control-grid > *, .backend-summary-grid > *, .backend-readiness-grid > *, .audit-grid > *, .memory-gallery-grid > *, .memory-album-grid > *, .platform-grid > *, .messages-layout > *, .message-support-grid > *) {
+  grid-column: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere;
+}
+
+body.app-routed main :where(.trip-tab-bar, .tabs, .message-tabs, .split-mode-tabs, .transport-tabs, .explore-tabs, .event-dashboard-tabs, .travel-section-nav, .pass-filter-row, .travel-pass-filters, .travel-search-suggestions) {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center;
+  max-width: 100%;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+body.app-routed main :where(.trip-tab-bar button, .tabs .tab, .message-tabs button, .split-mode-tabs button, .transport-tabs button, .explore-tabs button, .event-dashboard-tabs button, .travel-section-nav button, .pass-filter-row button, .travel-pass-filters button, .travel-search-suggestions button) {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: max-content !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 1100px) {
+  body.app-routed main > section.panel:not([hidden]),
+  body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome),
+  body.app-routed main > section.panel:not([hidden]) :where(.travel-dashboard-sections, .travel-booking-summary, .travel-transport-summary, .travel-focus-grid, .travel-provider-cards, .wallet-dashboard-header, .wallet-home-grid, .wallet-trip-card-grid, .wallet-dashboard-sections, .wallet-section-card-grid, .wallet-action-grid, .info-status-grid, .important-info-grid, .security-status-grid, .security-control-grid, .backend-summary-grid, .backend-readiness-grid, .audit-grid, .memory-gallery-grid, .memory-album-grid, .platform-grid, .messages-layout, .message-support-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  body.app-routed main > section.panel:not([hidden]),
+  body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome),
+  body.app-routed main > section.panel:not([hidden]) :where(.travel-dashboard-sections, .travel-booking-summary, .travel-transport-summary, .travel-focus-grid, .travel-provider-cards, .wallet-dashboard-header, .wallet-home-grid, .wallet-trip-card-grid, .wallet-dashboard-sections, .wallet-section-card-grid, .wallet-action-grid, .info-status-grid, .important-info-grid, .security-status-grid, .security-control-grid, .backend-summary-grid, .backend-readiness-grid, .audit-grid, .memory-gallery-grid, .memory-album-grid, .platform-grid, .messages-layout, .message-support-grid) {
     grid-template-columns: 1fr !important;
   }
 }
