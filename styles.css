@@ -12314,6 +12314,569 @@ body.auth-screen .auth-carousel blockquote {
   }
 }
 
+/* Chat, Wallet, Memories, and Travel separation refresh */
+#socialHub .daily-memory-panel,
+#socialHub .social-media-hub {
+  display: none;
+}
+
+#socialHub .section-heading h2 {
+  overflow-wrap: anywhere;
+}
+
+#socialHub .messages-hub {
+  margin-bottom: 0;
+}
+
+#socialHub .messages-layout {
+  grid-template-columns: minmax(230px, 0.78fr) minmax(340px, 1.45fr) minmax(240px, 0.78fr);
+}
+
+.conversation-card {
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+}
+
+.conversation-card span,
+.conversation-card strong,
+.conversation-card small,
+.conversation-card em {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.conversation-card em {
+  grid-column: auto;
+  justify-self: end;
+  max-width: 92px;
+  text-align: right;
+}
+
+.conversation-details-panel {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--soft-shadow);
+  padding: 14px;
+  min-width: 0;
+}
+
+.chat-detail-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.chat-detail-card h3,
+.conversation-details-panel h4,
+.conversation-details-panel p {
+  margin: 0;
+}
+
+.chat-detail-card small,
+.conversation-details-panel p {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.chat-detail-actions,
+.chat-danger-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.chat-detail-actions button,
+.chat-danger-actions button {
+  min-height: 38px;
+  border: 1px solid rgba(8, 127, 140, 0.14);
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #174650;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.chat-danger-actions button {
+  border-color: rgba(220, 38, 38, 0.18);
+  color: #991b1b;
+  background: #fff7f7;
+}
+
+.chat-member-list {
+  display: grid;
+  gap: 8px;
+}
+
+.chat-member-list span {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  color: #334155;
+}
+
+.chat-member-list b {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  background: #e0f7fa;
+  color: #075985;
+  font-size: 0.74rem;
+}
+
+.memories-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.memories-toolbar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 6px;
+  border-radius: 999px;
+  background: #eef7f5;
+}
+
+.memories-toolbar button {
+  min-height: 38px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #47656d;
+  padding: 0 14px;
+  font-weight: 900;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.memories-toolbar button.active,
+.memories-toolbar button:hover,
+.memories-toolbar button:focus-visible {
+  background: #fff;
+  color: #0f2f3a;
+  box-shadow: 0 8px 18px rgba(23, 32, 42, 0.09);
+  outline: none;
+}
+
+.memories-gallery-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.7fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.memory-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.memory-media-card,
+.memory-comments-panel,
+.memory-album-grid article {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+  overflow: hidden;
+}
+
+.memory-media-card {
+  display: grid;
+  min-width: 0;
+}
+
+.memory-media-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.memory-media-card > div:not(.memory-card-actions) {
+  display: grid;
+  gap: 5px;
+  padding: 13px 14px 8px;
+}
+
+.memory-media-card span {
+  width: fit-content;
+  border-radius: 999px;
+  background: #e0f7fa;
+  color: #075985;
+  padding: 5px 9px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.memory-media-card strong,
+.memory-album-grid strong {
+  color: #0f172a;
+  overflow-wrap: anywhere;
+}
+
+.memory-media-card small,
+.memory-album-grid span {
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.memory-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 14px 14px;
+}
+
+.memory-card-actions button,
+.memory-comment-form button,
+.memory-album-grid button,
+.wallet-section-nav button,
+.wallet-mini-actions button,
+.wallet-quick-actions-redesign button {
+  min-height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: #eef7f5;
+  color: #174650;
+  padding: 0 13px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.memory-card-actions button.active {
+  background: #ffebef;
+  color: #be123c;
+}
+
+.memory-comments-panel {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  position: sticky;
+  top: 18px;
+}
+
+.memory-comment-list {
+  display: grid;
+  gap: 10px;
+  max-height: 330px;
+  overflow: auto;
+}
+
+.memory-comment-list div {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 6px 9px;
+  padding: 10px;
+  border-radius: 14px;
+  background: #f8fafc;
+}
+
+.memory-comment-list b {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #00c2c7, #ff8a5c);
+  color: #06292f;
+}
+
+.memory-comment-list span {
+  overflow-wrap: anywhere;
+}
+
+.memory-comment-list time {
+  color: #64748b;
+  font-size: 0.78rem;
+}
+
+.memory-comment-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.memory-comment-form input {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 14px;
+  font: inherit;
+}
+
+.memory-album-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.memory-album-grid article {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+}
+
+.wallet-redesign-shell {
+  display: grid;
+  grid-template-columns: minmax(200px, 250px) minmax(0, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.wallet-section-nav {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.94);
+  padding: 12px;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+}
+
+.wallet-section-nav button {
+  width: 100%;
+  border-radius: 13px;
+  text-align: left;
+}
+
+.wallet-section-nav button.active,
+.wallet-section-nav button:hover,
+.wallet-section-nav button:focus-visible,
+.wallet-mini-actions button:hover,
+.wallet-mini-actions button:focus-visible,
+.wallet-quick-actions-redesign button:hover,
+.wallet-quick-actions-redesign button:focus-visible {
+  background: #0f172a;
+  color: #fff;
+  outline: none;
+}
+
+.wallet-home-grid,
+.wallet-trip-card-grid,
+.wallet-quick-actions-redesign {
+  display: grid;
+  gap: 12px;
+}
+
+.wallet-home-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.wallet-balance-hero {
+  grid-column: span 2;
+  min-height: 168px;
+  display: grid;
+  align-content: end;
+  gap: 8px;
+  border-radius: 24px;
+  padding: 18px;
+  color: #fff;
+  background:
+    linear-gradient(135deg, rgba(6, 78, 59, 0.86), rgba(8, 145, 178, 0.82)),
+    url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1000&auto=format&fit=crop") center/cover;
+  box-shadow: 0 18px 42px rgba(8, 47, 73, 0.16);
+}
+
+.wallet-summary-card,
+.wallet-trip-tile,
+.wallet-virtual-preview {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 22px;
+  background: #fff;
+  padding: 16px;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+}
+
+.wallet-balance-hero span,
+.wallet-summary-card span,
+.wallet-trip-tile span,
+.wallet-virtual-preview span {
+  font-size: 0.74rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.wallet-summary-card span,
+.wallet-trip-tile span,
+.wallet-virtual-preview span {
+  color: #64748b;
+}
+
+.wallet-balance-hero strong {
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  line-height: 0.95;
+}
+
+.wallet-summary-card strong,
+.wallet-trip-tile strong,
+.wallet-virtual-preview strong {
+  color: #0f172a;
+  font-size: 1.3rem;
+  overflow-wrap: anywhere;
+}
+
+.wallet-balance-hero small,
+.wallet-summary-card small,
+.wallet-trip-tile small,
+.wallet-virtual-preview small {
+  color: inherit;
+  opacity: 0.78;
+  line-height: 1.4;
+}
+
+.wallet-summary-card small,
+.wallet-trip-tile small,
+.wallet-virtual-preview small {
+  color: #64748b;
+  opacity: 1;
+}
+
+.wallet-progress {
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.24);
+  overflow: hidden;
+}
+
+.wallet-progress i {
+  display: block;
+  width: var(--w);
+  height: 100%;
+  border-radius: inherit;
+  background: #facc15;
+}
+
+.wallet-trip-card-grid {
+  grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.9fr);
+  margin-top: 12px;
+}
+
+.wallet-trip-tile {
+  grid-template-columns: 92px minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.wallet-trip-tile img {
+  width: 92px;
+  height: 86px;
+  border-radius: 18px;
+  object-fit: cover;
+}
+
+.wallet-mini-actions,
+.wallet-quick-actions-redesign {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wallet-quick-actions-redesign {
+  margin-top: 12px;
+}
+
+.travel-settings-shell,
+.travel-settings-shell * {
+  min-width: 0;
+}
+
+.travel-focus-header,
+.travel-focus-grid article,
+.travel-provider-cards article,
+.travel-map-dashboard,
+.travel-empty-state {
+  overflow: hidden;
+}
+
+.travel-focus-header h3,
+.travel-focus-header p,
+.travel-focus-grid strong,
+.travel-focus-grid small,
+.travel-provider-cards strong,
+.travel-provider-cards small,
+.travel-provider-cards dd,
+.travel-empty-state strong,
+.travel-empty-state span,
+#travelSettingsMessage {
+  overflow-wrap: anywhere;
+}
+
+.travel-focus-grid button,
+.travel-provider-cards button,
+.travel-pass-filters button,
+.travel-quick-actions.compact button {
+  max-width: 100%;
+  white-space: normal;
+}
+
+@media (max-width: 1120px) {
+  #socialHub .messages-layout,
+  .memories-gallery-shell,
+  .wallet-redesign-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .conversation-details-panel,
+  .memory-comments-panel {
+    position: static;
+  }
+
+  .memory-gallery-grid,
+  .memory-album-grid,
+  .wallet-home-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .message-search-row,
+  .memory-comment-form,
+  .wallet-trip-tile {
+    grid-template-columns: 1fr;
+  }
+
+  .conversation-card {
+    grid-template-columns: 46px minmax(0, 1fr);
+  }
+
+  .conversation-card em {
+    grid-column: 2;
+    justify-self: start;
+    max-width: 100%;
+    text-align: left;
+  }
+
+  .chat-header,
+  .pinned-message {
+    grid-template-columns: 1fr;
+  }
+
+  .memory-gallery-grid,
+  .memory-album-grid,
+  .wallet-home-grid,
+  .wallet-trip-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wallet-balance-hero {
+    grid-column: auto;
+  }
+}
+
 #rideShareHub .travel-overview-card .travel-summary-tile {
   position: relative;
   min-height: 96px;

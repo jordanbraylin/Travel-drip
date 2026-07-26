@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=83">
+  <link rel="stylesheet" href="styles.css?v=84">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -94,11 +94,11 @@
           <button type="button" data-target="socialHub">Archived</button>
         </details>
         <details class="nav-group">
-          <summary>Social</summary>
-          <button type="button" data-target="socialHub">Friends</button>
-          <button type="button" data-target="socialHub">Feed</button>
-          <button type="button" data-target="socialHub">Memories</button>
-          <button type="button" data-target="socialHub">Shared Albums</button>
+          <summary>Memories</summary>
+          <button type="button" data-target="memoriesPanel">Favorites</button>
+          <button type="button" data-target="memoriesPanel">Photos</button>
+          <button type="button" data-target="memoriesPanel">Memories</button>
+          <button type="button" data-target="memoriesPanel">Shared Albums</button>
         </details>
         <details class="nav-group">
           <summary>Account</summary>
@@ -330,7 +330,7 @@
         <button type="button" data-target="eventsPanel">Events</button>
         <button type="button" data-target="walletPanel">Wallet</button>
         <button type="button" data-target="importantInfo">Important Info</button>
-        <button type="button" data-target="socialHub">Memories</button>
+        <button type="button" data-target="memoriesPanel">Memories</button>
         <button type="button" data-target="securityCenter">Settings</button>
       </nav>
 
@@ -470,7 +470,7 @@
               <img src="https://images.unsplash.com/photo-1493558103817-58b2924bce98?q=80&w=300&auto=format&fit=crop" alt="Road trip memory">
               <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=300&auto=format&fit=crop" alt="Outdoor table memory">
             </div>
-            <button class="ghost-button" type="button" data-target="socialHub">Open album</button>
+            <button class="ghost-button" type="button" data-target="memoriesPanel">Open album</button>
           </article>
           <article class="travel-widget notifications-widget" data-widget="notifications" data-widget-scope="group corporate">
             <div class="widget-toolbar"><span>Notifications</span><button type="button" data-widget-pin="notifications">Pin</button><button type="button" data-widget-hide="notifications">Hide</button></div>
@@ -1328,6 +1328,39 @@
                   </form>
                   <div class="typing-indicator" id="typingIndicator">Maya is typing • read receipts on</div>
                 </section>
+                <aside class="conversation-details-panel" aria-label="Conversation details">
+                  <div class="chat-detail-card">
+                    <span class="message-avatar">M27</span>
+                    <div>
+                      <p class="eyebrow">Details</p>
+                      <h3>Miami 2027</h3>
+                      <small>8 members • notifications on • pinned</small>
+                    </div>
+                  </div>
+                  <div class="chat-detail-actions">
+                    <button type="button" data-message-action="Search in conversation">Search</button>
+                    <button type="button" data-message-action="Notification settings">Notifications</button>
+                    <button type="button" data-message-action="View shared files">Files</button>
+                    <button type="button" data-message-action="View pinned messages">Pinned</button>
+                  </div>
+                  <section>
+                    <h4>Group members</h4>
+                    <div class="chat-member-list">
+                      <span><b>JS</b> Jordan • Admin</span>
+                      <span><b>AM</b> Alex • Online</span>
+                      <span><b>MC</b> Maya • Typing</span>
+                      <span><b>SL</b> Sarah • Muted</span>
+                    </div>
+                  </section>
+                  <section>
+                    <h4>Pinned message</h4>
+                    <p>Meet in the hotel lobby at 8:00 AM for airport transportation.</p>
+                  </section>
+                  <div class="chat-danger-actions">
+                    <button type="button" data-message-action="Leave Group">Leave Group</button>
+                    <button type="button" data-message-action="Report conversation">Report</button>
+                  </div>
+                </aside>
               </div>
               <div class="message-support-grid">
                 <article>
@@ -1648,6 +1681,87 @@
               </div>
               <p class="small" id="socialStatus" aria-live="polite">Social Media Hub ready. No content is shared automatically without your approval.</p>
             </section>
+          </section>
+
+          <section class="panel memories-panel" id="memoriesPanel">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Memories</p>
+                <h2>Photos, videos, albums, likes, and comments</h2>
+                <p>Gallery-first trip memories. Messaging stays in Chat, while every reaction and comment remains attached to the specific media item.</p>
+              </div>
+              <button class="primary-button" type="button" data-memory-action="Upload Photos">Upload Media</button>
+            </div>
+            <div class="memories-toolbar" role="tablist" aria-label="Memories views">
+              <button class="active" type="button" data-memory-view="recent">Recent Memories</button>
+              <button type="button" data-memory-view="albums">My Albums</button>
+              <button type="button" data-memory-view="shared">Shared Albums</button>
+              <button type="button" data-memory-view="favorites">Favorites</button>
+              <button type="button" data-memory-view="photos">Photos</button>
+              <button type="button" data-memory-view="videos">Videos</button>
+              <button type="button" data-memory-view="events">Event Memories</button>
+            </div>
+            <div class="memories-gallery-shell">
+              <section class="memory-gallery-grid" aria-label="Memory gallery">
+                <article class="memory-media-card" data-memory-card="santorini-sunset">
+                  <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=900&q=78" alt="Santorini sunset memory">
+                  <div>
+                    <span>Trip Members</span>
+                    <strong>Santorini sunset dinner</strong>
+                    <small>Jordan • Day 3 • 24 likes • 6 comments</small>
+                  </div>
+                  <div class="memory-card-actions">
+                    <button type="button" data-memory-like="santorini-sunset" aria-pressed="false">Like <b>24</b></button>
+                    <button type="button" data-memory-comment-open="santorini-sunset">Comment</button>
+                    <button type="button" data-memory-action="Favorite Memory">Favorite</button>
+                  </div>
+                </article>
+                <article class="memory-media-card" data-memory-card="miami-beach">
+                  <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=78" alt="Miami beach group memory">
+                  <div>
+                    <span>Shared Album</span>
+                    <strong>Miami beach day</strong>
+                    <small>Maya • Miami 2027 • 18 likes • 3 comments</small>
+                  </div>
+                  <div class="memory-card-actions">
+                    <button type="button" data-memory-like="miami-beach" aria-pressed="false">Like <b>18</b></button>
+                    <button type="button" data-memory-comment-open="miami-beach">Comment</button>
+                    <button type="button" data-memory-action="Share Album">Share</button>
+                  </div>
+                </article>
+                <article class="memory-media-card" data-memory-card="team-retreat">
+                  <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=900&q=78" alt="Corporate retreat team memory">
+                  <div>
+                    <span>Company Only</span>
+                    <strong>Leadership retreat workshop</strong>
+                    <small>Event Team • Corporate Retreat • 9 likes • 2 comments</small>
+                  </div>
+                  <div class="memory-card-actions">
+                    <button type="button" data-memory-like="team-retreat" aria-pressed="false">Like <b>9</b></button>
+                    <button type="button" data-memory-comment-open="team-retreat">Comment</button>
+                    <button type="button" data-memory-action="Set Privacy">Privacy</button>
+                  </div>
+                </article>
+              </section>
+              <aside class="memory-comments-panel" aria-label="Selected memory comments">
+                <p class="eyebrow">Comments</p>
+                <h3 id="memoryCommentTitle">Santorini sunset dinner</h3>
+                <div class="memory-comment-list" id="memoryCommentList">
+                  <div><b>AM</b><span>That view was unreal.</span><time>8:42 PM</time></div>
+                  <div><b>MC</b><span>Adding this to the shared album.</span><time>8:49 PM</time></div>
+                </div>
+                <form class="memory-comment-form" id="memoryCommentForm">
+                  <input id="memoryCommentInput" placeholder="Add a comment to this memory" aria-label="Add a comment to this memory">
+                  <button type="submit">Post</button>
+                </form>
+                <p class="small" id="memoriesStatus">Likes, comments, and notifications follow each media item's privacy setting.</p>
+              </aside>
+            </div>
+            <div class="memory-album-grid">
+              <article><strong>Day 3 - Santorini</strong><span>42 photos • 8 videos • Trip Members</span><button type="button" data-memory-action="Open Album">Open Album</button></article>
+              <article><strong>Miami 2027 Favorites</strong><span>18 photos • Selected Users</span><button type="button" data-memory-action="Manage Album">Manage</button></article>
+              <article><strong>Corporate Approved</strong><span>12 photos • Company Only</span><button type="button" data-memory-action="Review Privacy">Review</button></article>
+            </div>
           </section>
 
           <section class="panel enterprise-rbac" id="enterpriseRbac">
@@ -2104,10 +2218,64 @@
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Trip Virtual Wallet</p>
-                <h2>One shared wallet for Miami 2027</h2>
+                <h2>Shared-trip money, made simple</h2>
+                <p>Balances, trip wallets, virtual cards, split bills, payment requests, refunds, and transactions are grouped into clear Wallet sections.</p>
               </div>
               <span class="card-status active">Active</span>
             </div>
+            <section class="wallet-redesign-shell" aria-label="Wallet home">
+              <aside class="wallet-section-nav" aria-label="Wallet sections">
+                <button class="active" type="button" data-wallet-section="overview">Overview</button>
+                <button type="button" data-wallet-section="myWallet">My Wallet</button>
+                <button type="button" data-wallet-section="tripWallets">Trip Wallets</button>
+                <button type="button" data-wallet-section="virtualCard">Virtual Card</button>
+                <button type="button" data-target="splitBill">Split Bills</button>
+                <button type="button" data-wallet-section="requests">Payment Requests</button>
+                <button type="button" data-wallet-section="transactions">Transactions</button>
+                <button type="button" data-wallet-section="refunds">Refunds</button>
+                <button type="button" data-wallet-section="security">Security</button>
+              </aside>
+              <div class="wallet-home-grid">
+                <article class="wallet-balance-hero">
+                  <span>Total Available Balance</span>
+                  <strong>$3,880</strong>
+                  <small>Shared wallet funds available after reservations, holds, and pending refunds.</small>
+                  <div class="wallet-progress"><i style="--w:61%"></i></div>
+                </article>
+                <article class="wallet-summary-card"><span>Personal Wallet</span><strong>$1,050</strong><small>Deposited by Jordan</small></article>
+                <article class="wallet-summary-card"><span>Shared Trip Wallet</span><strong>$6,400</strong><small>Total contributed</small></article>
+                <article class="wallet-summary-card"><span>Pending Payments</span><strong>$380</strong><small>3 requests need review</small></article>
+                <article class="wallet-summary-card"><span>Refundable Funds</span><strong>$380</strong><small>Eligible unused balance</small></article>
+              </div>
+              <div class="wallet-trip-card-grid">
+                <article class="wallet-trip-tile">
+                  <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=700&auto=format&fit=crop" alt="Miami beach wallet">
+                  <div>
+                    <span>Trip Wallet</span>
+                    <strong>Miami 2027</strong>
+                    <small>8 members • $3,880 available • $380 refundable</small>
+                  </div>
+                  <button type="button" data-wallet-section="tripWallets">View Wallet</button>
+                </article>
+                <article class="wallet-virtual-preview">
+                  <span>Virtual Card</span>
+                  <strong>•••• 4829</strong>
+                  <small>Locked • $380 spendable • PIN required for sensitive actions</small>
+                  <div class="wallet-mini-actions">
+                    <button type="button" id="walletPreviewCardButton">View Card</button>
+                    <button type="button" data-wallet-action="Recent Transactions">Transactions</button>
+                  </div>
+                </article>
+              </div>
+              <div class="wallet-quick-actions-redesign" aria-label="Wallet quick actions">
+                <button type="button" data-wallet-action="Add Funds">Add Funds</button>
+                <button type="button" data-wallet-action="Request Payment">Request Payment</button>
+                <button type="button" data-target="splitBill">Split a Bill</button>
+                <button type="button" data-wallet-action="Transfer to Trip">Transfer to Trip</button>
+                <button type="button" id="walletPreviewRefundButton">Request Refund</button>
+                <button type="button" data-wallet-action="Add Payment Method">Add Payment Method</button>
+              </div>
+            </section>
             <div class="trip-wallet-card">
               <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=900&auto=format&fit=crop" alt="Miami beach trip wallet cover">
               <div>

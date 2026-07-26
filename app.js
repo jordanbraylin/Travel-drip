@@ -3328,7 +3328,8 @@ const routeDefinitions = {
   itineraryAlerts: { path: "/trips/dubai-weekend/itinerary", label: "Itinerary & Alerts" },
   importantInfo: { path: "/trips/dubai-weekend/important-information", label: "Important Information" },
   cruisePanel: { path: "/trips/dubai-weekend/cruise", label: "Cruise" },
-  socialHub: { path: "/messages", label: "Messages & Memories" },
+  socialHub: { path: "/messages", label: "Messages" },
+  memoriesPanel: { path: "/memories", label: "Memories" },
   enterpriseRbac: { path: "/corporate", label: "Corporate" },
   securityCenter: { path: "/profile", label: "Profile & Settings" },
   copyrightPolicy: { path: "/settings/help", label: "Help & Copyright" }
@@ -3394,7 +3395,7 @@ const routeAliases = {
   "/trips/dubai-weekend/private-messages": "socialHub",
   "/trips/dubai-weekend/documents": "importantInfo",
   "/trips/dubai-weekend/important-information": "importantInfo",
-  "/trips/dubai-weekend/memories": "socialHub",
+  "/trips/dubai-weekend/memories": "memoriesPanel",
   "/trips/dubai-weekend/settings": "securityCenter",
   "/trips/dubai-weekend/cruise": "rideShareHub",
   "/messages": "socialHub",
@@ -3403,7 +3404,7 @@ const routeAliases = {
   "/messages/announcements": "socialHub",
   "/messages/ai-trip-manager": "socialHub",
   "/messages/media": "socialHub",
-  "/memories": "socialHub",
+  "/memories": "memoriesPanel",
   "/corporate": "enterpriseRbac",
   "/corporate/my-flight": "enterpriseRbac",
   "/corporate/my-hotel": "enterpriseRbac",
@@ -5388,6 +5389,67 @@ function wireLocalInteractions() {
     $("#messageStatus").textContent = "Notification simulated: @mention in Miami 2027 opened the correct group chat and highlighted the message.";
     addAuditEntry("Message notification routed", "Simulated @mention notification opened the correct conversation.");
     await saveSyncedEvent("message_notification_routed", { type: "mention", conversation: "Miami 2027" });
+  });
+
+  $$("[data-memory-like]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const count = button.querySelector("b");
+      const liked = button.getAttribute("aria-pressed") === "true";
+      button.setAttribute("aria-pressed", String(!liked));
+      button.classList.toggle("active", !liked);
+      if (count) count.textContent = String(Math.max(0, Number(count.textContent || 0) + (liked ? -1 : 1)));
+      $("#memoriesStatus").textContent = liked
+        ? "Like removed. Duplicate likes are prevented for this media item."
+        : "Memory liked. The like count updated for authorized viewers only.";
+      await saveSyncedEvent("memory_like_updated", { mediaId: button.dataset.memoryLike, liked: !liked });
+    });
+  });
+
+  $$("[data-memory-comment-open]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const card = button.closest("[data-memory-card]");
+      const title = card?.querySelector("strong")?.textContent || "Selected memory";
+      if ($("#memoryCommentTitle")) $("#memoryCommentTitle").textContent = title;
+      $("#memoryCommentInput")?.focus();
+      $("#memoriesStatus").textContent = `Comment panel opened for ${title}. Comments stay attached to this media item.`;
+      await saveSyncedEvent("memory_comment_panel_opened", { mediaId: button.dataset.memoryCommentOpen, title });
+    });
+  });
+
+  $("#memoryCommentForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const input = $("#memoryCommentInput");
+    const text = input.value.trim();
+    if (!text) return;
+    $("#memoryCommentList")?.insertAdjacentHTML("beforeend", `<div><b>JS</b><span>${escapeHtml(text)}</span><time>Now</time></div>`);
+    input.value = "";
+    $("#memoriesStatus").textContent = "Comment posted to the selected memory. Privacy rules control who can see it.";
+    await saveSyncedEvent("memory_comment_added", { title: $("#memoryCommentTitle")?.textContent, privacyAware: true });
+  });
+
+  $$("[data-memory-view]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      $$("[data-memory-view]").forEach((view) => view.classList.toggle("active", view === button));
+      $("#memoriesStatus").textContent = `${button.textContent} opened. Memories remains media-only with no chat conversations.`;
+      await saveSyncedEvent("memory_view_opened", { view: button.dataset.memoryView });
+    });
+  });
+
+  $("#walletPreviewCardButton")?.addEventListener("click", () => {
+    $("#virtualCard")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    $("#cardMessage").textContent = "Virtual Card opened from Wallet overview. Wallet PIN is still required for sensitive card actions.";
+  });
+
+  $("#walletPreviewRefundButton")?.addEventListener("click", () => {
+    $("#requestRefundButton")?.click();
+  });
+
+  $$("[data-wallet-section]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      $$("[data-wallet-section]").forEach((sectionButton) => sectionButton.classList.toggle("active", sectionButton === button));
+      $("#walletMessage").textContent = `${button.textContent} opened in Wallet. Existing balances, ledgers, refunds, and security controls remain preserved below.`;
+      await saveSyncedEvent("wallet_section_opened", { section: button.dataset.walletSection });
+    });
   });
 
   $("#authForm")?.addEventListener("submit", (event) => {
