@@ -1,0 +1,170 @@
+/* TravelDrip UI redesign: one predictable toolbar layer system. */
+:root {
+  --td-toolbar-gap: 12px;
+  --td-toolbar-height: 72px;
+  --td-destination-height: 84px;
+}
+
+body.signed-in-shell main {
+  min-width: 0;
+}
+
+body.signed-in-shell .topbar {
+  position: sticky !important;
+  top: 12px !important;
+  z-index: 30 !important;
+  display: grid;
+  grid-template-columns: auto minmax(220px, 1fr) auto auto;
+  align-items: center;
+  gap: var(--td-toolbar-gap);
+  min-width: 0;
+  max-width: 100%;
+}
+
+body.signed-in-shell .topbar > *,
+body.signed-in-shell .top-actions,
+body.signed-in-shell .search,
+body.signed-in-shell .lets-plan-button {
+  min-width: 0;
+  max-width: 100%;
+}
+
+body.signed-in-shell .top-actions,
+body.signed-in-shell .global-destination-actions,
+body.signed-in-shell .hero-actions,
+body.signed-in-shell .travel-workspace-toolbar,
+body.signed-in-shell .ride-toolbar,
+body.signed-in-shell .dashboard-controls,
+body.signed-in-shell .explore-results-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+body.signed-in-shell .top-actions {
+  justify-content: flex-end;
+}
+
+body.signed-in-shell .global-destination-header:not([hidden]) {
+  position: sticky !important;
+  top: calc(12px + var(--td-toolbar-height) + var(--td-toolbar-gap)) !important;
+  z-index: 24 !important;
+  min-width: 0;
+  max-width: 100%;
+  margin: var(--td-toolbar-gap) 0;
+}
+
+body.signed-in-shell main > .trip-tab-bar {
+  position: sticky !important;
+  top: calc(12px + var(--td-toolbar-height) + var(--td-toolbar-gap) + var(--td-destination-height) + var(--td-toolbar-gap)) !important;
+  z-index: 22 !important;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  overscroll-behavior-x: contain;
+}
+
+body.signed-in-shell .trip-tab-bar button {
+  flex: 0 0 auto !important;
+  min-width: max-content;
+  white-space: nowrap;
+}
+
+body.signed-in-shell .widget-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+body.signed-in-shell .widget-toolbar span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+body.signed-in-shell .travel-workspace-toolbar > *,
+body.signed-in-shell .ride-toolbar > *,
+body.signed-in-shell .dashboard-controls > *,
+body.signed-in-shell .explore-results-toolbar > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+body.signed-in-shell .topbar button,
+body.signed-in-shell .topbar input,
+body.signed-in-shell .topbar select,
+body.signed-in-shell .global-destination-header button,
+body.signed-in-shell .trip-tab-bar button {
+  max-width: 100%;
+}
+
+body.signed-in-shell main > :where(section, nav, header) {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 1100px) {
+  body.signed-in-shell .topbar {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  body.signed-in-shell .lets-plan-button {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  body.signed-in-shell .top-actions {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+
+@media (max-width: 760px) {
+  body.signed-in-shell main {
+    padding-bottom: calc(124px + env(safe-area-inset-bottom)) !important;
+  }
+
+  body.signed-in-shell .topbar,
+  body.signed-in-shell .global-destination-header:not([hidden]),
+  body.signed-in-shell main > .trip-tab-bar {
+    position: relative !important;
+    top: auto !important;
+    z-index: 2 !important;
+  }
+
+  body.signed-in-shell .topbar {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+  }
+
+  body.signed-in-shell .lets-plan-button,
+  body.signed-in-shell .top-actions {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    justify-content: stretch;
+  }
+
+  body.signed-in-shell .top-actions > * {
+    flex: 1 1 120px;
+  }
+
+  body.signed-in-shell .global-destination-header:not([hidden]) {
+    margin: 10px 0;
+  }
+
+  body.signed-in-shell main > .trip-tab-bar {
+    margin: 10px 0 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.signed-in-shell * {
+    scroll-behavior: auto !important;
+  }
+}
