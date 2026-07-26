@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-    <link rel="stylesheet" href="styles.css?v=99">
+    <link rel="stylesheet" href="styles.css?v=100">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -323,16 +323,16 @@
       </section>
 
       <nav class="trip-tab-bar" aria-label="Selected trip sections">
-        <button class="active" type="button" data-target="dashboardHome">Overview</button>
-        <button type="button" data-target="rideShareHub">Travel</button>
-        <button type="button" data-target="aiTravelPlanner">Planning</button>
-        <button type="button" data-target="rideShareHub" data-travel-section="itinerary">Itinerary</button>
-        <button type="button" data-target="eventsPanel">Events</button>
-        <button type="button" data-target="walletPanel">Wallet</button>
-        <button type="button" data-target="memoriesPanel">Memories</button>
-        <button type="button" data-target="socialHub">Chat</button>
-        <button type="button" data-target="importantInfo">Important Info</button>
-        <button type="button" data-target="adminPanel">Settings</button>
+        <button class="active" type="button" data-target="dashboardHome" data-tab-key="overview">Overview</button>
+        <button type="button" data-target="rideShareHub" data-tab-key="travel">Travel</button>
+        <button type="button" data-target="aiTravelPlanner" data-tab-key="planning">Planning</button>
+        <button type="button" data-target="rideShareHub" data-tab-key="itinerary" data-travel-section="itinerary">Itinerary</button>
+        <button type="button" data-target="eventsPanel" data-tab-key="events">Events</button>
+        <button type="button" data-target="walletPanel" data-tab-key="wallet">Wallet</button>
+        <button type="button" data-target="memoriesPanel" data-tab-key="memories">Memories</button>
+        <button type="button" data-target="socialHub" data-tab-key="chat">Chat</button>
+        <button type="button" data-target="importantInfo" data-tab-key="important-info">Important Info</button>
+        <button type="button" data-target="adminPanel" data-tab-key="settings">Settings</button>
       </nav>
 
       <section class="panel corporate-mode-home" id="corporateHome" hidden aria-label="Corporate travel home">

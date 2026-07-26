@@ -1842,6 +1842,12 @@ function setTravelFocus(section = "overview", options = {}) {
     history.pushState({ target: "rideShareHub", travelSection: target }, "", destination.route);
   }
   localStorage.setItem("traveldripTravelFocus", target);
+  const activeTripTab = target === "itinerary" ? "itinerary" : "travel";
+  $$(".trip-tab-bar button").forEach((button) => {
+    const active = button.dataset.tabKey === activeTripTab;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-current", active ? "page" : "false");
+  });
   return destination;
 }
 
@@ -1864,6 +1870,12 @@ function showTravelTileDestination(section) {
     button.setAttribute("aria-pressed", String(active));
   });
   history.pushState({ target: "rideShareHub", travelSection: section }, "", destination.route);
+  const activeTripTab = section === "itinerary" ? "itinerary" : "travel";
+  $$(".trip-tab-bar button").forEach((button) => {
+    const active = button.dataset.tabKey === activeTripTab;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-current", active ? "page" : "false");
+  });
   return destination;
 }
 
@@ -3713,9 +3725,14 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
     section.setAttribute("aria-hidden", "true");
   });
 
+  const activeTabKey = resolvedTarget === "rideShareHub" && history.state?.travelSection === "itinerary"
+    ? "itinerary"
+    : resolvedTarget;
   $$(".nav button, .mobile-nav button, .trip-tab-bar button, [data-target]").forEach((navButton) => {
-    navButton.classList.toggle("active", navButton.dataset.target === resolvedTarget);
-    if (navButton.dataset.target) navButton.setAttribute("aria-current", navButton.dataset.target === resolvedTarget ? "page" : "false");
+    const navigationKey = navButton.dataset.tabKey || navButton.dataset.target;
+    const isActive = navigationKey === activeTabKey;
+    navButton.classList.toggle("active", isActive);
+    if (navButton.dataset.target) navButton.setAttribute("aria-current", isActive ? "page" : "false");
   });
 
   const route = getRouteForTarget(resolvedTarget);
