@@ -3779,12 +3779,19 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
     section.setAttribute("aria-hidden", "true");
   });
 
-  const activeTabKey = resolvedTarget === "rideShareHub" && history.state?.travelSection === "itinerary"
-    ? "itinerary"
+  const activeTravelSection = resolvedTarget === "rideShareHub"
+    ? history.state?.travelSection || "overview"
+    : "";
+  const activeTabKey = resolvedTarget === "rideShareHub"
+    ? activeTravelSection === "itinerary" ? "itinerary" : "travel"
     : resolvedTarget;
-  $$(".nav button, .mobile-nav button, .trip-tab-bar button, [data-target]").forEach((navButton) => {
+  $$(".nav button, .nav a, .mobile-nav button, .trip-tab-bar button").forEach((navButton) => {
     const navigationKey = navButton.dataset.tabKey || navButton.dataset.target;
-    const isActive = navigationKey === activeTabKey;
+    const travelSection = navButton.dataset.travelSection || "";
+    const isTravelSectionItem = navButton.dataset.target === "rideShareHub" && travelSection;
+    const isActive = isTravelSectionItem
+      ? resolvedTarget === "rideShareHub" && travelSection === activeTravelSection
+      : navigationKey === activeTabKey;
     navButton.classList.toggle("active", isActive);
     if (navButton.dataset.target) navButton.setAttribute("aria-current", isActive ? "page" : "false");
   });
