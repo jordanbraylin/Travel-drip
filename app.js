@@ -2103,16 +2103,24 @@ function renderExplore(categoryKey = getActiveExploreCategory()) {
     return `
     <article class="explore-card" data-explore-card="${escapeHtml(item.id)}">
       <button class="explore-card-main" type="button" data-explore-detail="${escapeHtml(item.id)}">
-        <img src="${item.image}" alt="${escapeHtml(item.title)}">
-        <span>${escapeHtml(item.type)}</span>
-        <h3>${escapeHtml(item.title)}</h3>
-        <p>${escapeHtml(item.description)}</p>
-        <div class="explore-card-meta">
-          <strong>${escapeHtml(item.price)}</strong>
-          <small>${item.rating.toFixed(1)} rating</small>
-          <small>${item.distance ? `${item.distance} mi` : "Trip estimate"}</small>
-          <small>${escapeHtml(item.status)}</small>
-        </div>
+        <span class="trending-media animated-discovery-media">
+          <img src="${item.image}" alt="${escapeHtml(item.title)}" loading="lazy">
+        </span>
+        <span class="discovery-content">
+          <span class="eyebrow">${escapeHtml(item.type)}</span>
+          <strong class="discovery-title">${escapeHtml(item.title)}</strong>
+          <span class="discovery-location">${escapeHtml(destination)}</span>
+          <span class="discovery-description">${escapeHtml(item.description)}</span>
+          <span class="discovery-tags">
+            ${item.details.slice(0, 2).map((detail) => `<span>${escapeHtml(detail)}</span>`).join("")}
+          </span>
+          <span class="explore-card-meta">
+            <strong>${escapeHtml(item.price)}</strong>
+            <small>${item.rating.toFixed(1)} rating</small>
+            <small>${item.distance ? `${item.distance} mi` : "Trip estimate"}</small>
+            <small>${escapeHtml(item.status)}</small>
+          </span>
+        </span>
       </button>
       <div class="explore-card-actions">
         ${primaryActions.map((action) => `<button type="button" data-explore-action="${escapeHtml(action)}" data-explore-item="${escapeHtml(item.id)}">${escapeHtml(action)}</button>`).join("")}
