@@ -697,12 +697,12 @@
               <div class="event-create-grid">
                 <label>Event name<input type="text" value="Maya's rooftop birthday"></label>
                 <label>Event type<select><option>Birthday</option><option>Wedding</option><option>Baby Shower</option><option>Graduation</option><option>Conference</option><option>Custom Event</option></select></label>
-                <label>Date<input type="date" value="2026-08-12"></label>
+                <label>Date<input id="eventDateInput" type="date" value="2026-08-12"></label>
                 <label>Start time<input type="time" value="19:30"></label>
                 <label>End time<input type="time" value="23:00"></label>
                 <label>Venue<input type="text" value="Skyline Rooftop"></label>
                 <label class="wide">Address<input type="text" value="Miami, FL"></label>
-                <label>RSVP deadline<input type="date" value="2026-08-01"></label>
+                <label>RSVP deadline<input id="eventRsvpInput" type="date" value="2026-08-01"></label>
                 <label>Privacy<select><option>Invite only</option><option>Approval required</option><option>Public invitation link</option><option>Private</option></select></label>
                 <label class="wide">Description<textarea>Celebrate with dinner, music, photos, memories, RSVP tracking, guest updates, and shared event expenses.</textarea></label>
               </div>
@@ -2803,7 +2803,7 @@
                 </section>
                 <section class="travel-focus-panel" data-travel-panel="flights">
                   <div class="travel-focus-header"><span class="travel-focus-icon">✈️</span><div><p class="eyebrow">Flights</p><h3>Search, save, and manage flights</h3><p>Only flight-related confirmations, alerts, and boarding-pass shortcuts appear here.</p></div><button class="primary-button" type="button" data-travel-focus-action="Search Flights">Search Flights</button></div>
-                  <div class="travel-form-row"><input type="text" value="Miami (MIA)" aria-label="Origin airport"><input type="text" value="Tokyo (HND)" aria-label="Destination airport"><input type="date" value="2026-07-18" aria-label="Departure date"><button type="button" data-travel-focus-action="Upload Flight Confirmation">Upload Confirmation</button></div>
+                  <div class="travel-form-row"><input type="text" value="Miami (MIA)" aria-label="Origin airport"><input type="text" value="Tokyo (HND)" aria-label="Destination airport"><input id="flightDepartureDateInput" type="date" value="2026-07-18" aria-label="Departure date"><button type="button" data-travel-focus-action="Upload Flight Confirmation">Upload Confirmation</button></div>
                   <div class="travel-focus-grid"><article><span>Confirmed flight</span><strong>Delta DL 241</strong><small>MIA 8:45 AM → HND 3:20 PM • Conf DL-48291</small><button type="button" data-travel-focus="boarding">View Boarding Pass</button></article><article><span>Flight alert</span><strong>Check-in opens soon</strong><small>Reminder queued 24 hours before departure.</small><button type="button" data-travel-focus-action="Set Flight Reminder">Set Reminder</button></article></div>
                 </section>
                 <section class="travel-focus-panel" data-travel-panel="hotels">
@@ -4404,6 +4404,6 @@
   </dialog>
 
   <script src="public-config.js?v=2"></script>
-  <script defer src="app.js?v=56"></script>
+  <script defer src="app.js?v=57"></script>
 </body>
 </html>

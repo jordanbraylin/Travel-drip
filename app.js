@@ -1906,6 +1906,19 @@ function validateTripDateRanges() {
   return !invalidEndDate && ![eventRsvp, inviteDeadline].some((deadline) => deadline?.validationMessage);
 }
 
+function validateStandaloneDateInputs() {
+  const eventDate = $("#eventDateInput");
+  const eventRsvp = $("#eventRsvpInput");
+  if (eventDate && eventRsvp) {
+    eventRsvp.min = eventDate.value || "";
+    eventRsvp.setCustomValidity(eventDate.value && eventRsvp.value && eventRsvp.value > eventDate.value
+      ? "RSVP deadline should be on or before the event date."
+      : "");
+  }
+  const flightDate = $("#flightDepartureDateInput");
+  if (flightDate) flightDate.setCustomValidity("");
+}
+
 async function apiRequest(path, options = {}) {
   if (!state.session?.access_token || isFilePreview) return { skipped: true, reason: "No deployed authenticated API session" };
   const response = await fetch(path, {
@@ -3825,6 +3838,11 @@ function openPlanningWorkflow(type = "group") {
 }
 
 function wireLocalInteractions() {
+  ["#eventDateInput", "#eventRsvpInput", "#flightDepartureDateInput"].forEach((selector) => {
+    $(selector)?.addEventListener("input", validateStandaloneDateInputs);
+    $(selector)?.addEventListener("change", validateStandaloneDateInputs);
+  });
+  validateStandaloneDateInputs();
   renderPlan(0);
   renderBillSplit();
   renderTransportHub("flights");

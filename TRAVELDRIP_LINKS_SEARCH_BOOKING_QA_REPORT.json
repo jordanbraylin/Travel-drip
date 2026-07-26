@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-07-23T01:10:49.187Z",
+  "generatedAt": "2026-07-26T22:30:31.143Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
   },
   "totals": {
-    "screenIds": 503,
-    "buttons": 475,
+    "screenIds": 553,
+    "buttons": 767,
     "hrefLinks": 14,
-    "dataTargets": 94,
-    "uniqueDataTargets": 16,
-    "routeDefinitions": 16,
-    "dateInputs": 4,
-    "searchInputs": 7,
-    "actionAttributeTypes": 60,
-    "apiRoutes": 14
+    "dataTargets": 120,
+    "uniqueDataTargets": 19,
+    "routeDefinitions": 19,
+    "dateInputs": 7,
+    "searchInputs": 10,
+    "actionAttributeTypes": 80,
+    "apiRoutes": 15
   },
   "linkAndRouteVerification": {
-    "workingLocalTargets": 16,
+    "workingLocalTargets": 19,
     "targetIssues": [],
     "ariaIssues": [],
     "linkIssues": [],
@@ -31,6 +31,18 @@
   "datePickerVerification": {
     "status": "Native browser date/datetime-local controls present locally; full custom popover/mobile calendar QA requires browser/device testing.",
     "fields": [
+      {
+        "id": "eventDateInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      },
+      {
+        "id": "eventRsvpInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      },
       {
         "id": "tripStartInput",
         "type": "date",
@@ -51,6 +63,12 @@
       },
       {
         "id": "inviteDeadlineInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      },
+      {
+        "id": "flightDepartureDateInput",
         "type": "date",
         "referencedInApp": true,
         "hasDefaultValue": true
@@ -104,6 +122,16 @@
         "hasLabelOrPlaceholder": true
       },
       {
+        "id": "travelSmartSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "travelSettingsSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
         "id": "transportSearchInput",
         "referencedInApp": true,
         "hasLabelOrPlaceholder": true
@@ -115,6 +143,11 @@
       },
       {
         "id": "privateDriverSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "settingsSearchInput",
         "referencedInApp": true,
         "hasLabelOrPlaceholder": true
       }
@@ -152,6 +185,7 @@
       "config.js",
       "events.js",
       "explore.js",
+      "ghl-sync.js",
       "guest-access.js",
       "health.js",
       "invitations.js",
