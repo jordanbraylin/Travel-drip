@@ -18191,3 +18191,218 @@ body.app-routed main {
     margin-left: 0;
   }
 }
+
+/* Section 72: Smart dashboard appearance mirrored across every app tab */
+:root {
+  --td-dashboard-shell: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(240, 249, 255, 0.78));
+  --td-dashboard-card-bg: rgba(255, 255, 255, 0.96);
+  --td-dashboard-card-border: rgba(15, 23, 42, 0.08);
+  --td-dashboard-card-shadow: 0 12px 26px rgba(15, 23, 42, 0.07);
+  --td-dashboard-card-radius: 18px;
+  --td-dashboard-card-gap: clamp(14px, 1.8vw, 20px);
+  --td-dashboard-pad: clamp(16px, 2vw, 24px);
+}
+
+body.app-routed main > section.panel:not([hidden]),
+body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome) {
+  width: 100%;
+  max-width: 100%;
+  display: grid !important;
+  gap: var(--td-dashboard-card-gap);
+  padding: var(--td-dashboard-pad);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 24px !important;
+  background: var(--td-dashboard-shell);
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+}
+
+#dashboardHome {
+  border-radius: 28px;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.12);
+}
+
+#exploreDrops,
+#tripsPanel,
+#cruisePanel,
+#socialHub,
+#memoriesPanel,
+#importantInfo,
+#walletPanel,
+#rideShareHub,
+#itineraryAlerts,
+#myProfile,
+#adminPanel {
+  align-content: start;
+}
+
+#exploreDrops > .section-heading,
+#tripsPanel > .section-heading,
+#cruisePanel > .section-heading,
+#socialHub > .section-heading,
+#memoriesPanel > .section-heading,
+#importantInfo > .section-heading,
+#walletPanel > .section-heading,
+#rideShareHub > .section-heading,
+#itineraryAlerts > .section-heading,
+#myProfile > .section-heading,
+#adminPanel > .section-heading {
+  margin: 0;
+  padding: clamp(14px, 1.6vw, 18px);
+  border-radius: 18px !important;
+  background:
+    linear-gradient(135deg, rgba(224, 242, 254, 0.92), rgba(255, 237, 213, 0.78)),
+    #ffffff;
+}
+
+#exploreDrops > :where(section, article, div, form):not(.section-heading):not(.explore-tabs):not(.explore-subfilters):not(.explore-results-toolbar):not(.button-row):not(.mini-action-row):not([hidden]),
+#tripsPanel > :where(section, article, div, form):not(.section-heading):not(.button-row):not(.mini-action-row):not([hidden]),
+#cruisePanel > :where(section, article, div, form):not(.section-heading):not(.button-row):not(.mini-action-row):not([hidden]),
+#socialHub > :where(section, article, div, form):not(.section-heading):not(.button-row):not(.mini-action-row):not([hidden]),
+#memoriesPanel > :where(section, article, div, form):not(.section-heading):not(.button-row):not(.mini-action-row):not([hidden]),
+#importantInfo > :where(section, article, div, form):not(.section-heading):not(.button-row):not(.mini-action-row):not([hidden]),
+#walletPanel > :where(section, article, div, form):not(.section-heading):not(.button-row):not(.mini-action-row):not([hidden]),
+#rideShareHub > :where(section, article, div, form):not(.section-heading):not(.travel-section-nav):not(.button-row):not(.mini-action-row):not([hidden]),
+#itineraryAlerts > :where(section, article, div, form):not(.section-heading):not(.button-row):not(.mini-action-row):not([hidden]),
+#myProfile > :where(section, article, div, form):not(.section-heading):not(.profile-social-hero):not(.profile-quick-actions):not(.button-row):not(.mini-action-row):not([hidden]),
+#adminPanel > :where(section, article, div, form):not(.section-heading):not(.button-row):not(.mini-action-row):not([hidden]) {
+  min-width: 0;
+  border-radius: var(--td-dashboard-card-radius) !important;
+  border: 1px solid var(--td-dashboard-card-border);
+  background: var(--td-dashboard-card-bg);
+  box-shadow: var(--td-dashboard-card-shadow);
+}
+
+#exploreDrops :where(.explore-context-grid, .explore-results-grid, .explore-skeleton-grid, .explore-grid, .destination-grid),
+#tripsPanel :where(.event-experience-grid, .solo-dashboard-grid, .feature-toggle-grid, .solo-workspace, .invitation-builder-grid, .invitation-options-grid),
+#cruisePanel :where(.cruise-dashboard-grid, .cruise-doc-grid, .cruise-activity-grid, .cruise-card-grid, .cruise-corporate-rules),
+#socialHub :where(.messages-layout, .message-support-grid, .daily-memory-grid, .social-hub-layout, .platform-grid),
+#memoriesPanel :where(.memories-gallery-shell, .memory-gallery-grid, .memory-album-grid, .memory-action-grid, .profile-memory-gallery),
+#importantInfo :where(.info-status-grid, .important-info-grid, .document-list, .info-card-grid),
+#walletPanel :where(.wallet-dashboard-header, .wallet-home-grid, .wallet-trip-card-grid, .wallet-dashboard-sections, .wallet-section-card-grid, .wallet-action-grid, .wallet-breakdown),
+#rideShareHub :where(.travel-overview-card, .travel-dashboard-sections, .travel-booking-summary, .travel-transport-summary, .travel-focus-grid, .travel-provider-cards, .visual-pass-grid, .ride-recommendation-grid, .private-driver-list, .transport-record-list),
+#itineraryAlerts :where(.itinerary-dashboard, .travel-itinerary-dashboard, .upcoming-reservation-grid, .reservation-reminder-grid, .alert-category-grid, .delivery-preferences),
+#myProfile :where(.profile-card-grid, .profile-stats-grid, .profile-adventure-grid, .profile-connections-grid, .profile-personal-grid, .profile-photo-policy-grid),
+#adminPanel :where(.settings-shell, .admin-settings-shell, .security-status-grid, .security-control-grid, .fraud-signal-list, .backend-summary-grid, .backend-readiness-grid, .audit-grid) {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)) !important;
+  gap: var(--td-dashboard-card-gap) !important;
+  align-items: stretch;
+}
+
+#exploreDrops :where(.explore-context-grid > *, .explore-results-grid > *, .explore-skeleton-grid > *, .explore-grid > *, .destination-grid > *),
+#tripsPanel :where(.event-experience-grid > *, .solo-dashboard-grid > *, .feature-toggle-grid > *, .solo-workspace > *, .invitation-builder-grid > *, .invitation-options-grid > *),
+#cruisePanel :where(.cruise-dashboard-grid > *, .cruise-doc-grid > *, .cruise-activity-grid > *, .cruise-card-grid > *, .cruise-corporate-rules > *),
+#socialHub :where(.message-support-grid > *, .daily-memory-grid > *, .platform-grid > *),
+#memoriesPanel :where(.memory-gallery-grid > *, .memory-album-grid > *, .memory-action-grid > *),
+#importantInfo :where(.info-status-grid > *, .important-info-grid > *, .document-list > *, .info-card-grid > *),
+#walletPanel :where(.wallet-dashboard-header > *, .wallet-home-grid > *, .wallet-trip-card-grid > *, .wallet-dashboard-sections > *, .wallet-section-card-grid > *, .wallet-action-grid > *, .wallet-breakdown > *),
+#rideShareHub :where(.travel-overview-card > *, .travel-dashboard-sections > *, .travel-booking-summary > *, .travel-transport-summary > *, .travel-focus-grid > *, .travel-provider-cards > *, .visual-pass-grid > *, .ride-recommendation-grid > *, .private-driver-list > *, .transport-record-list > *),
+#itineraryAlerts :where(.itinerary-dashboard > *, .travel-itinerary-dashboard > *, .upcoming-reservation-grid > *, .reservation-reminder-grid > *, .alert-category-grid > *, .delivery-preferences > *),
+#myProfile :where(.profile-card-grid > *, .profile-stats-grid > *, .profile-adventure-grid > *, .profile-connections-grid > *, .profile-personal-grid > *, .profile-photo-policy-grid > *),
+#adminPanel :where(.security-status-grid > *, .security-control-grid > *, .fraud-signal-list > *, .backend-summary-grid > *, .backend-readiness-grid > *, .audit-grid > *) {
+  grid-column: auto !important;
+  min-width: 0;
+  border-radius: var(--td-dashboard-card-radius) !important;
+  border: 1px solid var(--td-dashboard-card-border);
+  background:
+    linear-gradient(180deg, #ffffff, rgba(248, 253, 255, 0.86)),
+    #ffffff;
+  box-shadow: var(--td-dashboard-card-shadow);
+}
+
+#socialHub .messages-layout,
+#memoriesPanel .memories-gallery-shell,
+#adminPanel .settings-shell,
+#adminPanel .admin-settings-shell,
+#rideShareHub .travel-settings-shell,
+#rideShareHub .travel-workspace-grid,
+#walletPanel .wallet-redesign-shell,
+#myProfile .profile-card-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)) !important;
+}
+
+#exploreDrops :where(.explore-tabs, .explore-subfilters),
+#rideShareHub :where(.travel-section-nav, .travel-pass-filters, .pass-filter-row),
+#socialHub .message-tabs,
+#adminPanel .settings-nav-panel,
+#walletPanel .wallet-section-nav {
+  margin: 0;
+  border-radius: 999px !important;
+  background: #ffffff;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+}
+
+#exploreDrops :where(button, .primary-button, .ghost-button),
+#tripsPanel :where(button, .primary-button, .ghost-button),
+#cruisePanel :where(button, .primary-button, .ghost-button),
+#socialHub :where(button, .primary-button, .ghost-button),
+#memoriesPanel :where(button, .primary-button, .ghost-button),
+#importantInfo :where(button, .primary-button, .ghost-button),
+#walletPanel :where(button, .primary-button, .ghost-button),
+#rideShareHub :where(button, .primary-button, .ghost-button),
+#itineraryAlerts :where(button, .primary-button, .ghost-button),
+#myProfile :where(button, .primary-button, .ghost-button),
+#adminPanel :where(button, .primary-button, .ghost-button) {
+  min-height: 40px;
+}
+
+@media (min-width: 1180px) {
+  #exploreDrops :where(.explore-context-grid, .explore-results-grid, .explore-grid, .destination-grid),
+  #tripsPanel :where(.solo-dashboard-grid, .feature-toggle-grid, .solo-workspace),
+  #cruisePanel :where(.cruise-dashboard-grid, .cruise-card-grid),
+  #socialHub :where(.message-support-grid, .daily-memory-grid, .platform-grid),
+  #memoriesPanel :where(.memory-gallery-grid, .memory-album-grid),
+  #importantInfo :where(.info-status-grid, .important-info-grid),
+  #walletPanel :where(.wallet-dashboard-header, .wallet-home-grid, .wallet-trip-card-grid, .wallet-section-card-grid, .wallet-action-grid),
+  #rideShareHub :where(.travel-overview-card, .travel-dashboard-sections, .travel-booking-summary, .travel-transport-summary, .travel-focus-grid, .visual-pass-grid, .ride-recommendation-grid),
+  #itineraryAlerts :where(.itinerary-dashboard, .travel-itinerary-dashboard, .upcoming-reservation-grid, .reservation-reminder-grid),
+  #myProfile :where(.profile-stats-grid, .profile-adventure-grid, .profile-connections-grid, .profile-personal-grid),
+  #adminPanel :where(.security-status-grid, .security-control-grid, .backend-summary-grid, .backend-readiness-grid) {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 920px) {
+  body.app-routed main > section.panel:not([hidden]),
+  body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome) {
+    padding: 14px;
+    border-radius: 20px !important;
+  }
+
+  #exploreDrops :where(.explore-context-grid, .explore-results-grid, .explore-grid, .destination-grid),
+  #tripsPanel :where(.event-experience-grid, .solo-dashboard-grid, .feature-toggle-grid, .solo-workspace, .invitation-builder-grid, .invitation-options-grid),
+  #cruisePanel :where(.cruise-dashboard-grid, .cruise-doc-grid, .cruise-activity-grid, .cruise-card-grid, .cruise-corporate-rules),
+  #socialHub :where(.messages-layout, .message-support-grid, .daily-memory-grid, .social-hub-layout, .platform-grid),
+  #memoriesPanel :where(.memories-gallery-shell, .memory-gallery-grid, .memory-album-grid, .memory-action-grid),
+  #importantInfo :where(.info-status-grid, .important-info-grid, .document-list, .info-card-grid),
+  #walletPanel :where(.wallet-dashboard-header, .wallet-home-grid, .wallet-trip-card-grid, .wallet-dashboard-sections, .wallet-section-card-grid, .wallet-action-grid, .wallet-breakdown),
+  #rideShareHub :where(.travel-overview-card, .travel-dashboard-sections, .travel-booking-summary, .travel-transport-summary, .travel-focus-grid, .travel-provider-cards, .visual-pass-grid, .ride-recommendation-grid, .private-driver-list, .transport-record-list),
+  #itineraryAlerts :where(.itinerary-dashboard, .travel-itinerary-dashboard, .upcoming-reservation-grid, .reservation-reminder-grid, .alert-category-grid, .delivery-preferences),
+  #myProfile :where(.profile-card-grid, .profile-stats-grid, .profile-adventure-grid, .profile-connections-grid, .profile-personal-grid, .profile-photo-policy-grid),
+  #adminPanel :where(.settings-shell, .admin-settings-shell, .security-status-grid, .security-control-grid, .fraud-signal-list, .backend-summary-grid, .backend-readiness-grid, .audit-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body.app-routed main > section.panel:not([hidden]),
+  body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome) {
+    padding: 12px;
+    gap: 12px;
+    border-radius: 18px !important;
+  }
+
+  #exploreDrops :where(.explore-context-grid, .explore-results-grid, .explore-grid, .destination-grid),
+  #tripsPanel :where(.event-experience-grid, .solo-dashboard-grid, .feature-toggle-grid, .solo-workspace, .invitation-builder-grid, .invitation-options-grid),
+  #cruisePanel :where(.cruise-dashboard-grid, .cruise-doc-grid, .cruise-activity-grid, .cruise-card-grid, .cruise-corporate-rules),
+  #socialHub :where(.messages-layout, .message-support-grid, .daily-memory-grid, .social-hub-layout, .platform-grid),
+  #memoriesPanel :where(.memories-gallery-shell, .memory-gallery-grid, .memory-album-grid, .memory-action-grid),
+  #importantInfo :where(.info-status-grid, .important-info-grid, .document-list, .info-card-grid),
+  #walletPanel :where(.wallet-dashboard-header, .wallet-home-grid, .wallet-trip-card-grid, .wallet-dashboard-sections, .wallet-section-card-grid, .wallet-action-grid, .wallet-breakdown),
+  #rideShareHub :where(.travel-overview-card, .travel-dashboard-sections, .travel-booking-summary, .travel-transport-summary, .travel-focus-grid, .travel-provider-cards, .visual-pass-grid, .ride-recommendation-grid, .private-driver-list, .transport-record-list),
+  #itineraryAlerts :where(.itinerary-dashboard, .travel-itinerary-dashboard, .upcoming-reservation-grid, .reservation-reminder-grid, .alert-category-grid, .delivery-preferences),
+  #myProfile :where(.profile-card-grid, .profile-stats-grid, .profile-adventure-grid, .profile-connections-grid, .profile-personal-grid, .profile-photo-policy-grid),
+  #adminPanel :where(.settings-shell, .admin-settings-shell, .security-status-grid, .security-control-grid, .fraud-signal-list, .backend-summary-grid, .backend-readiness-grid, .audit-grid) {
+    grid-template-columns: 1fr !important;
+  }
+}
