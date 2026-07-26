@@ -1847,6 +1847,7 @@ function setTravelFocus(section = "overview", options = {}) {
     button.classList.toggle("active", active);
     button.setAttribute("aria-current", active ? "page" : "false");
   });
+  syncNavigationState("rideShareHub", target);
   return destination;
 }
 
@@ -3588,6 +3589,25 @@ const routeAliases = {
 
 const sectionRouteIds = Object.keys(routeDefinitions);
 
+function syncNavigationState(resolvedTarget, travelSection = "") {
+  const activeTravelSection = resolvedTarget === "rideShareHub"
+    ? travelSection || "overview"
+    : "";
+  const activeTabKey = resolvedTarget === "rideShareHub"
+    ? activeTravelSection === "itinerary" ? "itinerary" : "travel"
+    : resolvedTarget;
+  $$(".nav button, .nav a, .mobile-nav button, .trip-tab-bar button").forEach((navButton) => {
+    const navigationKey = navButton.dataset.tabKey || navButton.dataset.target;
+    const buttonTravelSection = navButton.dataset.travelSection || "";
+    const isTravelSectionItem = navButton.dataset.target === "rideShareHub" && buttonTravelSection;
+    const isActive = isTravelSectionItem
+      ? resolvedTarget === "rideShareHub" && buttonTravelSection === activeTravelSection
+      : navigationKey === activeTabKey;
+    navButton.classList.toggle("active", isActive);
+    if (navButton.dataset.target) navButton.setAttribute("aria-current", isActive ? "page" : "false");
+  });
+}
+
 function normalizeAppPath(pathname = location.pathname) {
   const clean = pathname.replace(/\/+$/, "") || "/";
   if (clean.endsWith("/index.html")) return "/index.html";
@@ -3752,6 +3772,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
     $$(selector).forEach((section) => {
       section.hidden = !isHome;
       section.setAttribute("aria-hidden", String(!isHome));
+      section.inert = !isHome;
     });
   });
 
@@ -3759,42 +3780,32 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   if (contentGrid) {
     contentGrid.hidden = isHome;
     contentGrid.setAttribute("aria-hidden", String(isHome));
+    contentGrid.inert = isHome;
   }
 
   sectionRouteIds.forEach((sectionId) => {
     const section = document.getElementById(sectionId);
     if (!section) return;
     section.classList.add("route-screen");
-    section.hidden = sectionId !== resolvedTarget;
-    section.setAttribute("aria-hidden", String(sectionId !== resolvedTarget));
+    const visible = sectionId === resolvedTarget;
+    section.hidden = !visible;
+    section.setAttribute("aria-hidden", String(!visible));
+    section.inert = !visible;
   });
   $$("[data-route-support]").forEach((section) => {
     const supportedRoutes = section.dataset.routeSupport.split(/\s+/);
     const visible = !isHome && supportedRoutes.includes(resolvedTarget);
     section.hidden = !visible;
     section.setAttribute("aria-hidden", String(!visible));
+    section.inert = !visible;
   });
   $$(".content-grid section.panel:not([id]):not([data-route-support])").forEach((section) => {
     section.hidden = true;
     section.setAttribute("aria-hidden", "true");
+    section.inert = true;
   });
 
-  const activeTravelSection = resolvedTarget === "rideShareHub"
-    ? history.state?.travelSection || "overview"
-    : "";
-  const activeTabKey = resolvedTarget === "rideShareHub"
-    ? activeTravelSection === "itinerary" ? "itinerary" : "travel"
-    : resolvedTarget;
-  $$(".nav button, .nav a, .mobile-nav button, .trip-tab-bar button").forEach((navButton) => {
-    const navigationKey = navButton.dataset.tabKey || navButton.dataset.target;
-    const travelSection = navButton.dataset.travelSection || "";
-    const isTravelSectionItem = navButton.dataset.target === "rideShareHub" && travelSection;
-    const isActive = isTravelSectionItem
-      ? resolvedTarget === "rideShareHub" && travelSection === activeTravelSection
-      : navigationKey === activeTabKey;
-    navButton.classList.toggle("active", isActive);
-    if (navButton.dataset.target) navButton.setAttribute("aria-current", isActive ? "page" : "false");
-  });
+  syncNavigationState(resolvedTarget, resolvedTarget === "rideShareHub" ? history.state?.travelSection : "");
 
   const route = getRouteForTarget(resolvedTarget);
   const current = normalizeAppPath(location.pathname);
