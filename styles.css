@@ -13694,6 +13694,436 @@ body.auth-screen .auth-carousel blockquote {
   }
 }
 
+/* Section 60: global widget fit and no-overflow confirmation layer */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.panel,
+.travel-widget,
+.travel-focus-panel,
+.travel-focus-grid article,
+.travel-itinerary-section,
+.travel-timeline-section,
+.travel-reservation-sections article,
+.itinerary-card,
+.itinerary-timeline-dashboard,
+.upcoming-reservation-grid article,
+.wallet-summary-card,
+.wallet-trip-tile,
+.wallet-virtual-preview,
+.wallet-section-card-grid article,
+.trip-wallet-card,
+.wallet-total,
+.wallet-breakdown div,
+.wallet-action-grid button,
+.shared-wallet-ledger,
+.virtual-card-panel,
+.visual-pass-card,
+.messages-hub,
+.conversation-card,
+.chat-workspace,
+.conversation-details-panel,
+.memory-media-card,
+.memory-comments-panel,
+.memory-album-grid article,
+.event-experience-card,
+.social-card,
+.settings-shell,
+.settings-nav-panel,
+.settings-main-panel,
+.settings-row,
+.profile-photo-manager,
+.theme-studio,
+.travel-badge-panel,
+.reservation-reminder-card,
+.smart-departure-card,
+.reservation-ai-card,
+.ride-clean-card,
+.ride-provider-card,
+.private-driver-panel,
+.explore-card {
+  min-width: 0;
+  max-width: 100%;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.panel,
+.travel-widget,
+.travel-focus-grid article,
+.travel-itinerary-section,
+.travel-timeline-section,
+.travel-reservation-sections article,
+.itinerary-card,
+.upcoming-reservation-grid article,
+.wallet-summary-card,
+.wallet-trip-tile,
+.wallet-virtual-preview,
+.wallet-section-card-grid article,
+.conversation-details-panel,
+.memory-media-card,
+.memory-comments-panel,
+.settings-nav-panel,
+.settings-main-panel,
+.settings-row,
+.reservation-reminder-card,
+.ride-clean-card,
+.social-card {
+  border-radius: 14px;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+span,
+small,
+strong,
+em,
+time,
+label,
+button,
+a,
+dt,
+dd,
+li,
+input,
+select,
+textarea,
+code {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+img,
+video,
+canvas,
+svg,
+iframe {
+  max-width: 100%;
+}
+
+.panel img,
+.travel-widget img,
+.travel-focus-grid img,
+.memory-media-card img,
+.trip-wallet-card img,
+.wallet-trip-tile img,
+.platform-card img,
+.conversation-card img,
+.share-preview img,
+.profile-photo-preview img {
+  display: block;
+  max-width: 100%;
+  object-fit: cover;
+}
+
+button,
+.primary-button,
+.ghost-button,
+.icon-button,
+select,
+input,
+textarea {
+  max-width: 100%;
+}
+
+.button-row,
+.mini-action-row,
+.hero-actions,
+.travel-quick-actions,
+.travel-pass-filters,
+.payment-method-grid,
+.wallet-mini-actions,
+.wallet-quick-actions-redesign,
+.memory-card-actions,
+.social-action-row,
+.ride-account-actions,
+.itinerary-action-row,
+.pass-actions,
+.platform-actions {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.button-row button,
+.mini-action-row button,
+.hero-actions button,
+.travel-quick-actions button,
+.travel-pass-filters button,
+.payment-method-grid button,
+.wallet-mini-actions button,
+.wallet-quick-actions-redesign button,
+.memory-card-actions button,
+.social-action-row button,
+.ride-account-actions button,
+.itinerary-action-row button,
+.pass-actions button,
+.platform-actions button {
+  white-space: normal;
+}
+
+.status-pill,
+.card-status,
+.compliance-badge,
+.social-pill,
+.connection-status {
+  width: fit-content;
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.25;
+}
+
+.content-grid,
+.dashboard-widget-grid,
+.travel-settings-shell,
+.travel-focus-grid,
+.travel-itinerary-dashboard,
+.travel-reservation-sections,
+.itinerary-dashboard,
+.upcoming-reservation-grid,
+.wallet-home-grid,
+.wallet-trip-card-grid,
+.wallet-section-card-grid,
+.messages-layout,
+.message-support-grid,
+.memories-gallery-shell,
+.memory-gallery-grid,
+.memory-album-grid,
+.social-hub-layout,
+.platform-grid,
+.event-experience-grid,
+.events-dashboard-grid,
+.settings-shell,
+.reservation-reminder-grid,
+.ride-two-column-grid,
+.ride-recommendation-grid,
+.private-driver-list {
+  min-width: 0;
+}
+
+.visual-pass-card {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+}
+
+.visual-pass-card .pass-route,
+.visual-pass-card dl,
+.visual-pass-card .pass-actions,
+.visual-pass-card .pass-topline,
+.visual-pass-card .pass-provider {
+  min-width: 0;
+}
+
+.visual-pass-card dl {
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+}
+
+.official-code,
+.barcode-strip {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.official-code {
+  justify-self: start;
+}
+
+.barcode-strip {
+  width: 100%;
+}
+
+.virtual-card {
+  max-width: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.virtual-card .card-number {
+  font-size: clamp(1.35rem, 4vw, 2.3rem);
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.card-meta,
+.card-balance-grid,
+.wallet-breakdown,
+.bill-total-grid,
+.ride-estimate-grid,
+.weather-metrics,
+.info-status-grid {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.shared-wallet-ledger div,
+.card-ledger div,
+.transaction-row,
+.document-list div,
+.alert-preview-list div,
+.ride-history-list article,
+.ride-notification-list article {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.modern-messages .msg,
+.messages .msg,
+.memory-comment-list div {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.chat-form {
+  position: relative;
+  z-index: 1;
+}
+
+.chat-form input {
+  min-width: 0;
+}
+
+.settings-row {
+  align-items: start;
+}
+
+.settings-toggle {
+  flex: 0 0 auto;
+  justify-self: end;
+}
+
+@media (max-width: 1024px) {
+  .content-grid,
+  .dashboard-widget-grid,
+  .travel-focus-grid,
+  .travel-itinerary-dashboard,
+  .travel-reservation-sections,
+  .itinerary-dashboard,
+  .upcoming-reservation-grid,
+  .wallet-home-grid,
+  .wallet-trip-card-grid,
+  .wallet-section-card-grid,
+  .memory-gallery-grid,
+  .memory-album-grid,
+  .platform-grid,
+  .event-experience-grid,
+  .reservation-reminder-grid,
+  .ride-recommendation-grid,
+  .private-driver-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .content-grid,
+  .dashboard-widget-grid,
+  .travel-settings-shell,
+  .travel-focus-grid,
+  .travel-itinerary-dashboard,
+  .travel-reservation-sections,
+  .itinerary-dashboard,
+  .upcoming-reservation-grid,
+  .wallet-redesign-shell,
+  .wallet-home-grid,
+  .wallet-trip-card-grid,
+  .wallet-section-card-grid,
+  .messages-layout,
+  .message-support-grid,
+  .memories-gallery-shell,
+  .memory-gallery-grid,
+  .memory-album-grid,
+  .social-hub-layout,
+  .platform-grid,
+  .event-experience-grid,
+  .settings-shell,
+  .reservation-reminder-grid,
+  .ride-two-column-grid,
+  .ride-recommendation-grid,
+  .private-driver-list,
+  .travel-itinerary-section dl,
+  .travel-provider-cards,
+  .ride-entry-grid,
+  .ride-location-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .panel,
+  .travel-settings-main,
+  .settings-main-panel,
+  .messages-hub,
+  .wallet-redesign-shell,
+  .memories-panel {
+    padding: 12px;
+  }
+
+  .travel-focus-header,
+  .section-heading,
+  .chat-header,
+  .pinned-message,
+  .settings-row,
+  .wallet-trip-tile,
+  .trip-wallet-card,
+  .profile-photo-main,
+  .smart-departure-card,
+  .ride-card-heading,
+  .social-card-header,
+  .travel-itinerary-rows summary,
+  .itinerary-timeline-list summary {
+    grid-template-columns: 1fr;
+  }
+
+  .button-row button,
+  .mini-action-row button,
+  .hero-actions button,
+  .travel-quick-actions button,
+  .payment-method-grid button,
+  .wallet-mini-actions button,
+  .wallet-quick-actions-redesign button,
+  .memory-card-actions button,
+  .social-action-row button,
+  .ride-account-actions button,
+  .itinerary-action-row button,
+  .pass-actions button,
+  .platform-actions button,
+  .travel-focus-grid button,
+  .travel-provider-cards button,
+  .travel-itinerary-section button,
+  .travel-reservation-sections button,
+  .settings-row button,
+  .settings-row select {
+    width: 100%;
+  }
+
+  .settings-toggle {
+    justify-self: start;
+  }
+
+  .visual-pass-card .pass-route {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    text-align: left;
+  }
+
+  .official-code {
+    justify-self: stretch;
+    width: min(100%, 220px);
+  }
+}
+
 #rideShareHub .travel-overview-card .travel-summary-tile {
   position: relative;
   min-height: 96px;
