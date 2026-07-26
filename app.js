@@ -1736,6 +1736,71 @@ const travelSearchTargets = [
   ["alerts", ["alert", "notification", "reminder"]]
 ];
 
+const travelSmartSearchRecords = [
+  { group: "Flights", section: "flights", icon: "✈️", title: "DL 241 Miami to Tokyo", meta: "MIA to HND • Jul 18 • 8:45 AM", status: "Confirmed" },
+  { group: "Flights", section: "boarding", icon: "🎫", title: "Boarding pass for Jordan Smith", meta: "Gate B18 • Seat 14A • Boarding 7:55 AM", status: "Checked In" },
+  { group: "Hotels", section: "hotels", icon: "🏨", title: "Tokyo Station Hotel", meta: "Aug 8 - Aug 13 • Queen Room", status: "Saved" },
+  { group: "Trips", section: "overview", icon: "🌍", title: "Miami to Tokyo Adventure", meta: "Tokyo, Japan • 4 travelers • 84% ready", status: "Active" },
+  { group: "Boarding Passes", section: "boarding", icon: "▦", title: "TravelDrip digital boarding pass", meta: "QR code, barcode, gate, seat, group, and status", status: "Ready" },
+  { group: "Ride Share", section: "rideShare", icon: "🚘", title: "Airport pickup to Tokyo Station Hotel", meta: "Driver assigned • 42 minute estimate", status: "Scheduled" },
+  { group: "Restaurants", section: "itinerary", icon: "🍽️", title: "Ocean Rooftop Sushi", meta: "Reservation • Smart bill split available", status: "Confirmed" },
+  { group: "Activities", section: "itinerary", icon: "🎟️", title: "Catamaran cruise and winery tour", meta: "Marina Dock B • smart route ready", status: "Booked" },
+  { group: "Travel Documents", section: "documents", icon: "📄", title: "Passport, insurance, and confirmations", meta: "12 saved files • 1 missing item", status: "Action needed" },
+  { group: "Weather Locations", section: "weather", icon: "🌦️", title: "Tokyo arrival weather", meta: "82°F • light rain • packing guidance", status: "Alert" },
+  { group: "Reservations", section: "documents", icon: "🧾", title: "Hotel, dining, and transfer confirmations", meta: "3 confirmed reservations", status: "Synced" },
+  { group: "Maps and Routes", section: "maps", icon: "🗺️", title: "Airport, hotel, and pickup maps", meta: "Saved locations and directions", status: "Ready" }
+];
+
+function getTravelSmartSearchMatches(query = "") {
+  const normalized = query.trim().toLowerCase();
+  const matches = normalized
+    ? travelSmartSearchRecords.filter((item) => [item.group, item.title, item.meta, item.status].join(" ").toLowerCase().includes(normalized))
+    : travelSmartSearchRecords;
+  return matches.reduce((groups, item) => {
+    if (!groups[item.group]) groups[item.group] = [];
+    groups[item.group].push(item);
+    return groups;
+  }, {});
+}
+
+function renderTravelSmartSearchResults(query = "") {
+  const results = $("#travelSmartResults");
+  if (!results) return;
+  const groups = getTravelSmartSearchMatches(query);
+  const entries = Object.entries(groups);
+  if (!entries.length) {
+    results.innerHTML = `
+      <article class="travel-search-empty">
+        <strong>No exact matches were found.</strong>
+        <span>Try changing your dates, destination, or search terms.</span>
+        <button type="button" data-travel-search-open="overview">Back to Travel Home</button>
+      </article>
+    `;
+    return;
+  }
+  results.innerHTML = entries.map(([group, items]) => `
+    <section class="travel-result-group" aria-label="${escapeHtml(group)} results">
+      <div class="travel-result-group-head">
+        <strong>${escapeHtml(group)}</strong>
+        <span>${items.length} result${items.length === 1 ? "" : "s"}</span>
+      </div>
+      <div class="travel-result-grid">
+        ${items.map((item) => `
+          <article class="travel-result-card">
+            <span class="travel-result-thumb" aria-hidden="true">${escapeHtml(item.icon)}</span>
+            <div>
+              <strong>${escapeHtml(item.title)}</strong>
+              <small>${escapeHtml(item.meta)}</small>
+              <em>${escapeHtml(item.status)}</em>
+            </div>
+            <button type="button" data-travel-search-open="${escapeHtml(item.section)}">Open</button>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `).join("");
+}
+
 function renderTravelFocusRideProviders() {
   const list = $("#travelFocusRideProviders");
   if (!list) return;
@@ -4181,6 +4246,55 @@ function wireLocalInteractions() {
     await saveSyncedEvent("travel_search", { query, section });
   });
 
+  renderTravelSmartSearchResults($("#travelSmartSearchInput")?.value || "");
+
+  $("#travelSmartSearchInput")?.addEventListener("input", (event) => {
+    renderTravelSmartSearchResults(event.target.value);
+  });
+
+  $("#clearTravelSearchButton")?.addEventListener("click", () => {
+    const input = $("#travelSmartSearchInput");
+    if (input) input.value = "";
+    renderTravelSmartSearchResults("");
+    const destination = setTravelFocus("overview", { updateHistory: false });
+    if ($("#travelSettingsMessage")) {
+      $("#travelSettingsMessage").textContent = `Search cleared. ${destination.title} is open.`;
+    }
+  });
+
+  $("#voiceTravelSearchButton")?.addEventListener("click", () => {
+    const input = $("#travelSmartSearchInput");
+    if (input) {
+      input.value = "boarding pass";
+      input.focus();
+    }
+    renderTravelSmartSearchResults("boarding pass");
+    if ($("#travelSettingsMessage")) {
+      $("#travelSettingsMessage").textContent = "Voice search is provider-ready. Showing boarding pass results as a local preview.";
+    }
+  });
+
+  $$(".travel-search-suggestions [data-travel-search-suggestion]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const query = button.dataset.travelSearchSuggestion || "";
+      const input = $("#travelSmartSearchInput");
+      if (input) input.value = query;
+      renderTravelSmartSearchResults(query);
+    });
+  });
+
+  $("#travelSmartResults")?.addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-travel-search-open]");
+    if (!button) return;
+    const section = button.dataset.travelSearchOpen;
+    const destination = setTravelFocus(section);
+    if ($("#travelSettingsMessage")) {
+      $("#travelSettingsMessage").textContent = `${destination.title} opened from Smart Travel Search with trip context preserved.`;
+    }
+    addAuditEntry("Smart Travel Search result opened", `${destination.title} opened.`);
+    await saveSyncedEvent("travel_smart_search_opened", { section, route: destination.route });
+  });
+
   $("#travelSettingsTripSelect")?.addEventListener("change", async (event) => {
     localStorage.setItem("traveldripSelectedTravelTrip", event.target.value);
     if ($("#travelSettingsMessage")) {
@@ -5545,6 +5659,10 @@ function wireLocalInteractions() {
   });
 
   $("#walletSectionCardButton")?.addEventListener("click", () => {
+    $("#walletPreviewCardButton")?.click();
+  });
+
+  $("#walletHeaderVirtualCardButton")?.addEventListener("click", () => {
     $("#walletPreviewCardButton")?.click();
   });
 

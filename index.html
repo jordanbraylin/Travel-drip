@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-    <link rel="stylesheet" href="styles.css?v=91">
+    <link rel="stylesheet" href="styles.css?v=92">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -2256,6 +2256,12 @@
                 <small>Funding, refunds, transfers, and card details require Wallet PIN.</small>
               </article>
             </section>
+            <section class="wallet-smart-actions" aria-label="Wallet quick actions">
+              <button type="button" data-wallet-action="Add Funds">Add Funds</button>
+              <button type="button" data-target="splitBill">Split Bill</button>
+              <button type="button" data-wallet-action="Request Payment">Request Payment</button>
+              <button type="button" id="walletHeaderVirtualCardButton">View Virtual Card</button>
+            </section>
             <section class="wallet-redesign-shell" aria-label="Wallet home">
               <aside class="wallet-section-nav" aria-label="Wallet sections">
                 <button class="active" type="button" data-wallet-section="overview">Overview</button>
@@ -2343,6 +2349,12 @@
                   <strong>12 wallet records</strong>
                   <small>Trip, category, date, method, amount, and status remain audit-ready.</small>
                   <button type="button" data-wallet-section="transactions">View Feed</button>
+                </article>
+                <article>
+                  <p class="eyebrow">Payment Methods</p>
+                  <strong>2 linked methods</strong>
+                  <small>Visa debit, Apple Pay, and TravelDrip Wallet are ready for PIN-gated checkout.</small>
+                  <button type="button" data-wallet-action="Add Payment Method">Manage Methods</button>
                 </article>
               </section>
               <div class="wallet-quick-actions-redesign" aria-label="Wallet quick actions">
@@ -2603,6 +2615,29 @@
               </div>
               <span class="compliance-badge">Trip-ready</span>
             </div>
+            <section class="travel-smart-search" aria-label="Travel smart search">
+              <div class="travel-smart-search-head">
+                <div>
+                  <p class="eyebrow">Smart Travel Search</p>
+                  <h3>Find flights, stays, passes, rides, and documents</h3>
+                </div>
+                <span>Grouped results</span>
+              </div>
+              <div class="travel-smart-search-row">
+                <span class="travel-search-icon" aria-hidden="true">⌕</span>
+                <input id="travelSmartSearchInput" type="search" placeholder="Search flights, hotels, destinations, reservations, or documents..." autocomplete="off" aria-label="Search flights, hotels, destinations, reservations, or documents">
+                <button type="button" id="voiceTravelSearchButton" aria-label="Start voice search">Voice</button>
+                <button type="button" id="clearTravelSearchButton">Clear</button>
+              </div>
+              <div class="travel-search-suggestions" aria-label="Travel search suggestions">
+                <button type="button" data-travel-search-suggestion="boarding pass">Boarding pass</button>
+                <button type="button" data-travel-search-suggestion="Tokyo hotel">Tokyo hotel</button>
+                <button type="button" data-travel-search-suggestion="airport transfer">Airport transfer</button>
+                <button type="button" data-travel-search-suggestion="weather alerts">Weather alerts</button>
+                <button type="button" data-travel-search-suggestion="travel documents">Travel documents</button>
+              </div>
+              <div class="travel-smart-results" id="travelSmartResults" aria-live="polite"></div>
+            </section>
             <section class="travel-command-header" aria-label="Travel dashboard header">
               <article class="travel-command-trip">
                 <span>Selected trip</span>
@@ -2619,7 +2654,7 @@
             </section>
             <section class="travel-settings-shell" aria-label="Travel settings-style workspace">
               <aside class="travel-settings-sidebar">
-                <label class="travel-search-label">Search Travel
+                <label class="travel-search-label travel-search-label--compact" hidden>Quick Travel Filter
                   <input id="travelSettingsSearchInput" type="search" placeholder="Flights, Uber, boarding pass, hotel, weather">
                 </label>
                 <section class="travel-current-trip-card" aria-label="Current trip">
@@ -2727,6 +2762,12 @@
                       <p>Check-in reminder, rain advisory, and missing travel-insurance document.</p>
                       <button type="button" data-travel-focus="alerts">View Alerts</button>
                     </article>
+                    <article class="travel-dashboard-card">
+                      <p class="eyebrow">Documents</p>
+                      <h4>12 saved files</h4>
+                      <p>Passport, visa, hotel confirmations, receipts, and insurance live in secure Travel Documents.</p>
+                      <button type="button" data-travel-focus="documents">Open Documents</button>
+                    </article>
                   </section>
                   <section class="travel-booking-summary" aria-label="Booking summary">
                     <article><span>Flights</span><strong>1 booked</strong><small>Delta DL 241 • Confirmed</small><button type="button" data-travel-focus="flights">Open</button></article>
@@ -2777,7 +2818,7 @@
                 <section class="travel-focus-panel" data-travel-panel="boarding">
                   <div class="travel-focus-header"><span class="travel-focus-icon">🎫</span><div><p class="eyebrow">Boarding Passes</p><h3>Upcoming, active, completed, and cancelled passes</h3><p>Each pass uses its own visual ticket. Official QR or barcode is shown only when imported from a valid provider document.</p></div><button class="primary-button" type="button" data-travel-focus-action="Save Offline">Save Offline</button></div>
                   <div class="travel-pass-filters"><button class="active" type="button">Upcoming</button><button type="button">Active</button><button type="button">Completed</button><button type="button">Cancelled</button></div>
-                  <div class="visual-pass-grid single-focus-pass"><article class="visual-pass-card visual-pass-card--flight"><div class="pass-topline"><span>Flight boarding pass</span><strong>Checked In</strong></div><div class="pass-provider"><b>DELTA</b><span>Official imported pass</span></div><div class="pass-route"><b>MIA</b><i></i><b>HND</b></div><h4>Delta DL 241</h4><dl><div><dt>Passenger</dt><dd>Jordan Smith</dd></div><div><dt>Gate</dt><dd>B18</dd></div><div><dt>Seat</dt><dd>14A</dd></div><div><dt>Boarding</dt><dd>Group 3</dd></div></dl><div class="official-code" aria-label="Official provider QR code available"></div><div class="barcode-strip" aria-hidden="true"></div><div class="pass-actions"><button type="button" data-pass-action="View Boarding Pass">View Details</button><button type="button" data-pass-action="Save Offline">Save Offline</button></div></article></div>
+                  <div class="visual-pass-grid single-focus-pass"><article class="visual-pass-card visual-pass-card--flight digital-boarding-pass"><div class="pass-topline"><span>Flight boarding pass</span><strong>On Time</strong></div><div class="pass-provider"><b>TravelDrip Pass</b><span>Verified travel document</span></div><div class="pass-route"><b>MIA</b><i></i><b>HND</b></div><h4>DL 241 • Miami to Tokyo</h4><dl><div><dt>Passenger</dt><dd>Jordan Smith</dd></div><div><dt>Flight</dt><dd>DL 241</dd></div><div><dt>Boarding</dt><dd>7:55 AM</dd></div><div><dt>Departs</dt><dd>8:45 AM</dd></div><div><dt>Gate</dt><dd>B18</dd></div><div><dt>Seat</dt><dd>14A</dd></div><div><dt>Group</dt><dd>3</dd></div><div><dt>Status</dt><dd>Checked In</dd></div></dl><div class="official-code" aria-label="QR code for boarding pass"></div><div class="barcode-strip" aria-label="Barcode for boarding pass"></div><div class="pass-actions"><button type="button" data-pass-action="View Boarding Pass">View Details</button><button type="button" data-pass-action="Save Offline">Save Offline</button></div></article></div>
                 </section>
                 <section class="travel-focus-panel" data-travel-panel="weather">
                   <div class="travel-focus-header"><span class="travel-focus-icon">🌦️</span><div><p class="eyebrow">Weather</p><h3>Destination forecast</h3><p>Full weather stays here; Travel Home only shows a preview. Live provider status is labeled until connected.</p></div><button class="primary-button" type="button" data-travel-focus-action="Refresh Weather">Refresh</button></div>
@@ -2972,21 +3013,25 @@
                     </label>
                   </div>
                   <div class="visual-pass-grid">
-                    <article class="visual-pass-card visual-pass-card--flight">
+                    <article class="visual-pass-card visual-pass-card--flight digital-boarding-pass">
                       <div class="pass-topline"><span>Flight boarding pass</span><strong>Checked In</strong></div>
-                      <div class="pass-provider"><b>DELTA</b><span>Sky Priority</span></div>
+                      <div class="pass-provider"><b>TravelDrip Pass</b><span>Verified travel document</span></div>
                       <div class="pass-route"><b>MIA</b><i></i><b>HND</b></div>
-                      <h4>Delta DL 241</h4>
+                      <h4>DL 241 • Miami to Tokyo</h4>
                       <dl>
                         <div><dt>Passenger</dt><dd>Jordan Smith</dd></div>
+                        <div><dt>Flight</dt><dd>DL 241</dd></div>
+                        <div><dt>Boarding</dt><dd>7:55 AM</dd></div>
+                        <div><dt>Departs</dt><dd>8:45 AM</dd></div>
                         <div><dt>Gate</dt><dd>B18</dd></div>
                         <div><dt>Seat</dt><dd>14A</dd></div>
-                        <div><dt>Boarding</dt><dd>Group 3</dd></div>
+                        <div><dt>Group</dt><dd>3</dd></div>
                         <div><dt>Terminal</dt><dd>D</dd></div>
                         <div><dt>Cabin</dt><dd>Comfort+</dd></div>
+                        <div><dt>Status</dt><dd>On Time</dd></div>
                       </dl>
-                      <div class="official-code" aria-label="Official provider QR code available"></div>
-                      <div class="barcode-strip" aria-hidden="true"></div>
+                      <div class="official-code" aria-label="QR code for boarding pass"></div>
+                      <div class="barcode-strip" aria-label="Barcode for boarding pass"></div>
                       <div class="pass-actions">
                         <button type="button" data-pass-action="View Boarding Pass">View</button>
                         <button type="button" data-pass-action="Save Offline">Save offline</button>
