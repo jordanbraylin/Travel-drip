@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=85">
+  <link rel="stylesheet" href="styles.css?v=86">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -325,7 +325,7 @@
         <button class="active" type="button" data-target="dashboardHome">Overview</button>
         <button type="button" data-target="rideShareHub">Travel</button>
         <button type="button" data-target="aiTravelPlanner">Planning</button>
-        <button type="button" data-target="itineraryAlerts">Itinerary</button>
+        <button type="button" data-target="rideShareHub" data-travel-section="itinerary">Itinerary</button>
         <button type="button" data-target="eventsPanel">Events</button>
         <button type="button" data-target="walletPanel">Wallet</button>
         <button type="button" data-target="memoriesPanel">Memories</button>
@@ -2635,8 +2635,59 @@
                   <div class="travel-focus-grid"><article><span>Identification</span><strong>Passport</strong><small>Jordan Smith • Verified • Expires 2031</small><button type="button" data-travel-focus-action="View Passport">View</button></article><article><span>Insurance</span><strong>Travel insurance needed</strong><small>Missing before departure</small><button type="button" data-travel-focus-action="Upload Insurance">Upload</button></article><article><span>Hotel confirmation</span><strong>Tokyo Station Hotel</strong><small>Uploaded Jul 20 • TSH-2088</small><button type="button" data-travel-focus-action="Download Hotel Confirmation">Download</button></article></div>
                 </section>
                 <section class="travel-focus-panel" data-travel-panel="itinerary">
-                  <div class="travel-focus-header"><span class="travel-focus-icon">🗓️</span><div><p class="eyebrow">Itinerary</p><h3>Daily schedule, Smart Route, and Your Trips</h3><p>Smart Route and Your Trips stay close together with normal spacing and one section at a time.</p></div><button class="primary-button" type="button" data-travel-focus-action="Open Daily Schedule">Daily Schedule</button></div>
-                  <div class="travel-focus-grid"><article><span>Smart Route</span><strong>Airport → Hotel → Dinner</strong><small>Fastest route: 48 minutes • rain-aware timing</small><button type="button" data-travel-focus="maps">Open Route</button></article><article><span>Your Trips</span><strong>Miami to Tokyo Adventure</strong><small>4 travelers • 84% ready • 12 confirmations</small><button type="button" data-travel-focus-action="Open Trip">Open Trip</button></article><article><span>Reservation</span><strong>Ocean Grill Dinner</strong><small>7:30 PM • reminder enabled</small><button type="button" data-travel-focus-action="View Reservation">View</button></article></div>
+                  <div class="travel-focus-header"><span class="travel-focus-icon">🗓️</span><div><p class="eyebrow">Itinerary inside Travel</p><h3>Miami to Tokyo trip dashboard</h3><p>Trip overview, today’s schedule, timeline, smart route, reservations, transportation, alerts, weather, documents, and quick actions are separated into clean Travel sections.</p></div><button class="primary-button" type="button" data-travel-focus-action="Add Activity">Add Activity</button></div>
+                  <section class="travel-itinerary-dashboard" aria-label="Travel itinerary dashboard">
+                    <article class="travel-itinerary-section trip-overview">
+                      <span>Trip Overview</span>
+                      <h3>Miami to Tokyo Adventure</h3>
+                      <dl>
+                        <div><dt>Destination</dt><dd>Tokyo, Japan</dd></div>
+                        <div><dt>Dates</dt><dd>Jul 18 - Jul 28, 2026</dd></div>
+                        <div><dt>Travelers</dt><dd>4 travelers</dd></div>
+                        <div><dt>Status</dt><dd>Ready • 84% complete</dd></div>
+                      </dl>
+                      <div class="trip-progress-track"><i style="--w:84%"></i></div>
+                    </article>
+                    <article class="travel-itinerary-section">
+                      <span>Today's Schedule</span>
+                      <h3>Catamaran Cruise → Winery Tour</h3>
+                      <p>Current activity: Catamaran Cruise, 11:00 AM - 2:45 PM. Next activity starts 3:30 PM at Pyrgos Winery.</p>
+                      <button type="button" data-itinerary-dashboard-action="View Today Details">View Details</button>
+                    </article>
+                    <article class="travel-itinerary-section smart-route-card">
+                      <span>Smart Route</span>
+                      <h3>Hotel → Marina → Winery</h3>
+                      <div class="route-preview-line" aria-hidden="true"><i></i><i></i><i></i></div>
+                      <p>Current stop: Marina Dock B. Next stop: Pyrgos Winery. Estimated travel time: 48 minutes. Optimized for traffic and light rain.</p>
+                      <button type="button" data-travel-focus="maps">Open Map</button>
+                    </article>
+                    <article class="travel-itinerary-section weather-snapshot-card">
+                      <span>Weather Preview</span>
+                      <div class="weather-orb" aria-hidden="true"></div>
+                      <h3>82°F • Light rain</h3>
+                      <p>Rain probability 68%. Short forecast: cooler evening with marina winds.</p>
+                      <button type="button" data-travel-focus="weather">Open Full Weather</button>
+                    </article>
+                  </section>
+                  <section class="travel-timeline-section" aria-label="Daily timeline">
+                    <div class="section-heading compact"><div><p class="eyebrow">Daily Timeline</p><h3>Each itinerary item is separate</h3></div><button class="ghost-button" type="button" data-itinerary-dashboard-action="Add Timeline Item">Add item</button></div>
+                    <div class="travel-itinerary-rows">
+                      <details open><summary><time>8:30 AM</time><strong>Breakfast at Blue Cafe</strong><span>Dining • Confirmed</span><em>Complete</em></summary><p>Oia terrace table. Notes: receipt attached to Smart Bill Split.</p></details>
+                      <details open><summary><time>11:00 AM</time><strong>Catamaran Cruise</strong><span>Activity • Confirmed</span><em>In progress</em></summary><p>Location: Marina Dock B. Check-in closes 30 minutes before departure.</p></details>
+                      <details><summary><time>3:30 PM</time><strong>Winery Tour</strong><span>Activity • Confirmed</span><em>Upcoming</em></summary><p>Location: Pyrgos Winery. Transportation confirmed. Wear comfortable shoes.</p></details>
+                      <details><summary><time>7:45 PM</time><strong>Sunset Dinner</strong><span>Restaurant • Reserved</span><em>Reminder on</em></summary><p>Location: Ocean Rooftop Grill. Time-to-leave alert will calculate from traffic and weather.</p></details>
+                    </div>
+                  </section>
+                  <section class="travel-reservation-sections" aria-label="Upcoming reservations">
+                    <article><span>Flight</span><strong>Delta DL 241</strong><small>MIA → HND • Gate B18 • Seat 14A</small><button type="button" data-travel-focus="boarding">Boarding Pass</button></article>
+                    <article><span>Hotel</span><strong>Tokyo Station Hotel</strong><small>Check-in 3:00 PM • confirmation saved</small><button type="button" data-travel-focus="hotels">View Hotel</button></article>
+                    <article><span>Restaurant</span><strong>Ocean Rooftop Grill</strong><small>7:30 PM • leave by 6:55 PM</small><button type="button" data-itinerary-dashboard-action="View Reservation">View Reservation</button></article>
+                    <article><span>Activity</span><strong>Catamaran Sunset Cruise</strong><small>5:00 PM • check-in closes 4:30 PM</small><button type="button" data-itinerary-dashboard-action="View Activity">View Activity</button></article>
+                    <article><span>Transportation</span><strong>HND airport transfer</strong><small>Driver assigned • ride-share backup ready</small><button type="button" data-travel-focus="rideShare">Book Transportation</button></article>
+                    <article><span>Travel Documents</span><strong>Boarding pass, ID, insurance</strong><small>Insurance still missing before departure</small><button type="button" data-travel-focus="documents">View Documents</button></article>
+                    <article><span>Travel Alerts</span><strong>3 active alerts</strong><small>Gate reminder, rain advisory, reservation reminder</small><button type="button" data-travel-focus="alerts">View Alerts</button></article>
+                    <article><span>Quick Actions</span><strong>Add, upload, book, or open</strong><small>Actions preserve trip and traveler context.</small><button type="button" data-itinerary-dashboard-action="Upload Confirmation">Upload Confirmation</button></article>
+                  </section>
                 </section>
                 <section class="travel-focus-panel" data-travel-panel="maps">
                   <div class="travel-focus-header"><span class="travel-focus-icon">🗺️</span><div><p class="eyebrow">Maps</p><h3>Places, routes, pickup points, and stops</h3><p>Airports, hotels, stations, ports, event venues, restaurants, and transportation routes for the selected trip.</p></div><button class="primary-button" type="button" data-travel-focus-action="Open Directions">Open Directions</button></div>
@@ -3496,10 +3547,83 @@
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Security & Data Protection</p>
-                <h2>Account, wallet, API, and corporate safeguards</h2>
+                <h2>Settings</h2>
+                <p>Account, profile, notifications, privacy, security, payments, travel preferences, accessibility, and app preferences in standard rows.</p>
               </div>
               <button class="ghost-button" type="button" id="runSecurityAuditButton">Run security audit</button>
             </div>
+            <section class="settings-shell" aria-label="Settings workspace">
+              <aside class="settings-nav-panel">
+                <label>Search settings
+                  <input id="settingsSearchInput" type="search" placeholder="Notifications, Wallet PIN, privacy">
+                </label>
+                <button class="active" type="button" data-settings-section="account">Account</button>
+                <button type="button" data-settings-section="profile">Profile</button>
+                <button type="button" data-settings-section="notifications">Notifications</button>
+                <button type="button" data-settings-section="privacy">Privacy</button>
+                <button type="button" data-settings-section="security">Security</button>
+                <button type="button" data-settings-section="payments">Payments</button>
+                <button type="button" data-settings-section="travel">Travel Preferences</button>
+                <button type="button" data-settings-section="accessibility">Accessibility</button>
+                <button type="button" data-settings-section="app">App Preferences</button>
+              </aside>
+              <div class="settings-main-panel">
+                <section class="settings-section active" data-settings-panel="account">
+                  <div><p class="eyebrow">Account</p><h3>Profile and account access</h3><p>Name, username, email, password, and account status stay readable in rows.</p></div>
+                  <div class="settings-row"><div><strong>Name</strong><span>Jordan Smith</span></div><button type="button" data-profile-photo-action="Edit Name">Edit</button></div>
+                  <div class="settings-row"><div><strong>Username</strong><span>@jordansmith</span></div><button type="button" data-profile-photo-action="Edit Username">Edit</button></div>
+                  <div class="settings-row"><div><strong>Email</strong><span>jordan@example.com</span></div><button type="button" data-auth-workflow="Verify Email">Verify</button></div>
+                  <div class="settings-row"><div><strong>Account status</strong><span>Active • email verification supported when Supabase is configured.</span></div><span class="status-pill">Active</span></div>
+                </section>
+                <section class="settings-section" data-settings-panel="profile">
+                  <div><p class="eyebrow">Profile</p><h3>Photo and display controls</h3><p>Profile photo setup remains optional and available after account creation.</p></div>
+                  <div class="settings-row"><div><strong>Profile photo</strong><span>Default initials avatar active until a photo is saved.</span></div><button type="button" data-profile-photo-action="Choose Recent Photo">Change</button></div>
+                  <div class="settings-row"><div><strong>Photo visibility</strong><span>Trip Members Only</span></div><button type="button" data-settings-section="privacy">Privacy</button></div>
+                </section>
+                <section class="settings-section" data-settings-panel="notifications">
+                  <div><p class="eyebrow">Notifications</p><h3>Travel, wallet, chat, memories, and event alerts</h3><p>Rows keep toggles away from descriptions on every screen size.</p></div>
+                  <div class="settings-row"><div><strong>Push notifications</strong><span>Device alerts for itinerary changes and messages.</span></div><label class="settings-toggle"><input type="checkbox" checked><span></span></label></div>
+                  <div class="settings-row"><div><strong>Booking notifications</strong><span>Flights, hotels, restaurants, activities, cruises, and transportation reminders.</span></div><label class="settings-toggle"><input type="checkbox" checked><span></span></label></div>
+                  <div class="settings-row"><div><strong>Wallet notifications</strong><span>Payment requests, refunds, deposits, and card activity.</span></div><label class="settings-toggle"><input type="checkbox" checked><span></span></label></div>
+                  <div class="settings-row"><div><strong>Memories notifications</strong><span>Likes, comments, replies, and shared albums.</span></div><label class="settings-toggle"><input type="checkbox" checked><span></span></label></div>
+                </section>
+                <section class="settings-section" data-settings-panel="privacy">
+                  <div><p class="eyebrow">Privacy</p><h3>Visibility and data permissions</h3><p>Profile, trips, events, albums, blocking, and data permissions are separated.</p></div>
+                  <div class="settings-row"><div><strong>Profile visibility</strong><span>Trip Members Only</span></div><select aria-label="Profile visibility"><option>Trip Members Only</option><option>Friends Only</option><option>Private</option><option>Public</option></select></div>
+                  <div class="settings-row"><div><strong>Album visibility</strong><span>Media privacy controls likes and comments.</span></div><select aria-label="Album visibility"><option>Trip Members</option><option>Selected Users</option><option>Private</option></select></div>
+                  <div class="settings-row"><div><strong>Blocked users</strong><span>No blocked users in this preview.</span></div><button type="button" data-message-action="Manage privacy">Manage</button></div>
+                </section>
+                <section class="settings-section" data-settings-panel="security">
+                  <div><p class="eyebrow">Security</p><h3>Authentication and trusted access</h3><p>Two-factor authentication, Wallet PIN, login activity, trusted devices, and recovery options.</p></div>
+                  <div class="settings-row"><div><strong>Two-factor authentication</strong><span>Optional second step for sensitive account access.</span></div><label class="settings-toggle"><input type="checkbox"><span></span></label></div>
+                  <div class="settings-row"><div><strong>Wallet PIN</strong><span>Required for adding funds, refunds, transfers, trip payments, and card details.</span></div><button type="button" data-wallet-section="security">Manage</button></div>
+                  <div class="settings-row"><div><strong>Trusted devices</strong><span>2 active sessions in this preview.</span></div><button type="button" data-profile-photo-action="Review Devices">Review</button></div>
+                </section>
+                <section class="settings-section" data-settings-panel="payments">
+                  <div><p class="eyebrow">Payments</p><h3>Wallet, refunds, billing, and virtual card</h3><p>Payment methods, refund preferences, wallet security, and card settings.</p></div>
+                  <div class="settings-row"><div><strong>Payment methods</strong><span>Debit card and TravelDrip Wallet preview available.</span></div><button type="button" data-target="walletPanel">Open Wallet</button></div>
+                  <div class="settings-row"><div><strong>Refund preferences</strong><span>Unused eligible funds return to original method or TravelDrip Wallet.</span></div><button type="button" data-target="walletPanel">Manage</button></div>
+                </section>
+                <section class="settings-section" data-settings-panel="travel">
+                  <div><p class="eyebrow">Travel Preferences</p><h3>Flight, hotel, transport, and weather defaults</h3><p>Preferred airport, seat, hotel style, ride share, and weather units.</p></div>
+                  <div class="settings-row"><div><strong>Preferred airport</strong><span>Miami International Airport (MIA)</span></div><button type="button" data-travel-focus="flights">Edit</button></div>
+                  <div class="settings-row"><div><strong>Seat preference</strong><span>Window seat</span></div><select aria-label="Seat preference"><option>Window</option><option>Aisle</option><option>No preference</option></select></div>
+                  <div class="settings-row"><div><strong>Weather units</strong><span>Fahrenheit</span></div><select aria-label="Weather units"><option>Fahrenheit</option><option>Celsius</option></select></div>
+                </section>
+                <section class="settings-section" data-settings-panel="accessibility">
+                  <div><p class="eyebrow">Accessibility</p><h3>Motion, text, contrast, and captions</h3><p>Accessible controls stay row-based with full-width mobile behavior.</p></div>
+                  <div class="settings-row"><div><strong>Reduced motion</strong><span>Respect device preference for animations.</span></div><label class="settings-toggle"><input type="checkbox"><span></span></label></div>
+                  <div class="settings-row"><div><strong>Text size</strong><span>Default</span></div><select aria-label="Text size"><option>Default</option><option>Large</option><option>Extra Large</option></select></div>
+                  <div class="settings-row"><div><strong>High contrast</strong><span>Increase contrast for text and controls.</span></div><label class="settings-toggle"><input type="checkbox"><span></span></label></div>
+                </section>
+                <section class="settings-section" data-settings-panel="app">
+                  <div><p class="eyebrow">App Preferences</p><h3>Theme, install, and app behavior</h3><p>Theme controls, app install settings, offline behavior, and account support.</p></div>
+                  <div class="settings-row"><div><strong>App theme</strong><span>Tropical Paradise</span></div><select id="settingsThemeSelector" aria-label="App theme mirror"><option value="tropical">Tropical Paradise</option><option value="sunset">Sunset Escape</option><option value="ocean">Ocean Breeze</option><option value="miami">Miami Nights</option><option value="cruise">Cruise Life</option><option value="festival">Festival Vibes</option></select></div>
+                  <div class="settings-row"><div><strong>Install app</strong><span>Add TravelDrip free from the browser on mobile or desktop.</span></div><button type="button" id="settingsInstallButton">Install</button></div>
+                </section>
+                <p class="small" id="settingsStatusMessage">Settings rows are visible and controls stay aligned across desktop and mobile.</p>
+              </div>
+            </section>
             <section class="theme-studio" aria-label="TravelDrip theme settings">
               <div>
                 <p class="eyebrow">Theme Studio</p>

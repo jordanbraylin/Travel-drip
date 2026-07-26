@@ -3422,7 +3422,7 @@ const routeAliases = {
   "/profile/my-profile": "securityCenter",
   "/profile/edit": "securityCenter",
   "/profile/privacy": "securityCenter",
-  "/profile/notifications": "itineraryAlerts",
+  "/profile/notifications": "securityCenter",
   "/profile/connected-accounts": "socialHub",
   "/profile/ride-share-connections": "rideShareHub",
   "/profile/social-media-connections": "socialHub",
@@ -3430,7 +3430,7 @@ const routeAliases = {
   "/profile/security": "securityCenter",
   "/profile/travel-statistics": "tripsPanel",
   "/settings": "securityCenter",
-  "/settings/notifications": "itineraryAlerts",
+  "/settings/notifications": "securityCenter",
   "/settings/privacy": "securityCenter",
   "/settings/security": "securityCenter",
   "/settings/help": "copyrightPolicy",
@@ -5118,6 +5118,37 @@ function wireLocalInteractions() {
       addAuditEntry("Theme updated", `${themeLabels[state.theme]} applied from theme swatches.`);
       await saveSyncedEvent("theme_updated", { theme: state.theme });
     });
+  });
+  $$("[data-settings-section]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const section = button.dataset.settingsSection;
+      $$("[data-settings-section]").forEach((entry) => entry.classList.toggle("active", entry === button));
+      $$(".settings-section").forEach((panel) => panel.classList.toggle("active", panel.dataset.settingsPanel === section));
+      if ($("#settingsStatusMessage")) $("#settingsStatusMessage").textContent = `${button.textContent.trim()} settings opened. Rows stay separated with no overlapping controls.`;
+      await saveSyncedEvent("settings_section_opened", { section });
+    });
+  });
+  $("#settingsSearchInput")?.addEventListener("input", (event) => {
+    const query = event.target.value.trim().toLowerCase();
+    if (!query) {
+      if ($("#settingsStatusMessage")) $("#settingsStatusMessage").textContent = "Settings search cleared.";
+      return;
+    }
+    const match = $$("[data-settings-section]").find((button) => button.textContent.toLowerCase().includes(query));
+    match?.click();
+    if ($("#settingsStatusMessage")) $("#settingsStatusMessage").textContent = match
+      ? `Search opened ${match.textContent.trim()} settings.`
+      : `No exact setting category found for "${event.target.value.trim()}".`;
+  });
+  $("#settingsThemeSelector")?.addEventListener("change", async (event) => {
+    applyTheme(event.target.value);
+    localStorage.setItem("traveldripTheme", state.theme);
+    if ($("#settingsStatusMessage")) $("#settingsStatusMessage").textContent = `${themeLabels[state.theme]} applied from Settings rows.`;
+    await saveSyncedEvent("settings_theme_updated", { theme: state.theme });
+  });
+  $("#settingsInstallButton")?.addEventListener("click", () => {
+    $("#installPwaButton")?.click();
+    if ($("#settingsStatusMessage")) $("#settingsStatusMessage").textContent = "Install prompt opened when supported by this browser.";
   });
   $("#sidebarMenuButton")?.addEventListener("click", () => {
     const open = !document.body.classList.contains("sidebar-open");
