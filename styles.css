@@ -17726,3 +17726,468 @@ body.app-routed main > section.panel:not([hidden]) {
 .digital-boarding-pass::before {
   display: none;
 }
+
+/* Section 71: Approved dashboard design applied across every tab */
+:root {
+  --td-approved-bg: #f6fbff;
+  --td-approved-card: rgba(255, 255, 255, 0.96);
+  --td-approved-border: rgba(15, 23, 42, 0.09);
+  --td-approved-shadow: 0 12px 30px rgba(15, 23, 42, 0.075);
+  --td-approved-radius: 18px;
+  --td-approved-tab: #ffffff;
+  --td-approved-active: linear-gradient(135deg, #7dd3fc, #99f6e4 52%, #fed7aa);
+  --td-approved-gap: clamp(16px, 2vw, 24px);
+}
+
+body:not(.auth-screen) {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(125, 211, 252, 0.28), transparent 28%),
+    radial-gradient(circle at 88% 10%, rgba(253, 186, 116, 0.24), transparent 26%),
+    linear-gradient(180deg, var(--td-approved-bg), #fff7ed 100%);
+}
+
+body.app-routed main {
+  max-width: min(1440px, 100%);
+}
+
+.topbar,
+.trip-tab-bar,
+.tabs,
+.message-tabs,
+.split-mode-tabs,
+.transport-tabs,
+.explore-tabs,
+.event-dashboard-tabs,
+.travel-section-nav,
+.pass-filter-row,
+.travel-pass-filters,
+.travel-search-suggestions {
+  display: flex !important;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 999px !important;
+  background: var(--td-approved-tab);
+  box-shadow: var(--td-approved-shadow);
+  -webkit-overflow-scrolling: touch;
+}
+
+.trip-tab-bar button,
+.tabs .tab,
+.tab,
+.message-tabs button,
+.split-mode-tabs button,
+.transport-tabs button,
+.explore-tabs button,
+.event-dashboard-tabs button,
+.travel-section-nav button,
+.pass-filter-row button,
+.travel-pass-filters button,
+.travel-search-suggestions button {
+  flex: 0 0 auto;
+  width: auto !important;
+  min-width: max-content;
+  min-height: 40px;
+  justify-content: center;
+  padding: 0 14px;
+  border-radius: 999px !important;
+  white-space: nowrap;
+  color: #0f2f3a;
+}
+
+.trip-tab-bar button.active,
+.tabs .tab.active,
+.tab.active,
+.message-tabs button.active,
+.split-mode-tabs button.active,
+.transport-tabs button.active,
+.explore-tabs button.active,
+.event-dashboard-tabs button.active,
+.travel-section-nav button.active,
+.pass-filter-row button.active,
+.travel-pass-filters button.active,
+.travel-search-suggestions button.active {
+  background: var(--td-approved-active) !important;
+  color: #082f49 !important;
+  box-shadow: 0 8px 18px rgba(8, 127, 140, 0.14);
+}
+
+.content-grid,
+.dashboard-widget-grid,
+.widget-grid,
+.dashboard-widgets,
+.right-stack,
+.navigation-status-grid,
+.events-dashboard-grid,
+.event-experience-grid,
+.solo-dashboard-grid,
+.corporate-access-admin-grid,
+.employee-dashboard,
+.permission-grid,
+.invite-grid,
+.explore-grid,
+.destination-grid,
+.reservation-reminder-grid,
+.itinerary-dashboard,
+.travel-itinerary-dashboard,
+.travel-reservation-sections,
+.upcoming-reservation-grid,
+.memory-gallery-grid,
+.memory-album-grid,
+.platform-grid,
+.profile-stats-grid,
+.profile-adventure-grid,
+.profile-memory-strip,
+.backend-readiness-grid,
+.audit-grid,
+.security-list,
+.payment-method-grid,
+.card-balance-grid,
+.card-rules,
+.card-ledger,
+.ride-recommendation-grid,
+.private-driver-list,
+.transport-record-list,
+.travel-command-header,
+.travel-dashboard-sections,
+.travel-booking-summary,
+.travel-transport-summary,
+.travel-focus-grid,
+.travel-provider-cards,
+.travel-smart-results,
+.wallet-dashboard-header,
+.wallet-home-grid,
+.wallet-trip-card-grid,
+.wallet-dashboard-sections,
+.wallet-section-card-grid,
+.wallet-breakdown,
+.wallet-action-grid,
+.visual-pass-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)) !important;
+  gap: var(--td-approved-gap);
+  align-items: stretch;
+}
+
+.messages-layout,
+.memories-gallery-shell,
+.social-hub-layout,
+.settings-shell,
+.admin-settings-shell,
+.ride-two-column-grid,
+.transport-dashboard-grid,
+.travel-settings-shell,
+.wallet-redesign-shell,
+.profile-card-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)) !important;
+  gap: var(--td-approved-gap);
+  align-items: start;
+}
+
+.travel-dashboard-card--overview,
+.wallet-dashboard-sections > article:first-child,
+.itinerary-card--featured,
+.itinerary-timeline-dashboard,
+.settings-main-panel,
+.messages-hub,
+.memory-comments-panel,
+.social-card.is-large,
+.backend-readiness-grid > article:first-child,
+.audit-grid > article:first-child {
+  grid-column: span 2 !important;
+}
+
+.section-heading,
+.travel-command-header > *,
+.travel-smart-search,
+.travel-dashboard-card,
+.travel-booking-summary article,
+.travel-transport-summary article,
+.travel-focus-header,
+.travel-focus-grid article,
+.travel-provider-cards article,
+.travel-result-group,
+.travel-result-card,
+.wallet-dashboard-header article,
+.wallet-summary-card,
+.wallet-balance-hero,
+.wallet-trip-tile,
+.wallet-virtual-preview,
+.wallet-dashboard-sections article,
+.wallet-section-card-grid article,
+.trip-wallet-card,
+.virtual-card,
+.profile-social-hero,
+.profile-card-grid article,
+.events-dashboard-grid article,
+.event-experience-card,
+.memory-media-card,
+.social-card,
+.platform-card,
+.conversation-card,
+.settings-row,
+.settings-main-panel,
+.settings-nav-panel,
+.admin-panel,
+.navigation-audit-panel,
+.backend-readiness-panel,
+.security-list div,
+.audit-grid article,
+.destination-card,
+.explore-card,
+.reservation-reminder-card,
+.ride-clean-card,
+.transport-record-card,
+.transport-pass-card,
+.visual-pass-card {
+  border-radius: var(--td-approved-radius) !important;
+  border: 1px solid var(--td-approved-border);
+  background: var(--td-approved-card);
+  box-shadow: var(--td-approved-shadow);
+}
+
+.section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px;
+}
+
+.section-heading .eyebrow,
+.panel .eyebrow {
+  color: #0891b2;
+  letter-spacing: 0.08em;
+}
+
+.travel-dashboard-card:nth-child(4n + 1),
+.wallet-dashboard-header article:nth-child(4n + 1),
+.profile-stats-grid article:nth-child(4n + 1),
+.events-dashboard-grid article:nth-child(4n + 1),
+.platform-card:nth-child(4n + 1) {
+  background: linear-gradient(180deg, #ffffff, rgba(224, 242, 254, 0.86));
+}
+
+.travel-dashboard-card:nth-child(4n + 2),
+.wallet-dashboard-header article:nth-child(4n + 2),
+.profile-stats-grid article:nth-child(4n + 2),
+.events-dashboard-grid article:nth-child(4n + 2),
+.platform-card:nth-child(4n + 2) {
+  background: linear-gradient(180deg, #ffffff, rgba(204, 251, 241, 0.78));
+}
+
+.travel-dashboard-card:nth-child(4n + 3),
+.wallet-dashboard-header article:nth-child(4n + 3),
+.profile-stats-grid article:nth-child(4n + 3),
+.events-dashboard-grid article:nth-child(4n + 3),
+.platform-card:nth-child(4n + 3) {
+  background: linear-gradient(180deg, #ffffff, rgba(254, 215, 170, 0.72));
+}
+
+.travel-dashboard-card:nth-child(4n + 4),
+.wallet-dashboard-header article:nth-child(4n + 4),
+.profile-stats-grid article:nth-child(4n + 4),
+.events-dashboard-grid article:nth-child(4n + 4),
+.platform-card:nth-child(4n + 4) {
+  background: linear-gradient(180deg, #ffffff, rgba(221, 214, 254, 0.62));
+}
+
+.travel-smart-search-row,
+.travel-result-card,
+.wallet-trip-tile,
+.memory-media-card,
+.platform-card,
+.conversation-card,
+.transport-record-card,
+.settings-row,
+.shared-wallet-ledger div,
+.card-ledger div,
+.transaction-row,
+.document-list div,
+.alert-preview-list div,
+.ride-history-list article,
+.ride-notification-list article,
+.navigation-audit-list div,
+.member-table > div {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center;
+  gap: 12px;
+}
+
+.wallet-trip-tile,
+.memory-media-card,
+.platform-card,
+.conversation-card {
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+}
+
+.wallet-smart-actions,
+.wallet-quick-actions-redesign,
+.travel-quick-actions.compact,
+.pass-actions,
+.memory-card-actions,
+.platform-actions,
+.explore-card-actions,
+.button-row,
+.mini-action-row,
+.hero-actions,
+.social-action-row,
+.ride-account-actions,
+.itinerary-action-row,
+.corporate-card-actions {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.wallet-smart-actions button,
+.wallet-quick-actions-redesign button,
+.travel-quick-actions.compact button,
+.pass-actions button,
+.memory-card-actions button,
+.platform-actions button,
+.explore-card-actions button,
+.button-row button,
+.mini-action-row button,
+.hero-actions button,
+.social-action-row button,
+.ride-account-actions button,
+.itinerary-action-row button,
+.corporate-card-actions button {
+  width: auto !important;
+  min-width: max-content;
+}
+
+.digital-boarding-pass {
+  background:
+    linear-gradient(90deg, rgba(15, 47, 58, 0.98) 0 34%, rgba(255, 255, 255, 0.98) 34%),
+    #ffffff;
+}
+
+.digital-boarding-pass::before {
+  display: block;
+}
+
+.digital-boarding-pass .pass-topline,
+.digital-boarding-pass .pass-provider,
+.digital-boarding-pass .pass-route {
+  width: calc(34% - 18px);
+}
+
+.digital-boarding-pass h4,
+.digital-boarding-pass dl,
+.digital-boarding-pass .official-code,
+.digital-boarding-pass .barcode-strip,
+.digital-boarding-pass .pass-actions {
+  margin-left: 35%;
+}
+
+.mobile-nav {
+  border-radius: 24px !important;
+}
+
+@media (max-width: 900px) {
+  .travel-dashboard-card--overview,
+  .wallet-dashboard-sections > article:first-child,
+  .itinerary-card--featured,
+  .itinerary-timeline-dashboard,
+  .settings-main-panel,
+  .messages-hub,
+  .memory-comments-panel,
+  .social-card.is-large,
+  .backend-readiness-grid > article:first-child,
+  .audit-grid > article:first-child {
+    grid-column: auto !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .wallet-smart-actions,
+  .wallet-quick-actions-redesign,
+  .travel-quick-actions.compact,
+  .pass-actions,
+  .memory-card-actions,
+  .platform-actions,
+  .explore-card-actions,
+  .button-row,
+  .mini-action-row,
+  .hero-actions,
+  .social-action-row,
+  .ride-account-actions,
+  .itinerary-action-row,
+  .corporate-card-actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .wallet-smart-actions button,
+  .wallet-quick-actions-redesign button,
+  .travel-quick-actions.compact button,
+  .pass-actions button,
+  .memory-card-actions button,
+  .platform-actions button,
+  .explore-card-actions button,
+  .button-row button,
+  .mini-action-row button,
+  .hero-actions button,
+  .social-action-row button,
+  .ride-account-actions button,
+  .itinerary-action-row button,
+  .corporate-card-actions button {
+    width: 100% !important;
+    min-width: 0;
+  }
+
+  .travel-smart-search-row,
+  .travel-result-card,
+  .wallet-trip-tile,
+  .memory-media-card,
+  .platform-card,
+  .conversation-card,
+  .transport-record-card,
+  .settings-row,
+  .shared-wallet-ledger div,
+  .card-ledger div,
+  .transaction-row,
+  .document-list div,
+  .alert-preview-list div,
+  .ride-history-list article,
+  .ride-notification-list article,
+  .navigation-audit-list div,
+  .member-table > div {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .digital-boarding-pass {
+    background: linear-gradient(180deg, #0f2f3a 0 190px, #ffffff 190px);
+  }
+
+  .digital-boarding-pass::before {
+    display: none;
+  }
+
+  .digital-boarding-pass .pass-topline,
+  .digital-boarding-pass .pass-provider,
+  .digital-boarding-pass .pass-route {
+    width: 100%;
+  }
+
+  .digital-boarding-pass h4,
+  .digital-boarding-pass dl,
+  .digital-boarding-pass .official-code,
+  .digital-boarding-pass .barcode-strip,
+  .digital-boarding-pass .pass-actions {
+    margin-left: 0;
+  }
+}
