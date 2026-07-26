@@ -14555,6 +14555,65 @@ textarea {
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
+/* Section 63 travel tab presentation: keep the familiar #rideShareHub tile view first */
+#rideShareHub {
+  display: flex;
+  flex-direction: column;
+}
+
+#rideShareHub > .section-heading {
+  order: 0;
+}
+
+#rideShareHub > .travel-overview-card {
+  order: 1;
+}
+
+#rideShareHub > .travel-section-nav {
+  order: 2;
+}
+
+#rideShareHub > .travel-selected-tile {
+  order: 3;
+}
+
+#rideShareHub > .travel-command-header {
+  order: 4;
+}
+
+#rideShareHub > .travel-settings-shell {
+  order: 5;
+}
+
+#rideShareHub > .travel-workspace {
+  order: 6;
+}
+
+#rideShareHub > .transport-confirmation-hub {
+  order: 7;
+}
+
+#rideShareHub > .ride-hub-redesign {
+  order: 8;
+}
+
+#rideShareHub > .ride-assistant-panel,
+#rideShareHub > .payment-method-grid,
+#rideShareHub > #rideMessage,
+#rideShareHub > .corporate-meal-rules {
+  order: 9;
+}
+
+#rideShareHub .travel-command-header {
+  margin-top: 6px;
+  padding-top: 0;
+}
+
+#rideShareHub .travel-command-header article,
+#rideShareHub .travel-command-actions {
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.045);
+}
+
 /* Section 62: Travel and Wallet dashboards with full text visibility */
 :root {
   --td-title-size: clamp(1.35rem, 2.6vw, 2.25rem);

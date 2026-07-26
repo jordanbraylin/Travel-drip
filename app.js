@@ -3666,6 +3666,10 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
     if (exploreState.itemId) showExploreDetail(exploreState.itemId);
     if (exploreState.destinationId) showDestinationExploreDetail(exploreState.destinationId, exploreState.destinationAction);
   }
+  if (resolvedTarget === "rideShareHub" && !history.state?.travelSection) {
+    setTravelFocus("overview");
+    showTravelTileDestination("overview");
+  }
   if (resolvedTarget === "aiTravelPlanner") renderAiPlanner();
 
   updateDashboardWidgets();
