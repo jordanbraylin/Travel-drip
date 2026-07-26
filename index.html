@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=81">
+  <link rel="stylesheet" href="styles.css?v=82">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -37,73 +37,74 @@
       </a>
       <nav class="nav grouped-nav" aria-label="TravelDrip navigation">
         <details class="nav-group" data-consumer-nav open>
-          <summary>Primary Navigation</summary>
-          <button class="active" type="button" data-target="dashboardHome">Home</button>
-          <button type="button" data-target="letsPlan">Let's Plan</button>
+          <summary>Dashboard</summary>
+          <button class="active" type="button" data-target="dashboardHome">Overview</button>
           <button type="button" data-target="exploreDrops">Explore</button>
+          <button type="button" data-target="itineraryAlerts">Notifications</button>
           <button type="button" data-target="tripsPanel">My Trips</button>
-          <button type="button" data-target="socialHub">Messages</button>
-          <button type="button" data-target="socialHub">Memories</button>
-          <button type="button" data-target="enterpriseRbac">Corporate</button>
-          <button type="button" data-target="securityCenter">Profile</button>
         </details>
         <details class="nav-group" data-consumer-nav open>
-          <summary>Trip Management</summary>
-          <button type="button" data-target="dashboardHome">Overview</button>
-          <button type="button" data-target="itineraryAlerts">Itinerary</button>
-          <button type="button" data-target="itineraryAlerts">Flight Details</button>
-          <button type="button" data-target="importantInfo">Hotel Details</button>
+          <summary>Travel</summary>
+          <button type="button" data-target="rideShareHub" data-travel-section="flights">Flights</button>
+          <button type="button" data-target="rideShareHub" data-travel-section="hotels">Hotels</button>
           <button type="button" data-target="rideShareHub">Transportation</button>
+          <button type="button" data-target="rideShareHub" data-travel-section="rideShare">Ride Share</button>
+          <button type="button" data-target="rideShareHub" data-travel-section="trains">Trains</button>
+          <button type="button" data-target="rideShareHub" data-travel-section="buses">Buses</button>
           <button type="button" data-target="rideShareHub" data-travel-section="ferries">Cruises</button>
-          <button type="button" data-target="exploreDrops">Activities</button>
-          <button type="button" data-target="importantInfo">Documents</button>
-          <button type="button" data-target="importantInfo">Important Information</button>
-          <button type="button" data-target="walletPanel">Budget & Wallet</button>
-          <button type="button" data-target="socialHub" data-requires-trip-type="group corporate">Group Chat</button>
+          <button type="button" data-target="rideShareHub" data-travel-section="boarding">Boarding Passes</button>
+          <button type="button" data-target="rideShareHub" data-travel-section="documents">Travel Documents</button>
+          <button type="button" data-target="rideShareHub" data-travel-section="weather">Weather</button>
+          <button type="button" data-target="rideShareHub" data-travel-section="maps">Maps</button>
         </details>
         <details class="nav-group" data-consumer-nav open>
-          <summary>Financial</summary>
-          <button type="button" data-target="walletPanel">My Wallet</button>
-          <button type="button" data-target="groupBank">Group Bank</button>
+          <summary>Planning</summary>
+          <button type="button" data-target="letsPlan">Let's Plan</button>
+          <button type="button" data-target="itineraryAlerts">Itinerary</button>
+          <button type="button" data-target="tripsPanel">Smart Route</button>
+          <button type="button" data-target="tripsPanel">Tasks</button>
+          <button type="button" data-target="socialHub">Polls</button>
+          <button type="button" data-target="walletPanel">Budgets</button>
+        </details>
+        <details class="nav-group" data-consumer-nav open>
+          <summary>Wallet</summary>
+          <button type="button" data-target="walletPanel">Trip Virtual Wallet</button>
           <button type="button" data-target="walletPanel">Virtual Card</button>
-          <button type="button" data-target="walletPanel">Transaction History</button>
-          <button type="button" data-target="walletPanel">Refund Center</button>
-          <button type="button" data-target="splitBill">Smart Bill Split</button>
-          <button type="button" data-target="rideShareHub">Ride Share Expenses</button>
+          <button type="button" data-target="walletPanel">Transactions</button>
+          <button type="button" data-target="groupBank">Contributions</button>
+          <button type="button" data-target="walletPanel">Refunds</button>
+          <button type="button" data-target="splitBill">Split Bills</button>
+          <button type="button" data-target="walletPanel">Payment Requests</button>
         </details>
         <details class="nav-group" data-corporate-nav open>
-          <summary>Corporate Travel</summary>
-          <button type="button" data-target="dashboardHome">Corporate Home</button>
-          <button type="button" data-target="enterpriseRbac">My Travel</button>
-          <button type="button" data-target="enterpriseRbac">Events</button>
-          <button type="button" data-target="enterpriseRbac">Schedule</button>
-          <button type="button" data-target="enterpriseRbac">Activities</button>
-          <button type="button" data-target="socialHub">Messages</button>
-          <button type="button" data-target="enterpriseRbac">Per Diem</button>
-          <button type="button" data-target="walletPanel">Virtual Card</button>
-          <button type="button" data-target="enterpriseRbac">Expenses</button>
-          <button type="button" data-target="importantInfo">Documents</button>
-          <button type="button" data-target="importantInfo">Policies</button>
-          <button type="button" data-target="importantInfo">Announcements</button>
-          <button type="button" data-target="securityCenter">Profile</button>
-          <button type="button" data-target="enterpriseRbac" data-admin-only>Attendees</button>
-          <button type="button" data-target="enterpriseRbac" data-admin-only>Approvals</button>
-          <button type="button" data-target="enterpriseRbac" data-admin-only>Budget</button>
-          <button type="button" data-target="enterpriseRbac" data-admin-only>Finance</button>
-          <button type="button" data-target="enterpriseRbac" data-admin-only>Reports</button>
-          <button type="button" data-target="enterpriseRbac" data-admin-only>Vendors</button>
-          <button type="button" data-target="enterpriseRbac" data-admin-only>Audit Logs</button>
-          <button type="button" data-target="enterpriseRbac" data-admin-only>Corporate Settings</button>
+          <summary>Events</summary>
+          <button type="button" data-target="eventsPanel">Create Event</button>
+          <button type="button" data-target="eventsPanel">Upcoming Events</button>
+          <button type="button" data-target="eventsPanel">Invitations</button>
+          <button type="button" data-target="eventsPanel">RSVPs</button>
+          <button type="button" data-target="eventsPanel">Guests</button>
+          <button type="button" data-target="eventsPanel">Past Events</button>
+          <button type="button" data-target="enterpriseRbac">Corporate Controls</button>
         </details>
         <details class="nav-group">
-          <summary>Settings</summary>
-          <button type="button" data-target="securityCenter">Account</button>
-          <button type="button" data-target="itineraryAlerts">Notifications</button>
-          <button type="button" data-target="securityCenter">Privacy</button>
-          <button type="button" data-target="socialHub">Connected Social Media</button>
-          <button type="button" data-target="rideShareHub">Connected Ride Share Accounts</button>
+          <summary>Messages</summary>
+          <button type="button" data-target="socialHub">Group Chats</button>
+          <button type="button" data-target="socialHub">Private Messages</button>
+          <button type="button" data-target="socialHub">Message Requests</button>
+          <button type="button" data-target="socialHub">Archived</button>
+        </details>
+        <details class="nav-group">
+          <summary>Social</summary>
+          <button type="button" data-target="socialHub">Friends</button>
+          <button type="button" data-target="socialHub">Feed</button>
+          <button type="button" data-target="socialHub">Memories</button>
+          <button type="button" data-target="socialHub">Shared Albums</button>
+        </details>
+        <details class="nav-group">
+          <summary>Account</summary>
+          <button type="button" data-target="securityCenter">Profile</button>
+          <button type="button" data-target="securityCenter">Settings</button>
           <button type="button" data-target="securityCenter">Security</button>
-          <button type="button" data-target="walletPanel">Wallet Settings</button>
           <button type="button" data-target="copyrightPolicy">Help & Support</button>
           <a href="admin.html">Admin</a>
         </details>
@@ -326,7 +327,7 @@
         <button type="button" data-target="itineraryAlerts">Itinerary</button>
         <button type="button" data-target="socialHub">Chat</button>
         <button type="button" data-target="rideShareHub">Travel</button>
-        <button type="button" data-target="letsPlan">Events</button>
+        <button type="button" data-target="eventsPanel">Events</button>
         <button type="button" data-target="walletPanel">Wallet</button>
         <button type="button" data-target="importantInfo">Important Info</button>
         <button type="button" data-target="socialHub">Memories</button>
@@ -544,7 +545,7 @@
             <div class="lets-plan-hero">
               <p class="eyebrow">Central planning hub</p>
               <h2>Let's Plan Your Next Adventure!</h2>
-              <p>What would you like to plan today? Start with a trip, celebration, event, cruise, or corporate experience, then invite people, collect RSVPs, build schedules, and manage travel from one workflow.</p>
+              <p>What would you like to plan today? Start with a trip, celebration, event, cruise, or corporate experience, then open the guided workflow that fits what you are building.</p>
               <div class="lets-plan-hero-actions">
                 <button class="primary-button" type="button" data-plan-ai>🤖 Plan with AI</button>
                 <button class="ghost-button" type="button" data-target="tripsPanel">Open guided creation</button>
@@ -560,20 +561,20 @@
               <button class="event-experience-card" type="button" data-event-card="Wedding" style="--event-image:url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=900&auto=format&fit=crop')">
                 <span>Wedding</span>
                 <strong>Santorini ceremony</strong>
-                <small>86 guests • hotel block ready • sunny</small>
+                <small>86 guests • ceremony tasks ready • RSVP open</small>
                 <i>42 days left</i>
               </button>
               <button class="event-experience-card" type="button" data-event-card="Corporate Retreat" style="--event-image:url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=900&auto=format&fit=crop')">
                 <span>Corporate Retreat</span>
                 <strong>Dubai leadership offsite</strong>
-                <small>44 attendees • travel assigned • 5 tasks</small>
+                <small>44 attendees • agenda ready • 5 tasks</small>
                 <i>Policy controlled</i>
               </button>
               <button class="event-experience-card" type="button" data-event-card="Cruise Party" style="--event-image:url('https://images.unsplash.com/photo-1548574505-5e239809ee19?q=80&w=900&auto=format&fit=crop')">
                 <span>Cruise Party</span>
-                <strong>Caribbean sailing crew</strong>
-                <small>Cabins, ports, boarding docs, shore plans</small>
-                <i>Boarding soon</i>
+                <strong>Sunset celebration party</strong>
+                <small>Guest list, playlist, photos, and RSVP reminders</small>
+                <i>Invite open</i>
               </button>
             </section>
 
@@ -628,9 +629,84 @@
               <article><span>Creation</span><strong>Name, type, destination, dates, budget, guests, privacy, and cover photo.</strong></article>
               <article><span>Invitations</span><strong>Email, username, share link, QR code, preview, draft, or invite later.</strong></article>
               <article><span>RSVP Dashboard</span><strong>Accept, decline, maybe, guest totals, and organizer response tracking.</strong></article>
-              <article><span>Planning Dashboard</span><strong>Overview, itinerary, travel, guests, messages, polls, budget, wallet, documents, transportation, hotels, flights, memories, and settings.</strong></article>
+              <article><span>Planning Dashboard</span><strong>Overview, schedule, guests, messages, polls, budget, files, memories, tasks, and settings.</strong></article>
             </section>
             <p class="small" id="letsPlanMessage">Choose a planning option to open the correct guided workflow. Save as Draft keeps unfinished plans available for later.</p>
+          </section>
+
+          <section class="panel events-dashboard-panel" id="eventsPanel">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Events</p>
+                <h2>Plan celebrations, gatherings, and shared moments</h2>
+                <p>Create events, invite guests, manage RSVPs, coordinate budgets, collect memories, and keep every update in one event-focused workspace.</p>
+              </div>
+              <button class="primary-button" type="button" data-event-dashboard-action="Create Event">Create Event</button>
+            </div>
+            <div class="event-dashboard-tabs" role="tablist" aria-label="Event dashboard sections">
+              <button class="active" type="button" data-event-dashboard-tab="Upcoming Events">Upcoming Events</button>
+              <button type="button" data-event-dashboard-tab="Draft Events">Draft Events</button>
+              <button type="button" data-event-dashboard-tab="Invitations">Invitations</button>
+              <button type="button" data-event-dashboard-tab="RSVP Requests">RSVP Requests</button>
+              <button type="button" data-event-dashboard-tab="Shared With Me">Shared With Me</button>
+              <button type="button" data-event-dashboard-tab="Past Events">Past Events</button>
+            </div>
+            <section class="event-experience-grid event-dashboard-cards" aria-label="Event cards">
+              <button class="event-experience-card" type="button" data-event-card="Birthday" style="--event-image:url('https://images.unsplash.com/photo-1464349153735-7db50ed83c84?q=80&w=900&auto=format&fit=crop')">
+                <span>Birthday</span>
+                <strong>Maya's rooftop birthday</strong>
+                <small>Aug 12 • 7:30 PM • Miami</small>
+                <i>18 guests • 72% RSVP</i>
+              </button>
+              <button class="event-experience-card" type="button" data-event-card="Wedding" style="--event-image:url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=900&auto=format&fit=crop')">
+                <span>Wedding</span>
+                <strong>Santorini ceremony</strong>
+                <small>Sep 9 • 5:00 PM • Cliffside venue</small>
+                <i>86 guests • seating in progress</i>
+              </button>
+              <button class="event-experience-card" type="button" data-event-card="Corporate Event" style="--event-image:url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=900&auto=format&fit=crop')">
+                <span>Corporate Event</span>
+                <strong>Leadership awards dinner</strong>
+                <small>Oct 3 • 6:00 PM • Grand ballroom</small>
+                <i>44 attendees • 5 tasks open</i>
+              </button>
+              <button class="event-experience-card" type="button" data-event-card="Family Reunion" style="--event-image:url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=900&auto=format&fit=crop')">
+                <span>Family Reunion</span>
+                <strong>Johnson family picnic</strong>
+                <small>Jul 27 • 1:00 PM • Lake pavilion</small>
+                <i>31 guests • meal poll active</i>
+              </button>
+            </section>
+            <div class="event-operations-grid" aria-label="Event management tools">
+              <button type="button" data-event-dashboard-action="Invitations"><strong>Invitations</strong><span>Templates, guest links, resend, cancel, download, and preview.</span></button>
+              <button type="button" data-event-dashboard-action="RSVPs"><strong>RSVPs</strong><span>Accepted, declined, maybe, pending, waitlisted, and checked in.</span></button>
+              <button type="button" data-event-dashboard-action="Guests"><strong>Guests</strong><span>Plus-ones, households, meal preferences, and accessibility requests.</span></button>
+              <button type="button" data-event-dashboard-action="Schedule"><strong>Schedule</strong><span>Event timeline, messages, polls, tasks, updates, and check-in.</span></button>
+              <button type="button" data-event-dashboard-action="Budget"><strong>Budget</strong><span>Event budget, expenses, split bills, payment requests, and approvals.</span></button>
+              <button type="button" data-event-dashboard-action="Memories"><strong>Memories</strong><span>Photos, videos, files, shared albums, and event recap.</span></button>
+            </div>
+            <form class="event-create-card" aria-label="Create event form">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Create event</p>
+                  <h3>Guided event builder</h3>
+                </div>
+                <button class="ghost-button" type="button" data-event-dashboard-action="Save Draft">Save Draft</button>
+              </div>
+              <div class="event-create-grid">
+                <label>Event name<input type="text" value="Maya's rooftop birthday"></label>
+                <label>Event type<select><option>Birthday</option><option>Wedding</option><option>Baby Shower</option><option>Graduation</option><option>Conference</option><option>Custom Event</option></select></label>
+                <label>Date<input type="date" value="2026-08-12"></label>
+                <label>Start time<input type="time" value="19:30"></label>
+                <label>End time<input type="time" value="23:00"></label>
+                <label>Venue<input type="text" value="Skyline Rooftop"></label>
+                <label class="wide">Address<input type="text" value="Miami, FL"></label>
+                <label>RSVP deadline<input type="date" value="2026-08-01"></label>
+                <label>Privacy<select><option>Invite only</option><option>Approval required</option><option>Public invitation link</option><option>Private</option></select></label>
+                <label class="wide">Description<textarea>Celebrate with dinner, music, photos, memories, RSVP tracking, guest updates, and shared event expenses.</textarea></label>
+              </div>
+            </form>
+            <p class="small" id="eventsDashboardMessage">Events are strictly event-focused. Travel tools stay in the Travel tab.</p>
           </section>
 
           <section class="panel" data-route-support="groupBank">
@@ -2312,6 +2388,7 @@
               <button type="button" data-travel-section="hotels" aria-label="Open Hotels"><span>🏨</span><strong>Hotels</strong><small>2 reservations • confirmations saved</small></button>
               <button type="button" data-travel-section="trains" aria-label="Open Trains"><span>🚆</span><strong>Trains</strong><small>2 tickets • station reminders ready</small></button>
               <button type="button" data-travel-section="rideShare" aria-label="Open Transportation"><span>🚗</span><strong>Transportation</strong><small>Airport pickup • fare split ready</small></button>
+              <button type="button" data-travel-section="rideShare" aria-label="Open Ride Share"><span>🚘</span><strong>Ride Share</strong><small>Country providers • app booking</small></button>
               <button type="button" data-travel-section="tickets" aria-label="Open Tickets and Boarding Passes"><span>🎫</span><strong>Tickets</strong><small>Wallet passes • QR codes available</small></button>
               <button type="button" data-travel-section="boarding" aria-label="Open Boarding Information"><span>🪪</span><strong>Boarding Info</strong><small>Gate B18 • Group 3 • pass ready</small></button>
               <button type="button" data-travel-section="weather" aria-label="Open Weather"><span>🌦️</span><strong>Weather</strong><small>Forecast • rain and packing tips</small></button>

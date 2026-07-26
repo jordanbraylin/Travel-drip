@@ -11181,6 +11181,129 @@ body.auth-screen .auth-carousel blockquote {
   gap: 12px;
 }
 
+.events-dashboard-panel {
+  display: grid;
+  gap: 14px;
+  overflow: hidden;
+}
+
+.events-dashboard-panel > .section-heading {
+  align-items: center;
+}
+
+.events-dashboard-panel > .section-heading p:not(.eyebrow) {
+  margin: 5px 0 0;
+  max-width: 760px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.event-dashboard-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.event-dashboard-tabs button {
+  min-height: 36px;
+  border: 1px solid rgba(8, 127, 140, 0.14);
+  border-radius: 999px;
+  padding: 0 13px;
+  background: rgba(255, 255, 255, 0.86);
+  color: #174650;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.event-dashboard-tabs button.active,
+.event-dashboard-tabs button:hover,
+.event-dashboard-tabs button:focus-visible {
+  border-color: rgba(0, 150, 199, 0.38);
+  background: rgba(8, 189, 184, 0.12);
+}
+
+.event-operations-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.event-operations-grid button {
+  display: grid;
+  gap: 6px;
+  min-height: 104px;
+  align-content: start;
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 14px;
+  padding: 13px;
+  background:
+    linear-gradient(135deg, rgba(8, 189, 184, 0.1), rgba(255, 138, 92, 0.08)),
+    #ffffff;
+  color: #174650;
+  text-align: left;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.055);
+}
+
+.event-operations-grid strong {
+  color: #0f2f3a;
+  font-size: 17px;
+}
+
+.event-operations-grid span {
+  color: #5f7882;
+  line-height: 1.35;
+}
+
+.event-create-card {
+  display: grid;
+  gap: 12px;
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 16px;
+  padding: 14px;
+  background: #fff;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.055);
+}
+
+.event-create-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.event-create-grid label {
+  display: grid;
+  gap: 5px;
+  color: #47707a;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.event-create-grid .wide {
+  grid-column: span 2;
+}
+
+.event-create-grid input,
+.event-create-grid select,
+.event-create-grid textarea {
+  width: 100%;
+  min-height: 38px;
+  border: 1px solid rgba(8, 127, 140, 0.16);
+  border-radius: 11px;
+  padding: 9px 10px;
+  background: #fff;
+  color: #0f2f3a;
+  font: inherit;
+  font-weight: 750;
+}
+
+.event-create-grid textarea {
+  min-height: 78px;
+  resize: vertical;
+  text-transform: none;
+}
+
 .event-experience-card {
   min-height: 190px;
   display: grid;
@@ -11529,6 +11652,7 @@ body.auth-screen .auth-carousel blockquote {
 }
 
 .weather-hero {
+  position: relative;
   min-height: 170px;
   display: grid;
   align-content: end;
@@ -11545,13 +11669,28 @@ body.auth-screen .auth-carousel blockquote {
   color: #fff;
 }
 
+.weather-hero::after {
+  content: "";
+  position: absolute;
+  inset: -20px;
+  background: repeating-linear-gradient(100deg, transparent 0 18px, rgba(255, 255, 255, 0.24) 18px 20px, transparent 20px 34px);
+  opacity: 0.5;
+  animation: weatherRainDrift 5s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
 .weather-hero span,
 .weather-hero small {
+  position: relative;
+  z-index: 1;
   font-weight: 900;
   text-shadow: 0 1px 8px rgba(15, 23, 42, 0.35);
 }
 
 .weather-hero strong {
+  position: relative;
+  z-index: 1;
   font-size: 44px;
   line-height: 0.95;
   text-shadow: 0 1px 10px rgba(15, 23, 42, 0.35);
@@ -11598,9 +11737,30 @@ body.auth-screen .auth-carousel blockquote {
   font-weight: 800;
 }
 
-#rideShareHub .transport-confirmation-hub,
-#rideShareHub .ride-hub-redesign {
+@keyframes weatherRainDrift {
+  from {
+    transform: translate3d(-10px, -16px, 0);
+  }
+
+  to {
+    transform: translate3d(18px, 22px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .weather-hero::after {
+    animation: none;
+  }
+}
+
+#rideShareHub .transport-confirmation-hub {
   display: none;
+}
+
+#rideShareHub .ride-hub-redesign {
+  display: grid;
+  gap: 12px;
+  margin-top: 0;
 }
 
 @media (max-width: 1120px) {
@@ -11632,6 +11792,7 @@ body.auth-screen .auth-carousel blockquote {
   }
 
   .event-experience-grid,
+  .event-operations-grid,
   .wallet-action-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -11650,6 +11811,10 @@ body.auth-screen .auth-carousel blockquote {
   .visual-pass-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .event-create-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
@@ -11659,9 +11824,15 @@ body.auth-screen .auth-carousel blockquote {
 
   .visual-pass-grid,
   .event-experience-grid,
+  .event-operations-grid,
+  .event-create-grid,
   .wallet-action-grid,
   .weather-metrics {
     grid-template-columns: 1fr;
+  }
+
+  .event-create-grid .wide {
+    grid-column: auto;
   }
 
   .event-experience-card {

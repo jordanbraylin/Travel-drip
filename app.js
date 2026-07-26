@@ -2423,7 +2423,7 @@ function renderRideProviders() {
   if (!providers.includes(state.selectedRideProvider)) state.selectedRideProvider = providers[0];
   $("#rideProviderList").innerHTML = providers.map((provider) => {
     const account = state.connectedRideAccounts[provider];
-    const status = account?.connected ? "Connected" : "Connect required";
+    const status = account?.connected ? "Available • Connected" : "Available • Provider app required";
     return `<button class="${provider === state.selectedRideProvider ? "active" : ""}" type="button" data-ride-provider="${escapeHtml(provider)}"><strong>${escapeHtml(provider)}</strong><span>${status}</span></button>`;
   }).join("");
   $("#rideRecommended").textContent = state.selectedRideProvider;
@@ -3192,6 +3192,7 @@ async function signOut() {
 const routeDefinitions = {
   dashboardHome: { path: "/home", label: "Home Dashboard" },
   letsPlan: { path: "/lets-plan", label: "Let's Plan" },
+  eventsPanel: { path: "/events", label: "Events" },
   aiTravelPlanner: { path: "/ai-planner", label: "AI Travel Planner" },
   exploreDrops: { path: "/explore", label: "Explore" },
   tripsPanel: { path: "/trips", label: "My Trips" },
@@ -3213,6 +3214,10 @@ const routeAliases = {
   "/index.html": "dashboardHome",
   "/home": "dashboardHome",
   "/lets-plan": "letsPlan",
+  "/events": "eventsPanel",
+  "/events/upcoming": "eventsPanel",
+  "/events/invitations": "eventsPanel",
+  "/events/rsvps": "eventsPanel",
   "/create": "letsPlan",
   "/plan": "letsPlan",
   "/ai-planner": "aiTravelPlanner",
@@ -5335,6 +5340,15 @@ function wireLocalInteractions() {
   $$("[data-event-card]").forEach((button) => {
     button.addEventListener("click", async () => {
       const label = button.dataset.eventCard;
+      if (button.closest("#eventsPanel")) {
+        renderRoute("eventsPanel", { updateHistory: true });
+        if ($("#eventsDashboardMessage")) {
+          $("#eventsDashboardMessage").textContent = `${label} opened. Event overview, schedule, guests, invitations, RSVPs, messages, polls, tasks, budget, split bills, memories, files, updates, and check-in stay in Events.`;
+        }
+        addAuditEntry("Event card opened", `${label} selected from Events dashboard.`);
+        await saveSyncedEvent("event_dashboard_card_opened", { label });
+        return;
+      }
       const type = /wedding/i.test(label)
         ? "wedding"
         : /birthday/i.test(label)
@@ -5345,11 +5359,25 @@ function wireLocalInteractions() {
               ? "cruise"
               : "special_event";
       openPlanningWorkflow(type);
-      if ($("#letsPlanMessage")) {
-        $("#letsPlanMessage").textContent = `${label} event dashboard opened with RSVP progress, budget, travel, split bills, tasks, memories, and AI planning widgets.`;
-      }
+      if ($("#letsPlanMessage")) $("#letsPlanMessage").textContent = `${label} guided event setup opened with RSVP progress, budget, split bills, tasks, memories, and AI planning widgets.`;
       addAuditEntry("Event card opened", `${label} selected from interactive Events dashboard.`);
       await saveSyncedEvent("event_card_opened", { label, type });
+    });
+  });
+
+  $$("[data-event-dashboard-tab], [data-event-dashboard-action]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const label = button.dataset.eventDashboardTab || button.dataset.eventDashboardAction;
+      $$("[data-event-dashboard-tab]").forEach((tab) => {
+        const active = tab === button;
+        tab.classList.toggle("active", active);
+        tab.setAttribute("aria-selected", String(active));
+      });
+      if ($("#eventsDashboardMessage")) {
+        $("#eventsDashboardMessage").textContent = `${label} opened in Events. No flight, hotel, boarding pass, weather, or travel document tools are shown in this event workspace.`;
+      }
+      addAuditEntry("Events dashboard action", `${label} selected.`);
+      await saveSyncedEvent("events_dashboard_action", { label });
     });
   });
 
