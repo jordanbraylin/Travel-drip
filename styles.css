@@ -15533,3 +15533,290 @@ textarea {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Section 65: Emergency Travel and Wallet overlap fix */
+#rideShareHub,
+#walletPanel {
+  overflow-x: clip;
+}
+
+#rideShareHub,
+#rideShareHub *,
+#walletPanel,
+#walletPanel * {
+  box-sizing: border-box;
+}
+
+#rideShareHub > :where(section, div, p),
+#walletPanel > :where(section, div, p),
+#rideShareHub :where(article, section, div),
+#walletPanel :where(article, section, div) {
+  min-width: 0;
+}
+
+#rideShareHub :where(.travel-command-header, .travel-smart-search, .travel-overview-card, .travel-section-nav, .travel-selected-tile, .travel-settings-shell, .travel-workspace, .transport-confirmation-hub, .ride-hub-redesign),
+#walletPanel :where(.wallet-dashboard-header, .wallet-smart-actions, .wallet-redesign-shell, .wallet-home-grid, .wallet-trip-card-grid, .wallet-dashboard-sections, .wallet-section-card-grid, .wallet-breakdown, .wallet-action-grid, .shared-wallet-ledger) {
+  position: relative;
+  inset: auto;
+  float: none;
+  clear: both;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  min-height: 0;
+  margin-left: 0;
+  margin-right: 0;
+  transform: none;
+  overflow: visible;
+  z-index: auto;
+}
+
+#rideShareHub > .travel-overview-card,
+#rideShareHub > .travel-section-nav,
+#rideShareHub > .travel-selected-tile,
+#rideShareHub > .travel-workspace,
+#rideShareHub > .transport-confirmation-hub,
+#rideShareHub > .ride-hub-redesign {
+  display: grid;
+}
+
+#rideShareHub .travel-command-header,
+#walletPanel .wallet-dashboard-header {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 12px;
+  align-items: stretch;
+  margin: 12px 0;
+}
+
+#rideShareHub .travel-command-header > article,
+#walletPanel .wallet-dashboard-header > article {
+  grid-column: span 2;
+}
+
+#rideShareHub .travel-command-header > .travel-command-trip {
+  grid-column: span 4;
+}
+
+#rideShareHub .travel-command-actions {
+  grid-column: span 2;
+}
+
+#walletPanel .wallet-dashboard-header > article:first-child {
+  grid-column: span 2;
+}
+
+#rideShareHub .travel-smart-search {
+  margin: 12px 0;
+  isolation: isolate;
+  z-index: 2;
+}
+
+#rideShareHub .travel-smart-results {
+  position: relative;
+  z-index: 3;
+}
+
+#rideShareHub .travel-dashboard-sections,
+#rideShareHub .travel-booking-summary,
+#rideShareHub .travel-transport-summary,
+#walletPanel .wallet-home-grid,
+#walletPanel .wallet-trip-card-grid,
+#walletPanel .wallet-dashboard-sections,
+#walletPanel .wallet-section-card-grid,
+#walletPanel .wallet-breakdown,
+#walletPanel .wallet-action-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 12px;
+  align-items: stretch;
+  margin-top: 12px;
+}
+
+#rideShareHub .travel-dashboard-sections > *,
+#rideShareHub .travel-booking-summary > *,
+#rideShareHub .travel-transport-summary > *,
+#walletPanel .wallet-dashboard-sections > *,
+#walletPanel .wallet-section-card-grid > *,
+#walletPanel .wallet-breakdown > *,
+#walletPanel .wallet-action-grid > * {
+  grid-column: span 4;
+  width: 100%;
+  min-height: 0;
+  height: auto;
+}
+
+#rideShareHub .travel-dashboard-card--overview,
+#walletPanel .wallet-dashboard-sections > article:first-child {
+  grid-column: span 8;
+}
+
+#walletPanel .wallet-balance-hero {
+  grid-column: span 6;
+}
+
+#walletPanel .wallet-summary-card {
+  grid-column: span 3;
+}
+
+#walletPanel .wallet-trip-tile,
+#walletPanel .wallet-virtual-preview {
+  grid-column: span 6;
+}
+
+#walletPanel .wallet-smart-actions,
+#walletPanel .wallet-quick-actions-redesign {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 12px 0;
+}
+
+#walletPanel .wallet-redesign-shell {
+  display: grid;
+  grid-template-columns: minmax(190px, 240px) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+#walletPanel .wallet-section-nav {
+  position: relative;
+  top: auto;
+}
+
+#walletPanel .trip-wallet-card {
+  display: grid;
+  grid-template-columns: 120px repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-items: center;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+#walletPanel .trip-wallet-card img {
+  width: 120px;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+#rideShareHub :where(article, .travel-dashboard-card, .travel-result-card, .travel-result-group, .travel-focus-header, .travel-current-trip-card, .travel-provider-cards article, .visual-pass-card),
+#walletPanel :where(article, .wallet-summary-card, .wallet-trip-tile, .wallet-virtual-preview, .wallet-balance-hero, .wallet-dashboard-sections article, .wallet-section-card-grid article, .trip-wallet-card, .wallet-breakdown div, .wallet-action-grid button, .shared-wallet-ledger div) {
+  overflow: visible;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  white-space: normal;
+}
+
+#rideShareHub :where(button, .primary-button, .ghost-button),
+#walletPanel :where(button, .primary-button, .ghost-button) {
+  max-width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+#rideShareHub :where(img, .weather-dashboard-visual, .weather-visual),
+#walletPanel img {
+  max-width: 100%;
+}
+
+#rideShareHub .digital-boarding-pass {
+  overflow: hidden;
+}
+
+#rideShareHub .digital-boarding-pass :where(h4, dl, .official-code, .barcode-strip, .pass-actions) {
+  min-width: 0;
+}
+
+@media (max-width: 1180px) {
+  #rideShareHub .travel-command-header > article,
+  #rideShareHub .travel-command-actions,
+  #walletPanel .wallet-dashboard-header > article,
+  #walletPanel .wallet-dashboard-header > article:first-child {
+    grid-column: span 4;
+  }
+
+  #rideShareHub .travel-command-header > .travel-command-trip,
+  #rideShareHub .travel-dashboard-card--overview,
+  #walletPanel .wallet-dashboard-sections > article:first-child {
+    grid-column: span 8;
+  }
+
+  #rideShareHub .travel-dashboard-sections > *,
+  #rideShareHub .travel-booking-summary > *,
+  #rideShareHub .travel-transport-summary > *,
+  #walletPanel .wallet-dashboard-sections > *,
+  #walletPanel .wallet-section-card-grid > *,
+  #walletPanel .wallet-breakdown > *,
+  #walletPanel .wallet-action-grid > *,
+  #walletPanel .wallet-summary-card {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 900px) {
+  #walletPanel .wallet-redesign-shell {
+    grid-template-columns: 1fr;
+  }
+
+  #walletPanel .wallet-section-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #walletPanel .wallet-smart-actions,
+  #walletPanel .wallet-quick-actions-redesign {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #rideShareHub .travel-command-header > *,
+  #walletPanel .wallet-dashboard-header > *,
+  #walletPanel .wallet-balance-hero,
+  #walletPanel .wallet-trip-tile,
+  #walletPanel .wallet-virtual-preview {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 680px) {
+  #rideShareHub .travel-command-header,
+  #walletPanel .wallet-dashboard-header,
+  #rideShareHub .travel-dashboard-sections,
+  #rideShareHub .travel-booking-summary,
+  #rideShareHub .travel-transport-summary,
+  #walletPanel .wallet-home-grid,
+  #walletPanel .wallet-trip-card-grid,
+  #walletPanel .wallet-dashboard-sections,
+  #walletPanel .wallet-section-card-grid,
+  #walletPanel .wallet-breakdown,
+  #walletPanel .wallet-action-grid,
+  #walletPanel .wallet-smart-actions,
+  #walletPanel .wallet-quick-actions-redesign,
+  #walletPanel .trip-wallet-card {
+    grid-template-columns: 1fr;
+  }
+
+  #rideShareHub .travel-command-header > *,
+  #rideShareHub .travel-dashboard-sections > *,
+  #rideShareHub .travel-booking-summary > *,
+  #rideShareHub .travel-transport-summary > *,
+  #walletPanel .wallet-dashboard-header > *,
+  #walletPanel .wallet-home-grid > *,
+  #walletPanel .wallet-trip-card-grid > *,
+  #walletPanel .wallet-dashboard-sections > *,
+  #walletPanel .wallet-section-card-grid > *,
+  #walletPanel .wallet-breakdown > *,
+  #walletPanel .wallet-action-grid > * {
+    grid-column: 1 / -1;
+  }
+
+  #walletPanel .wallet-section-nav {
+    grid-template-columns: 1fr;
+  }
+
+  #walletPanel .trip-wallet-card img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+}
