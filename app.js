@@ -1641,6 +1641,11 @@ const travelTileDestinations = {
     route: "/trips/dubai-weekend/transportation/boarding",
     summary: "Boarding pass is ready. Gate B18, boarding group 3, seat 14A, and check-in reminders open on the Boarding Info page."
   },
+  weather: {
+    title: "Weather",
+    route: "/trips/dubai-weekend/transportation/weather",
+    summary: "Tokyo weather is 82°F with light rain on arrival evening. Forecast, packing guidance, travel alerts, and outdoor timing open on the Weather page."
+  },
   documents: {
     title: "Travel documents",
     route: "/trips/dubai-weekend/transportation/documents",
@@ -1653,7 +1658,7 @@ function showTravelTileDestination(section) {
   if ($("#travelSelectedTitle")) $("#travelSelectedTitle").textContent = destination.title;
   if ($("#travelSelectedSummary")) $("#travelSelectedSummary").textContent = destination.summary;
   if ($("#travelSelectedRoute")) $("#travelSelectedRoute").textContent = destination.route;
-  $$(".travel-section-nav [data-travel-section]").forEach((button) => {
+  $$(".travel-section-nav [data-travel-section], .travel-overview-card [data-travel-section]").forEach((button) => {
     const active = button.dataset.travelSection === section;
     button.classList.toggle("active", active);
     button.setAttribute("aria-pressed", String(active));
@@ -3227,6 +3232,7 @@ const routeAliases = {
   "/trips/dubai-weekend/transportation/ride-share": "rideShareHub",
   "/trips/dubai-weekend/transportation/tickets": "rideShareHub",
   "/trips/dubai-weekend/transportation/boarding": "rideShareHub",
+  "/trips/dubai-weekend/transportation/weather": "rideShareHub",
   "/trips/dubai-weekend/transportation/documents": "rideShareHub",
   "/trips/dubai-weekend/transportation/rental-cars": "rideShareHub",
   "/trips/dubai-weekend/transportation/private-transfers": "rideShareHub",
@@ -3950,7 +3956,7 @@ function wireLocalInteractions() {
     $("#transportMessage").textContent = `${transportTypeLabels[button.dataset.transportType]} opened. Each transportation type has its own confirmation list, detail view, tickets, access-pass area, and secure sharing controls.`;
   });
 
-  $$(".travel-section-nav [data-travel-section], .travel-support-card [data-travel-section]").forEach((button) => {
+  $$(".travel-section-nav [data-travel-section], .travel-overview-card [data-travel-section], .travel-support-card [data-travel-section]").forEach((button) => {
     button.addEventListener("click", async () => {
       const section = button.dataset.travelSection;
       const targetType = section === "ferries" ? "ferries" : section;
@@ -3959,7 +3965,13 @@ function wireLocalInteractions() {
         renderTransportHub(targetType);
         $("#transportMessage").textContent = `${transportTypeLabels[targetType]} opened from the Travel tile grid. Detailed tables stay on ${destination.route}.`;
       } else {
-        const label = section === "tickets" ? "Ticket Center" : section === "documents" ? "Document Center" : "Hotel reservations";
+        const label = section === "tickets"
+          ? "Ticket Center"
+          : section === "documents"
+            ? "Document Center"
+            : section === "weather"
+              ? "Weather Center"
+              : "Hotel reservations";
         $("#transportMessage").textContent = `${label} opened from the Travel tile grid. Detailed records stay on ${destination.route}.`;
       }
       $("#travelSelectedTile")?.scrollIntoView({ behavior: "smooth", block: "nearest" });

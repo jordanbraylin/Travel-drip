@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=77">
+  <link rel="stylesheet" href="styles.css?v=79">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -2241,31 +2241,39 @@
               <span class="compliance-badge">Trip-ready</span>
             </div>
             <section class="travel-overview-card" aria-label="Travel overview">
-              <div>
+              <button class="travel-summary-tile travel-summary-tile--trip" type="button" data-travel-section="flights" aria-label="Open next trip flight details">
                 <span>Next Trip</span>
                 <strong>Miami → Tokyo</strong>
-                <small>Jul 18 • Departs in 5 days</small>
-              </div>
-              <div>
+                <small>Jul 18 - Jul 28 • 5 days until departure</small>
+                <em>DL 241 • MIA 8:45 AM → HND 3:20 PM</em>
+              </button>
+              <button class="travel-summary-tile travel-summary-tile--weather" type="button" data-travel-section="weather" aria-label="Open destination weather">
                 <span>Weather</span>
                 <strong>82°F, light rain</strong>
-                <small>Pack a jacket for arrival evening.</small>
-              </div>
-              <div>
-                <span>Status</span>
-                <strong>Ready</strong>
-                <small>12 confirmations saved • 3 reminders soon</small>
-              </div>
-              <div>
+                <small>Tokyo arrival evening • pack a light jacket.</small>
+                <i class="weather-visual" aria-hidden="true"></i>
+              </button>
+              <button class="travel-summary-tile travel-summary-tile--pass" type="button" data-travel-section="boarding" aria-label="Open boarding pass">
+                <span>Boarding Pass</span>
+                <strong>Gate B18 • Seat 14A</strong>
+                <small>Boarding Group 3 • QR ready</small>
+                <i class="mini-boarding-pass" aria-hidden="true">
+                  <b>DL 241</b>
+                  <b>MIA → HND</b>
+                  <b>14A</b>
+                  <b></b>
+                </i>
+              </button>
+              <button class="travel-summary-tile" type="button" data-travel-section="tickets" aria-label="Open saved confirmations">
                 <span>Confirmations</span>
                 <strong>12 saved</strong>
                 <small>Flights, hotels, tickets, rides</small>
-              </div>
-              <div>
+              </button>
+              <button class="travel-summary-tile" type="button" data-travel-section="documents" aria-label="Open missing travel items">
                 <span>Missing items</span>
                 <strong>1 needed</strong>
                 <small>Travel insurance before departure</small>
-              </div>
+              </button>
             </section>
             <nav class="travel-section-nav" aria-label="Travel sections">
               <button type="button" data-travel-section="flights" aria-label="Open Flights"><span>✈️</span><strong>Flights</strong><small>Upcoming flight • Miami to Tokyo</small></button>
@@ -2274,6 +2282,7 @@
               <button type="button" data-travel-section="rideShare" aria-label="Open Transportation"><span>🚗</span><strong>Transportation</strong><small>Airport pickup • fare split ready</small></button>
               <button type="button" data-travel-section="tickets" aria-label="Open Tickets and Boarding Passes"><span>🎫</span><strong>Tickets</strong><small>Wallet passes • QR codes available</small></button>
               <button type="button" data-travel-section="boarding" aria-label="Open Boarding Information"><span>🪪</span><strong>Boarding Info</strong><small>Gate B18 • Group 3 • pass ready</small></button>
+              <button type="button" data-travel-section="weather" aria-label="Open Weather"><span>🌦️</span><strong>Weather</strong><small>Forecast • rain and packing tips</small></button>
               <button type="button" data-travel-section="documents" aria-label="Open Travel Documents"><span>📄</span><strong>Documents</strong><small>Passport, insurance, confirmations</small></button>
               <button type="button" data-travel-section="buses" aria-label="Open Buses"><span>🚌</span><strong>Buses</strong><small>Group shuttle • passenger list</small></button>
               <button type="button" data-travel-section="ferries" aria-label="Open Ferries and Cruises"><span>🚢</span><strong>Cruises</strong><small>Boarding pass • luggage tags</small></button>
