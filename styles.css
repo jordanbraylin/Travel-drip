@@ -18606,6 +18606,91 @@ body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome) {
   }
 }
 
+/* Section 76: restore the signed-in floating destination bar */
+body.signed-in-shell .global-destination-header:not([hidden]) {
+  position: sticky !important;
+  top: 84px;
+  z-index: 18;
+  display: grid !important;
+  grid-template-columns: 96px minmax(0, 1fr) auto !important;
+  width: 100%;
+  min-width: 0;
+  min-height: 82px;
+  margin: 0 0 14px;
+  padding: 9px 12px;
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.09);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(16px);
+}
+
+body.signed-in-shell .global-destination-header img {
+  width: 96px;
+  height: 62px;
+  max-width: 100%;
+  border-radius: 11px;
+  object-fit: cover;
+}
+
+body.signed-in-shell .global-destination-copy,
+body.signed-in-shell .global-destination-actions {
+  min-width: 0;
+}
+
+body.signed-in-shell .global-destination-copy strong,
+body.signed-in-shell .global-destination-copy p {
+  overflow-wrap: anywhere;
+}
+
+body.signed-in-shell .global-destination-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+body.signed-in-shell .global-destination-actions button {
+  flex: 0 0 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 680px) {
+  body.signed-in-shell .global-destination-header:not([hidden]) {
+    top: 70px;
+    grid-template-columns: 64px minmax(0, 1fr) !important;
+    min-height: 72px;
+    padding: 8px;
+  }
+
+  body.signed-in-shell .global-destination-header img {
+    width: 64px;
+    height: 54px;
+  }
+
+  body.signed-in-shell .global-destination-copy strong {
+    font-size: 16px;
+  }
+
+  body.signed-in-shell .global-destination-copy p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  body.signed-in-shell .global-destination-actions {
+    grid-column: 1 / -1;
+    justify-content: stretch;
+  }
+
+  body.signed-in-shell .global-destination-actions button {
+    flex: 1 1 0;
+  }
+}
+
 /* Section 75: last-pass wrapper removal and overlap protection */
 body.app-routed main > section.panel:not([hidden]),
 body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome) {

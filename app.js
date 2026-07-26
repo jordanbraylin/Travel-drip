@@ -1441,11 +1441,10 @@ function getGlobalDestinationContext(target = getTargetFromRoute()) {
 function renderGlobalDestinationHeader(target = getTargetFromRoute(), nextIndex = state.globalDestinationIndex) {
   const header = $("#globalDestinationHeader");
   if (!header) return;
-  const isHome = target === "dashboardHome";
   const isAuth = document.body.classList.contains("auth-screen");
-  header.hidden = isHome || isAuth;
-  header.setAttribute("aria-hidden", String(isHome || isAuth));
-  if (isHome || isAuth) return;
+  header.hidden = isAuth;
+  header.setAttribute("aria-hidden", String(isAuth));
+  if (isAuth) return;
 
   const corporateMode = $("#dashboardTripType")?.value === "corporate" && hasValidCorporateAccess();
   const destinations = corporateMode
