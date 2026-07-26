@@ -14265,6 +14265,357 @@ textarea {
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
+/* Section 62: Travel and Wallet dashboards with full text visibility */
+:root {
+  --td-title-size: clamp(1.35rem, 2.6vw, 2.25rem);
+  --td-section-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  --td-card-title-size: clamp(0.98rem, 1.2vw, 1.15rem);
+  --td-body-size: clamp(0.88rem, 0.95vw, 0.98rem);
+  --td-label-size: clamp(0.72rem, 0.82vw, 0.82rem);
+}
+
+.panel h2 {
+  font-size: var(--td-title-size);
+  line-height: 1.08;
+}
+
+.panel h3 {
+  font-size: var(--td-section-size);
+  line-height: 1.18;
+}
+
+.panel h4,
+.travel-dashboard-card strong,
+.travel-booking-summary strong,
+.travel-transport-summary strong,
+.wallet-dashboard-sections strong,
+.wallet-dashboard-header strong {
+  font-size: var(--td-card-title-size);
+  line-height: 1.18;
+}
+
+.panel p,
+.panel small,
+.panel span,
+.panel label,
+.panel button,
+.panel input,
+.panel select,
+.panel textarea,
+.panel dd {
+  font-size: var(--td-body-size);
+  line-height: 1.42;
+}
+
+.eyebrow,
+.travel-command-header span,
+.travel-dashboard-card .eyebrow,
+.travel-booking-summary span,
+.travel-transport-summary span,
+.wallet-dashboard-header span,
+.wallet-dashboard-sections .eyebrow,
+.wallet-metric-list span {
+  font-size: var(--td-label-size);
+  letter-spacing: 0.03em;
+}
+
+.travel-command-header,
+.wallet-dashboard-header {
+  display: grid;
+  grid-template-columns: minmax(260px, 1.5fr) repeat(3, minmax(150px, 0.8fr)) auto;
+  gap: 12px;
+  align-items: stretch;
+  margin: 12px 0 16px;
+}
+
+.travel-command-header article,
+.wallet-dashboard-header article,
+.travel-command-actions,
+.travel-dashboard-card,
+.travel-booking-summary article,
+.travel-transport-summary article,
+.wallet-dashboard-sections article,
+.wallet-metric-list div {
+  min-width: 0;
+  height: auto;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.055);
+  overflow: visible;
+}
+
+.travel-command-header article,
+.wallet-dashboard-header article,
+.travel-command-actions {
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  padding: 12px;
+}
+
+.travel-command-trip,
+.wallet-dashboard-header article:first-child {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.11), rgba(249, 115, 22, 0.1)), #fff;
+}
+
+.travel-command-header span,
+.wallet-dashboard-header span,
+.travel-booking-summary span,
+.travel-transport-summary span,
+.wallet-metric-list span {
+  color: #64748b;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.travel-command-header strong,
+.wallet-dashboard-header strong {
+  color: #0f172a;
+  overflow-wrap: anywhere;
+}
+
+.travel-command-header small,
+.wallet-dashboard-header small {
+  color: #64748b;
+  overflow-wrap: anywhere;
+}
+
+.travel-command-actions {
+  grid-template-columns: 1fr;
+  min-width: 150px;
+}
+
+.travel-command-actions button,
+.travel-dashboard-card button,
+.travel-booking-summary button,
+.travel-transport-summary button,
+.wallet-dashboard-sections button {
+  width: fit-content;
+  max-width: 100%;
+  min-height: 36px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #174650;
+  padding: 0 11px;
+  font: inherit;
+  font-weight: 850;
+  white-space: normal;
+}
+
+.travel-dashboard-sections,
+.travel-booking-summary,
+.travel-transport-summary,
+.wallet-dashboard-sections,
+.wallet-metric-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.travel-dashboard-card,
+.travel-booking-summary article,
+.travel-transport-summary article,
+.wallet-dashboard-sections article,
+.wallet-metric-list div {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 14px;
+}
+
+.travel-dashboard-card--overview {
+  grid-column: span 2;
+}
+
+.travel-dashboard-card dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.travel-dashboard-card dt {
+  color: #64748b;
+  font-size: var(--td-label-size);
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.travel-dashboard-card dd {
+  margin: 0;
+  color: #0f172a;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.travel-dashboard-card--weather {
+  position: relative;
+  overflow: hidden;
+  padding-right: 86px;
+}
+
+.weather-dashboard-visual {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 62px;
+  height: 48px;
+  border-radius: 16px;
+  opacity: 0.82;
+  background:
+    radial-gradient(circle at 19px 16px, #fbbf24 0 11px, transparent 12px),
+    radial-gradient(circle at 39px 29px, #fff 0 16px, transparent 17px),
+    radial-gradient(circle at 22px 33px, #fff 0 13px, transparent 14px),
+    linear-gradient(180deg, #7dd3fc, #38bdf8);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.travel-dashboard-card--weather > *:not(.weather-dashboard-visual) {
+  position: relative;
+  z-index: 1;
+}
+
+.wallet-dashboard-header {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.wallet-redesign-shell {
+  grid-template-columns: minmax(190px, 230px) minmax(0, 1fr);
+}
+
+.wallet-section-nav,
+.wallet-summary-card,
+.wallet-trip-tile,
+.wallet-virtual-preview,
+.wallet-balance-hero {
+  border-radius: 14px;
+}
+
+.wallet-balance-hero {
+  min-height: 132px;
+  padding: 16px;
+}
+
+.wallet-balance-hero strong {
+  font-size: clamp(1.9rem, 3.6vw, 3.2rem);
+  line-height: 1;
+}
+
+.wallet-trip-card-grid {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: stretch;
+}
+
+.wallet-dashboard-sections {
+  grid-column: 1 / -1;
+}
+
+.wallet-dashboard-sections > article:first-child {
+  grid-column: span 3;
+}
+
+.wallet-metric-list {
+  margin-top: 0;
+}
+
+.wallet-metric-list div {
+  box-shadow: none;
+  background: #f8fafc;
+}
+
+.wallet-dashboard-sections > article:not(:first-child) strong,
+.wallet-dashboard-sections > article:not(:first-child) small {
+  overflow-wrap: anywhere;
+}
+
+.wallet-trip-tile {
+  gap: 12px;
+}
+
+.wallet-virtual-preview {
+  align-content: center;
+}
+
+.wallet-quick-actions-redesign button {
+  border-radius: 10px;
+  min-height: 38px;
+}
+
+#walletPanel .trip-wallet-card,
+#walletPanel .wallet-total,
+#walletPanel .security-note,
+#walletPanel .wallet-breakdown,
+#walletPanel .wallet-action-grid,
+#walletPanel .range-wrap,
+#walletPanel .funds-form,
+#walletPanel .shared-wallet-ledger,
+#walletPanel .budget-line,
+#walletPanel .bar {
+  margin-top: 12px;
+}
+
+@media (max-width: 1180px) {
+  .travel-command-header {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .travel-command-trip,
+  .travel-command-actions {
+    grid-column: span 2;
+  }
+
+  .wallet-dashboard-header,
+  .travel-dashboard-sections,
+  .travel-booking-summary,
+  .travel-transport-summary,
+  .wallet-dashboard-sections,
+  .wallet-metric-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .wallet-dashboard-sections > article:first-child,
+  .travel-dashboard-card--overview {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 720px) {
+  .travel-command-header,
+  .wallet-dashboard-header,
+  .travel-dashboard-sections,
+  .travel-booking-summary,
+  .travel-transport-summary,
+  .wallet-dashboard-sections,
+  .wallet-metric-list,
+  .wallet-trip-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .travel-command-trip,
+  .travel-command-actions,
+  .wallet-dashboard-sections > article:first-child,
+  .travel-dashboard-card--overview {
+    grid-column: auto;
+  }
+
+  .travel-dashboard-card--weather {
+    padding-right: 14px;
+    padding-bottom: 62px;
+  }
+
+  .travel-command-actions button,
+  .travel-dashboard-card button,
+  .travel-booking-summary button,
+  .travel-transport-summary button,
+  .wallet-dashboard-sections button {
+    width: 100%;
+  }
+}
+
 #rideShareHub .travel-overview-card .travel-summary-tile:hover,
 #rideShareHub .travel-overview-card .travel-summary-tile:focus-visible,
 #rideShareHub .travel-overview-card .travel-summary-tile.active {

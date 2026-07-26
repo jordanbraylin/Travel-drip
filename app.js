@@ -5505,6 +5505,10 @@ function wireLocalInteractions() {
     $("#cardMessage").textContent = "Virtual Card opened from Wallet overview. Wallet PIN is still required for sensitive card actions.";
   });
 
+  $("#walletPreviewCardFreezeButton")?.addEventListener("click", () => {
+    $("#lockCardButton")?.click();
+  });
+
   $("#walletPreviewRefundButton")?.addEventListener("click", () => {
     $("#requestRefundButton")?.click();
   });
@@ -5514,6 +5518,10 @@ function wireLocalInteractions() {
   });
 
   $("#walletSectionRefundButton")?.addEventListener("click", () => {
+    $("#requestRefundButton")?.click();
+  });
+
+  $("#walletDashboardRefundButton")?.addEventListener("click", () => {
     $("#requestRefundButton")?.click();
   });
 

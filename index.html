@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-    <link rel="stylesheet" href="styles.css?v=88">
+    <link rel="stylesheet" href="styles.css?v=89">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -2223,6 +2223,38 @@
               </div>
               <span class="card-status active">Active</span>
             </div>
+            <section class="wallet-dashboard-header" aria-label="Wallet dashboard summary">
+              <article>
+                <span>Total available</span>
+                <strong>$3,880</strong>
+                <small>Ready after holds, reservations, and pending refunds.</small>
+              </article>
+              <article>
+                <span>Personal wallet</span>
+                <strong>$1,050</strong>
+                <small>Jordan's available personal TravelDrip balance.</small>
+              </article>
+              <article>
+                <span>Shared trip wallet</span>
+                <strong>$6,400</strong>
+                <small>Collected for Miami 2027 across 8 contributors.</small>
+              </article>
+              <article>
+                <span>Pending payments</span>
+                <strong>$380</strong>
+                <small>3 open requests with reminders ready.</small>
+              </article>
+              <article>
+                <span>Refundable funds</span>
+                <strong>$380</strong>
+                <small>Unused and unallocated funds eligible for refund.</small>
+              </article>
+              <article>
+                <span>Wallet status</span>
+                <strong>PIN-gated</strong>
+                <small>Funding, refunds, transfers, and card details require Wallet PIN.</small>
+              </article>
+            </section>
             <section class="wallet-redesign-shell" aria-label="Wallet home">
               <aside class="wallet-section-nav" aria-label="Wallet sections">
                 <button class="active" type="button" data-wallet-section="overview">Overview</button>
@@ -2253,20 +2285,65 @@
                   <div>
                     <span>Trip Wallet</span>
                     <strong>Miami 2027</strong>
-                    <small>8 members • $3,880 available • $380 refundable</small>
+                    <small>Miami, Florida • 8 contributors • $3,880 available • $6,400 contributed • $2,520 spent • $380 refundable</small>
                   </div>
                   <button type="button" data-wallet-section="tripWallets">View Wallet</button>
                 </article>
                 <article class="wallet-virtual-preview">
                   <span>Virtual Card</span>
                   <strong>•••• 4829</strong>
-                  <small>Locked • $380 spendable • PIN required for sensitive actions</small>
+                  <small>Miami 2027 • Locked • Exp 08/29 • $380 spendable • PIN required for sensitive actions</small>
                   <div class="wallet-mini-actions">
                     <button type="button" id="walletPreviewCardButton">View Card</button>
+                    <button type="button" id="walletPreviewCardFreezeButton">Freeze</button>
                     <button type="button" data-wallet-action="Recent Transactions">Transactions</button>
                   </div>
                 </article>
               </div>
+              <section class="wallet-dashboard-sections" aria-label="Wallet dashboard sections">
+                <article>
+                  <p class="eyebrow">Balance Overview</p>
+                  <div class="wallet-metric-list">
+                    <div><span>Available Balance</span><strong>$3,880</strong><small>Current spendable shared balance.</small></div>
+                    <div><span>Total Deposited</span><strong>$6,400</strong><small>All completed contributions.</small></div>
+                    <div><span>Total Spent</span><strong>$2,520</strong><small>Flights, stay, food, events, and ride costs.</small></div>
+                    <div><span>Pending Amount</span><strong>$380</strong><small>Requests and holds awaiting action.</small></div>
+                    <div><span>Amount Owed</span><strong>$920</strong><small>Outstanding member contributions.</small></div>
+                    <div><span>Due to User</span><strong>$120</strong><small>Approved reimbursements pending payout.</small></div>
+                  </div>
+                </article>
+                <article>
+                  <p class="eyebrow">Contributions</p>
+                  <strong>$6,400 collected of $7,320 goal</strong>
+                  <small>8 contributors • 84% funded • $920 remaining • 3 outstanding contributions.</small>
+                  <div class="wallet-progress"><i style="--w:84%"></i></div>
+                  <button type="button" data-target="groupBank">Open Contributions</button>
+                </article>
+                <article>
+                  <p class="eyebrow">Split Bills</p>
+                  <strong>2 active bills</strong>
+                  <small>1 pending restaurant receipt, 1 paid ride split, $146 outstanding across 3 participants.</small>
+                  <button type="button" data-target="splitBill">Split Bill</button>
+                </article>
+                <article>
+                  <p class="eyebrow">Payment Requests</p>
+                  <strong>3 pending requests</strong>
+                  <small>2 sent, 1 received, 4 paid, 0 declined, $380 total outstanding.</small>
+                  <button type="button" data-wallet-section="requests">View Requests</button>
+                </article>
+                <article>
+                  <p class="eyebrow">Refunds</p>
+                  <strong>$380 refundable</strong>
+                  <small>1 pending refund, 2 completed refunds, eligibility based on unused/unallocated funds.</small>
+                  <button type="button" id="walletDashboardRefundButton">Request Refund</button>
+                </article>
+                <article>
+                  <p class="eyebrow">Recent Transactions</p>
+                  <strong>12 wallet records</strong>
+                  <small>Trip, category, date, method, amount, and status remain audit-ready.</small>
+                  <button type="button" data-wallet-section="transactions">View Feed</button>
+                </article>
+              </section>
               <div class="wallet-quick-actions-redesign" aria-label="Wallet quick actions">
                 <button type="button" data-wallet-action="Add Funds">Add Funds</button>
                 <button type="button" data-wallet-action="Request Payment">Request Payment</button>
@@ -2525,6 +2602,20 @@
               </div>
               <span class="compliance-badge">Trip-ready</span>
             </div>
+            <section class="travel-command-header" aria-label="Travel dashboard header">
+              <article class="travel-command-trip">
+                <span>Selected trip</span>
+                <strong>Miami to Tokyo Adventure</strong>
+                <small>Tokyo, Japan • Jul 18 - Jul 28, 2026 • 4 travelers</small>
+              </article>
+              <article><span>Status</span><strong>Ready</strong><small>84% complete</small></article>
+              <article><span>Progress</span><strong>Day 0 of 10</strong><small>5 days until departure</small></article>
+              <article><span>Alerts</span><strong>3 active</strong><small>Flight, weather, insurance</small></article>
+              <div class="travel-command-actions">
+                <button type="button" data-travel-focus-action="Change Trip">Change Trip</button>
+                <button type="button" data-travel-focus-action="Add Trip">Add Trip</button>
+              </div>
+            </section>
             <section class="travel-settings-shell" aria-label="Travel settings-style workspace">
               <aside class="travel-settings-sidebar">
                 <label class="travel-search-label">Search Travel
@@ -2592,6 +2683,67 @@
                     </div>
                     <button class="primary-button" type="button" data-travel-focus-action="Add Flight">Add Flight</button>
                   </div>
+                  <section class="travel-dashboard-sections" aria-label="Travel dashboard sections">
+                    <article class="travel-dashboard-card travel-dashboard-card--overview">
+                      <p class="eyebrow">Current Trip Overview</p>
+                      <h4>Miami to Tokyo Adventure</h4>
+                      <dl>
+                        <div><dt>Destination</dt><dd>Tokyo, Japan</dd></div>
+                        <div><dt>Dates</dt><dd>Jul 18 - Jul 28, 2026</dd></div>
+                        <div><dt>Travelers</dt><dd>4 travelers</dd></div>
+                        <div><dt>Status</dt><dd>Ready • 84% complete</dd></div>
+                      </dl>
+                      <div class="trip-progress-track"><i style="--w:84%"></i></div>
+                    </article>
+                    <article class="travel-dashboard-card">
+                      <p class="eyebrow">Next Travel Item</p>
+                      <h4>Delta DL 241</h4>
+                      <p>MIA to HND • Jul 18 at 8:45 AM • Gate B18 • Confirmed</p>
+                      <button type="button" data-travel-focus="flights">View Details</button>
+                    </article>
+                    <article class="travel-dashboard-card">
+                      <p class="eyebrow">Itinerary Snapshot</p>
+                      <h4>Catamaran Cruise to Winery Tour</h4>
+                      <p>Current stop: Marina Dock B. Next stop: Pyrgos Winery. Smart Route estimates 48 minutes.</p>
+                      <button type="button" data-travel-focus="itinerary">Full Itinerary</button>
+                    </article>
+                    <article class="travel-dashboard-card travel-dashboard-card--weather">
+                      <span class="weather-dashboard-visual" aria-hidden="true"></span>
+                      <p class="eyebrow">Weather</p>
+                      <h4>82°F • feels like 86°F</h4>
+                      <p>Light rain in Tokyo. Rain probability 68%. Forecast visual stays behind the text.</p>
+                      <button type="button" data-travel-focus="weather">Full Forecast</button>
+                    </article>
+                    <article class="travel-dashboard-card">
+                      <p class="eyebrow">Boarding Pass</p>
+                      <h4>Jordan Smith • MIA to HND</h4>
+                      <p>Gate B18 • Seat 14A • Boarding Group 3 • Pass ready and readable.</p>
+                      <button type="button" data-travel-focus="boarding">View Pass</button>
+                    </article>
+                    <article class="travel-dashboard-card">
+                      <p class="eyebrow">Travel Alerts</p>
+                      <h4>3 active alerts</h4>
+                      <p>Check-in reminder, rain advisory, and missing travel-insurance document.</p>
+                      <button type="button" data-travel-focus="alerts">View Alerts</button>
+                    </article>
+                  </section>
+                  <section class="travel-booking-summary" aria-label="Booking summary">
+                    <article><span>Flights</span><strong>1 booked</strong><small>Delta DL 241 • Confirmed</small><button type="button" data-travel-focus="flights">Open</button></article>
+                    <article><span>Hotels</span><strong>2 stays</strong><small>Tokyo Station Hotel • Saved</small><button type="button" data-travel-focus="hotels">Open</button></article>
+                    <article><span>Trains</span><strong>2 tickets</strong><small>Tokyo to Kyoto • Upcoming</small><button type="button" data-travel-focus="trains">Open</button></article>
+                    <article><span>Buses</span><strong>0 tickets</strong><small>Add shuttle or upload confirmation</small><button type="button" data-travel-focus="buses">Open</button></article>
+                    <article><span>Cruises</span><strong>1 pass</strong><small>Oceanic Vista • Luggage tags</small><button type="button" data-travel-focus="cruises">Open</button></article>
+                    <article><span>Activities</span><strong>4 saved</strong><small>Cruise, winery, dinner, tour</small><button type="button" data-travel-focus="itinerary">Open</button></article>
+                    <article><span>Reservations</span><strong>3 confirmed</strong><small>Dining, hotel, transfer</small><button type="button" data-travel-focus="documents">Open</button></article>
+                  </section>
+                  <section class="travel-transport-summary" aria-label="Transportation summary">
+                    <article><span>Ride Share</span><strong>Careem + Uber</strong><small>Country-based providers for United Arab Emirates and Japan remain visible.</small><button type="button" data-travel-focus="rideShare">Compare</button></article>
+                    <article><span>Airport Transfer</span><strong>HND pickup</strong><small>Driver assigned • 42 minute estimate.</small><button type="button" data-travel-focus="transfers">Open</button></article>
+                    <article><span>Rental Car</span><strong>Optional</strong><small>No active rental; add if plans change.</small><button type="button" data-travel-focus-action="Add Rental Car">Add</button></article>
+                    <article><span>Shuttle</span><strong>Group ready</strong><small>Passenger coordination and fare split available.</small><button type="button" data-travel-focus="rideShare">Open</button></article>
+                    <article><span>Public Transit</span><strong>$8.50 route</strong><small>Accessible train plus walking route.</small><button type="button" data-travel-focus="publicTransit">View</button></article>
+                    <article><span>Route Comparison</span><strong>3 options</strong><small>Fastest, cheapest, and group-friendly.</small><button type="button" data-travel-focus="routeComparison">Compare</button></article>
+                  </section>
                   <div class="travel-focus-grid">
                     <article><span>Next booking</span><strong>DL 241 • MIA → HND</strong><small>Jul 18 • 8:45 AM • Confirmed</small><button type="button" data-travel-focus="flights">View Flight</button></article>
                     <article><span>Weather preview</span><strong>82°F • Light rain</strong><small>Provider-ready forecast • Tokyo timezone</small><button type="button" data-travel-focus="weather">View Weather</button></article>
