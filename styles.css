@@ -4626,6 +4626,126 @@ body.app-routed main :where(.trip-tab-bar button, .tabs .tab, .message-tabs butt
   }
 }
 
+/* Section 79: restore the approved smart Home dashboard composition */
+body.app-routed main > #dashboardHome {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0;
+  margin: 0 0 16px;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 28px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+body.app-routed main > .trip-tab-bar {
+  display: flex !important;
+  width: 100%;
+  margin: 0 0 16px;
+  padding: 8px;
+  min-width: 0;
+  border-radius: 16px !important;
+  overflow-x: auto !important;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+body.app-routed main > :where(.destination-insights, .metrics, .travel-social-strip, .dashboard-widgets) {
+  width: 100%;
+  min-width: 0;
+  margin: 0 0 16px;
+}
+
+body.app-routed main > .destination-insights,
+body.app-routed main > .dashboard-widgets {
+  display: block !important;
+  padding: 16px !important;
+  border: 1px solid var(--td-approved-border) !important;
+  border-radius: var(--td-approved-radius) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: var(--td-approved-shadow) !important;
+}
+
+body.app-routed main > .metrics,
+body.app-routed main > .travel-social-strip {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: var(--td-approved-gap) !important;
+  align-items: stretch;
+}
+
+body.app-routed main > .metrics > *,
+body.app-routed main > .travel-social-strip > * {
+  grid-column: auto !important;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  margin: 0;
+  border: 1px solid var(--td-approved-border);
+  border-radius: var(--td-approved-radius);
+  background: var(--td-approved-card);
+  box-shadow: var(--td-approved-shadow);
+}
+
+body.app-routed main > .dashboard-widgets > .section-heading {
+  margin: 0 0 14px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.app-routed main > .dashboard-widgets > .widget-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: var(--td-approved-gap) !important;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+body.app-routed main > .dashboard-widgets .widget-grid > .travel-widget {
+  grid-column: auto !important;
+  min-width: 0;
+  min-height: 174px;
+  width: 100%;
+  margin: 0;
+  border: 1px solid var(--td-approved-border);
+  border-radius: var(--td-approved-radius);
+  background: var(--td-approved-card);
+  box-shadow: var(--td-approved-shadow);
+}
+
+body.app-routed main > .dashboard-widgets > #widgetStatusMessage {
+  margin: 12px 0 0;
+}
+
+@media (max-width: 1100px) {
+  body.app-routed main > .metrics,
+  body.app-routed main > .travel-social-strip,
+  body.app-routed main > .dashboard-widgets > .widget-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  body.app-routed main > .metrics,
+  body.app-routed main > .travel-social-strip,
+  body.app-routed main > .dashboard-widgets > .widget-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.app-routed main > .destination-insights,
+  body.app-routed main > .dashboard-widgets {
+    padding: 12px !important;
+  }
+}
+
 /* Section 77: approved Trending Discovery media and card grid */
 body.app-routed main > section.panel:not([hidden]) .explore-results-grid,
 body.app-routed main > section.route-screen:not([hidden]) .explore-results-grid {
