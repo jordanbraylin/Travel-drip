@@ -11154,6 +11154,287 @@ body.auth-screen .auth-carousel blockquote {
   line-height: 1.4;
 }
 
+.travel-workspace {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(8, 189, 184, 0.08), rgba(255, 138, 92, 0.06)),
+    #ffffff;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.055);
+}
+
+.travel-workspace-toolbar,
+.pass-control-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.8fr) 1fr;
+  gap: 10px;
+  align-items: end;
+}
+
+.travel-workspace-toolbar label,
+.pass-control-row label {
+  display: grid;
+  gap: 5px;
+  color: #47707a;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.travel-workspace-toolbar select,
+.pass-control-row select {
+  min-height: 38px;
+  border: 1px solid rgba(8, 127, 140, 0.16);
+  border-radius: 11px;
+  padding: 0 10px;
+  background: #fff;
+  color: #0f2f3a;
+  font-weight: 800;
+}
+
+.travel-quick-actions,
+.pass-filter-row,
+.route-chip-list,
+.pass-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.travel-quick-actions button,
+.pass-filter-row button,
+.route-chip-list button,
+.pass-actions button {
+  min-height: 34px;
+  border: 1px solid rgba(8, 127, 140, 0.14);
+  border-radius: 999px;
+  padding: 0 12px;
+  background: rgba(255, 255, 255, 0.86);
+  color: #174650;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.travel-quick-actions button:hover,
+.travel-quick-actions button:focus-visible,
+.pass-filter-row button:hover,
+.pass-filter-row button:focus-visible,
+.pass-filter-row button.active,
+.route-chip-list button:hover,
+.route-chip-list button:focus-visible,
+.pass-actions button:hover,
+.pass-actions button:focus-visible {
+  border-color: rgba(0, 150, 199, 0.38);
+  background: rgba(8, 189, 184, 0.1);
+}
+
+.travel-workspace-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(260px, 0.75fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.travel-pass-workspace,
+.travel-weather-dashboard,
+.travel-map-dashboard {
+  display: grid;
+  gap: 11px;
+  min-width: 0;
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.045);
+}
+
+.travel-pass-workspace {
+  grid-row: span 2;
+}
+
+.travel-pass-workspace .section-heading p:not(.eyebrow),
+.travel-map-dashboard p,
+.travel-weather-dashboard p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.visual-pass-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.visual-pass-card {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 14px;
+  padding: 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 253, 255, 0.86)),
+    #ffffff;
+}
+
+.visual-pass-card--flight {
+  background:
+    linear-gradient(135deg, rgba(0, 150, 199, 0.14), rgba(8, 189, 184, 0.08)),
+    #ffffff;
+}
+
+.visual-pass-card--reservation {
+  background:
+    linear-gradient(135deg, rgba(255, 186, 73, 0.14), rgba(255, 138, 92, 0.08)),
+    #ffffff;
+}
+
+.pass-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: #47707a;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.pass-topline strong {
+  color: #087f8c;
+  font-size: 11px;
+}
+
+.pass-route {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  align-items: center;
+  color: #0f2f3a;
+  font-size: 24px;
+  font-weight: 950;
+}
+
+.pass-route i {
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0096c7, #ff7a59);
+}
+
+.visual-pass-card h4 {
+  margin: 0;
+  color: #0f2f3a;
+  font-size: 17px;
+}
+
+.visual-pass-card dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.visual-pass-card dt {
+  color: #69838b;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.visual-pass-card dd {
+  margin: 2px 0 0;
+  color: #173f49;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.official-code {
+  min-height: 54px;
+  border-radius: 10px;
+  background:
+    linear-gradient(90deg, #0f2f3a 0 4px, transparent 4px 8px),
+    linear-gradient(#0f2f3a 0 4px, transparent 4px 8px),
+    #ffffff;
+  background-size: 11px 11px;
+  border: 1px solid rgba(15, 47, 58, 0.12);
+}
+
+.pass-note {
+  margin: 0;
+  color: #5f7882;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.weather-hero {
+  min-height: 170px;
+  display: grid;
+  align-content: end;
+  gap: 6px;
+  overflow: hidden;
+  border-radius: 14px;
+  padding: 14px;
+  background:
+    linear-gradient(180deg, rgba(9, 25, 35, 0.08), rgba(9, 25, 35, 0.52)),
+    radial-gradient(circle at 75% 26%, #ffd166 0 28px, transparent 29px),
+    radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.92) 0 38px, transparent 39px),
+    radial-gradient(circle at 58% 44%, rgba(255, 255, 255, 0.86) 0 44px, transparent 45px),
+    linear-gradient(160deg, #7dd3fc, #0ea5e9 58%, #087f8c);
+  color: #fff;
+}
+
+.weather-hero span,
+.weather-hero small {
+  font-weight: 900;
+  text-shadow: 0 1px 8px rgba(15, 23, 42, 0.35);
+}
+
+.weather-hero strong {
+  font-size: 44px;
+  line-height: 0.95;
+  text-shadow: 0 1px 10px rgba(15, 23, 42, 0.35);
+}
+
+.weather-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.weather-metrics div {
+  display: grid;
+  gap: 3px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(8, 189, 184, 0.08);
+}
+
+.weather-metrics span {
+  color: #5f7882;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.weather-metrics strong {
+  color: #0f2f3a;
+  font-size: 18px;
+}
+
+.travel-map-dashboard {
+  background:
+    linear-gradient(135deg, rgba(8, 189, 184, 0.1), rgba(255, 138, 92, 0.08)),
+    #ffffff;
+}
+
+.route-chip-list button {
+  border-radius: 12px;
+}
+
 #rideShareHub .transport-confirmation-hub,
 #rideShareHub .ride-hub-redesign {
   display: none;
@@ -11175,6 +11456,50 @@ body.auth-screen .auth-carousel blockquote {
   #rideShareHub .travel-selected-tile {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+@media (max-width: 1080px) {
+  .travel-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .travel-pass-workspace {
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .travel-workspace-toolbar,
+  .pass-control-row {
+    grid-template-columns: 1fr;
+  }
+
+  .travel-quick-actions {
+    justify-content: flex-start;
+  }
+
+  .visual-pass-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .travel-workspace {
+    padding: 10px;
+  }
+
+  .visual-pass-grid,
+  .weather-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .pass-route {
+    font-size: 20px;
+  }
+
+  .weather-hero {
+    min-height: 142px;
   }
 }
 

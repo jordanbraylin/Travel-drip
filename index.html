@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=79">
+  <link rel="stylesheet" href="styles.css?v=80">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -54,7 +54,7 @@
           <button type="button" data-target="itineraryAlerts">Flight Details</button>
           <button type="button" data-target="importantInfo">Hotel Details</button>
           <button type="button" data-target="rideShareHub">Transportation</button>
-          <button type="button" data-target="cruisePanel">Cruise</button>
+          <button type="button" data-target="rideShareHub" data-travel-section="ferries">Cruises</button>
           <button type="button" data-target="exploreDrops">Activities</button>
           <button type="button" data-target="importantInfo">Documents</button>
           <button type="button" data-target="importantInfo">Important Information</button>
@@ -326,7 +326,7 @@
         <button type="button" data-target="itineraryAlerts">Itinerary</button>
         <button type="button" data-target="socialHub">Chat</button>
         <button type="button" data-target="rideShareHub">Travel</button>
-        <button type="button" data-target="cruisePanel">Cruise</button>
+        <button type="button" data-target="letsPlan">Events</button>
         <button type="button" data-target="walletPanel">Wallet</button>
         <button type="button" data-target="importantInfo">Important Info</button>
         <button type="button" data-target="socialHub">Memories</button>
@@ -2286,6 +2286,7 @@
               <button type="button" data-travel-section="documents" aria-label="Open Travel Documents"><span>📄</span><strong>Documents</strong><small>Passport, insurance, confirmations</small></button>
               <button type="button" data-travel-section="buses" aria-label="Open Buses"><span>🚌</span><strong>Buses</strong><small>Group shuttle • passenger list</small></button>
               <button type="button" data-travel-section="ferries" aria-label="Open Ferries and Cruises"><span>🚢</span><strong>Cruises</strong><small>Boarding pass • luggage tags</small></button>
+              <button type="button" data-travel-section="maps" aria-label="Open Maps"><span>🗺️</span><strong>Maps</strong><small>Airports, hotels, routes, stops</small></button>
             </nav>
             <section class="travel-selected-tile" id="travelSelectedTile" aria-live="polite">
               <div>
@@ -2294,6 +2295,140 @@
                 <p id="travelSelectedSummary">Open Flights, Hotels, Transportation, Tickets, or Documents from the tile grid. Detailed records stay on their dedicated pages instead of crowding the Travel Hub.</p>
               </div>
               <span class="status-pill" id="travelSelectedRoute">Travel overview</span>
+            </section>
+            <section class="travel-workspace" aria-label="Travel internal workspace">
+              <div class="travel-workspace-toolbar">
+                <label>Current trip
+                  <select id="travelTripSelector" aria-label="Current trip selector">
+                    <option>Miami to Tokyo Adventure</option>
+                    <option>Dubai Weekend</option>
+                    <option>Caribbean Cruise</option>
+                  </select>
+                </label>
+                <div class="travel-quick-actions" aria-label="Travel quick actions">
+                  <button type="button" data-travel-quick="Search Flights">Search Flights</button>
+                  <button type="button" data-travel-quick="Add Hotel">Add Hotel</button>
+                  <button type="button" data-travel-quick="Compare Transportation">Compare Transportation</button>
+                  <button type="button" data-travel-quick="Upload Ticket">Upload Ticket</button>
+                  <button type="button" data-travel-quick="Add Cruise">Add Cruise</button>
+                </div>
+              </div>
+              <div class="travel-workspace-grid">
+                <section class="travel-pass-workspace" id="travelBoardingPasses" aria-label="Travel boarding passes">
+                  <div class="section-heading compact">
+                    <div>
+                      <p class="eyebrow">Travel → Boarding Passes</p>
+                      <h3>Visual passes and confirmations</h3>
+                      <p>Flight, rail, cruise, transfer, hotel, and activity confirmations stay inside Travel.</p>
+                    </div>
+                    <button class="ghost-button" type="button" data-travel-section="boarding">Open Boarding Passes</button>
+                  </div>
+                  <div class="pass-filter-row" role="tablist" aria-label="Boarding pass filters">
+                    <button class="active" type="button" data-pass-filter="All">All</button>
+                    <button type="button" data-pass-filter="Today">Today</button>
+                    <button type="button" data-pass-filter="Flights">Flights</button>
+                    <button type="button" data-pass-filter="Trains">Trains</button>
+                    <button type="button" data-pass-filter="Cruises">Cruises</button>
+                    <button type="button" data-pass-filter="Reservations">Reservations</button>
+                  </div>
+                  <div class="pass-control-row">
+                    <label>Traveler
+                      <select id="passTravelerFilter">
+                        <option>Jordan Smith</option>
+                        <option>Sarah Lee</option>
+                        <option>Family group</option>
+                      </select>
+                    </label>
+                    <label>Status
+                      <select id="passStatusFilter">
+                        <option>All statuses</option>
+                        <option>Confirmed</option>
+                        <option>Checked In</option>
+                        <option>Boarding</option>
+                        <option>Reservation</option>
+                      </select>
+                    </label>
+                  </div>
+                  <div class="visual-pass-grid">
+                    <article class="visual-pass-card visual-pass-card--flight">
+                      <div class="pass-topline"><span>Flight boarding pass</span><strong>Checked In</strong></div>
+                      <div class="pass-route"><b>MIA</b><i></i><b>HND</b></div>
+                      <h4>Delta DL 241</h4>
+                      <dl>
+                        <div><dt>Passenger</dt><dd>Jordan Smith</dd></div>
+                        <div><dt>Gate</dt><dd>B18</dd></div>
+                        <div><dt>Seat</dt><dd>14A</dd></div>
+                        <div><dt>Boarding</dt><dd>Group 3</dd></div>
+                      </dl>
+                      <div class="official-code" aria-label="Official provider QR code available"></div>
+                      <div class="pass-actions">
+                        <button type="button" data-pass-action="View Boarding Pass">View</button>
+                        <button type="button" data-pass-action="Save Offline">Save offline</button>
+                        <button type="button" data-pass-action="Refresh Status">Refresh status</button>
+                      </div>
+                    </article>
+                    <article class="visual-pass-card">
+                      <div class="pass-topline"><span>Rail ticket</span><strong>Confirmed</strong></div>
+                      <div class="pass-route"><b>Tokyo</b><i></i><b>Kyoto</b></div>
+                      <h4>Shinkansen Nozomi 33</h4>
+                      <dl>
+                        <div><dt>Coach</dt><dd>8</dd></div>
+                        <div><dt>Seat</dt><dd>12D</dd></div>
+                        <div><dt>Platform</dt><dd>Pending</dd></div>
+                        <div><dt>Updated</dt><dd>10 min ago</dd></div>
+                      </dl>
+                      <p class="pass-note">Official code not imported yet. Confirmation number shown instead.</p>
+                      <div class="pass-actions">
+                        <button type="button" data-pass-action="View Train Ticket">View</button>
+                        <button type="button" data-pass-action="View Itinerary">View itinerary</button>
+                      </div>
+                    </article>
+                    <article class="visual-pass-card visual-pass-card--reservation">
+                      <div class="pass-topline"><span>Hotel reservation card</span><strong>Confirmed</strong></div>
+                      <h4>Tokyo Station Hotel</h4>
+                      <dl>
+                        <div><dt>Check-in</dt><dd>Aug 8 • 3:00 PM</dd></div>
+                        <div><dt>Room</dt><dd>Queen</dd></div>
+                        <div><dt>Ref</dt><dd>TSH-2088</dd></div>
+                        <div><dt>Access</dt><dd>Assigned traveler</dd></div>
+                      </dl>
+                      <p class="pass-note">Reservation confirmation, not a boarding pass.</p>
+                      <div class="pass-actions">
+                        <button type="button" data-pass-action="View Reservation">View</button>
+                        <button type="button" data-pass-action="Get Directions">Get directions</button>
+                      </div>
+                    </article>
+                  </div>
+                </section>
+                <aside class="travel-weather-dashboard" id="travelWeatherDashboard" aria-label="Travel weather dashboard">
+                  <div class="weather-hero">
+                    <span>Tokyo weather</span>
+                    <strong>82°F</strong>
+                    <small>Light rain • feels like 86°F</small>
+                  </div>
+                  <div class="weather-metrics">
+                    <div><span>Rain</span><strong>68%</strong></div>
+                    <div><span>Wind</span><strong>9 mph</strong></div>
+                    <div><span>Humidity</span><strong>74%</strong></div>
+                    <div><span>UV</span><strong>4</strong></div>
+                  </div>
+                  <p>Forecast preview is labeled until a live weather provider is connected. Last updated: prototype data.</p>
+                  <button class="ghost-button" type="button" data-travel-section="weather">View Weather</button>
+                </aside>
+                <aside class="travel-map-dashboard" id="travelMapsDashboard" aria-label="Travel maps dashboard">
+                  <div>
+                    <p class="eyebrow">Travel → Maps</p>
+                    <h3>Route context</h3>
+                    <p>Airports, hotels, stations, ports, pickup points, and saved stops appear together.</p>
+                  </div>
+                  <div class="route-chip-list">
+                    <button type="button" data-pass-action="Open Airport Route">Airport to hotel</button>
+                    <button type="button" data-pass-action="Open Pickup Point">Driver pickup</button>
+                    <button type="button" data-pass-action="Open Cruise Port">Cruise port</button>
+                  </div>
+                </aside>
+              </div>
+              <p class="small" id="travelWorkspaceMessage">Boarding passes, weather, and maps are managed inside the Travel tab.</p>
             </section>
             <section class="transport-confirmation-hub" aria-label="Multi-transport confirmation hub">
               <div class="transport-hub-header">

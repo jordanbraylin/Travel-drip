@@ -1646,6 +1646,11 @@ const travelTileDestinations = {
     route: "/trips/dubai-weekend/transportation/weather",
     summary: "Tokyo weather is 82°F with light rain on arrival evening. Forecast, packing guidance, travel alerts, and outdoor timing open on the Weather page."
   },
+  maps: {
+    title: "Maps",
+    route: "/trips/dubai-weekend/transportation/maps",
+    summary: "Airports, hotels, stations, ports, pickup points, and saved route stops open in the Travel Maps page."
+  },
   documents: {
     title: "Travel documents",
     route: "/trips/dubai-weekend/transportation/documents",
@@ -3233,6 +3238,7 @@ const routeAliases = {
   "/trips/dubai-weekend/transportation/tickets": "rideShareHub",
   "/trips/dubai-weekend/transportation/boarding": "rideShareHub",
   "/trips/dubai-weekend/transportation/weather": "rideShareHub",
+  "/trips/dubai-weekend/transportation/maps": "rideShareHub",
   "/trips/dubai-weekend/transportation/documents": "rideShareHub",
   "/trips/dubai-weekend/transportation/rental-cars": "rideShareHub",
   "/trips/dubai-weekend/transportation/private-transfers": "rideShareHub",
@@ -3251,7 +3257,7 @@ const routeAliases = {
   "/trips/dubai-weekend/important-information": "importantInfo",
   "/trips/dubai-weekend/memories": "socialHub",
   "/trips/dubai-weekend/settings": "securityCenter",
-  "/trips/dubai-weekend/cruise": "cruisePanel",
+  "/trips/dubai-weekend/cruise": "rideShareHub",
   "/messages": "socialHub",
   "/messages/group": "socialHub",
   "/messages/private": "socialHub",
@@ -3956,7 +3962,7 @@ function wireLocalInteractions() {
     $("#transportMessage").textContent = `${transportTypeLabels[button.dataset.transportType]} opened. Each transportation type has its own confirmation list, detail view, tickets, access-pass area, and secure sharing controls.`;
   });
 
-  $$(".travel-section-nav [data-travel-section], .travel-overview-card [data-travel-section], .travel-support-card [data-travel-section]").forEach((button) => {
+  $$(".travel-section-nav [data-travel-section], .travel-overview-card [data-travel-section], .travel-workspace [data-travel-section], .travel-support-card [data-travel-section]").forEach((button) => {
     button.addEventListener("click", async () => {
       const section = button.dataset.travelSection;
       const targetType = section === "ferries" ? "ferries" : section;
@@ -3971,12 +3977,67 @@ function wireLocalInteractions() {
             ? "Document Center"
             : section === "weather"
               ? "Weather Center"
+              : section === "maps"
+                ? "Travel Maps"
               : "Hotel reservations";
         $("#transportMessage").textContent = `${label} opened from the Travel tile grid. Detailed records stay on ${destination.route}.`;
+      }
+      if ($("#travelWorkspaceMessage")) {
+        $("#travelWorkspaceMessage").textContent = `${destination.title} is open inside Travel. Boarding passes, weather, maps, and confirmations remain in this Travel workspace.`;
       }
       $("#travelSelectedTile")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
       addAuditEntry("Travel section opened", `${section} opened from Travel hub navigation.`);
       await saveSyncedEvent("travel_section_opened", { section });
+    });
+  });
+
+  $$("[data-travel-quick]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const action = button.dataset.travelQuick;
+      if ($("#travelWorkspaceMessage")) {
+        $("#travelWorkspaceMessage").textContent = `${action} opened in the Travel workspace. Provider-backed actions are labeled as estimates until live integrations are connected.`;
+      }
+      addAuditEntry("Travel quick action", `${action} selected from Travel workspace.`);
+      await saveSyncedEvent("travel_quick_action", { action });
+    });
+  });
+
+  $$("[data-pass-filter]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      $$("[data-pass-filter]").forEach((filterButton) => {
+        const active = filterButton === button;
+        filterButton.classList.toggle("active", active);
+        filterButton.setAttribute("aria-selected", String(active));
+      });
+      const filter = button.dataset.passFilter;
+      if ($("#travelWorkspaceMessage")) {
+        $("#travelWorkspaceMessage").textContent = `Boarding Passes filtered by ${filter}. Passes stay inside Travel -> Boarding Passes.`;
+      }
+      addAuditEntry("Boarding pass filter", `${filter} filter selected.`);
+      await saveSyncedEvent("boarding_pass_filter", { filter });
+    });
+  });
+
+  $$("[data-pass-action]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const action = button.dataset.passAction;
+      if ($("#travelWorkspaceMessage")) {
+        $("#travelWorkspaceMessage").textContent = `${action} selected. Supported pass actions open within Travel and avoid standalone pass tabs.`;
+      }
+      addAuditEntry("Travel pass action", `${action} selected in Travel workspace.`);
+      await saveSyncedEvent("travel_pass_action", { action });
+    });
+  });
+
+  $$("[data-target='rideShareHub'][data-travel-section]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const section = button.dataset.travelSection;
+      const destination = showTravelTileDestination(section);
+      if ($("#travelWorkspaceMessage")) {
+        $("#travelWorkspaceMessage").textContent = `${destination.title} opened from navigation inside the Travel tab.`;
+      }
+      addAuditEntry("Travel navigation shortcut", `${section} opened from signed-in navigation.`);
+      await saveSyncedEvent("travel_navigation_shortcut", { section });
     });
   });
 
