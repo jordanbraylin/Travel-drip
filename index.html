@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
-  <link rel="stylesheet" href="styles.css?v=82">
+  <link rel="stylesheet" href="styles.css?v=83">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -2344,10 +2344,141 @@
               <div>
                 <p class="eyebrow">Travel</p>
                 <h2>Travel hub</h2>
-                <p>Flights, hotels, tickets, transportation, confirmations, and documents organized in one clean place.</p>
+                <p>Choose one Travel section at a time. Search, switch trips, and open the right booking, pass, document, weather, or ride-share tool without clutter.</p>
               </div>
               <span class="compliance-badge">Trip-ready</span>
             </div>
+            <section class="travel-settings-shell" aria-label="Travel settings-style workspace">
+              <aside class="travel-settings-sidebar">
+                <label class="travel-search-label">Search Travel
+                  <input id="travelSettingsSearchInput" type="search" placeholder="Flights, Uber, boarding pass, hotel, weather">
+                </label>
+                <section class="travel-current-trip-card" aria-label="Current trip">
+                  <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=700&auto=format&fit=crop" alt="Tokyo skyline at sunset">
+                  <div>
+                    <span>Current trip</span>
+                    <strong>Miami to Tokyo Adventure</strong>
+                    <small>Tokyo • Jul 18 - Jul 28 • 4 travelers • Ready</small>
+                  </div>
+                  <select id="travelSettingsTripSelect" aria-label="Switch current trip">
+                    <option>Miami to Tokyo Adventure</option>
+                    <option>Dubai Weekend</option>
+                    <option>Caribbean Cruise</option>
+                  </select>
+                </section>
+                <nav class="travel-settings-nav" aria-label="Travel categories">
+                  <details open>
+                    <summary>Overview</summary>
+                    <button class="active" type="button" data-travel-focus="overview">Travel Home</button>
+                    <button type="button" data-travel-focus="alerts">Travel Alerts</button>
+                    <button type="button" data-travel-focus="missing">Missing Items</button>
+                  </details>
+                  <details>
+                    <summary>Bookings</summary>
+                    <button type="button" data-travel-focus="flights">Flights</button>
+                    <button type="button" data-travel-focus="hotels">Hotels</button>
+                    <button type="button" data-travel-focus="trains">Trains</button>
+                    <button type="button" data-travel-focus="buses">Buses</button>
+                    <button type="button" data-travel-focus="cruises">Cruises</button>
+                  </details>
+                  <details>
+                    <summary>Transportation</summary>
+                    <button type="button" data-travel-focus="rideShare">Ride Share</button>
+                    <button type="button" data-travel-focus="transfers">Airport Transfers</button>
+                    <button type="button" data-travel-focus="publicTransit">Public Transit</button>
+                    <button type="button" data-travel-focus="routeComparison">Route Comparison</button>
+                  </details>
+                  <details>
+                    <summary>Trip Management</summary>
+                    <button type="button" data-travel-focus="itinerary">Itinerary</button>
+                    <button type="button" data-travel-focus="smartRoute">Smart Route</button>
+                    <button type="button" data-travel-focus="yourTrips">Your Trips</button>
+                    <button type="button" data-travel-focus="travelers">Travelers</button>
+                  </details>
+                  <details>
+                    <summary>Travel Essentials</summary>
+                    <button type="button" data-travel-focus="boarding">Boarding Passes</button>
+                    <button type="button" data-travel-focus="weather">Weather</button>
+                    <button type="button" data-travel-focus="maps">Maps</button>
+                    <button type="button" data-travel-focus="documents">Travel Documents</button>
+                  </details>
+                </nav>
+              </aside>
+              <div class="travel-settings-main">
+                <section class="travel-focus-panel active" data-travel-panel="overview">
+                  <div class="travel-focus-header">
+                    <span class="travel-focus-icon">🌍</span>
+                    <div>
+                      <p class="eyebrow">Travel Home</p>
+                      <h3>Miami to Tokyo Adventure</h3>
+                      <p>Next booking, weather preview, alerts, missing items, progress, and quick actions for the selected trip.</p>
+                    </div>
+                    <button class="primary-button" type="button" data-travel-focus-action="Add Flight">Add Flight</button>
+                  </div>
+                  <div class="travel-focus-grid">
+                    <article><span>Next booking</span><strong>DL 241 • MIA → HND</strong><small>Jul 18 • 8:45 AM • Confirmed</small><button type="button" data-travel-focus="flights">View Flight</button></article>
+                    <article><span>Weather preview</span><strong>82°F • Light rain</strong><small>Provider-ready forecast • Tokyo timezone</small><button type="button" data-travel-focus="weather">View Weather</button></article>
+                    <article><span>Missing item</span><strong>Travel insurance</strong><small>Upload before departure</small><button type="button" data-travel-focus="documents">Upload Document</button></article>
+                    <article><span>Trip progress</span><strong>84% ready</strong><small>12 confirmations saved • 3 reminders soon</small><button type="button" data-travel-focus="boarding">View Passes</button></article>
+                  </div>
+                  <div class="travel-quick-actions compact">
+                    <button type="button" data-travel-focus="flights">Add Flight</button>
+                    <button type="button" data-travel-focus="hotels">Add Hotel</button>
+                    <button type="button" data-travel-focus="rideShare">Compare Transportation</button>
+                    <button type="button" data-travel-focus="itinerary">View Itinerary</button>
+                    <button type="button" data-travel-focus="boarding">View Boarding Pass</button>
+                    <button type="button" data-travel-focus="documents">Upload Document</button>
+                  </div>
+                </section>
+                <section class="travel-focus-panel" data-travel-panel="flights">
+                  <div class="travel-focus-header"><span class="travel-focus-icon">✈️</span><div><p class="eyebrow">Flights</p><h3>Search, save, and manage flights</h3><p>Only flight-related confirmations, alerts, and boarding-pass shortcuts appear here.</p></div><button class="primary-button" type="button" data-travel-focus-action="Search Flights">Search Flights</button></div>
+                  <div class="travel-form-row"><input type="text" value="Miami (MIA)" aria-label="Origin airport"><input type="text" value="Tokyo (HND)" aria-label="Destination airport"><input type="date" value="2026-07-18" aria-label="Departure date"><button type="button" data-travel-focus-action="Upload Flight Confirmation">Upload Confirmation</button></div>
+                  <div class="travel-focus-grid"><article><span>Confirmed flight</span><strong>Delta DL 241</strong><small>MIA 8:45 AM → HND 3:20 PM • Conf DL-48291</small><button type="button" data-travel-focus="boarding">View Boarding Pass</button></article><article><span>Flight alert</span><strong>Check-in opens soon</strong><small>Reminder queued 24 hours before departure.</small><button type="button" data-travel-focus-action="Set Flight Reminder">Set Reminder</button></article></div>
+                </section>
+                <section class="travel-focus-panel" data-travel-panel="hotels">
+                  <div class="travel-focus-header"><span class="travel-focus-icon">🏨</span><div><p class="eyebrow">Hotels</p><h3>Hotel search and confirmed stays</h3><p>Saved hotels, check-in reminders, room details, and reservation cards for the selected trip.</p></div><button class="primary-button" type="button" data-travel-focus-action="Add Hotel">Add Hotel</button></div>
+                  <div class="travel-focus-grid"><article><img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=700&auto=format&fit=crop" alt="Hotel lobby"><span>Confirmed stay</span><strong>Tokyo Station Hotel</strong><small>Aug 8 - Aug 13 • Queen Room • TSH-2088</small><button type="button" data-travel-focus-action="View Reservation">View Reservation</button></article><article><span>Check-in reminder</span><strong>3:00 PM arrival</strong><small>Reservation card appears in Travel Essentials.</small><button type="button" data-travel-focus="boarding">View Cards</button></article></div>
+                </section>
+                <section class="travel-focus-panel" data-travel-panel="rideShare">
+                  <div class="travel-focus-header"><span class="travel-focus-icon">🚘</span><div><p class="eyebrow">Ride Share</p><h3>Country-aware ride providers</h3><p>Select a country to show supported providers, availability, estimates, pickup time, vehicle type, and booking method.</p></div><button class="primary-button" type="button" data-travel-focus-action="Compare Providers">Compare Providers</button></div>
+                  <label class="travel-country-select">Destination country<select id="travelFocusCountry"><option>United Arab Emirates</option><option>United States</option><option>Canada</option><option>United Kingdom</option><option>Mexico</option><option>Brazil</option><option>Japan</option><option>Singapore</option><option>India</option></select></label>
+                  <div class="travel-provider-cards" id="travelFocusRideProviders" aria-label="Country-based ride-share providers"></div>
+                </section>
+                <section class="travel-focus-panel" data-travel-panel="boarding">
+                  <div class="travel-focus-header"><span class="travel-focus-icon">🎫</span><div><p class="eyebrow">Boarding Passes</p><h3>Upcoming, active, completed, and cancelled passes</h3><p>Each pass uses its own visual ticket. Official QR or barcode is shown only when imported from a valid provider document.</p></div><button class="primary-button" type="button" data-travel-focus-action="Save Offline">Save Offline</button></div>
+                  <div class="travel-pass-filters"><button class="active" type="button">Upcoming</button><button type="button">Active</button><button type="button">Completed</button><button type="button">Cancelled</button></div>
+                  <div class="visual-pass-grid single-focus-pass"><article class="visual-pass-card visual-pass-card--flight"><div class="pass-topline"><span>Flight boarding pass</span><strong>Checked In</strong></div><div class="pass-provider"><b>DELTA</b><span>Official imported pass</span></div><div class="pass-route"><b>MIA</b><i></i><b>HND</b></div><h4>Delta DL 241</h4><dl><div><dt>Passenger</dt><dd>Jordan Smith</dd></div><div><dt>Gate</dt><dd>B18</dd></div><div><dt>Seat</dt><dd>14A</dd></div><div><dt>Boarding</dt><dd>Group 3</dd></div></dl><div class="official-code" aria-label="Official provider QR code available"></div><div class="barcode-strip" aria-hidden="true"></div><div class="pass-actions"><button type="button" data-pass-action="View Boarding Pass">View Details</button><button type="button" data-pass-action="Save Offline">Save Offline</button></div></article></div>
+                </section>
+                <section class="travel-focus-panel" data-travel-panel="weather">
+                  <div class="travel-focus-header"><span class="travel-focus-icon">🌦️</span><div><p class="eyebrow">Weather</p><h3>Destination forecast</h3><p>Full weather stays here; Travel Home only shows a preview. Live provider status is labeled until connected.</p></div><button class="primary-button" type="button" data-travel-focus-action="Refresh Weather">Refresh</button></div>
+                  <div class="travel-weather-dashboard focus-weather"><div class="weather-hero"><span>Tokyo weather</span><strong>82°F</strong><small>Light rain • feels like 86°F</small></div><div class="weather-metrics"><div><span>Rain</span><strong>68%</strong></div><div><span>Wind</span><strong>9 mph</strong></div><div><span>Humidity</span><strong>74%</strong></div><div><span>UV</span><strong>4</strong></div></div><p class="weather-source-line">Forecast source: Provider unavailable • Last updated: Awaiting live API • Timezone: Asia/Tokyo</p></div>
+                </section>
+                <section class="travel-focus-panel" data-travel-panel="documents">
+                  <div class="travel-focus-header"><span class="travel-focus-icon">📄</span><div><p class="eyebrow">Travel Documents</p><h3>Organized secure document cards</h3><p>Identification, flight documents, hotel confirmations, cruise documents, tickets, insurance, visas, receipts, and other files.</p></div><button class="primary-button" type="button" data-travel-focus-action="Upload Document">Upload Document</button></div>
+                  <div class="travel-focus-grid"><article><span>Identification</span><strong>Passport</strong><small>Jordan Smith • Verified • Expires 2031</small><button type="button" data-travel-focus-action="View Passport">View</button></article><article><span>Insurance</span><strong>Travel insurance needed</strong><small>Missing before departure</small><button type="button" data-travel-focus-action="Upload Insurance">Upload</button></article><article><span>Hotel confirmation</span><strong>Tokyo Station Hotel</strong><small>Uploaded Jul 20 • TSH-2088</small><button type="button" data-travel-focus-action="Download Hotel Confirmation">Download</button></article></div>
+                </section>
+                <section class="travel-focus-panel" data-travel-panel="itinerary">
+                  <div class="travel-focus-header"><span class="travel-focus-icon">🗓️</span><div><p class="eyebrow">Itinerary</p><h3>Daily schedule, Smart Route, and Your Trips</h3><p>Smart Route and Your Trips stay close together with normal spacing and one section at a time.</p></div><button class="primary-button" type="button" data-travel-focus-action="Open Daily Schedule">Daily Schedule</button></div>
+                  <div class="travel-focus-grid"><article><span>Smart Route</span><strong>Airport → Hotel → Dinner</strong><small>Fastest route: 48 minutes • rain-aware timing</small><button type="button" data-travel-focus="maps">Open Route</button></article><article><span>Your Trips</span><strong>Miami to Tokyo Adventure</strong><small>4 travelers • 84% ready • 12 confirmations</small><button type="button" data-travel-focus-action="Open Trip">Open Trip</button></article><article><span>Reservation</span><strong>Ocean Grill Dinner</strong><small>7:30 PM • reminder enabled</small><button type="button" data-travel-focus-action="View Reservation">View</button></article></div>
+                </section>
+                <section class="travel-focus-panel" data-travel-panel="maps">
+                  <div class="travel-focus-header"><span class="travel-focus-icon">🗺️</span><div><p class="eyebrow">Maps</p><h3>Places, routes, pickup points, and stops</h3><p>Airports, hotels, stations, ports, event venues, restaurants, and transportation routes for the selected trip.</p></div><button class="primary-button" type="button" data-travel-focus-action="Open Directions">Open Directions</button></div>
+                  <div class="travel-map-dashboard"><div><p class="eyebrow">Route context</p><h3>Airport to hotel</h3><p>MIA departure, HND arrival, hotel location, pickup point, dinner stop, and saved places.</p></div><div class="route-chip-list"><button type="button">Airport</button><button type="button">Hotel</button><button type="button">Pickup</button><button type="button">Dinner</button></div></div>
+                </section>
+                <section class="travel-focus-panel" data-travel-panel="alerts"><div class="travel-focus-header"><span class="travel-focus-icon">🚨</span><div><p class="eyebrow">Travel Alerts</p><h3>Current trip alerts</h3><p>Flight check-in, weather, document, and reservation alerts for the selected trip.</p></div><button class="primary-button" type="button" data-travel-focus-action="Manage Alerts">Manage Alerts</button></div><div class="travel-focus-grid"><article><span>Check-in</span><strong>DL 241 opens soon</strong><small>Reminder queued.</small></article><article><span>Weather</span><strong>Light rain on arrival</strong><small>Pack a jacket.</small></article></div></section>
+                <section class="travel-focus-panel" data-travel-panel="missing"><div class="travel-focus-header"><span class="travel-focus-icon">✅</span><div><p class="eyebrow">Missing Items</p><h3>Items to finish before departure</h3><p>Short, actionable list instead of blank containers.</p></div><button class="primary-button" type="button" data-travel-focus="documents">Resolve Items</button></div><div class="travel-empty-state"><strong>1 item needs attention</strong><span>Upload travel insurance before departure.</span><button type="button" data-travel-focus="documents">Upload Insurance</button></div></section>
+                <section class="travel-focus-panel" data-travel-panel="trains"><div class="travel-focus-header"><span class="travel-focus-icon">🚆</span><div><p class="eyebrow">Trains</p><h3>Rail tickets and station reminders</h3><p>One train ticket per card with fare, class, accessibility, and platform status.</p></div><button class="primary-button" type="button" data-travel-focus-action="Search Trains">Search Trains</button></div><div class="travel-focus-grid"><article><span>Rail ticket</span><strong>Tokyo → Kyoto</strong><small>Nozomi 33 • Coach 8 • Seat 12D</small><button type="button" data-travel-focus="boarding">View Ticket</button></article></div></section>
+                <section class="travel-focus-panel" data-travel-panel="buses"><div class="travel-focus-header"><span class="travel-focus-icon">🚌</span><div><p class="eyebrow">Buses</p><h3>Bus tickets and shuttle plans</h3><p>Confirmed bus and shuttle tickets appear as their own cards.</p></div><button class="primary-button" type="button" data-travel-focus-action="Add Bus">Add Bus</button></div><div class="travel-empty-state"><strong>No bus tickets added yet</strong><span>Add a bus, shuttle, or upload an existing confirmation.</span><button type="button" data-travel-focus-action="Upload Bus Ticket">Upload Ticket</button></div></section>
+                <section class="travel-focus-panel" data-travel-panel="cruises"><div class="travel-focus-header"><span class="travel-focus-icon">🚢</span><div><p class="eyebrow">Cruises</p><h3>Cruise details inside Travel</h3><p>Cruise line, ship, cabin, ports, shore excursions, boarding documents, weather, and port transportation.</p></div><button class="primary-button" type="button" data-travel-focus-action="Add Cruise">Add Cruise</button></div><div class="travel-focus-grid"><article><span>Cruise pass</span><strong>Oceanic Vista • Cabin 11234</strong><small>Luggage tags attached • QR imported</small><button type="button" data-travel-focus="boarding">View Cruise Pass</button></article></div></section>
+                <section class="travel-focus-panel" data-travel-panel="transfers"><div class="travel-focus-header"><span class="travel-focus-icon">🚐</span><div><p class="eyebrow">Airport Transfers</p><h3>Airport, hotel, event, and cruise transfers</h3><p>Transfer cards show pickup, destination, passengers, estimate status, and booking method.</p></div><button class="primary-button" type="button" data-travel-focus-action="Add Transfer">Add Transfer</button></div><div class="travel-focus-grid"><article><span>Airport pickup</span><strong>HND → Tokyo Station Hotel</strong><small>Estimated $38 • 42 min • External booking</small><button type="button">Book Transfer</button></article></div></section>
+                <section class="travel-focus-panel" data-travel-panel="publicTransit"><div class="travel-focus-header"><span class="travel-focus-icon">🚇</span><div><p class="eyebrow">Public Transit</p><h3>Train, subway, bus, and walking alternatives</h3><p>Compare cost, duration, walking distance, transfers, accessibility, and savings.</p></div><button class="primary-button" type="button" data-travel-focus-action="Compare Transit">Compare Transit</button></div><div class="travel-focus-grid"><article><span>Best value</span><strong>Train + walking</strong><small>$8.50 • 32 minutes • save about $31.50</small><button type="button">Use Route</button></article></div></section>
+                <section class="travel-focus-panel" data-travel-panel="routeComparison"><div class="travel-focus-header"><span class="travel-focus-icon">🧭</span><div><p class="eyebrow">Route Comparison</p><h3>Compare multi-leg routes</h3><p>See total cost, duration, transfers, walking, arrival, booking needs, and savings.</p></div><button class="primary-button" type="button" data-travel-focus-action="Compare Route">Compare Route</button></div><div class="travel-focus-grid"><article><span>Fastest</span><strong>Ride share</strong><small>$42 • 18 min • provider app required</small></article><article><span>Cheapest</span><strong>Public transit</strong><small>$8.50 • 32 min • accessible route</small></article></div></section>
+                <section class="travel-focus-panel" data-travel-panel="smartRoute"><div class="travel-focus-header"><span class="travel-focus-icon">🧠</span><div><p class="eyebrow">Smart Route</p><h3>Rain-aware route planning</h3><p>Smart Route stays next to Your Trips inside this itinerary-focused section.</p></div><button class="primary-button" type="button" data-travel-focus="itinerary">Open Itinerary</button></div><div class="travel-focus-grid"><article><span>Smart Route</span><strong>Leave 20 minutes earlier</strong><small>Rain and traffic are affecting arrival timing.</small></article><article><span>Your Trips</span><strong>Miami to Tokyo Adventure</strong><small>Selected and synced across Travel.</small></article></div></section>
+                <section class="travel-focus-panel" data-travel-panel="yourTrips"><div class="travel-focus-header"><span class="travel-focus-icon">🧳</span><div><p class="eyebrow">Your Trips</p><h3>Saved and archived trips</h3><p>Switch trips without losing the active Travel section.</p></div><button class="primary-button" type="button" data-travel-focus-action="Open All Trips">Open All Trips</button></div><div class="travel-focus-grid"><article><span>Active</span><strong>Miami to Tokyo Adventure</strong><small>4 travelers • 84% ready</small></article><article><span>Archived</span><strong>Dubai Weekend</strong><small>Completed • memories saved</small></article></div></section>
+                <section class="travel-focus-panel" data-travel-panel="travelers"><div class="travel-focus-header"><span class="travel-focus-icon">👥</span><div><p class="eyebrow">Travelers</p><h3>Authorized traveler access</h3><p>Traveler-specific passes, documents, and records stay permission-aware.</p></div><button class="primary-button" type="button" data-travel-focus-action="Manage Travelers">Manage Travelers</button></div><div class="travel-focus-grid"><article><span>Organizer</span><strong>Jordan Smith</strong><small>Full trip access</small></article><article><span>Traveler</span><strong>Sarah Lee</strong><small>Assigned records only</small></article></div></section>
+                <p class="small" id="travelSettingsMessage">Travel Home is open. Search or choose a category to focus on one Travel section at a time.</p>
+              </div>
+            </section>
             <section class="travel-overview-card" aria-label="Travel overview">
               <button class="travel-summary-tile travel-summary-tile--trip" type="button" data-travel-section="flights" aria-label="Open next trip flight details">
                 <span>Next Trip</span>

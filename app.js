@@ -1601,6 +1601,21 @@ function getEventSpecificDetails() {
 }
 
 const travelTileDestinations = {
+  overview: {
+    title: "Travel Home",
+    route: "/trips/dubai-weekend/transportation",
+    summary: "Travel Home keeps the current trip, next booking, weather preview, alerts, missing items, progress, and quick actions easy to scan."
+  },
+  alerts: {
+    title: "Travel Alerts",
+    route: "/trips/dubai-weekend/transportation/alerts",
+    summary: "Flight check-in, weather, document, and reservation alerts for the selected trip."
+  },
+  missing: {
+    title: "Missing Items",
+    route: "/trips/dubai-weekend/transportation/missing-items",
+    summary: "Missing reservations, documents, insurance, and travel tasks appear as short actionable cards."
+  },
   flights: {
     title: "Flights",
     route: "/trips/dubai-weekend/transportation/flights",
@@ -1626,10 +1641,30 @@ const travelTileDestinations = {
     route: "/trips/dubai-weekend/transportation/ferries",
     summary: "Cruise boarding pass, ferry times, luggage tags, and port notes open on the Cruises and Ferries page."
   },
+  cruises: {
+    title: "Cruises",
+    route: "/trips/dubai-weekend/transportation/cruises",
+    summary: "Cruise line, ship, cabin, port stops, luggage tags, shore excursions, and embarkation documents open on the Cruises page."
+  },
   rideShare: {
     title: "Transportation",
     route: "/trips/dubai-weekend/transportation/ride-share",
     summary: "Airport pickup is scheduled. Ride-share, private driver, route, and fare split tools open on the Transportation page."
+  },
+  transfers: {
+    title: "Airport Transfers",
+    route: "/trips/dubai-weekend/transportation/transfers",
+    summary: "Airport, hotel, event, and cruise transfers show pickup, destination, passengers, estimate status, and booking method."
+  },
+  publicTransit: {
+    title: "Public Transit",
+    route: "/trips/dubai-weekend/transportation/public-transit",
+    summary: "Train, subway, bus, and walking alternatives compare cost, duration, walking distance, transfers, accessibility, and savings."
+  },
+  routeComparison: {
+    title: "Route Comparison",
+    route: "/trips/dubai-weekend/transportation/routes",
+    summary: "Compare multi-leg routes by cost, duration, transfers, walking, arrival, booking needs, and savings."
   },
   tickets: {
     title: "Tickets",
@@ -1655,11 +1690,101 @@ const travelTileDestinations = {
     title: "Travel documents",
     route: "/trips/dubai-weekend/transportation/documents",
     summary: "Passport, insurance, and confirmations are organized. Secure uploads open in Document Center."
+  },
+  itinerary: {
+    title: "Itinerary",
+    route: "/trips/dubai-weekend/transportation/itinerary",
+    summary: "Daily schedule, Smart Route, Your Trips, reservations, transportation, activities, and notes are grouped with normal spacing."
+  },
+  smartRoute: {
+    title: "Smart Route",
+    route: "/trips/dubai-weekend/transportation/smart-route",
+    summary: "Smart Route stays close to Your Trips with weather, traffic, and timing recommendations."
+  },
+  yourTrips: {
+    title: "Your Trips",
+    route: "/trips/dubai-weekend/transportation/your-trips",
+    summary: "Switch active, archived, and saved trips without losing the active Travel section."
+  },
+  travelers: {
+    title: "Travelers",
+    route: "/trips/dubai-weekend/transportation/travelers",
+    summary: "Traveler-specific passes, documents, and records stay permission-aware."
   }
 };
 
+const travelSearchTargets = [
+  ["boarding", ["boarding", "pass", "ticket", "qr", "barcode", "seat", "gate", "dl 241"]],
+  ["rideShare", ["uber", "lyft", "careem", "grab", "didi", "ola", "ride", "taxi", "driver"]],
+  ["flights", ["flight", "airline", "delta", "airport", "confirmation", "mia", "hnd"]],
+  ["hotels", ["hotel", "stay", "reservation", "room", "check-in", "tokyo station"]],
+  ["weather", ["weather", "rain", "forecast", "temperature", "uv", "wind"]],
+  ["documents", ["document", "passport", "insurance", "visa", "receipt"]],
+  ["maps", ["map", "route", "directions", "pickup", "location"]],
+  ["itinerary", ["itinerary", "schedule", "reservation", "daily"]],
+  ["smartRoute", ["smart route", "traffic", "leave", "route"]],
+  ["yourTrips", ["trip", "archive", "current trip"]],
+  ["trains", ["train", "rail", "platform", "station"]],
+  ["buses", ["bus", "shuttle"]],
+  ["cruises", ["cruise", "ship", "cabin", "port"]],
+  ["missing", ["missing", "needed", "todo"]],
+  ["alerts", ["alert", "notification", "reminder"]]
+];
+
+function renderTravelFocusRideProviders() {
+  const list = $("#travelFocusRideProviders");
+  if (!list) return;
+  const country = $("#travelFocusCountry")?.value || "United Arab Emirates";
+  const providers = rideProvidersByDestination[country] || ["Local taxi", "Hotel transfer"];
+  list.innerHTML = providers.map((provider) => `
+    <article>
+      <span>${escapeHtml(country)}</span>
+      <strong>${escapeHtml(provider)}</strong>
+      <small>Available • Estimate only • Provider app required</small>
+      <dl>
+        <div><dt>Pickup</dt><dd>${provider === "Careem" || provider === "Grab" ? "8 min" : "12 min"}</dd></div>
+        <div><dt>Fare</dt><dd>${country === "United Arab Emirates" ? "$18-$22" : "$16-$28"}</dd></div>
+        <div><dt>Vehicle</dt><dd>Sedan / SUV</dd></div>
+        <div><dt>Booking</dt><dd>External app</dd></div>
+      </dl>
+      <button type="button" data-ride-provider="${escapeHtml(provider)}">Select provider</button>
+    </article>
+  `).join("");
+}
+
+function setTravelFocus(section = "overview", options = {}) {
+  const target = travelTileDestinations[section] ? section : "overview";
+  $$(".travel-focus-panel").forEach((panel) => {
+    panel.classList.toggle("active", panel.dataset.travelPanel === target);
+  });
+  $$("[data-travel-focus]").forEach((button) => {
+    const active = button.dataset.travelFocus === target;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+  const destination = travelTileDestinations[target] || travelTileDestinations.overview;
+  if ($("#travelSettingsMessage")) $("#travelSettingsMessage").textContent = `${destination.title} opened. ${destination.summary}`;
+  if ($("#travelSelectedTitle")) $("#travelSelectedTitle").textContent = destination.title;
+  if ($("#travelSelectedSummary")) $("#travelSelectedSummary").textContent = destination.summary;
+  if ($("#travelSelectedRoute")) $("#travelSelectedRoute").textContent = destination.route;
+  renderTravelFocusRideProviders();
+  if (options.updateHistory !== false) {
+    history.pushState({ target: "rideShareHub", travelSection: target }, "", destination.route);
+  }
+  localStorage.setItem("traveldripTravelFocus", target);
+  return destination;
+}
+
+function resolveTravelSearchTarget(query = "") {
+  const normalized = query.trim().toLowerCase();
+  if (!normalized) return "overview";
+  const match = travelSearchTargets.find(([, terms]) => terms.some((term) => normalized.includes(term)));
+  return match?.[0] || "overview";
+}
+
 function showTravelTileDestination(section) {
   const destination = travelTileDestinations[section] || travelTileDestinations.rideShare;
+  setTravelFocus(section, { updateHistory: false });
   if ($("#travelSelectedTitle")) $("#travelSelectedTitle").textContent = destination.title;
   if ($("#travelSelectedSummary")) $("#travelSelectedSummary").textContent = destination.summary;
   if ($("#travelSelectedRoute")) $("#travelSelectedRoute").textContent = destination.route;
@@ -3232,6 +3357,8 @@ const routeAliases = {
   "/trips/dubai-weekend/hotels": "importantInfo",
   "/trips/dubai-weekend/travel": "rideShareHub",
   "/trips/dubai-weekend/transportation": "rideShareHub",
+  "/trips/dubai-weekend/transportation/alerts": "rideShareHub",
+  "/trips/dubai-weekend/transportation/missing-items": "rideShareHub",
   "/trips/dubai-weekend/transportation/flights": "rideShareHub",
   "/trips/dubai-weekend/transportation/hotels": "rideShareHub",
   "/trips/dubai-weekend/transportation/trains": "rideShareHub",
@@ -3240,11 +3367,18 @@ const routeAliases = {
   "/trips/dubai-weekend/transportation/cruises": "rideShareHub",
   "/trips/dubai-weekend/transportation/shuttles": "rideShareHub",
   "/trips/dubai-weekend/transportation/ride-share": "rideShareHub",
+  "/trips/dubai-weekend/transportation/transfers": "rideShareHub",
+  "/trips/dubai-weekend/transportation/public-transit": "rideShareHub",
+  "/trips/dubai-weekend/transportation/routes": "rideShareHub",
   "/trips/dubai-weekend/transportation/tickets": "rideShareHub",
   "/trips/dubai-weekend/transportation/boarding": "rideShareHub",
   "/trips/dubai-weekend/transportation/weather": "rideShareHub",
   "/trips/dubai-weekend/transportation/maps": "rideShareHub",
   "/trips/dubai-weekend/transportation/documents": "rideShareHub",
+  "/trips/dubai-weekend/transportation/itinerary": "rideShareHub",
+  "/trips/dubai-weekend/transportation/smart-route": "rideShareHub",
+  "/trips/dubai-weekend/transportation/your-trips": "rideShareHub",
+  "/trips/dubai-weekend/transportation/travelers": "rideShareHub",
   "/trips/dubai-weekend/transportation/rental-cars": "rideShareHub",
   "/trips/dubai-weekend/transportation/private-transfers": "rideShareHub",
   "/trips/dubai-weekend/ride-share": "rideShareHub",
@@ -3550,6 +3684,10 @@ function wireLocalInteractions() {
   renderTransportHub("flights");
   renderRideSplit();
   renderRideHubSections();
+  setTravelFocus(localStorage.getItem("traveldripTravelFocus") || "overview", { updateHistory: false });
+  if ($("#travelSettingsTripSelect") && localStorage.getItem("traveldripSelectedTravelTrip")) {
+    $("#travelSettingsTripSelect").value = localStorage.getItem("traveldripSelectedTravelTrip");
+  }
   updateEnterpriseRole();
   updateDashboardWidgets();
   startLivePlanRotation();
@@ -3993,6 +4131,57 @@ function wireLocalInteractions() {
       $("#travelSelectedTile")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
       addAuditEntry("Travel section opened", `${section} opened from Travel hub navigation.`);
       await saveSyncedEvent("travel_section_opened", { section });
+    });
+  });
+
+  $$("[data-travel-focus]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const section = button.dataset.travelFocus;
+      const destination = setTravelFocus(section);
+      addAuditEntry("Travel focus section opened", `${destination.title} opened from Settings-style Travel navigation.`);
+      await saveSyncedEvent("travel_focus_opened", { section, route: destination.route });
+    });
+  });
+
+  $("#travelSettingsSearchInput")?.addEventListener("keydown", async (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    const query = event.target.value.trim();
+    const section = resolveTravelSearchTarget(query);
+    const destination = setTravelFocus(section);
+    if ($("#travelSettingsMessage")) {
+      $("#travelSettingsMessage").textContent = query
+        ? `Search for "${query}" opened ${destination.title}.`
+        : "Search cleared. Travel Home opened.";
+    }
+    addAuditEntry("Travel search opened section", `${query || "empty search"} -> ${destination.title}`);
+    await saveSyncedEvent("travel_search", { query, section });
+  });
+
+  $("#travelSettingsTripSelect")?.addEventListener("change", async (event) => {
+    localStorage.setItem("traveldripSelectedTravelTrip", event.target.value);
+    if ($("#travelSettingsMessage")) {
+      $("#travelSettingsMessage").textContent = `${event.target.value} is now the active Travel trip. The selected Travel section remains open.`;
+    }
+    await saveSyncedEvent("travel_trip_selected", { trip: event.target.value });
+  });
+
+  $("#travelFocusCountry")?.addEventListener("change", async (event) => {
+    renderTravelFocusRideProviders();
+    if ($("#travelSettingsMessage")) {
+      $("#travelSettingsMessage").textContent = `Ride Share providers refreshed for ${event.target.value}. Unsupported providers are not shown as active.`;
+    }
+    await saveSyncedEvent("travel_ride_country_selected", { country: event.target.value });
+  });
+
+  $$("[data-travel-focus-action]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const action = button.dataset.travelFocusAction;
+      if ($("#travelSettingsMessage")) {
+        $("#travelSettingsMessage").textContent = `${action} opened in the active Travel section. Production provider actions remain labeled until connected.`;
+      }
+      addAuditEntry("Travel focus action", action);
+      await saveSyncedEvent("travel_focus_action", { action });
     });
   });
 
