@@ -1,6 +1,6 @@
 # TravelDrip Links, Search, Date Picker, Booking, and Real-Time Updates Verification
 
-Generated: 2026-07-29T16:51:40.887Z
+Generated: 2026-07-29T17:11:20.224Z
 
 ## Final Status
 
@@ -53,6 +53,23 @@ Chat owns messaging only; Daily Memory is mounted under Memories and Social Medi
 - Today in TravelDrip heading count: 1
 
 Today in TravelDrip is defined once inside the Dashboard widget section, and the route renderer hides all dashboard-only sections on other routes.
+
+## Side Toolbar Navigation Verification
+
+| Toolbar item | Expected route | Shared config | Sidebar control | Status |
+| --- | --- | --- | --- |
+| dashboard | /dashboard | yes | yes | pass |
+| planning | /planning | yes | yes | pass |
+| itinerary | /itinerary | yes | yes | pass |
+| events | /events | yes | yes | pass |
+| travel | /travel | yes | yes | pass |
+| wallet | /wallet | yes | yes | pass |
+| chat | /chat | yes | yes | pass |
+| important-info | /important-info | yes | yes | pass |
+| memories | /memories | yes | yes | pass |
+| settings | /settings | yes | yes | pass |
+
+All ten main sidebar routes use the shared navigation configuration; Cruise remains nested under Travel.
 
 ## Required Travel Documents Verification
 

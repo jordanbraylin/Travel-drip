@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-29T16:51:40.887Z",
+  "generatedAt": "2026-07-29T17:11:20.224Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
@@ -102,6 +102,34 @@
       "dashboardWidgets"
     ],
     "todayHeadingCount": 1,
+    "issues": [],
+    "status": "PASS"
+  },
+  "toolbarNavigationVerification": {
+    "requiredRoutes": {
+      "dashboard": "/dashboard",
+      "planning": "/planning",
+      "itinerary": "/itinerary",
+      "events": "/events",
+      "travel": "/travel",
+      "wallet": "/wallet",
+      "chat": "/chat",
+      "important-info": "/important-info",
+      "memories": "/memories",
+      "settings": "/settings"
+    },
+    "sidebarItems": [
+      "chat",
+      "dashboard",
+      "events",
+      "important-info",
+      "itinerary",
+      "memories",
+      "planning",
+      "settings",
+      "travel",
+      "wallet"
+    ],
     "issues": [],
     "status": "PASS"
   },

@@ -33,6 +33,20 @@ const mainNavigationIds = unique(matchAll(mainNavigationBlock, /id:\s*["']([^"']
 const mainNavigationPaths = unique(matchAll(mainNavigationBlock, /path:\s*["']([^"']+)["']/g));
 const mainNavigationControls = matchAll(html, /\bdata-main-nav-id=["']([^"']+)["']/g);
 const requiredMainNavigationIds = ["dashboard", "planning", "itinerary", "events", "travel", "wallet", "chat", "important-info", "memories", "settings"];
+const requiredToolbarRoutes = {
+  dashboard: "/dashboard",
+  planning: "/planning",
+  itinerary: "/itinerary",
+  events: "/events",
+  travel: "/travel",
+  wallet: "/wallet",
+  chat: "/chat",
+  "important-info": "/important-info",
+  memories: "/memories",
+  settings: "/settings"
+};
+const sidebarBlock = html.match(/<aside\b[^>]*class=["'][^"']*\bsidebar\b[^"']*["'][\s\S]*?<\/aside>/)?.[0] || "";
+const sidebarMainNavigationIds = unique(matchAll(sidebarBlock, /\bdata-main-nav-id=["']([^"']+)["']/g));
 const routeBlock = app.match(/const routeDefinitions = \{([\s\S]*?)\n\};/)?.[1] || "";
 const routeTargets = unique(matchAll(routeBlock, /^\s{2}([A-Za-z0-9_]+):\s*\{\s*path:/gm));
 const routeSupportTargets = unique(matchAll(html, /\bdata-route-support=["']([^"']+)["']/g).flatMap((value) => value.split(/\s+/).filter(Boolean)));
@@ -86,6 +100,21 @@ const dashboardOnlyIssues = dashboardOnlyRequiredIds
 if (todayHeadingCount !== 1) dashboardOnlyIssues.push(`Expected one Today in TravelDrip heading, found ${todayHeadingCount}`);
 if (!app.includes("[data-dashboard-only]") || !app.includes("section.hidden = !isHome")) {
   dashboardOnlyIssues.push("Route renderer does not explicitly toggle dashboard-only sections");
+}
+
+const toolbarNavigationIssues = requiredMainNavigationIds
+  .filter((id) => !sidebarMainNavigationIds.includes(id))
+  .map((id) => `Sidebar is missing shared navigation item: ${id}`);
+Object.entries(requiredToolbarRoutes).forEach(([id, path]) => {
+  if (!mainNavigationBlock.includes(`id: "${id}"`) || !mainNavigationBlock.includes(`path: "${path}"`)) {
+    toolbarNavigationIssues.push(`Shared navigation route is missing or incorrect: ${id} -> ${path}`);
+  }
+});
+if (sidebarBlock.includes('data-main-nav-id="cruise"')) {
+  toolbarNavigationIssues.push("Cruise must remain nested under Travel, not a main sidebar route");
+}
+if (!app.includes("applyMainNavigationConfig()") || !app.includes("syncNavigationState")) {
+  toolbarNavigationIssues.push("Shared navigation configuration is not applied to route controls");
 }
 
 const travelDocumentIssues = travelDocumentRequiredClasses
@@ -215,6 +244,12 @@ const results = {
     issues: dashboardOnlyIssues,
     status: dashboardOnlyIssues.length ? "FAIL" : "PASS"
   },
+  toolbarNavigationVerification: {
+    requiredRoutes: requiredToolbarRoutes,
+    sidebarItems: sidebarMainNavigationIds,
+    issues: toolbarNavigationIssues,
+    status: toolbarNavigationIssues.length ? "FAIL" : "PASS"
+  },
   travelDocumentsVerification: {
     cardCount: travelDocumentCardCount,
     requiredClasses: travelDocumentRequiredClasses,
@@ -251,6 +286,7 @@ const criticalIssues = [
   ...targetIssues,
   ...routeIsolationIssues,
   ...dashboardOnlyIssues,
+  ...toolbarNavigationIssues,
   ...travelDocumentIssues,
   ...outerWrapperIssues,
   ...ariaIssues,
@@ -325,6 +361,14 @@ ${routeIsolationIssues.length ? `### Route Isolation Issues\n${routeIsolationIss
 - Today in TravelDrip heading count: ${todayHeadingCount}
 
 ${dashboardOnlyIssues.length ? `### Dashboard-Only Issues\n${dashboardOnlyIssues.map((issue) => `- ${issue}`).join("\n")}` : "Today in TravelDrip is defined once inside the Dashboard widget section, and the route renderer hides all dashboard-only sections on other routes."}
+
+## Side Toolbar Navigation Verification
+
+| Toolbar item | Expected route | Shared config | Sidebar control | Status |
+| --- | --- | --- | --- |
+${Object.entries(requiredToolbarRoutes).map(([id, path]) => `| ${id} | ${path} | ${mainNavigationBlock.includes(`id: "${id}"`) && mainNavigationBlock.includes(`path: "${path}"`) ? "yes" : "no"} | ${sidebarMainNavigationIds.includes(id) ? "yes" : "no"} | ${toolbarNavigationIssues.some((issue) => issue.includes(id)) ? "review" : "pass"} |`).join("\n")}
+
+${toolbarNavigationIssues.length ? `### Toolbar Navigation Issues\n${toolbarNavigationIssues.map((issue) => `- ${issue}`).join("\n")}` : "All ten main sidebar routes use the shared navigation configuration; Cruise remains nested under Travel."}
 
 ## Required Travel Documents Verification
 

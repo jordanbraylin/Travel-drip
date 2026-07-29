@@ -21,6 +21,7 @@
 body.signed-in-shell .sidebar {
   position: sticky;
   z-index: var(--z-toolbar);
+  pointer-events: auto;
 }
 
 body.signed-in-shell .topbar {
@@ -196,6 +197,32 @@ body.app-routed [data-route-component]:not([hidden]) > :where(
   border: 0 !important;
   border-radius: 0 !important;
   background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Layout groups keep their grid role but never render as a second dashboard card. */
+body.app-routed [data-route-component]:not([hidden]) :where(
+  .dashboard-section,
+  .widget-group,
+  .dashboard-panel,
+  .parent-widget,
+  .outer-card,
+  .smart-dashboard-grid,
+  .widget-grid,
+  .travel-dashboard-sections,
+  .travel-booking-summary,
+  .travel-transport-summary,
+  .wallet-dashboard-sections,
+  .wallet-section-card-grid,
+  .messages-layout,
+  .memory-gallery-grid,
+  .settings-main-panel
+) {
+  min-height: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
   box-shadow: none !important;
 }
 
