@@ -1838,17 +1838,34 @@ function setTravelFocus(section = "overview", options = {}) {
   if ($("#travelSelectedRoute")) $("#travelSelectedRoute").textContent = destination.route;
   renderTravelFocusRideProviders();
   if (options.updateHistory !== false) {
-    history.pushState({ target: "rideShareHub", travelSection: target }, "", destination.route);
+    const route = getTravelRoute(target);
+    const currentPath = isFilePreview
+      ? `index.html${location.hash}`
+      : normalizeAppPath(location.pathname);
+    const nextPath = isFilePreview ? route : normalizeAppPath(route);
+    const currentSection = getTravelSectionFromRoute(location.pathname, history.state);
+    if (currentPath !== nextPath || currentSection !== target || getTargetFromRoute() !== "rideShareHub") {
+      history.pushState({ target: "rideShareHub", travelSection: target }, "", route);
+    }
   }
   localStorage.setItem("traveldripTravelFocus", target);
-  const activeTripTab = target === "itinerary" ? "itinerary" : "travel";
+  syncTravelSectionControls(target);
+  syncNavigationState("rideShareHub", target);
+  return destination;
+}
+
+function syncTravelSectionControls(section = "overview") {
+  const activeTripTab = section === "itinerary" ? "itinerary" : "travel";
   $$(".trip-tab-bar button").forEach((button) => {
     const active = button.dataset.tabKey === activeTripTab;
     button.classList.toggle("active", active);
     button.setAttribute("aria-current", active ? "page" : "false");
   });
-  syncNavigationState("rideShareHub", target);
-  return destination;
+  $$(".travel-section-nav [data-travel-section], .travel-overview-card [data-travel-section], .travel-workspace [data-travel-section], .travel-support-card [data-travel-section]").forEach((button) => {
+    const active = button.dataset.travelSection === section;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
 }
 
 function resolveTravelSearchTarget(query = "") {
@@ -1858,24 +1875,13 @@ function resolveTravelSearchTarget(query = "") {
   return match?.[0] || "overview";
 }
 
-function showTravelTileDestination(section) {
+function showTravelTileDestination(section, options = {}) {
   const destination = travelTileDestinations[section] || travelTileDestinations.rideShare;
-  setTravelFocus(section, { updateHistory: false });
+  setTravelFocus(section, options);
   if ($("#travelSelectedTitle")) $("#travelSelectedTitle").textContent = destination.title;
   if ($("#travelSelectedSummary")) $("#travelSelectedSummary").textContent = destination.summary;
   if ($("#travelSelectedRoute")) $("#travelSelectedRoute").textContent = destination.route;
-  $$(".travel-section-nav [data-travel-section], .travel-overview-card [data-travel-section]").forEach((button) => {
-    const active = button.dataset.travelSection === section;
-    button.classList.toggle("active", active);
-    button.setAttribute("aria-pressed", String(active));
-  });
-  history.pushState({ target: "rideShareHub", travelSection: section }, "", destination.route);
-  const activeTripTab = section === "itinerary" ? "itinerary" : "travel";
-  $$(".trip-tab-bar button").forEach((button) => {
-    const active = button.dataset.tabKey === activeTripTab;
-    button.classList.toggle("active", active);
-    button.setAttribute("aria-current", active ? "page" : "false");
-  });
+  syncTravelSectionControls(section);
   return destination;
 }
 
@@ -3682,8 +3688,9 @@ function normalizeAppPath(pathname = location.pathname) {
 }
 
 function getTargetFromRoute(pathname = location.pathname) {
-  const hashTarget = location.hash.startsWith("#") ? location.hash.slice(1) : "";
-  if (hashTarget && routeDefinitions[hashTarget]) return hashTarget;
+  const hashTarget = location.hash.startsWith("#") ? decodeURIComponent(location.hash.slice(1)) : "";
+  const hashRouteTarget = hashTarget.split("/")[0];
+  if (hashRouteTarget && routeDefinitions[hashRouteTarget]) return hashRouteTarget;
   if (normalizeAppPath(pathname).startsWith("/explore/")) return "exploreDrops";
   return routeAliases[normalizeAppPath(pathname)] || "dashboardHome";
 }
@@ -3691,6 +3698,29 @@ function getTargetFromRoute(pathname = location.pathname) {
 function getRouteForTarget(target) {
   if (isFilePreview) return `index.html#${target}`;
   return routeDefinitions[target]?.path || `/app/${target}`;
+}
+
+function getTravelRoute(section = "overview") {
+  const destination = travelTileDestinations[section] || travelTileDestinations.overview;
+  if (!isFilePreview) return destination.route;
+  return section === "overview"
+    ? "index.html#rideShareHub"
+    : `index.html#rideShareHub/${encodeURIComponent(section)}`;
+}
+
+function getTravelSectionFromRoute(pathname = location.pathname, navigationState = history.state) {
+  const stateSection = navigationState?.target === "rideShareHub" ? navigationState.travelSection : "";
+  if (stateSection && travelTileDestinations[stateSection]) return stateSection;
+
+  const hashTarget = location.hash.startsWith("#") ? decodeURIComponent(location.hash.slice(1)) : "";
+  const hashSection = hashTarget.startsWith("rideShareHub/") ? hashTarget.slice("rideShareHub/".length) : "";
+  if (hashSection && travelTileDestinations[hashSection]) return hashSection;
+
+  const normalizedPath = normalizeAppPath(pathname);
+  const match = Object.entries(travelTileDestinations).find(([, destination]) => destination.route === normalizedPath);
+  if (match) return match[0];
+  if (normalizedPath === "/trips/dubai-weekend/travel") return "overview";
+  return "overview";
 }
 
 function isCorporateTarget(target) {
@@ -3809,8 +3839,13 @@ async function verifyCorporateAccessGate() {
   }
 }
 
-function renderRoute(target = getTargetFromRoute(), { updateHistory = false, replace = false } = {}) {
+function renderRoute(target = getTargetFromRoute(), { updateHistory = false, replace = false, travelSection = "" } = {}) {
   const resolvedTarget = routeDefinitions[target] ? target : "dashboardHome";
+  const activeTravelSection = resolvedTarget === "rideShareHub"
+    ? travelTileDestinations[travelSection]
+      ? travelSection
+      : getTravelSectionFromRoute(location.pathname, history.state)
+    : "";
   const previewAccess = isFilePreview && state.hasEnteredApp;
   if (!state.session?.user && !previewAccess && location.pathname !== "/admin.html") {
     rememberProtectedTarget(resolvedTarget);
@@ -3873,14 +3908,19 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
     section.inert = true;
   });
 
-  syncNavigationState(resolvedTarget, resolvedTarget === "rideShareHub" ? history.state?.travelSection : "");
-
-  const route = getRouteForTarget(resolvedTarget);
-  const current = normalizeAppPath(location.pathname);
-  if (updateHistory && current !== route) {
+  const route = resolvedTarget === "rideShareHub"
+    ? getTravelRoute(activeTravelSection)
+    : getRouteForTarget(resolvedTarget);
+  const current = isFilePreview
+    ? `index.html${location.hash}`
+    : normalizeAppPath(location.pathname);
+  const nextRoute = isFilePreview ? route : normalizeAppPath(route);
+  if (updateHistory && current !== nextRoute) {
     const method = replace ? "replaceState" : "pushState";
-    history[method]({ target: resolvedTarget }, "", route);
+    history[method]({ target: resolvedTarget, ...(activeTravelSection ? { travelSection: activeTravelSection } : {}) }, "", route);
   }
+
+  syncNavigationState(resolvedTarget, activeTravelSection);
 
   if (resolvedTarget === "exploreDrops") {
     const exploreState = getExploreRouteState();
@@ -3888,9 +3928,9 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
     if (exploreState.itemId) showExploreDetail(exploreState.itemId);
     if (exploreState.destinationId) showDestinationExploreDetail(exploreState.destinationId, exploreState.destinationAction);
   }
-  if (resolvedTarget === "rideShareHub" && !history.state?.travelSection) {
-    setTravelFocus("overview");
-    showTravelTileDestination("overview");
+  if (resolvedTarget === "rideShareHub") {
+    setTravelFocus(activeTravelSection, { updateHistory: false });
+    showTravelTileDestination(activeTravelSection, { updateHistory: false });
   }
   if (resolvedTarget === "aiTravelPlanner") renderAiPlanner();
 
@@ -5098,9 +5138,13 @@ function wireLocalInteractions() {
 
   $$("[data-target]").forEach((button) => {
     button.addEventListener("click", () => {
+      if (button.dataset.target === "rideShareHub" && button.dataset.travelSection) return;
       const target = button.dataset.target;
       if (!target || !$(`#${target}`)) return;
-      renderRoute(target, { updateHistory: true });
+      renderRoute(target, {
+        updateHistory: true,
+        travelSection: target === "rideShareHub" ? "overview" : ""
+      });
     });
   });
   $$("[data-route-link]").forEach((link) => {

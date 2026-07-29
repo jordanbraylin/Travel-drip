@@ -4626,6 +4626,127 @@ body.app-routed main :where(.trip-tab-bar button, .tabs .tab, .message-tabs butt
   }
 }
 
+/* Section 81: lock authenticated navigation and protect the smart dashboard layout */
+body.signed-in-shell {
+  --td-topbar-offset: 78px;
+}
+
+body.signed-in-shell main {
+  scroll-padding-top: 190px;
+}
+
+body.signed-in-shell .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  margin: -22px -26px 18px;
+  padding: 14px 26px;
+  border: 0;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 0 !important;
+  background: rgba(248, 253, 255, 0.92);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+body.signed-in-shell .global-destination-header:not([hidden]) {
+  top: var(--td-topbar-offset);
+  z-index: 35;
+}
+
+body.signed-in-shell main > .trip-tab-bar {
+  position: sticky;
+  top: calc(var(--td-topbar-offset) + 96px);
+  z-index: 20;
+  scroll-margin-top: 190px;
+}
+
+body.signed-in-shell main > #dashboardHome {
+  min-height: clamp(360px, 42vw, 540px);
+  height: clamp(360px, 42vw, 540px);
+  contain: layout paint;
+}
+
+body.signed-in-shell main > #dashboardHome .hero-copy {
+  max-width: min(680px, 100%);
+}
+
+html body.app-routed main > .dashboard-widgets > .widget-grid {
+  grid-template-columns: repeat(3, minmax(240px, 1fr)) !important;
+  align-items: stretch;
+}
+
+html body.app-routed main > .dashboard-widgets .widget-grid > .travel-widget {
+  min-width: 0;
+  min-height: 174px;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+html body.app-routed main > .dashboard-widgets .widget-grid > .travel-widget.is-large {
+  grid-column: span 2 !important;
+}
+
+.travel-widget h3,
+.travel-widget p,
+.travel-widget strong,
+.travel-widget span {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+@media (max-width: 1100px) {
+  body.signed-in-shell .topbar {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  html body.app-routed main > .dashboard-widgets > .widget-grid {
+    grid-template-columns: repeat(2, minmax(220px, 1fr)) !important;
+  }
+
+  html body.app-routed main > .dashboard-widgets .widget-grid > .travel-widget.is-large {
+    grid-column: span 2 !important;
+  }
+}
+
+@media (max-width: 760px) {
+  body.signed-in-shell {
+    --td-topbar-offset: 70px;
+  }
+
+  body.signed-in-shell .topbar {
+    grid-template-columns: auto minmax(0, 1fr);
+    margin: -22px -12px 14px;
+    padding: 12px;
+  }
+
+  body.signed-in-shell main > .trip-tab-bar {
+    top: calc(var(--td-topbar-offset) + 116px);
+  }
+
+  body.signed-in-shell main > #dashboardHome {
+    min-height: 520px;
+    height: 520px;
+  }
+
+  html body.app-routed main > .dashboard-widgets > .widget-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  html body.app-routed main > .dashboard-widgets .widget-grid > .travel-widget.is-large {
+    grid-column: auto !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.signed-in-shell main > #dashboardHome {
+    contain: layout;
+  }
+}
+
 /* Section 79: restore the approved smart Home dashboard composition */
 body.app-routed main > #dashboardHome {
   display: block !important;
