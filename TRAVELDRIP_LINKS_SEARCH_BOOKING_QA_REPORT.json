@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-29T17:57:47.703Z",
+  "generatedAt": "2026-07-29T17:59:15.792Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
@@ -197,6 +197,10 @@
       },
       {
         "label": "Wallet and boarding pass visuals",
+        "status": "PASS"
+      },
+      {
+        "label": "TravelDrip Pass workspace",
         "status": "PASS"
       }
     ],

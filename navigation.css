@@ -2450,3 +2450,116 @@ body.app-routed :where(.card-heading, .social-card-header, .ride-card-heading) >
     top: 205px;
   }
 }
+
+/* TravelDrip Pass workspace: the ticket is the surface, not a nested parent card. */
+#rideShareHub .travel-pass-workspace {
+  display: grid !important;
+  gap: 14px !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#rideShareHub .travel-pass-workspace > .section-heading {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  margin: 0 !important;
+  padding: 14px 16px !important;
+  border: 1px solid rgba(8, 127, 140, 0.12) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(135deg, #ffffff, #eafcff 56%, #fff1e9) !important;
+  box-shadow: 0 10px 22px rgba(15, 47, 58, 0.07) !important;
+}
+
+#rideShareHub .travel-pass-workspace > .section-heading h3 {
+  margin: 3px 0 3px;
+  color: #0f2f3a;
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  line-height: 1.2;
+}
+
+#rideShareHub .travel-pass-workspace > .section-heading p:not(.eyebrow) {
+  max-width: 62ch;
+  margin: 0;
+  color: #5f7882;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+#rideShareHub .travel-pass-workspace > .section-heading .ghost-button {
+  flex: 0 0 auto;
+  min-height: 34px;
+  white-space: nowrap !important;
+}
+
+#rideShareHub .travel-pass-workspace > .travel-pass-filters {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 !important;
+  padding: 5px !important;
+  border: 1px solid rgba(8, 127, 140, 0.12) !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  box-shadow: 0 8px 16px rgba(15, 47, 58, 0.05) !important;
+}
+
+#rideShareHub .travel-pass-workspace > .travel-pass-filters button {
+  min-height: 32px !important;
+  padding: 6px 11px !important;
+  border-radius: 8px !important;
+  font-size: 0.72rem;
+}
+
+#rideShareHub .travel-pass-workspace > .visual-pass-grid.single-focus-pass {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 0 !important;
+  width: 100%;
+  min-width: 0;
+}
+
+#rideShareHub .travel-pass-workspace .digital-boarding-pass .pass-topline {
+  letter-spacing: 0.08em;
+}
+
+#rideShareHub .travel-pass-workspace .digital-boarding-pass h4 {
+  margin-top: 4px !important;
+  font-size: clamp(1rem, 2vw, 1.4rem) !important;
+  line-height: 1.2;
+}
+
+#rideShareHub .travel-pass-workspace .digital-boarding-pass dl {
+  padding-top: 4px;
+  border-top: 1px solid rgba(15, 47, 58, 0.08);
+}
+
+#rideShareHub .travel-pass-workspace .digital-boarding-pass .pass-actions button {
+  min-height: 34px;
+  padding: 7px 11px;
+  border-radius: 9px;
+  font-size: 0.7rem;
+}
+
+@media (max-width: 640px) {
+  #rideShareHub .travel-pass-workspace > .section-heading {
+    flex-direction: column !important;
+  }
+
+  #rideShareHub .travel-pass-workspace > .section-heading .ghost-button {
+    width: 100%;
+  }
+
+  #rideShareHub .travel-pass-workspace > .travel-pass-filters {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+  }
+}
