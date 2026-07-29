@@ -2563,3 +2563,186 @@ body.app-routed :where(.card-heading, .social-card-header, .ride-card-heading) >
     flex-wrap: nowrap !important;
   }
 }
+
+/* Compact Smart Dashboard density: widgets size to content instead of creating long empty columns. */
+body.app-routed main > section.panel:not([hidden]) :where(
+  .smart-dashboard-grid,
+  .widget-grid,
+  .travel-dashboard-sections,
+  .travel-booking-summary,
+  .travel-transport-summary,
+  .travel-focus-grid,
+  .travel-provider-cards,
+  .wallet-dashboard-header,
+  .wallet-home-grid,
+  .wallet-trip-card-grid,
+  .wallet-dashboard-sections,
+  .wallet-section-card-grid,
+  .wallet-action-grid,
+  .info-status-grid,
+  .important-info-grid,
+  .security-status-grid,
+  .security-control-grid,
+  .memory-gallery-grid,
+  .memory-album-grid,
+  .platform-grid,
+  .message-support-grid
+) {
+  align-items: start !important;
+  grid-auto-rows: max-content !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(
+  .smart-dashboard-grid > *,
+  .widget-grid > *,
+  .travel-dashboard-sections > *,
+  .travel-booking-summary > *,
+  .travel-transport-summary > *,
+  .travel-focus-grid > *,
+  .travel-provider-cards > *,
+  .wallet-dashboard-header > *,
+  .wallet-home-grid > *,
+  .wallet-trip-card-grid > *,
+  .wallet-dashboard-sections > *,
+  .wallet-section-card-grid > *,
+  .wallet-action-grid > *,
+  .info-status-grid > *,
+  .important-info-grid > *,
+  .security-status-grid > *,
+  .security-control-grid > *,
+  .memory-gallery-grid > *,
+  .memory-album-grid > *,
+  .platform-grid > *,
+  .message-support-grid > *
+) {
+  align-self: start !important;
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+body.app-routed [data-route-component]:not([hidden]) :where(
+  .smart-widget,
+  .travel-widget,
+  .travel-dashboard-card,
+  .travel-booking-summary article,
+  .travel-transport-summary article,
+  .travel-focus-grid article,
+  .travel-provider-cards article,
+  .travel-result-card,
+  .travel-support-card,
+  .event-experience-card,
+  .itinerary-card,
+  .reservation-reminder-card,
+  .wallet-summary-card,
+  .wallet-trip-tile,
+  .wallet-section-card-grid article,
+  .memory-media-card,
+  .social-card,
+  .platform-card,
+  .ride-clean-card,
+  .transport-record-card,
+  .settings-row
+) {
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 12px !important;
+  gap: 8px !important;
+  align-self: start !important;
+}
+
+body.app-routed [data-route-component]:not([hidden]) :where(
+  .widget-grid,
+  .smart-dashboard-grid,
+  .travel-dashboard-sections,
+  .travel-booking-summary,
+  .travel-transport-summary,
+  .travel-focus-grid,
+  .travel-provider-cards,
+  .wallet-dashboard-header,
+  .wallet-home-grid,
+  .wallet-trip-card-grid,
+  .wallet-dashboard-sections,
+  .wallet-section-card-grid,
+  .wallet-action-grid,
+  .info-status-grid,
+  .important-info-grid,
+  .security-status-grid,
+  .security-control-grid,
+  .memory-gallery-grid,
+  .memory-album-grid,
+  .platform-grid,
+  .message-support-grid
+) {
+  gap: 12px !important;
+}
+
+body.app-routed [data-route-component]:not([hidden]) :where(
+  .widget-toolbar,
+  .widget-meta,
+  .button-row,
+  .mini-action-row,
+  .memory-card-actions,
+  .platform-actions,
+  .explore-card-actions,
+  .itinerary-action-row,
+  .corporate-card-actions
+) {
+  gap: 6px !important;
+}
+
+#socialHub .conversation-list {
+  max-height: 460px !important;
+}
+
+#socialHub .chat-workspace {
+  min-height: 0 !important;
+  padding: 12px !important;
+  gap: 8px !important;
+}
+
+#socialHub .modern-messages {
+  min-height: 240px !important;
+  max-height: 340px !important;
+  padding: 10px !important;
+}
+
+#itineraryAlerts .itinerary-dashboard > .itinerary-card,
+#eventsPanel .event-experience-card {
+  min-height: 0 !important;
+}
+
+#itineraryAlerts .itinerary-timeline-dashboard,
+#itineraryAlerts .reservation-reminder-panel,
+#rideShareHub .travel-settings-main,
+#walletPanel .wallet-redesign-shell,
+#memoriesPanel .memories-gallery-shell {
+  gap: 12px !important;
+}
+
+@media (max-width: 640px) {
+  body.app-routed [data-route-component]:not([hidden]) :where(
+    .smart-widget,
+    .travel-widget,
+    .travel-dashboard-card,
+    .travel-booking-summary article,
+    .travel-transport-summary article,
+    .travel-focus-grid article,
+    .travel-provider-cards article,
+    .travel-result-card,
+    .travel-support-card,
+    .event-experience-card,
+    .itinerary-card,
+    .reservation-reminder-card,
+    .wallet-summary-card,
+    .wallet-trip-tile,
+    .wallet-section-card-grid article,
+    .memory-media-card,
+    .social-card,
+    .platform-card,
+    .ride-clean-card,
+    .transport-record-card,
+    .settings-row
+  ) {
+    padding: 11px !important;
+  }
+}

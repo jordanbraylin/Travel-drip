@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-29T17:59:15.792Z",
+  "generatedAt": "2026-07-29T18:04:24.740Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
@@ -201,6 +201,10 @@
       },
       {
         "label": "TravelDrip Pass workspace",
+        "status": "PASS"
+      },
+      {
+        "label": "Compact widget sizing",
         "status": "PASS"
       }
     ],

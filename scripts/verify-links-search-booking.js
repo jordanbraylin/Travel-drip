@@ -176,7 +176,8 @@ const focusedLayoutChecks = [
   ["Chat layout", html.includes('id="socialHub"') && navigationCss.includes("#socialHub .messages-layout") && navigationCss.includes("#socialHub .chat-workspace") && navigationCss.includes("#socialHub .conversation-details-panel")],
   ["Widget headers stay on top", html.includes('class="widget-toolbar"') && navigationCss.includes("body.app-routed :where(.smart-widget, .travel-widget, [data-widget]) > .widget-toolbar") && navigationCss.includes("grid-column: 1 / -1 !important")],
   ["Wallet and boarding pass visuals", html.includes('class="card-chip"') && html.includes("digital-boarding-pass") && navigationCss.includes("#virtualCard .virtual-card") && navigationCss.includes("#rideShareHub .digital-boarding-pass")],
-  ["TravelDrip Pass workspace", html.includes('id="travelBoardingPasses"') && navigationCss.includes("#rideShareHub .travel-pass-workspace") && navigationCss.includes("single-focus-pass")]
+  ["TravelDrip Pass workspace", html.includes('id="travelBoardingPasses"') && navigationCss.includes("#rideShareHub .travel-pass-workspace") && navigationCss.includes("single-focus-pass")],
+  ["Compact widget sizing", navigationCss.includes("Compact Smart Dashboard density") && navigationCss.includes("grid-auto-rows: max-content") && navigationCss.includes("min-height: 0 !important")]
 ];
 const focusedLayoutIssues = focusedLayoutChecks
   .filter(([, passed]) => !passed)
@@ -480,7 +481,7 @@ ${outerWrapperIssues.length ? `### Outer Wrapper Issues\n${outerWrapperIssues.ma
 
 ## Focused Route Layout Verification
 
-- Itinerary, Events, Memories, Wallet, Smart Travel Search, Chat, widget headers, and TravelDrip Pass: ${ok(focusedLayoutIssues.length === 0)}
+- Itinerary, Events, Memories, Wallet, Smart Travel Search, Chat, widget headers, TravelDrip Pass, and compact sizing: ${ok(focusedLayoutIssues.length === 0)}
 
 ${focusedLayoutChecks.map(([label, passed]) => `- ${label}: ${ok(passed)}`).join("\n")}
 
