@@ -3073,6 +3073,10 @@ function updateAuthUi() {
     renderGlobalDestinationHeader(getTargetFromRoute());
   }
 
+  if (appAccess && !showGate && routeDefinitions[getTargetFromRoute()]) {
+    renderRoute(getTargetFromRoute(), { replace: true });
+  }
+
   if (location.pathname === "/admin.html") updateAdminUi();
 }
 
@@ -3588,6 +3592,69 @@ const routeAliases = {
 };
 
 const sectionRouteIds = Object.keys(routeDefinitions);
+let routeMountRegistry = null;
+let routeInteractionsWired = false;
+
+function getRouteComponentById(id) {
+  const mounted = document.getElementById(id);
+  if (mounted) return mounted;
+  const cached = routeMountRegistry?.roots.find(({ element }) => {
+    if (element.id === id) return true;
+    return Boolean(element.querySelector(`[id="${id}"]`));
+  });
+  if (!cached) return null;
+  return cached.element.id === id ? cached.element : cached.element.querySelector(`[id="${id}"]`);
+}
+
+function initializeRouteMountRegistry() {
+  if (routeMountRegistry) return;
+  const contentGrid = $(".content-grid");
+  const mainStack = contentGrid?.querySelector(":scope > .main-stack");
+  const rightStack = contentGrid?.querySelector(":scope > .right-stack");
+  const roots = [];
+  const registerStack = (parent, stackName) => {
+    if (!parent) return;
+    Array.from(parent.children).forEach((element, index) => {
+      if (!(element instanceof HTMLElement)) return;
+      roots.push({ element, parent, stackName, index, anchor: null });
+    });
+  };
+
+  registerStack(mainStack, "main");
+  registerStack(rightStack, "right");
+
+  const groupBank = document.getElementById("groupBank");
+  if (groupBank) {
+    roots.push({ element: groupBank, parent: groupBank.parentElement, stackName: "before-content", index: -1, anchor: contentGrid });
+  }
+
+  roots.forEach(({ element }) => {
+    element.dataset.routeComponent = "true";
+    element.remove();
+  });
+  routeMountRegistry = { contentGrid, roots };
+}
+
+function routeOwnsComponent(element, target) {
+  if (element.id && routeDefinitions[element.id]) return element.id === target;
+  const supportedRoutes = (element.dataset.routeSupport || "").split(/\s+/).filter(Boolean);
+  return supportedRoutes.includes(target);
+}
+
+function mountRouteComponents(target) {
+  if (!routeInteractionsWired) return;
+  initializeRouteMountRegistry();
+  if (!routeMountRegistry) return;
+
+  routeMountRegistry.roots.forEach(({ element }) => element.remove());
+  routeMountRegistry.roots
+    .filter(({ element }) => routeOwnsComponent(element, target))
+    .sort((a, b) => a.stackName.localeCompare(b.stackName) || a.index - b.index)
+    .forEach(({ element, parent, anchor }) => {
+      if (anchor && parent) parent.insertBefore(element, anchor);
+      else parent?.appendChild(element);
+    });
+}
 
 function syncNavigationState(resolvedTarget, travelSection = "") {
   const activeTravelSection = resolvedTarget === "rideShareHub"
@@ -3757,6 +3824,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
     showCorporateAccessGate(resolvedTarget, "Enter your company event code before corporate dashboard information loads.");
     return;
   }
+  mountRouteComponents(resolvedTarget);
   document.body.classList.toggle("app-routed", !document.body.classList.contains("auth-screen"));
   const isHome = resolvedTarget === "dashboardHome";
   const dashboardSections = [
@@ -3784,7 +3852,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   }
 
   sectionRouteIds.forEach((sectionId) => {
-    const section = document.getElementById(sectionId);
+    const section = getRouteComponentById(sectionId);
     if (!section) return;
     section.classList.add("route-screen");
     const visible = sectionId === resolvedTarget;
@@ -6088,6 +6156,8 @@ function wireLocalInteractions() {
   $("#signOutButton")?.addEventListener("click", signOut);
   $("#notifyButton")?.addEventListener("click", enableNotifications);
   $("#notifyForm")?.addEventListener("submit", sendAdminNotification);
+  routeInteractionsWired = true;
+  renderRoute(getTargetFromRoute(), { replace: true });
 }
 
 function filterImportantInfo(event) {
@@ -6319,12 +6389,12 @@ function getNavigationAudit() {
   });
 
   targetButtons.forEach((button) => {
-    if (!$(`#${button.dataset.target}`)) issues.push(`Missing section target: ${button.dataset.target}`);
+    if (!getRouteComponentById(button.dataset.target)) issues.push(`Missing section target: ${button.dataset.target}`);
     if (!routeDefinitions[button.dataset.target]) issues.push(`Missing route for target: ${button.dataset.target}`);
   });
 
   Object.entries(routeDefinitions).forEach(([target, route]) => {
-    if (!$(`#${target}`)) issues.push(`Route ${route.path} points to missing screen: ${target}`);
+    if (!getRouteComponentById(target)) issues.push(`Route ${route.path} points to missing screen: ${target}`);
   });
 
   $$("[aria-controls]").forEach((control) => {

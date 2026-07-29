@@ -1,4 +1,4 @@
-const CACHE_NAME = "traveldrip-v111";
+const CACHE_NAME = "traveldrip-v112";
 const APP_SHELL = [
   "/",
   "/index.html",
