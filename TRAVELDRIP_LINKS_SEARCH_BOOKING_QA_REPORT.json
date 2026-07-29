@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-07-29T17:28:25.627Z",
+  "generatedAt": "2026-07-29T17:32:11.370Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
   },
   "totals": {
     "screenIds": 565,
-    "buttons": 775,
+    "buttons": 781,
     "hrefLinks": 15,
-    "dataTargets": 93,
+    "dataTargets": 99,
     "uniqueDataTargets": 17,
     "mainNavigationControls": 32,
     "mainNavigationItems": 10,
@@ -185,6 +185,36 @@
       },
       {
         "label": "Smart Travel Search icon",
+        "status": "PASS"
+      }
+    ],
+    "issues": [],
+    "status": "PASS"
+  },
+  "corporateExperienceVerification": {
+    "checks": [
+      {
+        "label": "Visible Corporate navigation entry",
+        "status": "PASS"
+      },
+      {
+        "label": "Corporate tab entry",
+        "status": "PASS"
+      },
+      {
+        "label": "Secure corporate access gate",
+        "status": "PASS"
+      },
+      {
+        "label": "Policy and conditions",
+        "status": "PASS"
+      },
+      {
+        "label": "Role and finance restrictions",
+        "status": "PASS"
+      },
+      {
+        "label": "Corporate entry styling",
         "status": "PASS"
       }
     ],

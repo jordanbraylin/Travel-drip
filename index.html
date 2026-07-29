@@ -14,7 +14,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
     <link rel="stylesheet" href="styles.css?v=115">
-    <link rel="stylesheet" href="navigation.css?v=10">
+    <link rel="stylesheet" href="navigation.css?v=11">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -88,6 +88,14 @@
           <button type="button" data-target="eventsPanel">Guests</button>
           <button type="button" data-target="eventsPanel">Past Events</button>
           <button type="button" data-target="enterpriseRbac">Corporate Controls</button>
+        </details>
+        <details class="nav-group corporate-entry-nav" data-corporate-entry open>
+          <summary>Corporate</summary>
+          <button type="button" data-target="enterpriseRbac">Corporate Dashboard</button>
+          <button type="button" data-target="enterpriseRbac">Travel Policies</button>
+          <button type="button" data-target="enterpriseRbac">Employee Travel</button>
+          <button type="button" data-target="enterpriseRbac">Budget &amp; Approvals</button>
+          <button type="button" data-target="enterpriseRbac">Audit Log</button>
         </details>
         <details class="nav-group">
           <summary>Messages</summary>
@@ -330,6 +338,7 @@
         <button type="button" data-main-nav-id="planning">Planning</button>
         <button type="button" data-main-nav-id="itinerary" data-travel-section="itinerary">Itinerary</button>
         <button type="button" data-main-nav-id="events">Events</button>
+        <button type="button" class="corporate-tab" data-target="enterpriseRbac">Corporate</button>
         <button type="button" data-main-nav-id="wallet">Wallet</button>
         <button type="button" data-main-nav-id="memories">Memories</button>
         <button type="button" data-main-nav-id="chat">Chat</button>

@@ -178,6 +178,18 @@ const focusedLayoutIssues = focusedLayoutChecks
   .filter(([, passed]) => !passed)
   .map(([label]) => `${label} is missing its focused layout implementation`);
 
+const corporateExperienceChecks = [
+  ["Visible Corporate navigation entry", html.includes('data-corporate-entry') && html.includes('data-target="enterpriseRbac"')],
+  ["Corporate tab entry", html.includes('class="corporate-tab"') && html.includes('data-target="enterpriseRbac"')],
+  ["Secure corporate access gate", html.includes('id="corporateAccessDialog"') && app.includes("showCorporateAccessGate") && app.includes("hasValidCorporateAccess")],
+  ["Policy and conditions", html.includes("Travel policy engine") && html.includes("Corporate acceptance checklist") && html.includes("Financial privacy enforced")],
+  ["Role and finance restrictions", html.includes("data-visible-roles") && html.includes("data-financial-panel") && app.includes("isFinancialRole")],
+  ["Corporate entry styling", navigationCss.includes(".corporate-entry-nav") && navigationCss.includes(".corporate-tab")]
+];
+const corporateExperienceIssues = corporateExperienceChecks
+  .filter(([, passed]) => !passed)
+  .map(([label]) => `${label} is missing or disconnected`);
+
 const ariaIssues = [];
 unique(ariaControls).forEach((target) => {
   if (!ids.includes(target)) ariaIssues.push(`Missing aria-controls target "${target}"`);
@@ -306,6 +318,11 @@ const results = {
     issues: focusedLayoutIssues,
     status: focusedLayoutIssues.length ? "FAIL" : "PASS"
   },
+  corporateExperienceVerification: {
+    checks: corporateExperienceChecks.map(([label, passed]) => ({ label, status: passed ? "PASS" : "FAIL" })),
+    issues: corporateExperienceIssues,
+    status: corporateExperienceIssues.length ? "FAIL" : "PASS"
+  },
   datePickerVerification: {
     status: "Native browser date/datetime-local controls present locally; full custom popover/mobile calendar QA requires browser/device testing.",
     fields: dateResults,
@@ -336,6 +353,7 @@ const criticalIssues = [
   ...travelDocumentIssues,
   ...outerWrapperIssues,
   ...focusedLayoutIssues,
+  ...corporateExperienceIssues,
   ...ariaIssues,
   ...linkIssues,
   ...searchResults.filter((field) => !field.referencedInApp).map((field) => `Search input is not referenced in app.js: ${field.id || "unknown"}`),
@@ -446,6 +464,14 @@ ${outerWrapperIssues.length ? `### Outer Wrapper Issues\n${outerWrapperIssues.ma
 ${focusedLayoutChecks.map(([label, passed]) => `- ${label}: ${ok(passed)}`).join("\n")}
 
 ${focusedLayoutIssues.length ? `### Focused Layout Issues\n${focusedLayoutIssues.map((issue) => `- ${issue}`).join("\n")}` : "Focused route grids, compact event controls, horizontal widget text, wallet summaries, and the Smart Travel Search icon are present."}
+
+## Corporate Experience Verification
+
+- Corporate section restored: ${ok(corporateExperienceIssues.length === 0)}
+
+${corporateExperienceChecks.map(([label, passed]) => `- ${label}: ${ok(passed)}`).join("\n")}
+
+${corporateExperienceIssues.length ? `### Corporate Experience Issues\n${corporateExperienceIssues.map((issue) => `- ${issue}`).join("\n")}` : "Corporate navigation is reachable, secure access verification remains required, and the existing policy, role, financial privacy, audit, and acceptance conditions remain present."}
 
 ## Date Picker Verification
 

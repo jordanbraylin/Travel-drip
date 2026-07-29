@@ -668,6 +668,36 @@ body.app-routed main :where(
   writing-mode: horizontal-tb !important;
 }
 
+/* Corporate entry points stay visible so the secure verification gate is reachable. */
+.corporate-entry-nav {
+  border-color: rgba(18, 96, 126, 0.22);
+  background: linear-gradient(135deg, rgba(14, 116, 144, 0.08), rgba(245, 158, 11, 0.08));
+}
+
+.corporate-entry-nav summary {
+  color: #0f4c5c;
+  font-weight: 900;
+}
+
+.corporate-entry-nav button {
+  min-width: 0;
+  white-space: normal;
+}
+
+.trip-tab-bar .corporate-tab {
+  border-color: rgba(18, 96, 126, 0.26);
+  background: linear-gradient(135deg, rgba(14, 116, 144, 0.1), rgba(245, 158, 11, 0.1));
+  color: #0f4c5c;
+  font-weight: 850;
+}
+
+.trip-tab-bar .corporate-tab:hover,
+.trip-tab-bar .corporate-tab:focus-visible,
+.trip-tab-bar .corporate-tab.active {
+  background: linear-gradient(135deg, rgba(14, 116, 144, 0.18), rgba(245, 158, 11, 0.18));
+  border-color: rgba(18, 96, 126, 0.42);
+}
+
 /* Focused route polish: keep itinerary, events, memories, wallet, and search compact. */
 #eventsPanel .event-dashboard-tabs {
   display: grid !important;
