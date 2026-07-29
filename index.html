@@ -14,7 +14,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
     <link rel="stylesheet" href="styles.css?v=115">
-    <link rel="stylesheet" href="navigation.css?v=1">
+    <link rel="stylesheet" href="navigation.css?v=2">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -431,14 +431,14 @@
           </div>
         </div>
         <div class="widget-grid" id="widgetGrid">
-          <article class="travel-widget upcoming-widget" data-widget="upcoming" data-widget-scope="solo group cruise corporate">
+          <article class="travel-widget upcoming-widget smart-widget--medium" data-widget="upcoming" data-widget-scope="solo group cruise corporate">
             <div class="widget-toolbar"><span>Upcoming Trip</span><button type="button" data-widget-pin="upcoming">Pin</button><button type="button" data-widget-hide="upcoming">Hide</button></div>
             <h3>Dubai long weekend</h3>
             <p>Departing in <strong>18 days</strong></p>
             <div class="widget-meta"><span>Aug 8 - Aug 11</span><span>JBR Marina</span></div>
             <button class="primary-button" type="button" data-target="tripsPanel">Quick View</button>
           </article>
-          <article class="travel-widget ai-widget is-large" data-widget="ai" data-widget-scope="solo group cruise corporate">
+          <article class="travel-widget ai-widget is-large smart-widget--wide" data-widget="ai" data-widget-scope="solo group cruise corporate">
             <div class="widget-toolbar"><span>AI Trip Manager</span><button type="button" data-widget-pin="ai">Pin</button><button type="button" data-widget-hide="ai">Hide</button></div>
             <div class="ai-reminder-list">
               <div><strong>Today</strong><span>Confirm rooftop dinner headcount by 6 PM.</span></div>
@@ -448,26 +448,26 @@
             </div>
             <button class="primary-button" type="button" id="askAiWidgetButton" data-target="aiTravelPlanner">Ask AI</button>
           </article>
-          <article class="travel-widget budget-widget" data-widget="budget" data-widget-scope="solo group cruise corporate" data-finance-widget>
+          <article class="travel-widget budget-widget smart-widget--medium" data-widget="budget" data-widget-scope="solo group cruise corporate" data-finance-widget>
             <div class="widget-toolbar"><span>Budget Snapshot</span><button type="button" data-widget-pin="budget">Pin</button><button type="button" data-widget-hide="budget">Hide</button></div>
             <h3>$1,250 target</h3>
             <div class="progress-bar"><span style="width: 64%"></span></div>
             <div class="widget-meta"><span>$800 spent</span><span>$450 available</span><span>$220 due soon</span></div>
           </article>
-          <article class="travel-widget flight-widget" data-widget="flight" data-widget-scope="solo group corporate">
+          <article class="travel-widget flight-widget smart-widget--medium" data-widget="flight" data-widget-scope="solo group corporate">
             <div class="widget-toolbar"><span>Flight</span><button type="button" data-widget-pin="flight">Pin</button><button type="button" data-widget-hide="flight">Hide</button></div>
             <h3>Delta DL 241</h3>
             <p>Depart 8:45 AM • Gate B18</p>
             <span class="status-pill">On time</span>
             <button class="ghost-button" type="button" data-target="rideShareHub" data-travel-section="flights">View Details</button>
           </article>
-          <article class="travel-widget weather-widget" data-widget="weather" data-widget-scope="solo group cruise corporate">
+          <article class="travel-widget weather-widget smart-widget--medium" data-widget="weather" data-widget-scope="solo group cruise corporate">
             <div class="widget-toolbar"><span>Weather</span><button type="button" data-widget-pin="weather">Pin</button><button type="button" data-widget-hide="weather">Hide</button></div>
             <h3>92°F sunny</h3>
             <p>Pack sunglasses, light layers indoors, and hydrate before afternoon activities.</p>
             <button class="ghost-button" type="button" data-target="rideShareHub" data-travel-section="weather">View Weather</button>
           </article>
-          <article class="travel-widget memories-widget" data-widget="memories" data-widget-scope="solo group cruise corporate">
+          <article class="travel-widget memories-widget smart-widget--medium" data-widget="memories" data-widget-scope="solo group cruise corporate">
             <div class="widget-toolbar"><span>Memories</span><button type="button" data-widget-pin="memories">Pin</button><button type="button" data-widget-hide="memories">Hide</button></div>
             <div class="mini-collage">
               <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?q=80&w=300&auto=format&fit=crop" alt="Beach memory">
@@ -476,7 +476,7 @@
             </div>
             <button class="ghost-button" type="button" data-target="memoriesPanel">Open album</button>
           </article>
-          <article class="travel-widget notifications-widget" data-widget="notifications" data-widget-scope="group corporate">
+          <article class="travel-widget notifications-widget smart-widget--medium" data-widget="notifications" data-widget-scope="group corporate">
             <div class="widget-toolbar"><span>Notifications</span><button type="button" data-widget-pin="notifications">Pin</button><button type="button" data-widget-hide="notifications">Hide</button></div>
             <div class="notification-mini-list" id="notificationMiniList">
               <span>Travel: Gate changed to B18</span>

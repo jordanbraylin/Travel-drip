@@ -3477,6 +3477,97 @@ const mainNavigation = Object.freeze([
 const mainNavigationById = Object.fromEntries(mainNavigation.map((item) => [item.id, item]));
 const mainNavigationByTarget = Object.fromEntries(mainNavigation.map((item) => [item.target, item]));
 
+const smartDashboardGridSelectors = Object.freeze([
+  "#dashboardWidgets .widget-grid",
+  ".event-experience-grid",
+  ".event-operations-grid",
+  ".event-create-grid",
+  ".bank-grid",
+  ".ai-trip-output-grid",
+  ".explore-context-grid",
+  ".explore-skeleton-grid",
+  ".explore-results-grid",
+  ".destination-fact-grid",
+  ".corporate-home-grid",
+  ".lets-plan-grid",
+  ".retreat-type-grid",
+  ".invitation-builder-grid",
+  ".invitation-form-grid",
+  ".invitation-options-grid",
+  ".invite-checkbox-grid",
+  ".guest-portal-grid",
+  ".quick-share-grid",
+  ".solo-dashboard-grid",
+  ".cruise-overview-grid",
+  ".cruise-feature-grid",
+  ".cruise-wallet-grid",
+  ".message-support-grid",
+  ".daily-memory-grid",
+  ".memory-action-grid",
+  ".memory-settings-grid",
+  ".platform-grid",
+  ".memory-gallery-grid",
+  ".memory-album-grid",
+  ".memory-grid",
+  ".info-status-grid",
+  ".destination-info-grid",
+  ".checklist-grid",
+  ".emergency-grid",
+  ".wallet-home-grid",
+  ".wallet-trip-card-grid",
+  ".wallet-section-card-grid",
+  ".wallet-action-grid",
+  ".card-balance-grid",
+  ".bill-redesign-grid",
+  ".bill-entry-grid",
+  ".bill-total-grid",
+  ".bill-tools-grid",
+  ".payment-method-grid",
+  ".control-grid",
+  ".travel-focus-grid",
+  ".visual-pass-grid",
+  ".travel-support-grid",
+  ".transport-security-grid",
+  ".ride-overview-grid",
+  ".ride-location-grid",
+  ".ride-estimate-grid",
+  ".ride-recommendation-grid",
+  ".ride-entry-grid",
+  ".alert-category-grid",
+  ".upcoming-reservation-grid",
+  ".reservation-reminder-grid",
+  ".reservation-preferences-grid",
+  ".profile-card-grid",
+  ".profile-stats-grid",
+  ".profile-adventure-grid",
+  ".profile-connections-grid",
+  ".profile-photo-policy-grid",
+  ".profile-personal-grid",
+  ".travel-badge-grid",
+  ".theme-swatch-grid",
+  ".security-status-grid",
+  ".security-control-grid",
+  ".backend-summary-grid",
+  ".policy-summary-grid",
+  ".navigation-status-grid",
+  ".go-live-summary-grid",
+  ".corporate-feature-grid",
+  ".corporate-policy-grid",
+  ".enterprise-security-grid",
+  ".corporate-access-admin-grid",
+  ".approval-comm-grid",
+  ".vote-option-grid",
+  ".rsvp-status-grid",
+  ".feature-toggle-grid",
+  ".permission-grid"
+]);
+
+function applySmartDashboardLayout() {
+  smartDashboardGridSelectors.forEach((selector) => {
+    $$(selector).forEach((grid) => grid.classList.add("smart-dashboard-grid"));
+  });
+}
+
 const routeDefinitions = {
   dashboardHome: { path: mainNavigationByTarget.dashboardHome.path, label: "Dashboard" },
   letsPlan: { path: "/lets-plan", label: "Let's Plan" },
@@ -4014,6 +4105,7 @@ function openPlanningWorkflow(type = "group") {
 
 function wireLocalInteractions() {
   applyMainNavigationConfig();
+  applySmartDashboardLayout();
   ["#eventDateInput", "#eventRsvpInput", "#flightDepartureDateInput"].forEach((selector) => {
     $(selector)?.addEventListener("input", validateStandaloneDateInputs);
     $(selector)?.addEventListener("change", validateStandaloneDateInputs);

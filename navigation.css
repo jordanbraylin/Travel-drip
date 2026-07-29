@@ -44,3 +44,105 @@ body.signed-in-shell main > :not(.topbar):not(.global-destination-header):not(.t
   position: relative;
   z-index: var(--z-content);
 }
+
+/* Smart Dashboard sizing: each card owns its footprint instead of stretching to a shared row height. */
+.smart-dashboard-grid {
+  display: grid !important;
+  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  gap: clamp(16px, 2vw, 20px) !important;
+  align-items: start !important;
+  min-width: 0;
+}
+
+.smart-dashboard-grid > * {
+  grid-column: span 4 !important;
+  min-width: 0 !important;
+  width: auto !important;
+  max-width: 100%;
+  height: auto !important;
+  min-height: 0 !important;
+  align-self: start !important;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.smart-dashboard-grid > .smart-widget--small {
+  grid-column: span 3 !important;
+}
+
+.smart-dashboard-grid > .smart-widget--medium {
+  grid-column: span 4 !important;
+}
+
+.smart-dashboard-grid > .smart-widget--wide,
+.smart-dashboard-grid > .is-large,
+.smart-dashboard-grid > .featured,
+.smart-dashboard-grid > .travel-dashboard-card--overview,
+.smart-dashboard-grid > .travel-dashboard-card--weather {
+  grid-column: span 6 !important;
+}
+
+.smart-dashboard-grid > .smart-widget--large {
+  grid-column: span 8 !important;
+}
+
+.smart-dashboard-grid > .smart-widget--full,
+.smart-dashboard-grid > .single-focus-pass,
+.smart-dashboard-grid > .itinerary-timeline-dashboard {
+  grid-column: 1 / -1 !important;
+}
+
+.smart-dashboard-grid :where(
+  h1, h2, h3, h4, h5, h6, p, span, strong, small, em, dt, dd, li, label,
+  button, a
+) {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  line-height: 1.4;
+}
+
+.smart-dashboard-grid :where(button, .primary-button, .ghost-button) {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+}
+
+.smart-dashboard-grid :where(.widget-toolbar, .button-row, .itinerary-action-row) {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.smart-dashboard-grid :where(.widget-meta, .status-row, .card-meta) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+@media (max-width: 1024px) {
+  .smart-dashboard-grid > * {
+    grid-column: span 6 !important;
+  }
+
+  .smart-dashboard-grid > .smart-widget--full,
+  .smart-dashboard-grid > .single-focus-pass,
+  .smart-dashboard-grid > .itinerary-timeline-dashboard {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .smart-dashboard-grid {
+    gap: 14px !important;
+  }
+
+  .smart-dashboard-grid > * {
+    grid-column: 1 / -1 !important;
+  }
+}
