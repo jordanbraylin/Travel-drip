@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-29T14:23:33.575Z",
+  "generatedAt": "2026-07-29T16:51:40.887Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
   },
   "totals": {
     "screenIds": 565,
-    "buttons": 771,
+    "buttons": 775,
     "hrefLinks": 15,
     "dataTargets": 93,
     "uniqueDataTargets": 17,
@@ -15,7 +15,7 @@
     "routeDefinitions": 19,
     "dateInputs": 7,
     "searchInputs": 10,
-    "actionAttributeTypes": 82,
+    "actionAttributeTypes": 83,
     "apiRoutes": 15
   },
   "linkAndRouteVerification": {
@@ -102,6 +102,19 @@
       "dashboardWidgets"
     ],
     "todayHeadingCount": 1,
+    "issues": [],
+    "status": "PASS"
+  },
+  "travelDocumentsVerification": {
+    "cardCount": 4,
+    "requiredClasses": [
+      "travel-documents-section",
+      "travel-documents-grid",
+      "travel-document-card__title",
+      "travel-document-card__description",
+      "travel-document-card__due",
+      "travel-document-card__status"
+    ],
     "issues": [],
     "status": "PASS"
   },

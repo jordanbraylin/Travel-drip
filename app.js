@@ -5754,6 +5754,14 @@ function wireLocalInteractions() {
   $$(".trip-check").forEach((checkbox) => {
     checkbox.addEventListener("change", updateChecklistProgress);
   });
+  $$("[data-document-action]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const action = button.dataset.documentAction || "Document action";
+      showWorkflowMessage("Travel document", `${action} opened in the secure Travel Documents workflow.`);
+      addAuditEntry("Travel document action", action);
+      await saveSyncedEvent("travel_document_action", { action });
+    });
+  });
   $("#policyAck")?.addEventListener("change", updatePolicyAcknowledgment);
   updateChecklistProgress();
   $("#runNavigationAuditButton")?.addEventListener("click", () => {

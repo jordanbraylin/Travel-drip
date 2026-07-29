@@ -14,7 +14,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
     <link rel="stylesheet" href="styles.css?v=115">
-    <link rel="stylesheet" href="navigation.css?v=5">
+    <link rel="stylesheet" href="navigation.css?v=6">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -2087,13 +2087,37 @@
             </div>
 
             <div class="info-accordion" id="infoAccordion">
-              <details class="info-section" open>
+              <details class="info-section travel-documents-section" open>
                 <summary>Required Travel Documents</summary>
-                <div class="document-list">
-                  <div><strong>Passport</strong><span>Uploaded and valid 6+ months after return.</span><time>Due Jul 22</time><em class="ok">Complete</em></div>
-                  <div><strong>Flight confirmation</strong><span>Confirmation received for Delta DL 241.</span><time>Due Jul 22</time><em class="ok">Complete</em></div>
-                  <div><strong>Travel insurance</strong><span>Policy upload still required before departure.</span><time>Due Jul 23</time><em class="warn">Needed</em></div>
-                  <div><strong>Company credentials</strong><span>Bring company ID badge for workshop check-in.</span><time>Due Jul 24</time><em class="warn">Needed</em></div>
+                <div class="document-list travel-documents-grid">
+                  <article class="travel-document-card">
+                    <div class="travel-document-card__heading"><span class="travel-document-card__icon" aria-hidden="true">🛂</span><strong class="travel-document-card__title">Passport</strong></div>
+                    <span class="travel-document-card__description">Uploaded and valid for at least 6 months after return.</span>
+                    <time class="travel-document-card__due">Due: July 22</time>
+                    <em class="document-status travel-document-card__status ok">Complete</em>
+                    <button class="ghost-button" type="button" data-document-action="View Passport">View document</button>
+                  </article>
+                  <article class="travel-document-card">
+                    <div class="travel-document-card__heading"><span class="travel-document-card__icon" aria-hidden="true">✈️</span><strong class="travel-document-card__title">Flight Confirmation</strong></div>
+                    <span class="travel-document-card__description">Confirmation received for Delta DL 241.</span>
+                    <time class="travel-document-card__due">Due: July 22</time>
+                    <em class="document-status travel-document-card__status ok">Complete</em>
+                    <button class="ghost-button" type="button" data-document-action="View Flight Confirmation">View document</button>
+                  </article>
+                  <article class="travel-document-card">
+                    <div class="travel-document-card__heading"><span class="travel-document-card__icon" aria-hidden="true">🛡️</span><strong class="travel-document-card__title">Travel Insurance</strong></div>
+                    <span class="travel-document-card__description">Policy upload is still required before departure.</span>
+                    <time class="travel-document-card__due">Due: July 23</time>
+                    <em class="document-status travel-document-card__status warn">Needed</em>
+                    <button class="ghost-button" type="button" data-document-action="Upload Travel Insurance">Upload document</button>
+                  </article>
+                  <article class="travel-document-card">
+                    <div class="travel-document-card__heading"><span class="travel-document-card__icon" aria-hidden="true">🪪</span><strong class="travel-document-card__title">Company Credentials</strong></div>
+                    <span class="travel-document-card__description">Bring the company ID badge for workshop check-in.</span>
+                    <time class="travel-document-card__due">Due: July 24</time>
+                    <em class="document-status travel-document-card__status warn">Needed</em>
+                    <button class="ghost-button" type="button" data-document-action="View Company Credentials">View document</button>
+                  </article>
                 </div>
               </details>
 

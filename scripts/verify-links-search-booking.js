@@ -40,6 +40,15 @@ const extractedRouteComponents = unique(matchAll(html, /\bid=["']([^"']+)["'][^>
 const dashboardOnlyIds = unique(matchAll(html, /<[^>]*\bid=["']([^"']+)["'][^>]*\bdata-dashboard-only\b[^>]*>/g));
 const dashboardOnlyRequiredIds = ["dashboardHome", "dashboardWidgets"];
 const todayHeadingCount = countMatches(html, /Today in TravelDrip/g);
+const travelDocumentCardCount = countMatches(html, /class=["'][^"']*\btravel-document-card\b[^"']*["']/g);
+const travelDocumentRequiredClasses = [
+  "travel-documents-section",
+  "travel-documents-grid",
+  "travel-document-card__title",
+  "travel-document-card__description",
+  "travel-document-card__due",
+  "travel-document-card__status"
+];
 const hrefs = matchAll(html, /\bhref=["']([^"']*)["']/g);
 const ariaControls = matchAll(html, /\baria-controls=["']([^"']+)["']/g);
 const dateInputs = [...html.matchAll(/<input\b[^>]*\btype=["'](date|datetime-local)["'][^>]*>/g)].map((match) => match[0]);
@@ -77,6 +86,16 @@ const dashboardOnlyIssues = dashboardOnlyRequiredIds
 if (todayHeadingCount !== 1) dashboardOnlyIssues.push(`Expected one Today in TravelDrip heading, found ${todayHeadingCount}`);
 if (!app.includes("[data-dashboard-only]") || !app.includes("section.hidden = !isHome")) {
   dashboardOnlyIssues.push("Route renderer does not explicitly toggle dashboard-only sections");
+}
+
+const travelDocumentIssues = travelDocumentRequiredClasses
+  .filter((className) => !html.includes(className))
+  .map((className) => `Required travel-document class is missing: ${className}`);
+if (travelDocumentCardCount !== 4) travelDocumentIssues.push(`Expected four travel document cards, found ${travelDocumentCardCount}`);
+if (!navigationCss.includes("grid-template-columns: repeat(4, minmax(220px, 1fr))")
+  || !navigationCss.includes("grid-template-columns: repeat(2, minmax(240px, 1fr))")
+  || !navigationCss.includes("grid-template-columns: 1fr")) {
+  travelDocumentIssues.push("Travel document responsive 4/2/1 grid rules are incomplete");
 }
 
 const outerWrapperSelectors = [
@@ -196,6 +215,12 @@ const results = {
     issues: dashboardOnlyIssues,
     status: dashboardOnlyIssues.length ? "FAIL" : "PASS"
   },
+  travelDocumentsVerification: {
+    cardCount: travelDocumentCardCount,
+    requiredClasses: travelDocumentRequiredClasses,
+    issues: travelDocumentIssues,
+    status: travelDocumentIssues.length ? "FAIL" : "PASS"
+  },
   outerWrapperVerification: {
     selectors: outerWrapperSelectors,
     issues: outerWrapperIssues,
@@ -226,6 +251,7 @@ const criticalIssues = [
   ...targetIssues,
   ...routeIsolationIssues,
   ...dashboardOnlyIssues,
+  ...travelDocumentIssues,
   ...outerWrapperIssues,
   ...ariaIssues,
   ...linkIssues,
@@ -299,6 +325,14 @@ ${routeIsolationIssues.length ? `### Route Isolation Issues\n${routeIsolationIss
 - Today in TravelDrip heading count: ${todayHeadingCount}
 
 ${dashboardOnlyIssues.length ? `### Dashboard-Only Issues\n${dashboardOnlyIssues.map((issue) => `- ${issue}`).join("\n")}` : "Today in TravelDrip is defined once inside the Dashboard widget section, and the route renderer hides all dashboard-only sections on other routes."}
+
+## Required Travel Documents Verification
+
+- Document card structure: ${ok(travelDocumentIssues.length === 0)}
+- Document cards: ${travelDocumentCardCount}
+- Responsive grid rules: ${ok(travelDocumentIssues.length === 0)}
+
+${travelDocumentIssues.length ? `### Travel Document Issues\n${travelDocumentIssues.map((issue) => `- ${issue}`).join("\n")}` : "Required Travel Documents uses four compact cards with horizontal text flow and responsive desktop/tablet/mobile columns."}
 
 ## Outer Wrapper Verification
 
