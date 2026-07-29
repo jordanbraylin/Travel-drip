@@ -167,6 +167,17 @@ const outerWrapperIssues = outerWrapperSelectors
   .filter((selector) => !navigationCss.includes(selector))
   .map((selector) => `Missing outer-wrapper cleanup selector: ${selector}`);
 
+const focusedLayoutChecks = [
+  ["Itinerary layout", html.includes('id="itineraryAlerts"') && navigationCss.includes("#itineraryAlerts .itinerary-dashboard") && navigationCss.includes("#itineraryAlerts .itinerary-card--featured")],
+  ["Memories layout", html.includes('id="memoriesPanel"') && navigationCss.includes("#memoriesPanel .memory-gallery-grid") && navigationCss.includes("#memoriesPanel .memory-media-card")],
+  ["Event controls and cards", html.includes('id="eventsPanel"') && navigationCss.includes("#eventsPanel .event-dashboard-tabs") && navigationCss.includes("#eventsPanel .event-experience-card")],
+  ["Wallet formatting", html.includes('id="walletPanel"') && navigationCss.includes("#walletPanel .wallet-dashboard-header") && navigationCss.includes("#walletPanel .wallet-smart-actions")],
+  ["Smart Travel Search icon", html.includes('<span class="travel-search-icon" aria-hidden="true"></span>') && navigationCss.includes("#rideShareHub .travel-search-icon::after") && navigationCss.includes("#rideShareHub .travel-smart-search-row")]
+];
+const focusedLayoutIssues = focusedLayoutChecks
+  .filter(([, passed]) => !passed)
+  .map(([label]) => `${label} is missing its focused layout implementation`);
+
 const ariaIssues = [];
 unique(ariaControls).forEach((target) => {
   if (!ids.includes(target)) ariaIssues.push(`Missing aria-controls target "${target}"`);
@@ -290,6 +301,11 @@ const results = {
     issues: outerWrapperIssues,
     status: outerWrapperIssues.length ? "FAIL" : "PASS"
   },
+  focusedRouteLayoutVerification: {
+    checks: focusedLayoutChecks.map(([label, passed]) => ({ label, status: passed ? "PASS" : "FAIL" })),
+    issues: focusedLayoutIssues,
+    status: focusedLayoutIssues.length ? "FAIL" : "PASS"
+  },
   datePickerVerification: {
     status: "Native browser date/datetime-local controls present locally; full custom popover/mobile calendar QA requires browser/device testing.",
     fields: dateResults,
@@ -319,6 +335,7 @@ const criticalIssues = [
   ...fullWidthWidgetIssues,
   ...travelDocumentIssues,
   ...outerWrapperIssues,
+  ...focusedLayoutIssues,
   ...ariaIssues,
   ...linkIssues,
   ...searchResults.filter((field) => !field.referencedInApp).map((field) => `Search input is not referenced in app.js: ${field.id || "unknown"}`),
@@ -421,6 +438,14 @@ ${travelDocumentIssues.length ? `### Travel Document Issues\n${travelDocumentIss
 - Outer-shell cleanup selectors: ${ok(outerWrapperIssues.length === 0)}
 
 ${outerWrapperIssues.length ? `### Outer Wrapper Issues\n${outerWrapperIssues.map((issue) => `- ${issue}`).join("\n")}` : "Route roots and visible inner shells are transparent; individual widgets retain their card styling."}
+
+## Focused Route Layout Verification
+
+- Itinerary, Events, Memories, Wallet, and Smart Travel Search: ${ok(focusedLayoutIssues.length === 0)}
+
+${focusedLayoutChecks.map(([label, passed]) => `- ${label}: ${ok(passed)}`).join("\n")}
+
+${focusedLayoutIssues.length ? `### Focused Layout Issues\n${focusedLayoutIssues.map((issue) => `- ${issue}`).join("\n")}` : "Focused route grids, compact event controls, horizontal widget text, wallet summaries, and the Smart Travel Search icon are present."}
 
 ## Date Picker Verification
 

@@ -667,3 +667,456 @@ body.app-routed main :where(
   white-space: nowrap !important;
   writing-mode: horizontal-tb !important;
 }
+
+/* Focused route polish: keep itinerary, events, memories, wallet, and search compact. */
+#eventsPanel .event-dashboard-tabs {
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px !important;
+  width: 100%;
+  min-width: 0;
+}
+
+#eventsPanel .event-dashboard-tabs button {
+  min-width: 0 !important;
+  min-height: 34px !important;
+  padding: 6px 9px !important;
+  font-size: 0.72rem !important;
+  line-height: 1.15 !important;
+  white-space: normal !important;
+  text-align: center;
+}
+
+#eventsPanel .event-dashboard-cards,
+#eventsPanel .event-experience-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px !important;
+  align-items: start;
+  width: 100%;
+}
+
+#eventsPanel .event-experience-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 5px !important;
+  min-width: 0 !important;
+  min-height: 158px !important;
+  height: auto !important;
+  padding: 13px !important;
+}
+
+#eventsPanel .event-experience-card span {
+  padding: 4px 7px !important;
+  font-size: 0.62rem !important;
+  line-height: 1.15 !important;
+}
+
+#eventsPanel .event-experience-card strong {
+  width: 100%;
+  font-size: 0.98rem !important;
+  line-height: 1.2 !important;
+}
+
+#eventsPanel .event-experience-card small,
+#eventsPanel .event-experience-card i {
+  font-size: 0.7rem !important;
+  line-height: 1.25 !important;
+}
+
+#eventsPanel .event-experience-card i {
+  width: auto;
+  max-width: 100%;
+  padding: 4px 7px !important;
+}
+
+#eventsPanel .event-operations-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px !important;
+}
+
+#eventsPanel .event-operations-grid button {
+  min-height: 0 !important;
+  padding: 11px !important;
+  gap: 4px !important;
+}
+
+#eventsPanel .event-operations-grid strong {
+  font-size: 0.9rem !important;
+  line-height: 1.2 !important;
+}
+
+#eventsPanel .event-operations-grid span {
+  font-size: 0.72rem !important;
+  line-height: 1.3 !important;
+}
+
+#itineraryAlerts .itinerary-dashboard {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  align-items: start !important;
+  width: 100%;
+}
+
+#itineraryAlerts .itinerary-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start;
+  gap: 9px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 14px !important;
+}
+
+#itineraryAlerts .itinerary-card--featured {
+  grid-column: span 2 !important;
+}
+
+#itineraryAlerts .itinerary-card h3,
+#itineraryAlerts .itinerary-card p {
+  width: 100%;
+  margin: 0;
+}
+
+#itineraryAlerts .itinerary-card--featured h3 {
+  font-size: clamp(1.12rem, 1.8vw, 1.55rem) !important;
+  line-height: 1.18 !important;
+}
+
+#itineraryAlerts .itinerary-card p {
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+#itineraryAlerts .itinerary-card button,
+#itineraryAlerts .itinerary-action-row button,
+#itineraryAlerts .upcoming-reservation-grid button {
+  min-height: 32px !important;
+  padding: 6px 10px !important;
+  font-size: 0.74rem;
+  line-height: 1.2;
+}
+
+#itineraryAlerts .itinerary-timeline-dashboard {
+  grid-column: 1 / -1;
+  min-width: 0;
+  width: 100%;
+  padding: 14px !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list details summary {
+  display: grid;
+  grid-template-columns: 24px 74px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+#itineraryAlerts .itinerary-timeline-list details summary strong,
+#itineraryAlerts .itinerary-timeline-list details summary em {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+#memoriesPanel .memories-toolbar {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 7px !important;
+  width: 100%;
+  overflow: visible !important;
+  padding: 4px !important;
+}
+
+#memoriesPanel .memories-toolbar button {
+  flex: 0 1 auto !important;
+  min-height: 32px !important;
+  padding: 6px 10px !important;
+  font-size: 0.72rem !important;
+  line-height: 1.15 !important;
+  white-space: nowrap !important;
+}
+
+#memoriesPanel .memories-gallery-shell {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 14px !important;
+  width: 100%;
+}
+
+#memoriesPanel .memory-gallery-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  width: 100%;
+  align-items: start;
+}
+
+#memoriesPanel .memory-media-card {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  min-width: 0 !important;
+  height: auto !important;
+  align-self: start !important;
+}
+
+#memoriesPanel .memory-media-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+#memoriesPanel .memory-media-card > div:not(.memory-card-actions) {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 11px 12px 8px !important;
+}
+
+#memoriesPanel .memory-media-card strong {
+  font-size: 0.92rem;
+  line-height: 1.25;
+}
+
+#memoriesPanel .memory-media-card small {
+  font-size: 0.72rem;
+  line-height: 1.3;
+}
+
+#memoriesPanel .memory-card-actions {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px !important;
+  width: 100%;
+  padding: 0 12px 12px !important;
+}
+
+#memoriesPanel .memory-card-actions button {
+  flex: 1 1 90px;
+  min-width: 0 !important;
+  min-height: 32px !important;
+  padding: 5px 8px !important;
+  font-size: 0.7rem;
+  line-height: 1.15;
+}
+
+#memoriesPanel .memory-comments-panel {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+}
+
+#walletPanel .wallet-dashboard-header {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  align-items: start !important;
+  width: 100%;
+}
+
+#walletPanel .wallet-dashboard-header > article {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start;
+  gap: 5px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 13px !important;
+}
+
+#walletPanel .wallet-dashboard-header > article span {
+  font-size: 0.68rem !important;
+  line-height: 1.2 !important;
+}
+
+#walletPanel .wallet-dashboard-header > article strong {
+  font-size: 1.04rem !important;
+  line-height: 1.2 !important;
+}
+
+#walletPanel .wallet-dashboard-header > article small {
+  font-size: 0.72rem !important;
+  line-height: 1.3 !important;
+}
+
+#walletPanel .wallet-smart-actions {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  width: 100%;
+}
+
+#walletPanel .wallet-smart-actions button {
+  min-width: 0 !important;
+  min-height: 36px !important;
+  padding: 7px 9px !important;
+  font-size: 0.74rem;
+  line-height: 1.15;
+  white-space: normal !important;
+}
+
+#walletPanel .wallet-home-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+#walletPanel .wallet-home-grid > * {
+  min-width: 0 !important;
+  height: auto !important;
+  align-self: start !important;
+}
+
+#walletPanel .wallet-balance-hero {
+  grid-column: span 2;
+}
+
+#walletPanel :where(.wallet-balance-hero, .wallet-summary-card, .wallet-trip-tile, .wallet-virtual-preview) {
+  min-height: 0 !important;
+  padding: 14px !important;
+}
+
+#walletPanel .wallet-dashboard-sections,
+#walletPanel .wallet-section-card-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+#walletPanel .wallet-dashboard-sections > *,
+#walletPanel .wallet-section-card-grid > * {
+  min-width: 0 !important;
+  height: auto !important;
+  align-self: start !important;
+}
+
+#rideShareHub .travel-smart-search-row {
+  display: flex !important;
+  align-items: center;
+  gap: 10px !important;
+  min-width: 0;
+}
+
+#rideShareHub .travel-search-icon {
+  position: relative;
+  flex: 0 0 20px;
+  width: 20px !important;
+  height: 20px !important;
+  border: 2px solid #0f766e;
+  border-radius: 50%;
+  background: transparent !important;
+  box-sizing: border-box;
+}
+
+#rideShareHub .travel-search-icon::after {
+  content: "";
+  position: absolute;
+  right: -6px;
+  bottom: -3px;
+  width: 8px;
+  height: 2px;
+  border-radius: 2px;
+  background: #0f766e;
+  transform: rotate(45deg);
+  transform-origin: left center;
+}
+
+#rideShareHub .travel-smart-search-row input {
+  flex: 1 1 auto;
+  min-width: 0 !important;
+}
+
+@media (max-width: 1100px) {
+  #eventsPanel .event-dashboard-tabs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  #eventsPanel .event-dashboard-cards,
+  #eventsPanel .event-experience-grid,
+  #memoriesPanel .memory-gallery-grid,
+  #walletPanel .wallet-dashboard-sections,
+  #walletPanel .wallet-section-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #walletPanel .wallet-dashboard-header {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  #eventsPanel .event-dashboard-cards,
+  #eventsPanel .event-experience-grid,
+  #memoriesPanel .memory-gallery-grid,
+  #walletPanel .wallet-dashboard-sections,
+  #walletPanel .wallet-section-card-grid,
+  #walletPanel .wallet-home-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  #eventsPanel .event-dashboard-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #itineraryAlerts .itinerary-dashboard {
+    grid-template-columns: 1fr !important;
+  }
+
+  #itineraryAlerts .itinerary-card--featured,
+  #walletPanel .wallet-balance-hero {
+    grid-column: auto !important;
+  }
+
+  #itineraryAlerts .itinerary-timeline-list details summary {
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+  }
+
+  #itineraryAlerts .itinerary-timeline-list details summary time {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  #itineraryAlerts .itinerary-timeline-list details summary strong {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  #itineraryAlerts .itinerary-timeline-list details summary em {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+
+  #walletPanel .wallet-dashboard-header,
+  #walletPanel .wallet-smart-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #eventsPanel .event-dashboard-tabs,
+  #walletPanel .wallet-dashboard-header,
+  #walletPanel .wallet-smart-actions {
+    grid-template-columns: 1fr !important;
+  }
+
+  #rideShareHub .travel-smart-search-row {
+    flex-wrap: wrap;
+  }
+
+  #rideShareHub .travel-smart-search-row input {
+    order: 1;
+    flex-basis: calc(100% - 34px);
+  }
+
+  #rideShareHub .travel-smart-search-row button {
+    flex: 1 1 100px;
+  }
+}

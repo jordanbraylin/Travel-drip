@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-29T17:19:29.830Z",
+  "generatedAt": "2026-07-29T17:28:25.627Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
@@ -161,6 +161,32 @@
       ".memories-gallery-shell",
       ".settings-shell",
       ".admin-settings-shell"
+    ],
+    "issues": [],
+    "status": "PASS"
+  },
+  "focusedRouteLayoutVerification": {
+    "checks": [
+      {
+        "label": "Itinerary layout",
+        "status": "PASS"
+      },
+      {
+        "label": "Memories layout",
+        "status": "PASS"
+      },
+      {
+        "label": "Event controls and cards",
+        "status": "PASS"
+      },
+      {
+        "label": "Wallet formatting",
+        "status": "PASS"
+      },
+      {
+        "label": "Smart Travel Search icon",
+        "status": "PASS"
+      }
     ],
     "issues": [],
     "status": "PASS"
