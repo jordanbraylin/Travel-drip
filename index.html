@@ -14,7 +14,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
     <link rel="stylesheet" href="styles.css?v=115">
-    <link rel="stylesheet" href="navigation.css?v=2">
+    <link rel="stylesheet" href="navigation.css?v=3">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -1396,7 +1396,7 @@
               <p class="small" id="messageStatus">Messages sync with the selected trip or private conversation. AI replies respect user permissions.</p>
             </section>
 
-            <section class="daily-memory-panel">
+            <section class="daily-memory-panel" id="dailyMemoryPanel" data-route-support="memoriesPanel" data-route-extract>
               <div class="memory-reminder-hero">
                 <div>
                   <p class="eyebrow">Daily Memory Reminder</p>
@@ -1470,7 +1470,7 @@
               </div>
             </section>
 
-            <section class="social-media-hub" aria-label="Social Media Hub">
+            <section class="social-media-hub" id="socialMediaHub" data-route-support="adminPanel" data-route-extract aria-label="Social Media Hub">
               <div class="section-heading compact">
                 <div>
                   <p class="eyebrow">Profile / Settings / Connected Accounts</p>
@@ -4003,7 +4003,7 @@
                   <div><p class="eyebrow">Account Management</p><h3>Credentials and account status</h3><p>Email, password, connected accounts, recovery, and account lifecycle controls live here instead of My Profile.</p></div>
                   <div class="settings-row"><div><strong>Account email</strong><span>jordan@example.com</span></div><button type="button" data-auth-workflow="Verify Email">Verify</button></div>
                   <div class="settings-row"><div><strong>Password management</strong><span>Reset password, change password, and enforce strong credentials.</span></div><button type="button" data-auth-workflow="Reset Password">Manage</button></div>
-                  <div class="settings-row"><div><strong>Connected accounts</strong><span>Google, Apple, Microsoft, and social sign-in connections.</span></div><button type="button" data-target="socialHub">Manage</button></div>
+                  <div class="settings-row"><div><strong>Connected accounts</strong><span>Google, Apple, Microsoft, and social sign-in connections.</span></div><button type="button" data-target="adminPanel" data-settings-focus="socialMediaHub">Manage</button></div>
                   <div class="settings-row"><div><strong>Account status</strong><span>Active account with recovery configured.</span></div><span class="status-pill">Active</span></div>
                 </section>
                 <section class="settings-section" data-settings-panel="security">
@@ -4063,7 +4063,7 @@
                   <div><p class="eyebrow">Integrations</p><h3>Calendar, email, ride-share, payment, social, and travel providers</h3><p>Provider connections remain categorized and permission aware.</p></div>
                   <div class="settings-row"><div><strong>Calendar connections</strong><span>Apple, Google, and Outlook calendar sync.</span></div><button type="button" data-calendar-provider="Google Calendar">Connect</button></div>
                   <div class="settings-row"><div><strong>Ride-share connections</strong><span>Uber, Lyft, Grab, Careem, Bolt, and destination providers.</span></div><button type="button" data-target="rideShareHub">Manage</button></div>
-                  <div class="settings-row"><div><strong>Social connections</strong><span>Instagram, TikTok, Facebook, Threads, LinkedIn, Pinterest, YouTube, and X.</span></div><button type="button" data-target="socialHub">Manage</button></div>
+                  <div class="settings-row"><div><strong>Social connections</strong><span>Instagram, TikTok, Facebook, Threads, LinkedIn, Pinterest, YouTube, and X.</span></div><button type="button" data-target="adminPanel" data-settings-focus="socialMediaHub">Manage</button></div>
                   <div class="settings-row" data-admin-only><div><strong>Production providers</strong><span>Email, SMS, payments, maps, flight data, hotel data, AI, monitoring, and storage credentials.</span></div><button type="button" data-corporate-access-admin="Review Provider Integrations">Review</button></div>
                   <div class="settings-row" data-admin-only><div><strong>GoHighLevel CRM</strong><span id="ghlConnectionStatus">Connection status is available to administrators. API credentials remain server-side.</span></div><button type="button" id="ghlTestConnectionButton">Test connection</button></div>
                   <div class="settings-row" data-admin-only><div><strong>CRM activity sync</strong><span id="ghlLastSyncStatus">Sync contacts, tags, trip fields, opportunities, and workflows without blocking TravelDrip.</span></div><button type="button" id="ghlSyncTestContactButton">Sync test contact</button></div>

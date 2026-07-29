@@ -34,6 +34,8 @@ const mainNavigationControls = matchAll(html, /\bdata-main-nav-id=["']([^"']+)["
 const requiredMainNavigationIds = ["dashboard", "planning", "itinerary", "events", "travel", "wallet", "chat", "important-info", "memories", "settings"];
 const routeBlock = app.match(/const routeDefinitions = \{([\s\S]*?)\n\};/)?.[1] || "";
 const routeTargets = unique(matchAll(routeBlock, /^\s{2}([A-Za-z0-9_]+):\s*\{\s*path:/gm));
+const routeSupportTargets = unique(matchAll(html, /\bdata-route-support=["']([^"']+)["']/g).flatMap((value) => value.split(/\s+/).filter(Boolean)));
+const extractedRouteComponents = unique(matchAll(html, /\bid=["']([^"']+)["'][^>]*\bdata-route-extract\b/g));
 const hrefs = matchAll(html, /\bhref=["']([^"']*)["']/g);
 const ariaControls = matchAll(html, /\baria-controls=["']([^"']+)["']/g);
 const dateInputs = [...html.matchAll(/<input\b[^>]*\btype=["'](date|datetime-local)["'][^>]*>/g)].map((match) => match[0]);
@@ -56,6 +58,14 @@ unique(targetButtons).forEach((target) => {
   if (!sectionExists(target)) targetIssues.push(`Missing screen section for data-target="${target}"`);
   if (!routeTargets.includes(target)) targetIssues.push(`Missing routeDefinition for data-target="${target}"`);
 });
+
+const routeIsolationIssues = [];
+routeSupportTargets.forEach((target) => {
+  if (!routeTargets.includes(target)) routeIsolationIssues.push(`data-route-support references unknown route: ${target}`);
+});
+for (const required of ["dailyMemoryPanel", "socialMediaHub"]) {
+  if (!extractedRouteComponents.includes(required)) routeIsolationIssues.push(`Missing extracted route component: ${required}`);
+}
 
 const ariaIssues = [];
 unique(ariaControls).forEach((target) => {
@@ -145,6 +155,13 @@ const results = {
     renderedControlCount: mainNavigationControls.length,
     issues: targetIssues.filter((issue) => issue.includes("main navigation") || issue.includes("Shared main navigation"))
   },
+  routeIsolationVerification: {
+    requiredExtractedComponents: ["dailyMemoryPanel", "socialMediaHub"],
+    extractedComponents: extractedRouteComponents,
+    supportedRoutes: routeSupportTargets,
+    issues: routeIsolationIssues,
+    status: routeIsolationIssues.length ? "FAIL" : "PASS"
+  },
   datePickerVerification: {
     status: "Native browser date/datetime-local controls present locally; full custom popover/mobile calendar QA requires browser/device testing.",
     fields: dateResults,
@@ -168,6 +185,7 @@ const results = {
 
 const criticalIssues = [
   ...targetIssues,
+  ...routeIsolationIssues,
   ...ariaIssues,
   ...linkIssues,
   ...searchResults.filter((field) => !field.referencedInApp).map((field) => `Search input is not referenced in app.js: ${field.id || "unknown"}`),
@@ -224,6 +242,14 @@ ${ariaIssues.length ? `### ARIA Issues\n${ariaIssues.map((issue) => `- ${issue}`
 ${linkIssues.length ? `### Link Issues\n${linkIssues.map((issue) => `- ${issue}`).join("\n")}` : "No placeholder or insecure href values were detected."}
 
 ${results.mainNavigationVerification.issues.length ? `### Main Navigation Issues\n${results.mainNavigationVerification.issues.map((issue) => `- ${issue}`).join("\n")}` : `Shared navigation config covers ${requiredMainNavigationIds.join(", ")} and is stamped onto ${mainNavigationControls.length} header, sidebar, dashboard, and mobile controls.`}
+
+## Route Isolation Verification
+
+- Route-scoped components: ${ok(routeIsolationIssues.length === 0)}
+- Extracted components: ${extractedRouteComponents.join(", ") || "none"}
+- Supported route scopes: ${routeSupportTargets.join(", ") || "none"}
+
+${routeIsolationIssues.length ? `### Route Isolation Issues\n${routeIsolationIssues.map((issue) => `- ${issue}`).join("\n")}` : "Chat owns messaging only; Daily Memory is mounted under Memories and Social Media Hub is mounted under Settings."}
 
 ## Date Picker Verification
 

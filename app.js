@@ -3731,6 +3731,16 @@ function initializeRouteMountRegistry() {
   const mainStack = contentGrid?.querySelector(":scope > .main-stack");
   const rightStack = contentGrid?.querySelector(":scope > .right-stack");
   const roots = [];
+  const extractedComponents = contentGrid && mainStack
+    ? Array.from(contentGrid.querySelectorAll("[data-route-extract]"))
+      .filter((element) => element.parentElement !== mainStack && element.parentElement !== rightStack)
+    : [];
+
+  extractedComponents.forEach((element) => {
+    element.remove();
+    mainStack.appendChild(element);
+  });
+
   const registerStack = (parent, stackName) => {
     if (!parent) return;
     Array.from(parent.children).forEach((element, index) => {
@@ -3979,12 +3989,15 @@ async function verifyCorporateAccessGate() {
   }
 }
 
-function renderRoute(target = getTargetFromRoute(), { updateHistory = false, replace = false, travelSection = "" } = {}) {
+function renderRoute(target = getTargetFromRoute(), { updateHistory = false, replace = false, travelSection = "", settingsFocus = "" } = {}) {
   const resolvedTarget = routeDefinitions[target] ? target : "dashboardHome";
   const activeTravelSection = resolvedTarget === "rideShareHub"
     ? travelTileDestinations[travelSection]
       ? travelSection
       : getTravelSectionFromRoute(location.pathname, history.state)
+    : "";
+  const activeSettingsFocus = resolvedTarget === "adminPanel"
+    ? settingsFocus || history.state?.settingsFocus || ""
     : "";
   const previewAccess = isFilePreview && state.hasEnteredApp;
   if (!state.session?.user && !previewAccess && location.pathname !== "/admin.html") {
@@ -4000,6 +4013,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
     return;
   }
   mountRouteComponents(resolvedTarget);
+  document.body.dataset.activeRoute = resolvedTarget;
   document.body.classList.toggle("app-routed", !document.body.classList.contains("auth-screen"));
   const isHome = resolvedTarget === "dashboardHome";
   const dashboardSections = [
@@ -4057,7 +4071,11 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   const nextRoute = isFilePreview ? route : normalizeAppPath(route);
   if (updateHistory && current !== nextRoute) {
     const method = replace ? "replaceState" : "pushState";
-    history[method]({ target: resolvedTarget, ...(activeTravelSection ? { travelSection: activeTravelSection } : {}) }, "", route);
+    history[method]({
+      target: resolvedTarget,
+      ...(activeTravelSection ? { travelSection: activeTravelSection } : {}),
+      ...(activeSettingsFocus ? { settingsFocus: activeSettingsFocus } : {})
+    }, "", route);
   }
 
   syncNavigationState(resolvedTarget, activeTravelSection);
@@ -4081,6 +4099,9 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   document.body.classList.remove("sidebar-open");
   $("#sidebarMenuButton")?.setAttribute("aria-expanded", "false");
   window.scrollTo({ top: 0, behavior: "smooth" });
+  if (resolvedTarget === "adminPanel" && activeSettingsFocus) {
+    window.setTimeout(() => getRouteComponentById(activeSettingsFocus)?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+  }
 }
 
 function openPlanningWorkflow(type = "group") {
@@ -5288,7 +5309,8 @@ function wireLocalInteractions() {
       }
       navigateSafely(target, {
         updateHistory: true,
-        travelSection: target === "rideShareHub" ? "overview" : ""
+        travelSection: target === "rideShareHub" ? "overview" : "",
+        settingsFocus: target === "adminPanel" ? button.dataset.settingsFocus || "" : ""
       });
     });
   });

@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-29T14:02:49.807Z",
+  "generatedAt": "2026-07-29T14:07:08.308Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
   },
   "totals": {
-    "screenIds": 563,
+    "screenIds": 565,
     "buttons": 771,
     "hrefLinks": 15,
     "dataTargets": 93,
@@ -15,7 +15,7 @@
     "routeDefinitions": 19,
     "dateInputs": 7,
     "searchInputs": 10,
-    "actionAttributeTypes": 81,
+    "actionAttributeTypes": 82,
     "apiRoutes": 15
   },
   "linkAndRouteVerification": {
@@ -69,6 +69,27 @@
     ],
     "renderedControlCount": 32,
     "issues": []
+  },
+  "routeIsolationVerification": {
+    "requiredExtractedComponents": [
+      "dailyMemoryPanel",
+      "socialMediaHub"
+    ],
+    "extractedComponents": [
+      "dailyMemoryPanel",
+      "socialMediaHub"
+    ],
+    "supportedRoutes": [
+      "adminPanel",
+      "groupBank",
+      "itineraryAlerts",
+      "memoriesPanel",
+      "rideShareHub",
+      "tripsPanel",
+      "walletPanel"
+    ],
+    "issues": [],
+    "status": "PASS"
   },
   "datePickerVerification": {
     "status": "Native browser date/datetime-local controls present locally; full custom popover/mobile calendar QA requires browser/device testing.",
