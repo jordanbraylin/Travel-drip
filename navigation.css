@@ -578,3 +578,92 @@ body.app-routed :where(.smart-widget, .travel-widget, [data-widget]) :where(
     grid-column: 1 / -1 !important;
   }
 }
+
+/* App-wide route typography: headings always use the full card width and remain readable. */
+body.app-routed [data-route-component]:not([hidden]) :where(
+  h1, h2, h3, h4, h5, h6,
+  .smart-widget__title,
+  .widget-title,
+  .card-title,
+  .section-title,
+  .travel-document-card__title
+) {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin-inline: 0;
+  white-space: normal !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  line-height: 1.25 !important;
+}
+
+body.app-routed [data-route-component]:not([hidden]) :where(
+  p, span, strong, small, em, label, dt, dd, li, button, a
+) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+body.app-routed [data-route-component]:not([hidden]) :where(
+  .section-heading,
+  .card-heading,
+  .widget-toolbar,
+  .widget-meta,
+  .ride-card-heading,
+  .social-card-header,
+  .settings-row,
+  .travel-focus-header,
+  .travel-command-header,
+  .wallet-dashboard-header,
+  .guest-access-heading
+) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+body.app-routed [data-route-component]:not([hidden]) :where(
+  .section-heading > *,
+  .card-heading > *,
+  .widget-toolbar > *,
+  .widget-meta > *,
+  .ride-card-heading > *,
+  .social-card-header > *,
+  .settings-row > *,
+  .travel-focus-header > *,
+  .travel-command-header > *,
+  .wallet-dashboard-header > *,
+  .guest-access-heading > *
+) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+/* Navigation tabs remain compact controls; card and section titles use the normal flow above. */
+body.app-routed main :where(
+  .trip-tab-bar button,
+  .tabs .tab,
+  .message-tabs button,
+  .split-mode-tabs button,
+  .transport-tabs button,
+  .explore-tabs button,
+  .event-dashboard-tabs button,
+  .travel-section-nav button,
+  .pass-filter-row button,
+  .travel-pass-filters button,
+  .travel-search-suggestions button
+) {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  max-width: none !important;
+  white-space: nowrap !important;
+  writing-mode: horizontal-tb !important;
+}

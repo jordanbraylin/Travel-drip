@@ -56,6 +56,7 @@ const dashboardOnlyRequiredIds = ["dashboardHome", "dashboardWidgets"];
 const todayHeadingCount = countMatches(html, /Today in TravelDrip/g);
 const travelDocumentCardCount = countMatches(html, /class=["'][^"']*\btravel-document-card\b[^"']*["']/g);
 const fullWidthWidgetCss = navigationCss.split("/* Full-width Smart Dashboard pass")[1] || "";
+const routeTypographyCss = navigationCss.split("/* App-wide route typography:")[1] || "";
 const fullWidthWidgetIssues = [];
 if (!fullWidthWidgetCss.includes("body.app-routed main,")
   || !fullWidthWidgetCss.includes("body.signed-in-shell main")
@@ -73,6 +74,11 @@ if (!fullWidthWidgetCss.includes("writing-mode: horizontal-tb !important")
 if (!fullWidthWidgetCss.includes("grid-column: span 6 !important")
   || !fullWidthWidgetCss.includes("grid-column: 1 / -1 !important")) {
   fullWidthWidgetIssues.push("Smart Dashboard tablet/mobile column rules are incomplete");
+}
+if (!routeTypographyCss.includes("body.app-routed [data-route-component]:not([hidden])")
+  || !routeTypographyCss.includes("writing-mode: horizontal-tb !important")
+  || !routeTypographyCss.includes(".section-heading > *")) {
+  fullWidthWidgetIssues.push("Route-level headings are missing the horizontal full-width text rules");
 }
 const travelDocumentRequiredClasses = [
   "travel-documents-section",
