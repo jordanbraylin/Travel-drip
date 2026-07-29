@@ -1522,3 +1522,155 @@ body.app-routed main :where(
     flex-direction: column;
   }
 }
+
+/* App-wide text containment: titles and descriptions never live in a narrow side column. */
+body.app-routed [data-route-component]:not([hidden]) :where(
+  .smart-widget,
+  .travel-widget,
+  .memory-media-card,
+  .event-experience-card,
+  .itinerary-card,
+  .travel-document-card,
+  .travel-dashboard-card,
+  .travel-provider-card,
+  .travel-result-card,
+  .reservation-reminder-card,
+  .transport-record-card,
+  .wallet-summary-card,
+  .wallet-trip-tile,
+  .wallet-virtual-preview,
+  .profile-card-grid article,
+  .photo-editor-card,
+  .photo-privacy-card,
+  .settings-row,
+  .social-card
+) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+  overflow: hidden !important;
+  box-sizing: border-box;
+}
+
+body.app-routed [data-route-component]:not([hidden]) :where(
+  .memory-media-card,
+  .event-experience-card,
+  .itinerary-card,
+  .travel-document-card,
+  .travel-dashboard-card,
+  .travel-provider-card,
+  .travel-result-card,
+  .reservation-reminder-card,
+  .transport-record-card,
+  .wallet-summary-card,
+  .wallet-virtual-preview,
+  .profile-card-grid article,
+  .photo-editor-card,
+  .photo-privacy-card
+) {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start;
+  gap: 10px;
+  grid-template-columns: none !important;
+}
+
+body.app-routed [data-route-component]:not([hidden]) :where(
+  .memory-media-card,
+  .event-experience-card,
+  .itinerary-card,
+  .travel-document-card,
+  .travel-dashboard-card,
+  .travel-provider-card,
+  .travel-result-card,
+  .reservation-reminder-card,
+  .transport-record-card,
+  .wallet-summary-card,
+  .wallet-virtual-preview,
+  .profile-card-grid article,
+  .photo-editor-card,
+  .photo-privacy-card
+) :where(
+  h1, h2, h3, h4, h5, h6,
+  p, strong, small, span, em, label,
+  dt, dd, li
+) {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.4;
+}
+
+body.app-routed [data-route-component]:not([hidden]) :where(
+  .memory-media-card img,
+  .cover-photo-card img,
+  .photo-audience-card img,
+  .profile-photo-preview img,
+  .travel-provider-card img,
+  .travel-result-card img
+) {
+  display: block;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto;
+  object-fit: cover;
+}
+
+body.app-routed [data-route-component]:not([hidden]) :where(
+  .memory-card-actions,
+  .itinerary-action-row,
+  .button-row,
+  .hero-actions,
+  .mini-action-row,
+  .corporate-card-actions,
+  .wallet-mini-actions,
+  .platform-actions,
+  .explore-card-actions
+) {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  gap: 8px;
+}
+
+body.app-routed [data-route-component]:not([hidden]) :where(
+  .memory-card-actions > *,
+  .itinerary-action-row > *,
+  .button-row > *,
+  .hero-actions > *,
+  .mini-action-row > *,
+  .corporate-card-actions > *,
+  .wallet-mini-actions > *,
+  .platform-actions > *,
+  .explore-card-actions > *
+) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Photo captions use a full content row below the image, never a 92px thumbnail column. */
+body.app-routed [data-route-component]:not([hidden]) .memory-media-card {
+  grid-template-columns: none !important;
+}
+
+body.app-routed [data-route-component]:not([hidden]) .memory-media-card > :where(div, strong, small, span) {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+body.app-routed [data-route-component]:not([hidden]) .memory-media-card > div:not(.memory-card-actions) {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 4px;
+  padding-inline: 0;
+}

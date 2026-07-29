@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-29T17:36:38.631Z",
+  "generatedAt": "2026-07-29T17:44:25.332Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
@@ -215,6 +215,32 @@
       },
       {
         "label": "Corporate entry styling",
+        "status": "PASS"
+      }
+    ],
+    "issues": [],
+    "status": "PASS"
+  },
+  "textContainmentVerification": {
+    "checks": [
+      {
+        "label": "Horizontal text flow",
+        "status": "PASS"
+      },
+      {
+        "label": "Full-width widget titles",
+        "status": "PASS"
+      },
+      {
+        "label": "No narrow photo caption column",
+        "status": "PASS"
+      },
+      {
+        "label": "Contained photos and captions",
+        "status": "PASS"
+      },
+      {
+        "label": "Wrapped widget actions",
         "status": "PASS"
       }
     ],

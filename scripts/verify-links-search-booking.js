@@ -190,6 +190,17 @@ const corporateExperienceIssues = corporateExperienceChecks
   .filter(([, passed]) => !passed)
   .map(([label]) => `${label} is missing or disconnected`);
 
+const textContainmentChecks = [
+  ["Horizontal text flow", navigationCss.includes("writing-mode: horizontal-tb !important") && navigationCss.includes("word-break: normal !important")],
+  ["Full-width widget titles", navigationCss.includes(".memory-media-card") && navigationCss.includes("h1, h2, h3, h4, h5, h6") && navigationCss.includes("width: 100% !important")],
+  ["No narrow photo caption column", navigationCss.includes(".memory-media-card {\n  grid-template-columns: none !important;")],
+  ["Contained photos and captions", navigationCss.includes(".memory-media-card img") && navigationCss.includes("overflow-wrap: anywhere !important")],
+  ["Wrapped widget actions", navigationCss.includes(".memory-card-actions") && navigationCss.includes("flex-wrap: wrap !important")]
+];
+const textContainmentIssues = textContainmentChecks
+  .filter(([, passed]) => !passed)
+  .map(([label]) => `${label} is missing or incomplete`);
+
 const ariaIssues = [];
 unique(ariaControls).forEach((target) => {
   if (!ids.includes(target)) ariaIssues.push(`Missing aria-controls target "${target}"`);
@@ -323,6 +334,11 @@ const results = {
     issues: corporateExperienceIssues,
     status: corporateExperienceIssues.length ? "FAIL" : "PASS"
   },
+  textContainmentVerification: {
+    checks: textContainmentChecks.map(([label, passed]) => ({ label, status: passed ? "PASS" : "FAIL" })),
+    issues: textContainmentIssues,
+    status: textContainmentIssues.length ? "FAIL" : "PASS"
+  },
   datePickerVerification: {
     status: "Native browser date/datetime-local controls present locally; full custom popover/mobile calendar QA requires browser/device testing.",
     fields: dateResults,
@@ -354,6 +370,7 @@ const criticalIssues = [
   ...outerWrapperIssues,
   ...focusedLayoutIssues,
   ...corporateExperienceIssues,
+  ...textContainmentIssues,
   ...ariaIssues,
   ...linkIssues,
   ...searchResults.filter((field) => !field.referencedInApp).map((field) => `Search input is not referenced in app.js: ${field.id || "unknown"}`),
@@ -472,6 +489,14 @@ ${focusedLayoutIssues.length ? `### Focused Layout Issues\n${focusedLayoutIssues
 ${corporateExperienceChecks.map(([label, passed]) => `- ${label}: ${ok(passed)}`).join("\n")}
 
 ${corporateExperienceIssues.length ? `### Corporate Experience Issues\n${corporateExperienceIssues.map((issue) => `- ${issue}`).join("\n")}` : "Corporate navigation is reachable, secure access verification remains required, and the existing policy, role, financial privacy, audit, and acceptance conditions remain present."}
+
+## Text Containment Verification
+
+- Widget text and photo captions: ${ok(textContainmentIssues.length === 0)}
+
+${textContainmentChecks.map(([label, passed]) => `- ${label}: ${ok(passed)}`).join("\n")}
+
+${textContainmentIssues.length ? `### Text Containment Issues\n${textContainmentIssues.map((issue) => `- ${issue}`).join("\n")}` : "Widget titles, descriptions, status text, actions, and photo captions use horizontal full-width flow without narrow side columns."}
 
 ## Date Picker Verification
 
