@@ -6,6 +6,7 @@ const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
 
 const html = read("index.html");
 const app = read("app.js");
+const navigationCss = read("navigation.css");
 const pkg = JSON.parse(read("package.json"));
 
 function matchAll(text, regex, group = 1) {
@@ -66,6 +67,21 @@ routeSupportTargets.forEach((target) => {
 for (const required of ["dailyMemoryPanel", "socialMediaHub"]) {
   if (!extractedRouteComponents.includes(required)) routeIsolationIssues.push(`Missing extracted route component: ${required}`);
 }
+
+const outerWrapperSelectors = [
+  "[data-route-component]:not([hidden])",
+  ".messages-hub",
+  ".travel-workspace",
+  ".ride-hub-redesign",
+  ".reservation-reminder-panel",
+  ".wallet-redesign-shell",
+  ".memories-gallery-shell",
+  ".settings-shell",
+  ".admin-settings-shell"
+];
+const outerWrapperIssues = outerWrapperSelectors
+  .filter((selector) => !navigationCss.includes(selector))
+  .map((selector) => `Missing outer-wrapper cleanup selector: ${selector}`);
 
 const ariaIssues = [];
 unique(ariaControls).forEach((target) => {
@@ -162,6 +178,11 @@ const results = {
     issues: routeIsolationIssues,
     status: routeIsolationIssues.length ? "FAIL" : "PASS"
   },
+  outerWrapperVerification: {
+    selectors: outerWrapperSelectors,
+    issues: outerWrapperIssues,
+    status: outerWrapperIssues.length ? "FAIL" : "PASS"
+  },
   datePickerVerification: {
     status: "Native browser date/datetime-local controls present locally; full custom popover/mobile calendar QA requires browser/device testing.",
     fields: dateResults,
@@ -186,6 +207,7 @@ const results = {
 const criticalIssues = [
   ...targetIssues,
   ...routeIsolationIssues,
+  ...outerWrapperIssues,
   ...ariaIssues,
   ...linkIssues,
   ...searchResults.filter((field) => !field.referencedInApp).map((field) => `Search input is not referenced in app.js: ${field.id || "unknown"}`),
@@ -250,6 +272,12 @@ ${results.mainNavigationVerification.issues.length ? `### Main Navigation Issues
 - Supported route scopes: ${routeSupportTargets.join(", ") || "none"}
 
 ${routeIsolationIssues.length ? `### Route Isolation Issues\n${routeIsolationIssues.map((issue) => `- ${issue}`).join("\n")}` : "Chat owns messaging only; Daily Memory is mounted under Memories and Social Media Hub is mounted under Settings."}
+
+## Outer Wrapper Verification
+
+- Outer-shell cleanup selectors: ${ok(outerWrapperIssues.length === 0)}
+
+${outerWrapperIssues.length ? `### Outer Wrapper Issues\n${outerWrapperIssues.map((issue) => `- ${issue}`).join("\n")}` : "Route roots and visible inner shells are transparent; individual widgets retain their card styling."}
 
 ## Date Picker Verification
 

@@ -146,3 +146,75 @@ body.signed-in-shell main > :not(.topbar):not(.global-destination-header):not(.t
     grid-column: 1 / -1 !important;
   }
 }
+
+/* Remove visible outer shells around route widgets; keep the cards inside each shell intact. */
+body.app-routed .content-grid,
+body.app-routed .main-stack,
+body.app-routed .right-stack {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+body.app-routed [data-route-component]:not([hidden]) {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: var(--td-layout-gap, 20px) !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 0 var(--td-section-gap, 32px) !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+body.app-routed [data-route-component]:not([hidden]) > :where(
+  .messages-hub,
+  .daily-memory-panel,
+  .social-media-hub,
+  .ai-planner-shell,
+  .ai-generated-trip,
+  .travel-workspace,
+  .ride-hub-redesign,
+  .reservation-reminder-panel,
+  .wallet-redesign-shell,
+  .memories-gallery-shell,
+  .settings-shell,
+  .admin-settings-shell
+) {
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#dashboardWidgets,
+#dashboardWidgets .section-heading,
+.dashboard-widgets {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+#dashboardWidgets {
+  padding: 0 !important;
+}
+
+@media (max-width: 1024px) {
+  body.app-routed [data-route-component]:not([hidden]) {
+    gap: 16px !important;
+    margin-bottom: 24px !important;
+  }
+}

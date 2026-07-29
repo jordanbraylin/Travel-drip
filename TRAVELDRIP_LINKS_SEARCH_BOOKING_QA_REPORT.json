@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-29T14:07:08.308Z",
+  "generatedAt": "2026-07-29T14:14:01.240Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
@@ -87,6 +87,21 @@
       "rideShareHub",
       "tripsPanel",
       "walletPanel"
+    ],
+    "issues": [],
+    "status": "PASS"
+  },
+  "outerWrapperVerification": {
+    "selectors": [
+      "[data-route-component]:not([hidden])",
+      ".messages-hub",
+      ".travel-workspace",
+      ".ride-hub-redesign",
+      ".reservation-reminder-panel",
+      ".wallet-redesign-shell",
+      ".memories-gallery-shell",
+      ".settings-shell",
+      ".admin-settings-shell"
     ],
     "issues": [],
     "status": "PASS"
