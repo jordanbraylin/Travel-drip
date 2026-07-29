@@ -2224,3 +2224,229 @@ body.app-routed :where(.card-heading, .social-card-header, .ride-card-heading) >
     width: 100% !important;
   }
 }
+
+/* Physical-card treatment for the wallet preview and boarding-pass documents. */
+#virtualCard .virtual-card {
+  position: relative !important;
+  isolation: isolate;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: stretch !important;
+  min-height: 270px !important;
+  gap: 18px !important;
+  padding: 24px !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 24px !important;
+  background:
+    radial-gradient(circle at 88% 14%, rgba(255, 216, 115, 0.72), transparent 24%),
+    radial-gradient(circle at 12% 88%, rgba(28, 214, 199, 0.34), transparent 34%),
+    linear-gradient(135deg, #112b3b 0%, #087f8c 50%, #f06f54 100%) !important;
+  box-shadow: 0 24px 46px rgba(15, 47, 58, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  transform: perspective(900px) rotateX(2deg) rotateY(-2deg);
+}
+
+#virtualCard .virtual-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(115deg, transparent 18%, rgba(255, 255, 255, 0.24) 42%, transparent 58%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 7px);
+  opacity: 0.74;
+  pointer-events: none;
+}
+
+#virtualCard .virtual-card > * {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+#virtualCard .virtual-card .card-top {
+  align-items: flex-start;
+  color: #ffffff;
+}
+
+#virtualCard .virtual-card .card-top span,
+#virtualCard .virtual-card .card-meta small,
+#virtualCard .virtual-card .card-holder-row small {
+  color: rgba(255, 255, 255, 0.78) !important;
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+}
+
+#virtualCard .virtual-card .card-top strong {
+  font-size: 0.86rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#virtualCard .card-chip-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 34px;
+}
+
+#virtualCard .card-chip {
+  display: block;
+  width: 48px;
+  height: 35px;
+  border: 1px solid rgba(73, 49, 14, 0.32);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, transparent 47%, rgba(103, 70, 20, 0.3) 48% 51%, transparent 52%),
+    linear-gradient(0deg, transparent 47%, rgba(103, 70, 20, 0.3) 48% 51%, transparent 52%),
+    linear-gradient(135deg, #fff0ae, #c28e33 58%, #ffe9a0);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.72);
+}
+
+#virtualCard .card-contactless {
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 1.28rem;
+  letter-spacing: -0.2em;
+  transform: rotate(-90deg);
+}
+
+#virtualCard .virtual-card .card-number {
+  width: 100%;
+  color: #ffffff !important;
+  font-size: clamp(1.25rem, 2.6vw, 1.8rem) !important;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  white-space: nowrap !important;
+}
+
+#virtualCard .virtual-card .card-meta,
+#virtualCard .card-holder-row {
+  align-items: end;
+  width: 100%;
+}
+
+#virtualCard .virtual-card .card-meta strong,
+#virtualCard .card-holder-row strong {
+  color: #ffffff !important;
+  font-size: 0.78rem;
+}
+
+#virtualCard .card-holder-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+#virtualCard .card-holder-row > span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+#virtualCard .card-mark {
+  font-size: 1.45rem !important;
+  letter-spacing: 0.08em;
+  font-style: italic;
+}
+
+#rideShareHub .visual-pass-card {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(15, 47, 58, 0.14) !important;
+  border-radius: 22px !important;
+  background: #ffffff !important;
+  box-shadow: 0 18px 34px rgba(15, 47, 58, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+}
+
+#rideShareHub .visual-pass-card::before {
+  content: "";
+  display: block;
+  grid-column: 1 / -1;
+  height: 8px;
+  background: linear-gradient(90deg, #087f8c, #00a6c7 48%, #ff7a59) !important;
+}
+
+#rideShareHub .visual-pass-card::after {
+  content: "";
+  position: absolute;
+  top: 196px;
+  left: 20px;
+  right: 20px;
+  border-top: 2px dashed rgba(15, 47, 58, 0.2);
+  pointer-events: none;
+}
+
+#rideShareHub .visual-pass-card > * {
+  min-width: 0;
+  max-width: 100%;
+  margin-right: 20px !important;
+  margin-left: 20px !important;
+}
+
+#rideShareHub .visual-pass-card > .pass-topline {
+  margin-top: 10px !important;
+}
+
+#rideShareHub .visual-pass-card > .pass-actions {
+  margin-bottom: 20px !important;
+}
+
+#rideShareHub .digital-boarding-pass {
+  background: linear-gradient(180deg, #0f2f3a 0 184px, #ffffff 184px) !important;
+}
+
+#rideShareHub .digital-boarding-pass::before {
+  position: static !important;
+  top: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  border: 0 !important;
+  height: 8px !important;
+}
+
+#rideShareHub .digital-boarding-pass .pass-topline,
+#rideShareHub .digital-boarding-pass .pass-provider,
+#rideShareHub .digital-boarding-pass .pass-route,
+#rideShareHub .digital-boarding-pass h4,
+#rideShareHub .digital-boarding-pass dl,
+#rideShareHub .digital-boarding-pass .official-code,
+#rideShareHub .digital-boarding-pass .barcode-strip,
+#rideShareHub .digital-boarding-pass .pass-actions {
+  width: auto !important;
+  margin-left: 20px !important;
+  margin-right: 20px !important;
+}
+
+#rideShareHub .digital-boarding-pass .pass-provider {
+  background: rgba(255, 255, 255, 0.13) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+#rideShareHub .digital-boarding-pass .official-code {
+  justify-self: start;
+}
+
+#rideShareHub .digital-boarding-pass .pass-actions,
+#rideShareHub .visual-pass-card:not(.digital-boarding-pass) .pass-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+@media (max-width: 640px) {
+  #virtualCard .virtual-card {
+    min-height: 238px !important;
+    padding: 20px !important;
+    transform: none;
+  }
+
+  #rideShareHub .visual-pass-card::after {
+    top: 205px;
+  }
+}

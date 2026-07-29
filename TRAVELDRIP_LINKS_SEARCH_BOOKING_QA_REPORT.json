@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-29T17:53:27.578Z",
+  "generatedAt": "2026-07-29T17:57:47.703Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
@@ -193,6 +193,10 @@
       },
       {
         "label": "Widget headers stay on top",
+        "status": "PASS"
+      },
+      {
+        "label": "Wallet and boarding pass visuals",
         "status": "PASS"
       }
     ],

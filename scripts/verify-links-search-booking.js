@@ -174,7 +174,8 @@ const focusedLayoutChecks = [
   ["Wallet formatting", html.includes('id="walletPanel"') && navigationCss.includes("#walletPanel .wallet-dashboard-header") && navigationCss.includes("#walletPanel .wallet-smart-actions")],
   ["Smart Travel Search icon", html.includes('<span class="travel-search-icon" aria-hidden="true"></span>') && navigationCss.includes("#rideShareHub .travel-search-icon::after") && navigationCss.includes("#rideShareHub .travel-smart-search-row")],
   ["Chat layout", html.includes('id="socialHub"') && navigationCss.includes("#socialHub .messages-layout") && navigationCss.includes("#socialHub .chat-workspace") && navigationCss.includes("#socialHub .conversation-details-panel")],
-  ["Widget headers stay on top", html.includes('class="widget-toolbar"') && navigationCss.includes("body.app-routed :where(.smart-widget, .travel-widget, [data-widget]) > .widget-toolbar") && navigationCss.includes("grid-column: 1 / -1 !important")]
+  ["Widget headers stay on top", html.includes('class="widget-toolbar"') && navigationCss.includes("body.app-routed :where(.smart-widget, .travel-widget, [data-widget]) > .widget-toolbar") && navigationCss.includes("grid-column: 1 / -1 !important")],
+  ["Wallet and boarding pass visuals", html.includes('class="card-chip"') && html.includes("digital-boarding-pass") && navigationCss.includes("#virtualCard .virtual-card") && navigationCss.includes("#rideShareHub .digital-boarding-pass")]
 ];
 const focusedLayoutIssues = focusedLayoutChecks
   .filter(([, passed]) => !passed)
@@ -478,7 +479,7 @@ ${outerWrapperIssues.length ? `### Outer Wrapper Issues\n${outerWrapperIssues.ma
 
 ## Focused Route Layout Verification
 
-- Itinerary, Events, Memories, Wallet, Smart Travel Search, Chat, and widget headers: ${ok(focusedLayoutIssues.length === 0)}
+- Itinerary, Events, Memories, Wallet, Smart Travel Search, Chat, widget headers, and travel pass visuals: ${ok(focusedLayoutIssues.length === 0)}
 
 ${focusedLayoutChecks.map(([label, passed]) => `- ${label}: ${ok(passed)}`).join("\n")}
 
