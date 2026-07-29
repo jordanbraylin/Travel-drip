@@ -14,7 +14,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
     <link rel="stylesheet" href="styles.css?v=115">
-    <link rel="stylesheet" href="navigation.css?v=4">
+    <link rel="stylesheet" href="navigation.css?v=5">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -286,7 +286,7 @@
         </div>
       </section>
 
-      <section class="pwa-panel">
+      <section class="pwa-panel" data-dashboard-only>
         <div>
           <p class="eyebrow">Progressive Web App</p>
           <h2>Install TravelDrip for trip alerts</h2>
@@ -296,7 +296,7 @@
         <button class="light-button" type="button" id="profileInstallHelpButton">iPhone instructions</button>
       </section>
 
-      <section class="hero destination-banner" id="dashboardHome" aria-label="Rotating featured destinations">
+      <section class="hero destination-banner" id="dashboardHome" data-dashboard-only aria-label="Rotating featured destinations">
         <img id="livePlanPhoto" src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1600&auto=format&fit=crop" alt="Dubai skyline at sunset">
         <div class="hero-copy">
           <p class="eyebrow" id="livePlanLocation">Live group plan • United Arab Emirates</p>
@@ -337,7 +337,7 @@
         <button type="button" data-main-nav-id="settings">Settings</button>
       </nav>
 
-      <section class="panel corporate-mode-home" id="corporateHome" hidden aria-label="Corporate travel home">
+      <section class="panel corporate-mode-home" id="corporateHome" data-dashboard-only hidden aria-label="Corporate travel home">
         <div class="section-heading compact">
           <div>
             <p class="eyebrow">Corporate Travel Workspace</p>
@@ -361,7 +361,7 @@
         <p class="small" id="corporateModeMessage">Corporate Mode is active. Personal leisure trips, public invites, vacation deals, and consumer wallet prompts are hidden from this workspace.</p>
       </section>
 
-      <section class="panel destination-insights" aria-label="Destination highlights">
+      <section class="panel destination-insights" data-dashboard-only aria-label="Destination highlights">
         <div class="section-heading compact">
           <div>
             <p class="eyebrow">Choose a location</p>
@@ -398,21 +398,21 @@
         </div>
       </section>
 
-      <section class="metrics" aria-label="Trip metrics">
+      <section class="metrics" data-dashboard-only aria-label="Trip metrics">
         <article><span>Travelers</span><strong id="travelerMetric">8</strong><small>6 confirmed</small></article>
         <article><span>Group bank</span><strong id="walletMetric">$6,400</strong><small id="depositMetric">$800 each</small></article>
         <article><span>Votes open</span><strong>4</strong><small>2 close today</small></article>
         <article><span>Target spend</span><strong>$1,250</strong><small>per person</small></article>
       </section>
 
-      <section class="travel-social-strip" aria-label="TravelDrip social highlights">
+      <section class="travel-social-strip" data-dashboard-only aria-label="TravelDrip social highlights">
         <article><span>🌴</span><strong>Next Adventure</strong><small>18 days until Dubai</small></article>
         <article><span>📸</span><strong>New Memories</strong><small>12 photos ready to share</small></article>
         <article><span>🎉</span><strong>Achievement</strong><small>Beach Lover badge unlocked</small></article>
         <article><span>🍹</span><strong>Dinner Tonight</strong><small>Rooftop table vote closes soon</small></article>
       </section>
 
-      <section class="dashboard-widgets" id="dashboardWidgets" aria-label="Customizable dashboard widgets">
+      <section class="dashboard-widgets" id="dashboardWidgets" data-dashboard-only aria-label="Customizable dashboard widgets">
         <div class="section-heading compact">
           <div>
             <p class="eyebrow">Smart Dashboard</p>

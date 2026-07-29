@@ -4016,21 +4016,10 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   document.body.dataset.activeRoute = resolvedTarget;
   document.body.classList.toggle("app-routed", !document.body.classList.contains("auth-screen"));
   const isHome = resolvedTarget === "dashboardHome";
-  const dashboardSections = [
-    ".pwa-panel",
-    "#dashboardHome",
-    "#corporateHome",
-    ".destination-insights",
-    ".metrics",
-    ".travel-social-strip",
-    "#dashboardWidgets"
-  ];
-  dashboardSections.forEach((selector) => {
-    $$(selector).forEach((section) => {
-      section.hidden = !isHome;
-      section.setAttribute("aria-hidden", String(!isHome));
-      section.inert = !isHome;
-    });
+  $$('[data-dashboard-only]').forEach((section) => {
+    section.hidden = !isHome;
+    section.setAttribute("aria-hidden", String(!isHome));
+    section.inert = !isHome;
   });
 
   const contentGrid = $(".content-grid");

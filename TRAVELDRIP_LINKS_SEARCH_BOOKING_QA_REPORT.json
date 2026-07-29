@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-29T14:15:10.574Z",
+  "generatedAt": "2026-07-29T14:23:33.575Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
@@ -88,6 +88,20 @@
       "tripsPanel",
       "walletPanel"
     ],
+    "issues": [],
+    "status": "PASS"
+  },
+  "dashboardOnlyVerification": {
+    "requiredIds": [
+      "dashboardHome",
+      "dashboardWidgets"
+    ],
+    "markedIds": [
+      "corporateHome",
+      "dashboardHome",
+      "dashboardWidgets"
+    ],
+    "todayHeadingCount": 1,
     "issues": [],
     "status": "PASS"
   },

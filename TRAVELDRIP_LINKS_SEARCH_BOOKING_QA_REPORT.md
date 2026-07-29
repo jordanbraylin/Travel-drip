@@ -1,6 +1,6 @@
 # TravelDrip Links, Search, Date Picker, Booking, and Real-Time Updates Verification
 
-Generated: 2026-07-29T14:15:10.574Z
+Generated: 2026-07-29T14:23:33.575Z
 
 ## Final Status
 
@@ -45,6 +45,14 @@ Shared navigation config covers dashboard, planning, itinerary, events, travel, 
 - Supported route scopes: adminPanel, groupBank, itineraryAlerts, memoriesPanel, rideShareHub, tripsPanel, walletPanel
 
 Chat owns messaging only; Daily Memory is mounted under Memories and Social Media Hub is mounted under Settings.
+
+## Dashboard-Only Content Verification
+
+- Dashboard-only section markers: PASS
+- Marked sections: corporateHome, dashboardHome, dashboardWidgets
+- Today in TravelDrip heading count: 1
+
+Today in TravelDrip is defined once inside the Dashboard widget section, and the route renderer hides all dashboard-only sections on other routes.
 
 ## Outer Wrapper Verification
 

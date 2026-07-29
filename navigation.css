@@ -218,3 +218,79 @@ body.app-routed [data-route-component]:not([hidden]) > :where(
     margin-bottom: 24px !important;
   }
 }
+
+/* Dashboard-only content must never leak into another route. */
+body.app-routed[data-active-route]:not([data-active-route="dashboardHome"]) [data-dashboard-only] {
+  display: none !important;
+}
+
+/* Keep copy readable inside every independent widget, including route-specific grids. */
+body.app-routed :where(
+  .smart-widget,
+  .travel-widget,
+  [data-widget],
+  .smart-dashboard-grid > *,
+  .widget-grid > *,
+  .event-experience-card,
+  .metrics > *,
+  .travel-social-strip > *
+) {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  height: auto;
+  align-self: start;
+  overflow: hidden;
+}
+
+body.app-routed :where(
+  .smart-widget,
+  .travel-widget,
+  [data-widget],
+  .event-experience-card,
+  .metrics > *,
+  .travel-social-strip > *
+) :where(h1, h2, h3, h4, h5, h6, p, dt, dd, li) {
+  display: block;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+  line-height: 1.4;
+}
+
+body.app-routed :where(
+  .smart-widget,
+  .travel-widget,
+  [data-widget],
+  .event-experience-card,
+  .metrics > *,
+  .travel-social-strip > *
+) :where(span, strong, small, em, label, button, a) {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+  line-height: 1.4;
+}
+
+body.app-routed :where(
+  .smart-widget,
+  .travel-widget,
+  [data-widget],
+  .event-experience-card,
+  .metrics > *,
+  .travel-social-strip > *
+) :where(.widget-toolbar, .button-row, .hero-actions, .widget-meta, .status-row, .card-meta) {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+body.app-routed :where(.smart-widget, .travel-widget, [data-widget]) :where(button, .primary-button, .ghost-button) {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+}

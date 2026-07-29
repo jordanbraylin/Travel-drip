@@ -37,6 +37,9 @@ const routeBlock = app.match(/const routeDefinitions = \{([\s\S]*?)\n\};/)?.[1] 
 const routeTargets = unique(matchAll(routeBlock, /^\s{2}([A-Za-z0-9_]+):\s*\{\s*path:/gm));
 const routeSupportTargets = unique(matchAll(html, /\bdata-route-support=["']([^"']+)["']/g).flatMap((value) => value.split(/\s+/).filter(Boolean)));
 const extractedRouteComponents = unique(matchAll(html, /\bid=["']([^"']+)["'][^>]*\bdata-route-extract\b/g));
+const dashboardOnlyIds = unique(matchAll(html, /<[^>]*\bid=["']([^"']+)["'][^>]*\bdata-dashboard-only\b[^>]*>/g));
+const dashboardOnlyRequiredIds = ["dashboardHome", "dashboardWidgets"];
+const todayHeadingCount = countMatches(html, /Today in TravelDrip/g);
 const hrefs = matchAll(html, /\bhref=["']([^"']*)["']/g);
 const ariaControls = matchAll(html, /\baria-controls=["']([^"']+)["']/g);
 const dateInputs = [...html.matchAll(/<input\b[^>]*\btype=["'](date|datetime-local)["'][^>]*>/g)].map((match) => match[0]);
@@ -66,6 +69,14 @@ routeSupportTargets.forEach((target) => {
 });
 for (const required of ["dailyMemoryPanel", "socialMediaHub"]) {
   if (!extractedRouteComponents.includes(required)) routeIsolationIssues.push(`Missing extracted route component: ${required}`);
+}
+
+const dashboardOnlyIssues = dashboardOnlyRequiredIds
+  .filter((id) => !dashboardOnlyIds.includes(id))
+  .map((id) => `Dashboard-only section is not marked: ${id}`);
+if (todayHeadingCount !== 1) dashboardOnlyIssues.push(`Expected one Today in TravelDrip heading, found ${todayHeadingCount}`);
+if (!app.includes("[data-dashboard-only]") || !app.includes("section.hidden = !isHome")) {
+  dashboardOnlyIssues.push("Route renderer does not explicitly toggle dashboard-only sections");
 }
 
 const outerWrapperSelectors = [
@@ -178,6 +189,13 @@ const results = {
     issues: routeIsolationIssues,
     status: routeIsolationIssues.length ? "FAIL" : "PASS"
   },
+  dashboardOnlyVerification: {
+    requiredIds: dashboardOnlyRequiredIds,
+    markedIds: dashboardOnlyIds,
+    todayHeadingCount,
+    issues: dashboardOnlyIssues,
+    status: dashboardOnlyIssues.length ? "FAIL" : "PASS"
+  },
   outerWrapperVerification: {
     selectors: outerWrapperSelectors,
     issues: outerWrapperIssues,
@@ -207,6 +225,7 @@ const results = {
 const criticalIssues = [
   ...targetIssues,
   ...routeIsolationIssues,
+  ...dashboardOnlyIssues,
   ...outerWrapperIssues,
   ...ariaIssues,
   ...linkIssues,
@@ -272,6 +291,14 @@ ${results.mainNavigationVerification.issues.length ? `### Main Navigation Issues
 - Supported route scopes: ${routeSupportTargets.join(", ") || "none"}
 
 ${routeIsolationIssues.length ? `### Route Isolation Issues\n${routeIsolationIssues.map((issue) => `- ${issue}`).join("\n")}` : "Chat owns messaging only; Daily Memory is mounted under Memories and Social Media Hub is mounted under Settings."}
+
+## Dashboard-Only Content Verification
+
+- Dashboard-only section markers: ${ok(dashboardOnlyIssues.length === 0)}
+- Marked sections: ${dashboardOnlyIds.join(", ") || "none"}
+- Today in TravelDrip heading count: ${todayHeadingCount}
+
+${dashboardOnlyIssues.length ? `### Dashboard-Only Issues\n${dashboardOnlyIssues.map((issue) => `- ${issue}`).join("\n")}` : "Today in TravelDrip is defined once inside the Dashboard widget section, and the route renderer hides all dashboard-only sections on other routes."}
 
 ## Outer Wrapper Verification
 
