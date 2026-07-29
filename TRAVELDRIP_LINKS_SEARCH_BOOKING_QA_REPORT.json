@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-29T17:11:20.224Z",
+  "generatedAt": "2026-07-29T17:14:16.267Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
@@ -130,6 +130,10 @@
       "travel",
       "wallet"
     ],
+    "issues": [],
+    "status": "PASS"
+  },
+  "fullWidthWidgetVerification": {
     "issues": [],
     "status": "PASS"
   },

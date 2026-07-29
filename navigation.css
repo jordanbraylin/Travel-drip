@@ -448,3 +448,133 @@ body.app-routed :where(.smart-widget, .travel-widget, [data-widget]) :where(butt
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Full-width Smart Dashboard pass: let every authenticated tab use the space beside the sidebar. */
+body.app-routed main,
+body.signed-in-shell main {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+body.app-routed main > :where(.content-grid, .dashboard-widgets, .metrics, .travel-social-strip, [data-route-component]),
+body.app-routed .content-grid,
+body.app-routed .dashboard-widgets,
+body.app-routed .widget-grid,
+body.app-routed .smart-dashboard-grid {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.smart-dashboard-grid {
+  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  align-items: start !important;
+}
+
+.smart-dashboard-grid > *,
+.widget-grid > * {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  align-self: start !important;
+  box-sizing: border-box !important;
+}
+
+body.app-routed :where(.smart-widget, .travel-widget, [data-widget]) {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  align-self: start !important;
+  gap: 12px;
+  box-sizing: border-box !important;
+  overflow: hidden;
+}
+
+body.app-routed :where(.smart-widget, .travel-widget, [data-widget]) :where(
+  h1, h2, h3, h4, h5, h6,
+  .smart-widget__title,
+  .widget-title,
+  .card-title,
+  .section-title,
+  strong,
+  p,
+  span,
+  small,
+  em,
+  label,
+  button,
+  a
+) {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  line-height: 1.4;
+}
+
+body.app-routed :where(.smart-widget, .travel-widget, [data-widget]) :where(
+  h1, h2, h3, h4, h5, h6,
+  .smart-widget__title,
+  .widget-title,
+  .card-title,
+  .section-title
+) {
+  display: block;
+  width: 100%;
+  margin-block: 0;
+  line-height: 1.25;
+}
+
+body.app-routed :where(.smart-widget, .travel-widget, [data-widget]) :where(
+  .widget-toolbar,
+  .widget-meta,
+  .button-row,
+  .hero-actions,
+  .status-row,
+  .card-meta
+) {
+  min-width: 0;
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+body.app-routed :where(.smart-widget, .travel-widget, [data-widget]) :where(
+  button,
+  .primary-button,
+  .ghost-button
+) {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  .smart-dashboard-grid > * {
+    grid-column: span 6 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body.app-routed main {
+    padding: 16px !important;
+  }
+
+  .smart-dashboard-grid > * {
+    grid-column: 1 / -1 !important;
+  }
+}

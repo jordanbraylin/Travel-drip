@@ -55,6 +55,25 @@ const dashboardOnlyIds = unique(matchAll(html, /<[^>]*\bid=["']([^"']+)["'][^>]*
 const dashboardOnlyRequiredIds = ["dashboardHome", "dashboardWidgets"];
 const todayHeadingCount = countMatches(html, /Today in TravelDrip/g);
 const travelDocumentCardCount = countMatches(html, /class=["'][^"']*\btravel-document-card\b[^"']*["']/g);
+const fullWidthWidgetCss = navigationCss.split("/* Full-width Smart Dashboard pass")[1] || "";
+const fullWidthWidgetIssues = [];
+if (!fullWidthWidgetCss.includes("body.app-routed main,")
+  || !fullWidthWidgetCss.includes("body.signed-in-shell main")
+  || !fullWidthWidgetCss.includes("width: 100% !important;")
+  || !fullWidthWidgetCss.includes("max-width: none !important;")) {
+  fullWidthWidgetIssues.push("Authenticated main content is not explicitly full width");
+}
+if (!fullWidthWidgetCss.includes(".smart-dashboard-grid > *,\n.widget-grid > *")) {
+  fullWidthWidgetIssues.push("Widget cards are not explicitly sized to fill their grid tracks");
+}
+if (!fullWidthWidgetCss.includes("writing-mode: horizontal-tb !important")
+  || !fullWidthWidgetCss.includes("word-break: normal !important")) {
+  fullWidthWidgetIssues.push("Widget title text does not have an explicit horizontal wrapping rule");
+}
+if (!fullWidthWidgetCss.includes("grid-column: span 6 !important")
+  || !fullWidthWidgetCss.includes("grid-column: 1 / -1 !important")) {
+  fullWidthWidgetIssues.push("Smart Dashboard tablet/mobile column rules are incomplete");
+}
 const travelDocumentRequiredClasses = [
   "travel-documents-section",
   "travel-documents-grid",
@@ -250,6 +269,10 @@ const results = {
     issues: toolbarNavigationIssues,
     status: toolbarNavigationIssues.length ? "FAIL" : "PASS"
   },
+  fullWidthWidgetVerification: {
+    issues: fullWidthWidgetIssues,
+    status: fullWidthWidgetIssues.length ? "FAIL" : "PASS"
+  },
   travelDocumentsVerification: {
     cardCount: travelDocumentCardCount,
     requiredClasses: travelDocumentRequiredClasses,
@@ -287,6 +310,7 @@ const criticalIssues = [
   ...routeIsolationIssues,
   ...dashboardOnlyIssues,
   ...toolbarNavigationIssues,
+  ...fullWidthWidgetIssues,
   ...travelDocumentIssues,
   ...outerWrapperIssues,
   ...ariaIssues,
@@ -369,6 +393,14 @@ ${dashboardOnlyIssues.length ? `### Dashboard-Only Issues\n${dashboardOnlyIssues
 ${Object.entries(requiredToolbarRoutes).map(([id, path]) => `| ${id} | ${path} | ${mainNavigationBlock.includes(`id: "${id}"`) && mainNavigationBlock.includes(`path: "${path}"`) ? "yes" : "no"} | ${sidebarMainNavigationIds.includes(id) ? "yes" : "no"} | ${toolbarNavigationIssues.some((issue) => issue.includes(id)) ? "review" : "pass"} |`).join("\n")}
 
 ${toolbarNavigationIssues.length ? `### Toolbar Navigation Issues\n${toolbarNavigationIssues.map((issue) => `- ${issue}`).join("\n")}` : "All ten main sidebar routes use the shared navigation configuration; Cruise remains nested under Travel."}
+
+## Full-Width Widget Verification
+
+- Full-width authenticated content: ${ok(fullWidthWidgetIssues.length === 0)}
+- Horizontal title wrapping: ${ok(fullWidthWidgetIssues.length === 0)}
+- Responsive Smart Dashboard rules: ${ok(fullWidthWidgetIssues.length === 0)}
+
+${fullWidthWidgetIssues.length ? `### Full-Width Widget Issues\n${fullWidthWidgetIssues.map((issue) => `- ${issue}`).join("\n")}` : "Authenticated tabs use the full content width, widget cards fill their grid tracks, and widget titles are explicitly kept horizontal."}
 
 ## Required Travel Documents Verification
 
