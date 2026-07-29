@@ -1674,3 +1674,465 @@ body.app-routed [data-route-component]:not([hidden]) .memory-media-card > div:no
   gap: 4px;
   padding-inline: 0;
 }
+
+/* Chat redesign: conversation list, message thread, and details stay distinct. */
+#socialHub .messages-hub {
+  display: grid !important;
+  gap: 14px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#socialHub .message-search-row {
+  display: flex !important;
+  align-items: end;
+  gap: 10px !important;
+  padding: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+}
+
+#socialHub .message-search-row label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+#socialHub .message-search-row input {
+  width: 100%;
+  min-height: 42px;
+  padding-inline: 13px;
+  border-radius: 11px;
+}
+
+#socialHub .message-search-row #messageAiButton {
+  flex: 0 0 auto;
+  min-height: 42px;
+  padding: 7px 12px;
+  font-size: 0.76rem;
+}
+
+#socialHub .message-tabs {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px !important;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px;
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  border-radius: 12px;
+  background: #f1f8f7;
+}
+
+#socialHub .message-tabs button {
+  min-height: 34px;
+  padding: 6px 11px;
+  border-radius: 9px;
+  font-size: 0.74rem;
+  line-height: 1.15;
+}
+
+#socialHub .messages-layout {
+  display: grid !important;
+  grid-template-columns: minmax(220px, 0.78fr) minmax(0, 1.7fr) minmax(220px, 0.8fr) !important;
+  gap: 14px !important;
+  align-items: start !important;
+  width: 100%;
+  min-width: 0;
+}
+
+#socialHub .conversation-list,
+#socialHub .chat-workspace,
+#socialHub .conversation-details-panel {
+  min-width: 0 !important;
+  height: auto !important;
+  border: 1px solid rgba(15, 23, 42, 0.09) !important;
+  border-radius: 16px !important;
+  background: #ffffff !important;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06) !important;
+}
+
+#socialHub .conversation-list {
+  display: grid !important;
+  gap: 0 !important;
+  align-content: start;
+  max-height: 620px;
+  overflow: auto;
+  padding: 5px !important;
+}
+
+#socialHub .conversation-card {
+  display: grid !important;
+  grid-template-columns: 44px minmax(0, 1fr) auto !important;
+  gap: 9px !important;
+  min-width: 0 !important;
+  min-height: 68px !important;
+  padding: 9px !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.07) !important;
+  border-radius: 11px !important;
+  background: transparent !important;
+}
+
+#socialHub .conversation-card:last-child {
+  border-bottom: 0 !important;
+}
+
+#socialHub .conversation-card:hover,
+#socialHub .conversation-card:focus-visible,
+#socialHub .conversation-card.active {
+  border-color: rgba(8, 127, 140, 0.18) !important;
+  background: #effaf7 !important;
+  outline: none;
+}
+
+#socialHub .conversation-card img,
+#socialHub .conversation-card .message-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+}
+
+#socialHub .conversation-card > span:not(.message-avatar) {
+  display: grid;
+  align-content: center;
+  gap: 3px;
+  min-width: 0;
+}
+
+#socialHub .conversation-card strong,
+#socialHub .conversation-card small,
+#socialHub .conversation-card em {
+  width: 100% !important;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  line-height: 1.3;
+}
+
+#socialHub .conversation-card strong {
+  font-size: 0.78rem;
+}
+
+#socialHub .conversation-card small,
+#socialHub .conversation-card em {
+  font-size: 0.67rem;
+}
+
+#socialHub .conversation-card em {
+  grid-column: auto;
+  justify-self: end;
+  width: auto !important;
+  max-width: 72px;
+  text-align: right;
+}
+
+#socialHub .chat-workspace {
+  display: grid !important;
+  grid-template-rows: auto auto minmax(320px, auto) auto auto auto !important;
+  gap: 11px !important;
+  min-height: 620px !important;
+  padding: 14px !important;
+}
+
+#socialHub .chat-header {
+  display: flex !important;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+#socialHub .chat-header > div:first-child {
+  min-width: 0;
+}
+
+#socialHub .chat-header h3,
+#socialHub .chat-header span {
+  width: 100%;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+#socialHub .chat-header h3 {
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+#socialHub .chat-header span {
+  font-size: 0.7rem;
+  line-height: 1.35;
+}
+
+#socialHub .chat-header .mini-action-row {
+  flex: 0 1 auto;
+  width: auto !important;
+}
+
+#socialHub .chat-header .mini-action-row button,
+#socialHub .chat-tool-row button {
+  min-height: 31px;
+  padding: 6px 9px;
+  border-radius: 9px;
+  font-size: 0.68rem;
+}
+
+#socialHub .pinned-message {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  gap: 8px !important;
+  min-width: 0;
+  padding: 9px 10px;
+  border-radius: 11px;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+#socialHub .pinned-message > * {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+#socialHub .modern-messages {
+  display: grid !important;
+  align-content: start !important;
+  gap: 9px !important;
+  min-height: 320px !important;
+  max-height: 420px;
+  overflow: auto;
+  padding: 12px !important;
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f8fdff, #fffaf5);
+}
+
+#socialHub .modern-messages .msg {
+  width: fit-content;
+  max-width: min(88%, 560px);
+  padding: 9px 11px;
+  border-radius: 14px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+#socialHub .chat-tool-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  width: 100%;
+  overflow: visible;
+}
+
+#socialHub .chat-form {
+  display: flex !important;
+  align-items: center;
+  gap: 8px !important;
+  min-width: 0;
+}
+
+#socialHub .chat-form input {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0 !important;
+  min-height: 42px;
+  border-radius: 11px;
+}
+
+#socialHub .chat-form button {
+  flex: 0 0 auto;
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 11px;
+  font-size: 0.76rem;
+}
+
+#socialHub .typing-indicator {
+  padding-left: 2px;
+  font-size: 0.68rem;
+}
+
+#socialHub .conversation-details-panel {
+  display: grid !important;
+  gap: 12px !important;
+  align-content: start;
+  padding: 14px !important;
+}
+
+#socialHub .chat-detail-card {
+  display: grid !important;
+  grid-template-columns: 42px minmax(0, 1fr) !important;
+  gap: 9px !important;
+  align-items: center;
+  min-width: 0;
+}
+
+#socialHub .chat-detail-card .message-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+}
+
+#socialHub .chat-detail-card > div,
+#socialHub .conversation-details-panel section,
+#socialHub .conversation-details-panel p,
+#socialHub .conversation-details-panel h3,
+#socialHub .conversation-details-panel h4,
+#socialHub .conversation-details-panel small {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+#socialHub .chat-detail-card h3 {
+  font-size: 0.98rem;
+  line-height: 1.2;
+}
+
+#socialHub .chat-detail-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px !important;
+}
+
+#socialHub .chat-detail-actions button,
+#socialHub .chat-danger-actions button {
+  min-width: 0;
+  min-height: 34px;
+  padding: 6px 8px;
+  border-radius: 9px;
+  font-size: 0.68rem;
+  line-height: 1.2;
+}
+
+#socialHub .chat-member-list {
+  gap: 6px;
+}
+
+#socialHub .chat-member-list span {
+  width: 100%;
+  min-width: 0;
+  font-size: 0.72rem;
+  line-height: 1.3;
+}
+
+#socialHub .chat-danger-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px !important;
+}
+
+#socialHub .message-support-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px !important;
+  width: 100%;
+}
+
+#socialHub .message-support-grid article {
+  display: flex !important;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px !important;
+  min-width: 0;
+  min-height: 0;
+  padding: 13px !important;
+  border-radius: 14px;
+}
+
+#socialHub .message-support-grid article strong {
+  width: 100%;
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+#socialHub .message-support-grid article .mini-action-row {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 100%;
+  margin-top: auto;
+}
+
+#socialHub .message-support-grid article .mini-action-row button {
+  min-height: 30px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  font-size: 0.66rem;
+}
+
+#socialHub #messageStatus {
+  margin: 0;
+  padding: 0 2px;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 1180px) {
+  #socialHub .messages-layout {
+    grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.5fr) !important;
+  }
+
+  #socialHub .conversation-details-panel {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+
+  #socialHub .conversation-details-panel > section,
+  #socialHub .conversation-details-panel > .chat-danger-actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  #socialHub .message-search-row,
+  #socialHub .chat-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  #socialHub .message-search-row #messageAiButton,
+  #socialHub .chat-header .mini-action-row {
+    width: 100% !important;
+  }
+
+  #socialHub .message-search-row #messageAiButton {
+    flex-basis: auto;
+  }
+
+  #socialHub .messages-layout,
+  #socialHub .message-support-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  #socialHub .conversation-list,
+  #socialHub .chat-workspace {
+    max-height: none;
+  }
+
+  #socialHub .chat-workspace {
+    min-height: 0 !important;
+  }
+
+  #socialHub .modern-messages {
+    min-height: 240px !important;
+    max-height: 360px;
+  }
+
+  #socialHub .conversation-details-panel {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  #socialHub .pinned-message {
+    grid-template-columns: 1fr !important;
+  }
+}

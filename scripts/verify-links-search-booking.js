@@ -172,7 +172,8 @@ const focusedLayoutChecks = [
   ["Memories layout", html.includes('id="memoriesPanel"') && navigationCss.includes("#memoriesPanel .memory-gallery-grid") && navigationCss.includes("#memoriesPanel .memory-media-card")],
   ["Event controls and cards", html.includes('id="eventsPanel"') && navigationCss.includes("#eventsPanel .event-dashboard-tabs") && navigationCss.includes("#eventsPanel .event-experience-card")],
   ["Wallet formatting", html.includes('id="walletPanel"') && navigationCss.includes("#walletPanel .wallet-dashboard-header") && navigationCss.includes("#walletPanel .wallet-smart-actions")],
-  ["Smart Travel Search icon", html.includes('<span class="travel-search-icon" aria-hidden="true"></span>') && navigationCss.includes("#rideShareHub .travel-search-icon::after") && navigationCss.includes("#rideShareHub .travel-smart-search-row")]
+  ["Smart Travel Search icon", html.includes('<span class="travel-search-icon" aria-hidden="true"></span>') && navigationCss.includes("#rideShareHub .travel-search-icon::after") && navigationCss.includes("#rideShareHub .travel-smart-search-row")],
+  ["Chat layout", html.includes('id="socialHub"') && navigationCss.includes("#socialHub .messages-layout") && navigationCss.includes("#socialHub .chat-workspace") && navigationCss.includes("#socialHub .conversation-details-panel")]
 ];
 const focusedLayoutIssues = focusedLayoutChecks
   .filter(([, passed]) => !passed)
@@ -476,7 +477,7 @@ ${outerWrapperIssues.length ? `### Outer Wrapper Issues\n${outerWrapperIssues.ma
 
 ## Focused Route Layout Verification
 
-- Itinerary, Events, Memories, Wallet, and Smart Travel Search: ${ok(focusedLayoutIssues.length === 0)}
+- Itinerary, Events, Memories, Wallet, Smart Travel Search, and Chat: ${ok(focusedLayoutIssues.length === 0)}
 
 ${focusedLayoutChecks.map(([label, passed]) => `- ${label}: ${ok(passed)}`).join("\n")}
 
