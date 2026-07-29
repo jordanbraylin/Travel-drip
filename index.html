@@ -14,6 +14,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
     <link rel="stylesheet" href="styles.css?v=115">
+    <link rel="stylesheet" href="navigation.css?v=1">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -38,14 +39,15 @@
       <nav class="nav grouped-nav" aria-label="TravelDrip navigation">
         <details class="nav-group" data-consumer-nav open>
           <summary>Dashboard</summary>
-          <button class="active" type="button" data-target="dashboardHome">Overview</button>
+          <button class="active" type="button" data-main-nav-id="dashboard">Overview</button>
           <button type="button" data-target="exploreDrops">Explore</button>
-          <button type="button" data-target="itineraryAlerts">Notifications</button>
+          <button type="button" data-main-nav-id="itinerary">Itinerary</button>
+          <button type="button" data-main-nav-id="important-info">Important Info</button>
           <button type="button" data-target="tripsPanel">My Trips</button>
         </details>
         <details class="nav-group" data-consumer-nav open>
           <summary>Travel</summary>
-          <button type="button" data-target="rideShareHub" data-travel-section="overview">Travel Home</button>
+          <button type="button" data-main-nav-id="travel" data-travel-section="overview">Travel Home</button>
           <button type="button" data-target="rideShareHub" data-travel-section="flights">Flights</button>
           <button type="button" data-target="rideShareHub" data-travel-section="hotels">Hotels</button>
           <button type="button" data-target="rideShareHub" data-travel-section="transportation">Transportation</button>
@@ -60,8 +62,8 @@
         </details>
         <details class="nav-group" data-consumer-nav open>
           <summary>Planning</summary>
-          <button type="button" data-target="letsPlan">Let's Plan</button>
-          <button type="button" data-target="itineraryAlerts">Itinerary</button>
+          <button type="button" data-main-nav-id="planning">Let's Plan</button>
+          <button type="button" data-main-nav-id="itinerary">Itinerary</button>
           <button type="button" data-target="tripsPanel">Smart Route</button>
           <button type="button" data-target="tripsPanel">Tasks</button>
           <button type="button" data-target="socialHub">Polls</button>
@@ -69,7 +71,7 @@
         </details>
         <details class="nav-group" data-consumer-nav open>
           <summary>Wallet</summary>
-          <button type="button" data-target="walletPanel">Trip Virtual Wallet</button>
+          <button type="button" data-main-nav-id="wallet">Trip Virtual Wallet</button>
           <button type="button" data-target="walletPanel">Virtual Card</button>
           <button type="button" data-target="walletPanel">Transactions</button>
           <button type="button" data-target="groupBank">Contributions</button>
@@ -79,7 +81,7 @@
         </details>
         <details class="nav-group" data-corporate-nav open>
           <summary>Events</summary>
-          <button type="button" data-target="eventsPanel">Create Event</button>
+          <button type="button" data-main-nav-id="events">Create Event</button>
           <button type="button" data-target="eventsPanel">Upcoming Events</button>
           <button type="button" data-target="eventsPanel">Invitations</button>
           <button type="button" data-target="eventsPanel">RSVPs</button>
@@ -89,14 +91,14 @@
         </details>
         <details class="nav-group">
           <summary>Messages</summary>
-          <button type="button" data-target="socialHub">Group Chats</button>
+          <button type="button" data-main-nav-id="chat">Group Chats</button>
           <button type="button" data-target="socialHub">Private Messages</button>
           <button type="button" data-target="socialHub">Message Requests</button>
           <button type="button" data-target="socialHub">Archived</button>
         </details>
         <details class="nav-group">
           <summary>Memories</summary>
-          <button type="button" data-target="memoriesPanel">Favorites</button>
+          <button type="button" data-main-nav-id="memories">Favorites</button>
           <button type="button" data-target="memoriesPanel">Photos</button>
           <button type="button" data-target="memoriesPanel">Memories</button>
           <button type="button" data-target="memoriesPanel">Shared Albums</button>
@@ -104,7 +106,7 @@
         <details class="nav-group">
           <summary>Account</summary>
           <button type="button" data-target="myProfile">My Profile</button>
-          <button type="button" data-target="adminPanel">Admin</button>
+          <button type="button" data-main-nav-id="settings">Settings</button>
           <button type="button" data-target="adminPanel" data-settings-section="security">Security</button>
           <button type="button" data-target="copyrightPolicy">Help & Support</button>
           <a href="admin.html">Admin</a>
@@ -128,7 +130,7 @@
           <span aria-hidden="true">Search</span>
           <input id="globalSearchInput" type="search" placeholder="Destinations, trips, flights, hotels, messages">
         </label>
-        <button class="lets-plan-button" type="button" id="letsPlanButton" data-target="letsPlan" aria-label="Open Let's Plan"><span aria-hidden="true">✨</span><strong>Let's Plan</strong></button>
+        <button class="lets-plan-button" type="button" id="letsPlanButton" data-main-nav-id="planning" aria-label="Open Planning"><span aria-hidden="true">✨</span><strong>Let's Plan</strong></button>
         <div class="top-actions">
           <button class="profile-avatar-button" type="button" data-target="myProfile" aria-label="Open My Profile"><span class="profile-photo-avatar" data-profile-initials>JS</span></button>
           <button class="icon-button" type="button" id="notifyButton" aria-label="Enable notifications">Notify</button>
@@ -323,16 +325,16 @@
       </section>
 
       <nav class="trip-tab-bar" aria-label="Selected trip sections">
-        <button class="active" type="button" data-target="dashboardHome" data-tab-key="overview">Overview</button>
-        <button type="button" data-target="rideShareHub" data-tab-key="travel">Travel</button>
-        <button type="button" data-target="aiTravelPlanner" data-tab-key="planning">Planning</button>
-        <button type="button" data-target="rideShareHub" data-tab-key="itinerary" data-travel-section="itinerary">Itinerary</button>
-        <button type="button" data-target="eventsPanel" data-tab-key="events">Events</button>
-        <button type="button" data-target="walletPanel" data-tab-key="wallet">Wallet</button>
-        <button type="button" data-target="memoriesPanel" data-tab-key="memories">Memories</button>
-        <button type="button" data-target="socialHub" data-tab-key="chat">Chat</button>
-        <button type="button" data-target="importantInfo" data-tab-key="important-info">Important Info</button>
-        <button type="button" data-target="adminPanel" data-tab-key="settings">Settings</button>
+        <button class="active" type="button" data-main-nav-id="dashboard">Overview</button>
+        <button type="button" data-main-nav-id="travel">Travel</button>
+        <button type="button" data-main-nav-id="planning">Planning</button>
+        <button type="button" data-main-nav-id="itinerary" data-travel-section="itinerary">Itinerary</button>
+        <button type="button" data-main-nav-id="events">Events</button>
+        <button type="button" data-main-nav-id="wallet">Wallet</button>
+        <button type="button" data-main-nav-id="memories">Memories</button>
+        <button type="button" data-main-nav-id="chat">Chat</button>
+        <button type="button" data-main-nav-id="important-info">Important Info</button>
+        <button type="button" data-main-nav-id="settings">Settings</button>
       </nav>
 
       <section class="panel corporate-mode-home" id="corporateHome" hidden aria-label="Corporate travel home">
@@ -444,7 +446,7 @@
               <div><strong>Weather</strong><span>Heat advisory: move outdoor walk earlier.</span></div>
               <div><strong>Budget</strong><span>Shared wallet has $740 available after holds.</span></div>
             </div>
-            <button class="primary-button" type="button" id="askAiWidgetButton">Ask AI</button>
+            <button class="primary-button" type="button" id="askAiWidgetButton" data-target="aiTravelPlanner">Ask AI</button>
           </article>
           <article class="travel-widget budget-widget" data-widget="budget" data-widget-scope="solo group cruise corporate" data-finance-widget>
             <div class="widget-toolbar"><span>Budget Snapshot</span><button type="button" data-widget-pin="budget">Pin</button><button type="button" data-widget-hide="budget">Hide</button></div>
@@ -457,12 +459,13 @@
             <h3>Delta DL 241</h3>
             <p>Depart 8:45 AM • Gate B18</p>
             <span class="status-pill">On time</span>
-            <button class="ghost-button" type="button" data-target="itineraryAlerts">View Details</button>
+            <button class="ghost-button" type="button" data-target="rideShareHub" data-travel-section="flights">View Details</button>
           </article>
           <article class="travel-widget weather-widget" data-widget="weather" data-widget-scope="solo group cruise corporate">
             <div class="widget-toolbar"><span>Weather</span><button type="button" data-widget-pin="weather">Pin</button><button type="button" data-widget-hide="weather">Hide</button></div>
             <h3>92°F sunny</h3>
             <p>Pack sunglasses, light layers indoors, and hydrate before afternoon activities.</p>
+            <button class="ghost-button" type="button" data-target="rideShareHub" data-travel-section="weather">View Weather</button>
           </article>
           <article class="travel-widget memories-widget" data-widget="memories" data-widget-scope="solo group cruise corporate">
             <div class="widget-toolbar"><span>Memories</span><button type="button" data-widget-pin="memories">Pin</button><button type="button" data-widget-hide="memories">Hide</button></div>
@@ -4320,14 +4323,16 @@
   </div>
 
   <nav class="mobile-nav" aria-label="Mobile navigation">
-    <button class="active" type="button" data-target="dashboardHome">Home</button>
-    <button type="button" data-target="letsPlan">Let's Plan</button>
-    <button type="button" data-target="exploreDrops">Explore</button>
-    <button type="button" data-target="rideShareHub" data-travel-section="overview">Travel</button>
-    <button type="button" data-target="tripsPanel">Trips</button>
-    <button type="button" data-target="socialHub">Chat</button>
-    <button type="button" data-target="myProfile">Profile</button>
-    <button type="button" data-target="adminPanel">Admin</button>
+    <button class="active" type="button" data-main-nav-id="dashboard">Dashboard</button>
+    <button type="button" data-main-nav-id="planning">Planning</button>
+    <button type="button" data-main-nav-id="itinerary">Itinerary</button>
+    <button type="button" data-main-nav-id="events">Events</button>
+    <button type="button" data-main-nav-id="travel">Travel</button>
+    <button type="button" data-main-nav-id="wallet">Wallet</button>
+    <button type="button" data-main-nav-id="chat">Chat</button>
+    <button type="button" data-main-nav-id="important-info">Important Info</button>
+    <button type="button" data-main-nav-id="memories">Memories</button>
+    <button type="button" data-main-nav-id="settings">Settings</button>
   </nav>
 
   <section class="update-available-banner" id="updateAvailableBanner" role="status" aria-live="polite" hidden>
@@ -4405,6 +4410,6 @@
 
   <script src="https://link.msgsndr.com/js/external-tracking.js" data-tracking-id="tk_684cd074f7154fbebd60d6f62b2d331b"></script>
   <script src="public-config.js?v=2"></script>
-  <script defer src="app.js?v=58"></script>
+  <script defer src="app.js?v=59"></script>
 </body>
 </html>

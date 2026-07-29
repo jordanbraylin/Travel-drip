@@ -1,0 +1,46 @@
+/* TravelDrip navigation layers: keep controls above content and decorative surfaces click-safe. */
+:root {
+  --z-content: 1;
+  --z-banner: 10;
+  --z-sticky-nav: 30;
+  --z-toolbar: 40;
+  --z-dropdown: 60;
+  --z-modal: 100;
+  --z-toast: 120;
+}
+
+.hero::before,
+.hero::after,
+.destination-banner::before,
+.destination-banner::after,
+.global-destination-header::before,
+.global-destination-header::after {
+  pointer-events: none;
+}
+
+body.signed-in-shell .sidebar {
+  position: sticky;
+  z-index: var(--z-toolbar);
+}
+
+body.signed-in-shell .topbar {
+  z-index: var(--z-toolbar);
+}
+
+body.signed-in-shell .global-destination-header:not([hidden]) {
+  z-index: var(--z-banner);
+}
+
+body.signed-in-shell main > .trip-tab-bar {
+  z-index: var(--z-sticky-nav);
+}
+
+body.signed-in-shell .mobile-nav,
+body.signed-in-shell .mobile-nav button {
+  z-index: var(--z-toolbar);
+}
+
+body.signed-in-shell main > :not(.topbar):not(.global-destination-header):not(.trip-tab-bar) {
+  position: relative;
+  z-index: var(--z-content);
+}

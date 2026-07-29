@@ -27,6 +27,11 @@ function sectionExists(id) {
 
 const ids = unique(matchAll(html, /\bid=["']([^"']+)["']/g));
 const targetButtons = matchAll(html, /\bdata-target=["']([^"']+)["']/g);
+const mainNavigationBlock = app.match(/const mainNavigation = Object\.freeze\(\[([\s\S]*?)\n\]\);/)?.[1] || "";
+const mainNavigationIds = unique(matchAll(mainNavigationBlock, /id:\s*["']([^"']+)["']/g));
+const mainNavigationPaths = unique(matchAll(mainNavigationBlock, /path:\s*["']([^"']+)["']/g));
+const mainNavigationControls = matchAll(html, /\bdata-main-nav-id=["']([^"']+)["']/g);
+const requiredMainNavigationIds = ["dashboard", "planning", "itinerary", "events", "travel", "wallet", "chat", "important-info", "memories", "settings"];
 const routeBlock = app.match(/const routeDefinitions = \{([\s\S]*?)\n\};/)?.[1] || "";
 const routeTargets = unique(matchAll(routeBlock, /^\s{2}([A-Za-z0-9_]+):\s*\{\s*path:/gm));
 const hrefs = matchAll(html, /\bhref=["']([^"']*)["']/g);
@@ -40,6 +45,13 @@ const externalHrefs = hrefs.filter((href) => /^https?:\/\//i.test(href));
 const placeholderHrefs = hrefs.filter((href) => !href || href === "#");
 
 const targetIssues = [];
+requiredMainNavigationIds.forEach((id) => {
+  if (!mainNavigationIds.includes(id)) targetIssues.push(`Missing shared main navigation item: ${id}`);
+  if (!mainNavigationControls.includes(id)) targetIssues.push(`No rendered control uses shared main navigation item: ${id}`);
+});
+mainNavigationPaths.forEach((path) => {
+  if (!app.includes(`"${path}"`)) targetIssues.push(`Shared main navigation path is not registered: ${path}`);
+});
 unique(targetButtons).forEach((target) => {
   if (!sectionExists(target)) targetIssues.push(`Missing screen section for data-target="${target}"`);
   if (!routeTargets.includes(target)) targetIssues.push(`Missing routeDefinition for data-target="${target}"`);
@@ -110,6 +122,8 @@ const results = {
     hrefLinks: linkCount,
     dataTargets: targetButtons.length,
     uniqueDataTargets: unique(targetButtons).length,
+    mainNavigationControls: mainNavigationControls.length,
+    mainNavigationItems: mainNavigationIds.length,
     routeDefinitions: routeTargets.length,
     dateInputs: dateInputs.length,
     searchInputs: searchInputs.length,
@@ -123,6 +137,13 @@ const results = {
     linkIssues,
     externalHrefs,
     placeholderHrefs
+  },
+  mainNavigationVerification: {
+    requiredItems: requiredMainNavigationIds,
+    configuredItems: mainNavigationIds,
+    configuredPaths: mainNavigationPaths,
+    renderedControlCount: mainNavigationControls.length,
+    issues: targetIssues.filter((issue) => issue.includes("main navigation") || issue.includes("Shared main navigation"))
   },
   datePickerVerification: {
     status: "Native browser date/datetime-local controls present locally; full custom popover/mobile calendar QA requires browser/device testing.",
@@ -180,6 +201,8 @@ This local verification checks static routes, link targets, search/date field wi
 - Total links inspected: ${linkCount}
 - Data-target controls inspected: ${targetButtons.length}
 - Working local data-target routes: ${results.linkAndRouteVerification.workingLocalTargets}/${unique(targetButtons).length}
+- Shared main-navigation controls inspected: ${mainNavigationControls.length}
+- Shared main-navigation items configured: ${mainNavigationIds.length}/${requiredMainNavigationIds.length}
 - Route definitions found: ${routeTargets.length}
 - Date fields found: ${dateInputs.length}
 - Search fields found: ${searchInputs.length}
@@ -192,12 +215,15 @@ This local verification checks static routes, link targets, search/date field wi
 - ARIA control validation: ${ok(ariaIssues.length === 0)}
 - HREF validation: ${ok(linkIssues.length === 0)}
 - External HTTPS links: ${externalHrefs.length}
+- Shared main navigation: ${ok(results.mainNavigationVerification.issues.length === 0)}
 
 ${targetIssues.length ? `### Target Issues\n${targetIssues.map((issue) => `- ${issue}`).join("\n")}` : "No missing local data-target sections or route definitions were detected."}
 
 ${ariaIssues.length ? `### ARIA Issues\n${ariaIssues.map((issue) => `- ${issue}`).join("\n")}` : "No missing aria-controls targets were detected."}
 
 ${linkIssues.length ? `### Link Issues\n${linkIssues.map((issue) => `- ${issue}`).join("\n")}` : "No placeholder or insecure href values were detected."}
+
+${results.mainNavigationVerification.issues.length ? `### Main Navigation Issues\n${results.mainNavigationVerification.issues.map((issue) => `- ${issue}`).join("\n")}` : `Shared navigation config covers ${requiredMainNavigationIds.join(", ")} and is stamped onto ${mainNavigationControls.length} header, sidebar, dashboard, and mobile controls.`}
 
 ## Date Picker Verification
 

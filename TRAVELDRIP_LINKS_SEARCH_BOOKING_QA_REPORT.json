@@ -1,15 +1,17 @@
 {
-  "generatedAt": "2026-07-29T13:19:41.213Z",
+  "generatedAt": "2026-07-29T13:57:54.897Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
   },
   "totals": {
-    "screenIds": 554,
-    "buttons": 767,
-    "hrefLinks": 14,
-    "dataTargets": 120,
-    "uniqueDataTargets": 19,
+    "screenIds": 563,
+    "buttons": 771,
+    "hrefLinks": 15,
+    "dataTargets": 93,
+    "uniqueDataTargets": 17,
+    "mainNavigationControls": 32,
+    "mainNavigationItems": 10,
     "routeDefinitions": 19,
     "dateInputs": 7,
     "searchInputs": 10,
@@ -17,7 +19,7 @@
     "apiRoutes": 15
   },
   "linkAndRouteVerification": {
-    "workingLocalTargets": 19,
+    "workingLocalTargets": 17,
     "targetIssues": [],
     "ariaIssues": [],
     "linkIssues": [],
@@ -27,6 +29,46 @@
       "https://maps.google.com"
     ],
     "placeholderHrefs": []
+  },
+  "mainNavigationVerification": {
+    "requiredItems": [
+      "dashboard",
+      "planning",
+      "itinerary",
+      "events",
+      "travel",
+      "wallet",
+      "chat",
+      "important-info",
+      "memories",
+      "settings"
+    ],
+    "configuredItems": [
+      "chat",
+      "dashboard",
+      "events",
+      "important-info",
+      "itinerary",
+      "memories",
+      "planning",
+      "settings",
+      "travel",
+      "wallet"
+    ],
+    "configuredPaths": [
+      "/chat",
+      "/dashboard",
+      "/events",
+      "/important-info",
+      "/itinerary",
+      "/memories",
+      "/planning",
+      "/settings",
+      "/travel",
+      "/wallet"
+    ],
+    "renderedControlCount": 32,
+    "issues": []
   },
   "datePickerVerification": {
     "status": "Native browser date/datetime-local controls present locally; full custom popover/mobile calendar QA requires browser/device testing.",

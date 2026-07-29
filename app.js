@@ -1607,7 +1607,7 @@ function getEventSpecificDetails() {
 const travelTileDestinations = {
   overview: {
     title: "Travel Home",
-    route: "/trips/dubai-weekend/transportation",
+    route: "/travel",
     summary: "Travel Home keeps the current trip, next booking, weather preview, alerts, missing items, progress, and quick actions easy to scan."
   },
   alerts: {
@@ -3461,25 +3461,41 @@ async function signOut() {
   updateAuthUi();
 }
 
+const mainNavigation = Object.freeze([
+  { id: "dashboard", label: "Dashboard", target: "dashboardHome", path: "/dashboard" },
+  { id: "planning", label: "Planning", target: "aiTravelPlanner", path: "/planning" },
+  { id: "itinerary", label: "Itinerary", target: "itineraryAlerts", path: "/itinerary" },
+  { id: "events", label: "Events", target: "eventsPanel", path: "/events" },
+  { id: "travel", label: "Travel", target: "rideShareHub", path: "/travel", travelSection: "overview" },
+  { id: "wallet", label: "Wallet", target: "walletPanel", path: "/wallet" },
+  { id: "chat", label: "Chat", target: "socialHub", path: "/chat" },
+  { id: "important-info", label: "Important Info", target: "importantInfo", path: "/important-info" },
+  { id: "memories", label: "Memories", target: "memoriesPanel", path: "/memories" },
+  { id: "settings", label: "Settings", target: "adminPanel", path: "/settings" }
+]);
+
+const mainNavigationById = Object.fromEntries(mainNavigation.map((item) => [item.id, item]));
+const mainNavigationByTarget = Object.fromEntries(mainNavigation.map((item) => [item.target, item]));
+
 const routeDefinitions = {
-  dashboardHome: { path: "/home", label: "Home Dashboard" },
+  dashboardHome: { path: mainNavigationByTarget.dashboardHome.path, label: "Dashboard" },
   letsPlan: { path: "/lets-plan", label: "Let's Plan" },
   eventsPanel: { path: "/events", label: "Events" },
-  aiTravelPlanner: { path: "/ai-planner", label: "AI Travel Planner" },
+  aiTravelPlanner: { path: mainNavigationByTarget.aiTravelPlanner.path, label: "AI Travel Planner" },
   exploreDrops: { path: "/explore", label: "Explore" },
   tripsPanel: { path: "/trips", label: "My Trips" },
   groupBank: { path: "/trips/dubai-weekend/group-bank", label: "Group Bank" },
-  walletPanel: { path: "/trips/dubai-weekend/wallet", label: "Wallet" },
-  rideShareHub: { path: "/trips/dubai-weekend/transportation", label: "Transportation" },
+  walletPanel: { path: mainNavigationByTarget.walletPanel.path, label: "Wallet" },
+  rideShareHub: { path: mainNavigationByTarget.rideShareHub.path, label: "Travel" },
   splitBill: { path: "/trips/dubai-weekend/split-bill", label: "Restaurant Bill Split" },
-  itineraryAlerts: { path: "/trips/dubai-weekend/itinerary", label: "Itinerary & Alerts" },
-  importantInfo: { path: "/trips/dubai-weekend/important-information", label: "Important Information" },
+  itineraryAlerts: { path: mainNavigationByTarget.itineraryAlerts.path, label: "Itinerary & Alerts" },
+  importantInfo: { path: mainNavigationByTarget.importantInfo.path, label: "Important Information" },
   cruisePanel: { path: "/trips/dubai-weekend/cruise", label: "Cruise" },
-  socialHub: { path: "/messages", label: "Messages" },
+  socialHub: { path: mainNavigationByTarget.socialHub.path, label: "Messages" },
   memoriesPanel: { path: "/memories", label: "Memories" },
   enterpriseRbac: { path: "/corporate", label: "Corporate" },
   myProfile: { path: "/profile/my-profile", label: "My Profile" },
-  adminPanel: { path: "/admin", label: "Admin" },
+  adminPanel: { path: mainNavigationByTarget.adminPanel.path, label: "Settings" },
   copyrightPolicy: { path: "/settings/help", label: "Help & Copyright" }
 };
 
@@ -3487,7 +3503,10 @@ const routeAliases = {
   "/": "dashboardHome",
   "/index.html": "dashboardHome",
   "/home": "dashboardHome",
+  "/dashboard": "dashboardHome",
   "/lets-plan": "letsPlan",
+  "/planning": "aiTravelPlanner",
+  "/itinerary": "itineraryAlerts",
   "/events": "eventsPanel",
   "/events/upcoming": "eventsPanel",
   "/events/invitations": "eventsPanel",
@@ -3496,8 +3515,11 @@ const routeAliases = {
   "/plan": "letsPlan",
   "/ai-planner": "aiTravelPlanner",
   "/planner": "aiTravelPlanner",
-  "/dashboard": "dashboardHome",
   "/explore": "exploreDrops",
+  "/travel": "rideShareHub",
+  "/wallet": "walletPanel",
+  "/chat": "socialHub",
+  "/important-info": "importantInfo",
   "/trips": "tripsPanel",
   "/trips/dubai-weekend": "tripsPanel",
   "/trips/dubai-weekend/overview": "dashboardHome",
@@ -3662,20 +3684,47 @@ function mountRouteComponents(target) {
     });
 }
 
+function applyMainNavigationConfig() {
+  $$("[data-main-nav-id]").forEach((control) => {
+    const item = mainNavigationById[control.dataset.mainNavId];
+    if (!item) return;
+    control.dataset.target = item.target;
+    control.dataset.navPath = item.path;
+    control.dataset.tabKey = item.id;
+    if (!control.getAttribute("aria-label")) control.setAttribute("aria-label", item.label);
+  });
+}
+
+function getMainNavigationId(target, travelSection = "") {
+  if (target === "rideShareHub") {
+    return travelSection === "itinerary" ? "itinerary" : "travel";
+  }
+  return mainNavigationByTarget[target]?.id || "";
+}
+
+function navigateSafely(target, options = {}) {
+  if (!target || !routeDefinitions[target]) {
+    console.error("Navigation failed: missing destination", target || "(empty)");
+    return false;
+  }
+  renderRoute(target, options);
+  return true;
+}
+
 function syncNavigationState(resolvedTarget, travelSection = "") {
   const activeTravelSection = resolvedTarget === "rideShareHub"
     ? travelSection || "overview"
     : "";
-  const activeTabKey = resolvedTarget === "rideShareHub"
-    ? activeTravelSection === "itinerary" ? "itinerary" : "travel"
-    : resolvedTarget;
+  const activeNavigationId = getMainNavigationId(resolvedTarget, activeTravelSection);
   $$(".nav button, .nav a, .mobile-nav button, .trip-tab-bar button").forEach((navButton) => {
-    const navigationKey = navButton.dataset.tabKey || navButton.dataset.target;
+    const navigationKey = navButton.dataset.mainNavId || navButton.dataset.tabKey || navButton.dataset.target;
     const buttonTravelSection = navButton.dataset.travelSection || "";
     const isTravelSectionItem = navButton.dataset.target === "rideShareHub" && buttonTravelSection;
     const isActive = isTravelSectionItem
       ? resolvedTarget === "rideShareHub" && buttonTravelSection === activeTravelSection
-      : navigationKey === activeTabKey;
+      : navButton.dataset.mainNavId
+        ? navigationKey === activeNavigationId
+        : navigationKey === activeNavigationId || navigationKey === resolvedTarget;
     navButton.classList.toggle("active", isActive);
     if (navButton.dataset.target) navButton.setAttribute("aria-current", isActive ? "page" : "false");
   });
@@ -3964,6 +4013,7 @@ function openPlanningWorkflow(type = "group") {
 }
 
 function wireLocalInteractions() {
+  applyMainNavigationConfig();
   ["#eventDateInput", "#eventRsvpInput", "#flightDepartureDateInput"].forEach((selector) => {
     $(selector)?.addEventListener("input", validateStandaloneDateInputs);
     $(selector)?.addEventListener("change", validateStandaloneDateInputs);
@@ -5140,8 +5190,11 @@ function wireLocalInteractions() {
     button.addEventListener("click", () => {
       if (button.dataset.target === "rideShareHub" && button.dataset.travelSection) return;
       const target = button.dataset.target;
-      if (!target || !$(`#${target}`)) return;
-      renderRoute(target, {
+      if (!target || !routeDefinitions[target] || !getRouteComponentById(target)) {
+        console.error("Navigation failed: missing destination", target || "(empty)");
+        return;
+      }
+      navigateSafely(target, {
         updateHistory: true,
         travelSection: target === "rideShareHub" ? "overview" : ""
       });
@@ -5590,6 +5643,7 @@ function wireLocalInteractions() {
     $("#widgetStatusMessage").textContent = "Dashboard layout reset to the default widget set.";
   });
   $("#askAiWidgetButton")?.addEventListener("click", () => {
+    navigateSafely("aiTravelPlanner", { updateHistory: true });
     $("#widgetStatusMessage").textContent = "AI Trip Manager opened with reminders, weather, budget, flight, and activity context.";
     addAuditEntry("AI widget opened", "Dashboard Ask AI action opened travel assistant context.");
   });
