@@ -2136,3 +2136,91 @@ body.app-routed [data-route-component]:not([hidden]) .memory-media-card > div:no
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Keep widget headers in the top row instead of letting them become side columns. */
+body.app-routed :where(.smart-widget, .travel-widget, [data-widget]) {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+body.app-routed :where(.smart-widget, .travel-widget, [data-widget]) > .widget-toolbar {
+  display: flex !important;
+  flex: 0 0 auto !important;
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
+
+body.app-routed :where(.smart-widget, .travel-widget, [data-widget]) > .widget-toolbar > span:first-child {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  white-space: normal !important;
+}
+
+body.app-routed :where(
+  .smart-widget,
+  .travel-widget,
+  [data-widget],
+  .travel-dashboard-card,
+  .travel-support-card,
+  .travel-focus-panel,
+  .social-card,
+  .ride-clean-card,
+  .wallet-summary-card,
+  .settings-card,
+  .itinerary-card,
+  .memory-media-card
+) > :where(
+  .card-heading,
+  .widget-toolbar,
+  .social-card-header,
+  .ride-card-heading,
+  .travel-focus-header,
+  .section-heading,
+  .settings-row
+) {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  align-self: stretch !important;
+  box-sizing: border-box !important;
+}
+
+body.app-routed :where(.card-heading, .social-card-header, .ride-card-heading, .travel-focus-header) > :where(
+  h1, h2, h3, h4, h5, h6, p, strong, span, div
+) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  writing-mode: horizontal-tb !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+body.app-routed :where(.card-heading, .social-card-header, .ride-card-heading) {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 9px !important;
+}
+
+body.app-routed :where(.card-heading, .social-card-header, .ride-card-heading) > :first-child {
+  flex: 1 1 180px !important;
+}
+
+@media (max-width: 640px) {
+  body.app-routed :where(.card-heading, .social-card-header, .ride-card-heading) {
+    align-items: stretch !important;
+  }
+
+  body.app-routed :where(.card-heading, .social-card-header, .ride-card-heading) > :where(button, .button-row, .mini-action-row) {
+    width: 100% !important;
+  }
+}
