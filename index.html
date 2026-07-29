@@ -14,7 +14,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="TravelDrip">
     <link rel="stylesheet" href="styles.css?v=115">
-    <link rel="stylesheet" href="navigation.css?v=11">
+    <link rel="stylesheet" href="navigation.css?v=12">
   <title>TravelDrip</title>
 </head>
 <body>
@@ -3542,13 +3542,13 @@
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Itinerary Dashboard</p>
-                <h2>Today, routes, reservations, and alerts</h2>
-                <p>A cleaner travel dashboard for the selected trip. Notification settings, reminders, reservations, and existing itinerary details remain available below.</p>
+                <h2>Your day at a glance</h2>
+                <p>Follow today's schedule, next route, reservations, and travel alerts from one focused trip view.</p>
               </div>
               <span class="compliance-badge">Real-time ready</span>
             </div>
             <section class="itinerary-dashboard" aria-label="Itinerary home dashboard">
-              <article class="itinerary-card itinerary-card--featured">
+              <article class="itinerary-card itinerary-card--featured itinerary-card--today">
                 <span>Today's Schedule</span>
                 <h3>Catamaran Cruise → Winery Tour</h3>
                 <p>Current activity ends in 42 minutes. Next pickup is at Ammoudi Bay at 3:10 PM.</p>
@@ -3557,33 +3557,33 @@
                   <button type="button" data-itinerary-dashboard-action="Add Activity">Add Activity</button>
                 </div>
               </article>
-              <article class="itinerary-card smart-route-card">
+              <article class="itinerary-card smart-route-card itinerary-card--route">
                 <span>Smart Route</span>
                 <h3>Hotel → Marina → Winery</h3>
                 <div class="route-preview-line" aria-hidden="true"><i></i><i></i><i></i></div>
                 <p>Optimized for light rain, traffic, and group pickup timing. Estimated travel time: 48 minutes.</p>
                 <button type="button" data-target="rideShareHub">Open Maps</button>
               </article>
-              <article class="itinerary-card weather-snapshot-card">
+              <article class="itinerary-card weather-snapshot-card itinerary-card--weather">
                 <span>Weather Snapshot</span>
                 <div class="weather-orb" aria-hidden="true"></div>
                 <h3>82°F • Light rain</h3>
                 <p>Travel advisory: bring a light jacket and allow extra walking time near the marina.</p>
                 <button type="button" data-target="rideShareHub" data-travel-section="weather">Full Weather</button>
               </article>
-              <article class="itinerary-card">
+              <article class="itinerary-card itinerary-card--transport">
                 <span>Transportation Status</span>
                 <h3>Shuttle confirmed</h3>
                 <p>Driver arriving at 3:05 PM. Ride-share backup and public transit alternatives are ready.</p>
                 <button type="button" data-target="rideShareHub">Book Transportation</button>
               </article>
-              <article class="itinerary-card">
+              <article class="itinerary-card itinerary-card--alerts">
                 <span>Travel Alerts</span>
                 <h3>3 active alerts</h3>
                 <p>Gate reminder, rain advisory, and dinner reservation departure alert are queued.</p>
                 <button type="button" id="itineraryDashboardAlertButton">Send Test Alert</button>
               </article>
-              <article class="itinerary-card">
+              <article class="itinerary-card itinerary-card--progress">
                 <span>Trip Progress</span>
                 <h3>Day 3 of 7</h3>
                 <div class="trip-progress-track"><i style="--w:43%"></i></div>

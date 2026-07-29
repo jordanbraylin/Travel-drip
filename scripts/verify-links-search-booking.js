@@ -168,7 +168,7 @@ const outerWrapperIssues = outerWrapperSelectors
   .map((selector) => `Missing outer-wrapper cleanup selector: ${selector}`);
 
 const focusedLayoutChecks = [
-  ["Itinerary layout", html.includes('id="itineraryAlerts"') && navigationCss.includes("#itineraryAlerts .itinerary-dashboard") && navigationCss.includes("#itineraryAlerts .itinerary-card--featured")],
+  ["Itinerary layout", html.includes('id="itineraryAlerts"') && html.includes("itinerary-card--today") && navigationCss.includes("#itineraryAlerts .itinerary-dashboard") && navigationCss.includes("grid-template-columns: repeat(12, minmax(0, 1fr))") && navigationCss.includes(".itinerary-dashboard > .itinerary-card--today")],
   ["Memories layout", html.includes('id="memoriesPanel"') && navigationCss.includes("#memoriesPanel .memory-gallery-grid") && navigationCss.includes("#memoriesPanel .memory-media-card")],
   ["Event controls and cards", html.includes('id="eventsPanel"') && navigationCss.includes("#eventsPanel .event-dashboard-tabs") && navigationCss.includes("#eventsPanel .event-experience-card")],
   ["Wallet formatting", html.includes('id="walletPanel"') && navigationCss.includes("#walletPanel .wallet-dashboard-header") && navigationCss.includes("#walletPanel .wallet-smart-actions")],
