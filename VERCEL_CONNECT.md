@@ -5,9 +5,9 @@ Use `outputs/traveldrip` as the Vercel project root.
 ## Fastest Path
 
 1. Go to https://vercel.com/new.
-2. Import the repository or upload this project folder.
-3. Set the project root to `outputs/traveldrip`.
-4. Keep framework preset as `Other` if Vercel does not auto-detect it.
+2. Import the GitHub repository `jordanbraylin/Travel-drip`.
+3. Set **Root Directory** to `.` because this repository contains the Travel-Drip app at its root. Use `outputs/traveldrip` only when deploying the parent workspace directly.
+4. Keep the framework preset as **Other**. `vercel.json` also sets `framework` to `null` and `buildCommand` to `null`, which prevents Vercel from trying to run a Next.js build.
 5. Add the environment variables from `VERCEL_ENV_SETUP.md`.
 6. Deploy.
 7. Open `/api/health` on the deployed URL and confirm the required values are `true`.
