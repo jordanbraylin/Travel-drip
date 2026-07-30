@@ -6870,3 +6870,52 @@ body.signed-in-shell .global-destination-header:not([hidden]) {
     width: 100% !important;
   }
 }
+
+/* Overview Memories widget repair: keep the collage inside its card and reserve a clean action row. */
+body.app-routed #dashboardWidgets .memories-widget {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  overflow: hidden !important;
+  gap: 12px !important;
+  padding: 16px !important;
+}
+
+body.app-routed #dashboardWidgets .memories-widget .mini-collage {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr) !important;
+  grid-template-rows: repeat(2, minmax(0, 74px)) !important;
+  gap: 6px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: 154px !important;
+  overflow: hidden !important;
+  border-radius: 10px !important;
+}
+
+body.app-routed #dashboardWidgets .memories-widget .mini-collage img {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  object-fit: cover !important;
+}
+
+body.app-routed #dashboardWidgets .memories-widget > .ghost-button {
+  position: static !important;
+  flex: 0 0 auto !important;
+  align-self: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 42px !important;
+  margin: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+}
