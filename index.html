@@ -14,7 +14,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Travel-Drip">
     <link rel="stylesheet" href="styles.css?v=115">
-    <link rel="stylesheet" href="navigation.css?v=46">
+    <link rel="stylesheet" href="navigation.css?v=48">
   <title>Travel-Drip</title>
 </head>
 <body>
@@ -2755,7 +2755,7 @@
                   </details>
                   <details>
                     <summary>Travel Essentials</summary>
-                    <button type="button" data-travel-focus="boarding">Boarding Passes</button>
+                    <button type="button" data-travel-focus="boarding">Tickets &amp; Boarding</button>
                     <button type="button" data-travel-focus="weather">Weather</button>
                     <button type="button" data-travel-focus="maps">Maps</button>
                     <button type="button" data-travel-focus="documents">Travel Documents</button>
@@ -2773,56 +2773,6 @@
                     </div>
                     <button class="primary-button" type="button" data-travel-focus-action="Add Flight">Add Flight</button>
                   </div>
-                  <section class="travel-dashboard-sections" aria-label="Travel dashboard sections">
-                    <article class="travel-dashboard-card travel-dashboard-card--overview">
-                      <p class="eyebrow">Current Trip Overview</p>
-                      <h4>Miami to Tokyo Adventure</h4>
-                      <dl>
-                        <div><dt>Destination</dt><dd>Tokyo, Japan</dd></div>
-                        <div><dt>Dates</dt><dd>Jul 18 - Jul 28, 2026</dd></div>
-                        <div><dt>Travelers</dt><dd>4 travelers</dd></div>
-                        <div><dt>Status</dt><dd>Ready • 84% complete</dd></div>
-                      </dl>
-                      <div class="trip-progress-track"><i style="--w:84%"></i></div>
-                    </article>
-                    <article class="travel-dashboard-card">
-                      <p class="eyebrow">Next Travel Item</p>
-                      <h4>Delta DL 241</h4>
-                      <p>MIA to HND • Jul 18 at 8:45 AM • Gate B18 • Confirmed</p>
-                      <button type="button" data-travel-focus="flights">View Details</button>
-                    </article>
-                    <article class="travel-dashboard-card">
-                      <p class="eyebrow">Itinerary Snapshot</p>
-                      <h4>Catamaran Cruise to Winery Tour</h4>
-                      <p>Current stop: Marina Dock B. Next stop: Pyrgos Winery. Smart Route estimates 48 minutes.</p>
-                      <button type="button" data-travel-focus="itinerary">Full Itinerary</button>
-                    </article>
-                    <article class="travel-dashboard-card travel-dashboard-card--weather">
-                      <span class="weather-dashboard-visual" aria-hidden="true"></span>
-                      <p class="eyebrow">Weather</p>
-                      <h4>82°F • feels like 86°F</h4>
-                      <p>Light rain in Tokyo. Rain probability 68%. Forecast visual stays behind the text.</p>
-                      <button type="button" data-travel-focus="weather">Full Forecast</button>
-                    </article>
-                    <article class="travel-dashboard-card">
-                      <p class="eyebrow">Boarding Pass</p>
-                      <h4>Jordan Smith • MIA to HND</h4>
-                      <p>Gate B18 • Seat 14A • Boarding Group 3 • Pass ready and readable.</p>
-                      <button type="button" data-travel-focus="boarding">View Pass</button>
-                    </article>
-                    <article class="travel-dashboard-card">
-                      <p class="eyebrow">Travel Alerts</p>
-                      <h4>3 active alerts</h4>
-                      <p>Check-in reminder, rain advisory, and missing travel-insurance document.</p>
-                      <button type="button" data-travel-focus="alerts">View Alerts</button>
-                    </article>
-                    <article class="travel-dashboard-card">
-                      <p class="eyebrow">Documents</p>
-                      <h4>12 saved files</h4>
-                      <p>Passport, visa, hotel confirmations, receipts, and insurance live in secure Travel Documents.</p>
-                      <button type="button" data-travel-focus="documents">Open Documents</button>
-                    </article>
-                  </section>
                   <section class="travel-booking-summary" aria-label="Booking summary">
                     <article><span>Flights</span><strong>1 booked</strong><small>Delta DL 241 • Confirmed</small><button type="button" data-travel-focus="flights">Open</button></article>
                     <article><span>Hotels</span><strong>2 stays</strong><small>Tokyo Station Hotel • Saved</small><button type="button" data-travel-focus="hotels">Open</button></article>
@@ -2840,12 +2790,6 @@
                     <article><span>Public Transit</span><strong>$8.50 route</strong><small>Accessible train plus walking route.</small><button type="button" data-travel-focus="publicTransit">View</button></article>
                     <article><span>Route Comparison</span><strong>3 options</strong><small>Fastest, cheapest, and group-friendly.</small><button type="button" data-travel-focus="routeComparison">Compare</button></article>
                   </section>
-                  <div class="travel-focus-grid">
-                    <article><span>Next booking</span><strong>DL 241 • MIA → HND</strong><small>Jul 18 • 8:45 AM • Confirmed</small><button type="button" data-travel-focus="flights">View Flight</button></article>
-                    <article><span>Weather preview</span><strong>82°F • Light rain</strong><small>Provider-ready forecast • Tokyo timezone</small><button type="button" data-travel-focus="weather">View Weather</button></article>
-                    <article><span>Missing item</span><strong>Travel insurance</strong><small>Upload before departure</small><button type="button" data-travel-focus="documents">Upload Document</button></article>
-                    <article><span>Trip progress</span><strong>84% ready</strong><small>12 confirmations saved • 3 reminders soon</small><button type="button" data-travel-focus="boarding">View Passes</button></article>
-                  </div>
                   <div class="travel-quick-actions compact">
                     <button type="button" data-travel-focus="flights">Add Flight</button>
                     <button type="button" data-travel-focus="hotels">Add Hotel</button>
@@ -2955,7 +2899,7 @@
                 <p class="small" id="travelSettingsMessage">Travel Home is open. Search or choose a category to focus on one Travel section at a time.</p>
               </div>
             </section>
-            <section class="travel-overview-card" aria-label="Travel overview">
+            <section class="travel-overview-card" hidden aria-label="Legacy travel overview summary">
               <button class="travel-summary-tile travel-summary-tile--trip" type="button" data-travel-section="flights" aria-label="Open next trip flight details">
                 <span>Next Trip</span>
                 <strong>Miami → Tokyo</strong>
@@ -2979,7 +2923,7 @@
                   <b></b>
                 </i>
               </button>
-              <button class="travel-summary-tile" type="button" data-travel-section="tickets" aria-label="Open saved confirmations">
+              <button class="travel-summary-tile" type="button" data-travel-focus="boarding" aria-label="Open saved confirmations">
                 <span>Confirmations</span>
                 <strong>12 saved</strong>
                 <small>Flights, hotels, tickets, rides</small>
@@ -2990,29 +2934,7 @@
                 <small>Travel insurance before departure</small>
               </button>
             </section>
-            <nav class="travel-section-nav" aria-label="Travel sections">
-              <button type="button" data-travel-section="flights" aria-label="Open Flights"><span>✈️</span><strong>Flights</strong><small>Upcoming flight • Miami to Tokyo</small></button>
-              <button type="button" data-travel-section="hotels" aria-label="Open Hotels"><span>🏨</span><strong>Hotels</strong><small>2 reservations • confirmations saved</small></button>
-              <button type="button" data-travel-section="trains" aria-label="Open Trains"><span>🚆</span><strong>Trains</strong><small>2 tickets • station reminders ready</small></button>
-              <button type="button" data-travel-section="rideShare" aria-label="Open Transportation"><span>🚗</span><strong>Transportation</strong><small>Airport pickup • fare split ready</small></button>
-              <button type="button" data-travel-section="rideShare" aria-label="Open Ride Share"><span>🚘</span><strong>Ride Share</strong><small>Country providers • app booking</small></button>
-              <button type="button" data-travel-section="tickets" aria-label="Open Tickets and Boarding Passes"><span>🎫</span><strong>Tickets</strong><small>Wallet passes • QR codes available</small></button>
-              <button type="button" data-travel-section="boarding" aria-label="Open Boarding Information"><span>🪪</span><strong>Boarding Info</strong><small>Gate B18 • Group 3 • pass ready</small></button>
-              <button type="button" data-travel-section="weather" aria-label="Open Weather"><span>🌦️</span><strong>Weather</strong><small>Forecast • rain and packing tips</small></button>
-              <button type="button" data-travel-section="documents" aria-label="Open Travel Documents"><span>📄</span><strong>Documents</strong><small>Passport, insurance, confirmations</small></button>
-              <button type="button" data-travel-section="buses" aria-label="Open Buses"><span>🚌</span><strong>Buses</strong><small>Group shuttle • passenger list</small></button>
-              <button type="button" data-travel-section="ferries" aria-label="Open Ferries and Cruises"><span>🚢</span><strong>Cruises</strong><small>Boarding pass • luggage tags</small></button>
-              <button type="button" data-travel-section="maps" aria-label="Open Maps"><span>🗺️</span><strong>Maps</strong><small>Airports, hotels, routes, stops</small></button>
-            </nav>
-            <section class="travel-selected-tile" id="travelSelectedTile" aria-live="polite">
-              <div>
-                <p class="eyebrow">Selected travel page</p>
-                <h3 id="travelSelectedTitle">Choose a travel tile</h3>
-                <p id="travelSelectedSummary">Open Flights, Hotels, Transportation, Tickets, or Documents from the tile grid. Detailed records stay on their dedicated pages instead of crowding the Travel Hub.</p>
-              </div>
-              <span class="status-pill" id="travelSelectedRoute">Travel overview</span>
-            </section>
-            <section class="travel-workspace" aria-label="Travel internal workspace">
+            <section class="travel-workspace" hidden aria-label="Legacy travel internal workspace">
               <div class="travel-workspace-toolbar">
                 <label>Current trip
                   <select id="travelTripSelector" aria-label="Current trip selector">
@@ -3226,7 +3148,7 @@
                 </div>
                 <div class="transport-timeline" id="transportTimelineList" aria-label="Transportation timeline"></div>
               </div>
-              <div class="travel-support-grid">
+              <div class="travel-support-grid" hidden>
                 <section class="travel-support-card" id="hotelCenter">
                   <div class="section-heading compact">
                     <div>
@@ -3246,7 +3168,7 @@
                       <p class="eyebrow">Ticket Center</p>
                       <h3>Tickets and boarding passes</h3>
                     </div>
-                    <button class="ghost-button" type="button" data-travel-section="tickets">View tickets</button>
+                    <button class="ghost-button" type="button" data-travel-focus="boarding">View tickets</button>
                   </div>
                   <div class="travel-row-list">
                     <article><span>Flight boarding pass</span><strong>Jordan Smith • Delta DL 241</strong><small>QR available • Apple Wallet and Google Wallet eligible</small></article>

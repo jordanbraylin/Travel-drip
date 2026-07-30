@@ -8,6 +8,7 @@ const html = read("index.html");
 const app = read("app.js");
 const navigationCss = read("navigation.css");
 const pkg = JSON.parse(read("package.json"));
+const travelHomeMarkup = html.match(/<section class="travel-focus-panel active" data-travel-panel="overview">([\s\S]*?)<\/section>\s*<section class="travel-focus-panel" data-travel-panel="flights">/)?.[1] || "";
 
 function matchAll(text, regex, group = 1) {
   return [...text.matchAll(regex)].map((match) => match[group]);
@@ -195,7 +196,13 @@ const focusedLayoutChecks = [
   ["Wallet contrast stays readable", html.includes('id="walletPanel"') && navigationCss.includes("Wallet contrast repair") && navigationCss.includes("color: #10202f !important") && navigationCss.includes("color: #607280 !important") && navigationCss.includes("#walletPanel :where(input, select, textarea)")],
   ["AI receipt workspace stays readable", html.includes('id="splitBill"') && html.includes('class="receipt-workspace"') && navigationCss.includes("AI receipt workspace repair") && navigationCss.includes("#splitBill > *") && navigationCss.includes("#splitBill .receipt-item-list") && navigationCss.includes("#splitBill .receipt-claim-grid") && navigationCss.includes("writing-mode: horizontal-tb !important")],
   ["AI recognition widget stays horizontal", html.includes('id="aiBillReviewButton"') && navigationCss.includes("AI recognition widget repair") && navigationCss.includes("#splitBill .receipt-workspace") && navigationCss.includes("#splitBill .receipt-items-panel > .section-heading") && navigationCss.includes("grid-template-columns: minmax(0, 1fr) !important")],
-  ["Overview Memories collage stays contained", html.includes("memories-widget") && html.includes('class="mini-collage"') && navigationCss.includes("Overview Memories widget repair") && navigationCss.includes("#dashboardWidgets .memories-widget .mini-collage") && navigationCss.includes("overflow: hidden !important") && navigationCss.includes("#dashboardWidgets .memories-widget > .ghost-button")]
+  ["Overview Memories collage stays contained", html.includes("memories-widget") && html.includes('class="mini-collage"') && navigationCss.includes("Overview Memories widget repair") && navigationCss.includes("#dashboardWidgets .memories-widget .mini-collage") && navigationCss.includes("overflow: hidden !important") && navigationCss.includes("#dashboardWidgets .memories-widget > .ghost-button")],
+  ["Travel Home summary cards stay readable", html.includes('data-travel-panel="overview"') && navigationCss.includes("Travel Home summary card repair") && navigationCss.includes('#rideShareHub [data-travel-panel="overview"] .travel-booking-summary') && navigationCss.includes("grid-template-columns: minmax(0, 1fr) auto !important") && navigationCss.includes("grid-template-areas:")],
+  ["My Profile widgets stay readable", html.includes('id="myProfile"') && html.includes('class="profile-stats-grid"') && html.includes('class="profile-adventure-grid"') && navigationCss.includes("My Profile widget repair") && navigationCss.includes("#myProfile .profile-stats-grid") && navigationCss.includes("#myProfile .profile-adventure-grid") && navigationCss.includes("grid-template-areas:")],
+  ["Travel selected page panel removed", !html.includes('id="travelSelectedTile"') && !html.includes('class="travel-selected-tile"')],
+  ["Travel Home avoids duplicate summaries", travelHomeMarkup.includes('class="travel-booking-summary"') && travelHomeMarkup.includes('class="travel-transport-summary"') && !travelHomeMarkup.includes('class="travel-dashboard-sections"') && !travelHomeMarkup.includes('class="travel-focus-grid"')],
+  ["Travel uses one canonical navigation", countMatches(html, /class="travel-settings-nav"/g) === 1 && !html.includes('class="travel-section-nav"') && html.includes('data-travel-focus="boarding">Tickets &amp; Boarding</button>')],
+  ["Travel duplicate widgets are consolidated", html.includes('class="travel-overview-card" hidden') && html.includes('class="travel-workspace" hidden') && html.includes('class="travel-support-grid" hidden')]
 ];
 const focusedLayoutIssues = focusedLayoutChecks
   .filter(([, passed]) => !passed)

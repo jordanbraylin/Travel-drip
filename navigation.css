@@ -6919,3 +6919,249 @@ body.app-routed #dashboardWidgets .memories-widget > .ghost-button {
   white-space: normal !important;
   overflow-wrap: break-word !important;
 }
+
+/* Travel Home summary card repair: give each card a readable horizontal header and full-width details. */
+body.app-routed #rideShareHub [data-travel-panel="overview"] .travel-booking-summary,
+body.app-routed #rideShareHub [data-travel-panel="overview"] .travel-transport-summary {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  align-items: start !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+
+body.app-routed #rideShareHub [data-travel-panel="overview"] .travel-booking-summary > article,
+body.app-routed #rideShareHub [data-travel-panel="overview"] .travel-transport-summary > article {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  grid-template-areas:
+    "label value"
+    "details details"
+    "action action" !important;
+  align-items: start !important;
+  align-content: start !important;
+  gap: 8px 12px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 16px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+body.app-routed #rideShareHub [data-travel-panel="overview"] .travel-booking-summary > article > span,
+body.app-routed #rideShareHub [data-travel-panel="overview"] .travel-transport-summary > article > span {
+  grid-area: label !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+body.app-routed #rideShareHub [data-travel-panel="overview"] .travel-booking-summary > article > strong,
+body.app-routed #rideShareHub [data-travel-panel="overview"] .travel-transport-summary > article > strong {
+  grid-area: value !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  text-align: right !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+body.app-routed #rideShareHub [data-travel-panel="overview"] .travel-booking-summary > article > small,
+body.app-routed #rideShareHub [data-travel-panel="overview"] .travel-transport-summary > article > small {
+  grid-area: details !important;
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+body.app-routed #rideShareHub [data-travel-panel="overview"] .travel-booking-summary > article > button,
+body.app-routed #rideShareHub [data-travel-panel="overview"] .travel-transport-summary > article > button {
+  grid-area: action !important;
+  justify-self: start !important;
+  width: auto !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+@media (max-width: 1100px) {
+  body.app-routed #rideShareHub [data-travel-panel="overview"] .travel-booking-summary,
+  body.app-routed #rideShareHub [data-travel-panel="overview"] .travel-transport-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  body.app-routed #rideShareHub [data-travel-panel="overview"] .travel-booking-summary,
+  body.app-routed #rideShareHub [data-travel-panel="overview"] .travel-transport-summary {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* My Profile widget repair: keep stats compact and adventure cards readable without stretched rows. */
+body.app-routed #myProfile .profile-stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  align-items: start !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+
+body.app-routed #myProfile .profile-stats-grid > article {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  grid-template-areas:
+    "label value"
+    "detail detail" !important;
+  align-items: center !important;
+  align-content: start !important;
+  gap: 6px 10px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 14px !important;
+  box-sizing: border-box !important;
+}
+
+body.app-routed #myProfile .profile-stats-grid > article > span {
+  grid-area: label !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+body.app-routed #myProfile .profile-stats-grid > article > strong {
+  grid-area: value !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  text-align: right !important;
+  white-space: nowrap !important;
+}
+
+body.app-routed #myProfile .profile-stats-grid > article > small {
+  grid-area: detail !important;
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+body.app-routed #myProfile .profile-adventure-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  align-items: start !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+
+body.app-routed #myProfile .profile-adventure-grid > article {
+  display: grid !important;
+  grid-template-columns: 112px minmax(0, 1fr) !important;
+  grid-template-areas:
+    "media label"
+    "media title"
+    "media details"
+    "action action" !important;
+  align-items: start !important;
+  align-content: start !important;
+  gap: 8px 12px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 14px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+body.app-routed #myProfile .profile-adventure-grid > article > img {
+  grid-area: media !important;
+  display: block !important;
+  width: 112px !important;
+  height: 112px !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  border-radius: 12px !important;
+  object-fit: cover !important;
+}
+
+body.app-routed #myProfile .profile-adventure-grid > article > span {
+  grid-area: label !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+body.app-routed #myProfile .profile-adventure-grid > article > strong {
+  grid-area: title !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+body.app-routed #myProfile .profile-adventure-grid > article > small {
+  grid-area: details !important;
+  display: block !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+body.app-routed #myProfile .profile-adventure-grid > article > button {
+  grid-area: action !important;
+  justify-self: start !important;
+  width: auto !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+@media (max-width: 1100px) {
+  body.app-routed #myProfile .profile-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  body.app-routed #myProfile .profile-adventure-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  body.app-routed #myProfile .profile-stats-grid,
+  body.app-routed #myProfile .profile-adventure-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
