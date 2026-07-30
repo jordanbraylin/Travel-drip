@@ -1,6 +1,6 @@
-# TravelDrip Logo Assets
+# Travel-Drip Logo Assets
 
-This folder contains the TravelDrip logo redesign system.
+This folder contains the Travel-Drip logo redesign system.
 
 ## Core SVG Files
 
@@ -34,4 +34,4 @@ This folder contains the TravelDrip logo redesign system.
 
 ## Logo Concept
 
-The mark combines a minimalist globe, a dynamic airplane, a curved travel path, and a droplet location pin to represent global trips, movement, shared experiences, and the "Drip" in TravelDrip.
+The mark combines a minimalist globe, a dynamic airplane, a curved travel path, and a droplet location pin to represent global trips, movement, shared experiences, and the "Drip" in Travel-Drip.

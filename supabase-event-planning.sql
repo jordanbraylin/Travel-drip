@@ -1,4 +1,4 @@
--- TravelDrip event-planning production tables.
+-- Travel-Drip event-planning production tables.
 -- Run after supabase.sql and supabase-backend.sql.
 -- The existing public.trips row remains the canonical event shell for compatibility.
 

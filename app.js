@@ -1109,7 +1109,7 @@ const exploreCategories = {
         status: "Available Aug 8-11",
         image: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?q=80&w=900&auto=format&fit=crop",
         description: "Private sunset cruise with skyline views, shareable photo stops, and group add-ons.",
-        details: ["Location: Biscayne Bay", "Best dates: Friday and Saturday sunset", "Saved by 2,430 TravelDrip users"],
+        details: ["Location: Biscayne Bay", "Best dates: Friday and Saturday sunset", "Saved by 2,430 Travel-Drip users"],
         actions: ["Save", "Add to Trip", "Share", "Book"]
       },
       {
@@ -1262,7 +1262,7 @@ const exploreCategories = {
         distance: 1.4,
         status: "Saved often",
         image,
-        description: "A curated guide with local timing tips, nearby stops, and TravelDrip itinerary actions.",
+        description: "A curated guide with local timing tips, nearby stops, and Travel-Drip itinerary actions.",
         details: ["Public travel guide", "Great for planning", "Includes nearby options"],
         actions: ["Save", "Add to Trip", "Share", "Ask AI Trip Manager"]
       }
@@ -1433,7 +1433,7 @@ function getGlobalDestinationContext(target = getTargetFromRoute()) {
     enterpriseRbac: { label: "Approved corporate destination", action: "View Policy", actionType: "destinations" },
     myProfile: { label: "Personalized inspiration", action: "Explore", actionType: "destinations" },
     adminPanel: { label: "Admin settings", action: "Review", actionType: "settings" },
-    copyrightPolicy: { label: "TravelDrip help", action: "Explore", actionType: "destinations" }
+    copyrightPolicy: { label: "Travel-Drip help", action: "Explore", actionType: "destinations" }
   };
   return contexts[target] || contexts.exploreDrops;
 }
@@ -1476,7 +1476,7 @@ function startGlobalDestinationHeader() {
   if (!header) return;
   $("#globalDestinationPhoto")?.addEventListener("error", () => {
     header.classList.add("image-fallback");
-    $("#globalDestinationPhoto").alt = "TravelDrip destination inspiration fallback";
+    $("#globalDestinationPhoto").alt = "Travel-Drip destination inspiration fallback";
   });
   $("#globalDestinationPhoto")?.addEventListener("load", () => {
     header.classList.remove("image-fallback");
@@ -1740,7 +1740,7 @@ const travelSmartSearchRecords = [
   { group: "Flights", section: "boarding", icon: "🎫", title: "Boarding pass for Jordan Smith", meta: "Gate B18 • Seat 14A • Boarding 7:55 AM", status: "Checked In" },
   { group: "Hotels", section: "hotels", icon: "🏨", title: "Tokyo Station Hotel", meta: "Aug 8 - Aug 13 • Queen Room", status: "Saved" },
   { group: "Trips", section: "overview", icon: "🌍", title: "Miami to Tokyo Adventure", meta: "Tokyo, Japan • 4 travelers • 84% ready", status: "Active" },
-  { group: "Boarding Passes", section: "boarding", icon: "▦", title: "TravelDrip digital boarding pass", meta: "QR code, barcode, gate, seat, group, and status", status: "Ready" },
+  { group: "Boarding Passes", section: "boarding", icon: "▦", title: "Travel-Drip digital boarding pass", meta: "QR code, barcode, gate, seat, group, and status", status: "Ready" },
   { group: "Ride Share", section: "rideShare", icon: "🚘", title: "Airport pickup to Tokyo Station Hotel", meta: "Driver assigned • 42 minute estimate", status: "Scheduled" },
   { group: "Restaurants", section: "itinerary", icon: "🍽️", title: "Ocean Rooftop Sushi", meta: "Reservation • Smart bill split available", status: "Confirmed" },
   { group: "Activities", section: "itinerary", icon: "🎟️", title: "Catamaran cruise and winery tour", meta: "Marina Dock B • smart route ready", status: "Booked" },
@@ -2338,7 +2338,7 @@ async function answerAiPlanner(value) {
   saveAiPlannerState();
   renderAiPlanner();
   const nextStep = aiPlannerSteps[Math.min(state.aiPlanner.step, aiPlannerSteps.length - 1)];
-  $("#aiPlannerTranscript")?.insertAdjacentHTML("beforeend", `<div class="assistant"><strong>TravelDrip AI</strong><span>${escapeHtml(nextStep ? nextStep.question : "Your draft is ready. You can save, share, regenerate, or create a trip now.")}</span></div>`);
+  $("#aiPlannerTranscript")?.insertAdjacentHTML("beforeend", `<div class="assistant"><strong>Travel-Drip AI</strong><span>${escapeHtml(nextStep ? nextStep.question : "Your draft is ready. You can save, share, regenerate, or create a trip now.")}</span></div>`);
   $("#aiPlannerStatus").textContent = `Saved ${Object.keys(state.aiPlanner.answers).length} planning answer(s) in this session.`;
   await saveSyncedEvent("ai_planner_answered", { step: step?.key || "complete", answer, tripMode: getAiPlannerTripMode() });
 }
@@ -2351,7 +2351,7 @@ async function handleExploreAction(action, itemId) {
     "Save": `${item.title} added to Saved Places.`,
     "Add to Trip": `${item.title} opened the selected trip itinerary with destination ${destination}.`,
     "Add to Itinerary": `${item.title} added to the itinerary draft.`,
-    "Share": `${item.title} opened TravelDrip sharing and connected social options.`,
+    "Share": `${item.title} opened Travel-Drip sharing and connected social options.`,
     "Book": `${item.title} opened the supported booking flow.`,
     "Visit Website": `${item.title} opened the provider website workflow.`,
     "Customize Trip": `${item.title} opened the budget customization flow.`,
@@ -2735,7 +2735,7 @@ function renderRideAccount() {
   $("#rideConnectionTitle").textContent = account.connected ? `${provider} account connected` : `Connect your ${provider} account to continue.`;
   $("#rideConnectionMeta").textContent = account.connected
     ? `${account.status} • ${account.account || "Connected account"} • You can disconnect, reconnect, or switch providers anytime.`
-    : `TravelDrip never stores your ${provider} password. Use ${provider}'s supported authentication or launch the official app with trip details prefilled.`;
+    : `Travel-Drip never stores your ${provider} password. Use ${provider}'s supported authentication or launch the official app with trip details prefilled.`;
   $("#connectRideAccountButton").hidden = account.connected;
   $("#reconnectRideAccountButton").hidden = !account.connected;
   $("#disconnectRideAccountButton").hidden = !account.connected;
@@ -3218,8 +3218,8 @@ function setAuthMode(mode, scrollIntoView = false) {
     authTitle.textContent = isGuest
       ? "Access your company event"
       : isSignup
-        ? "Create your TravelDrip account"
-        : "Welcome to TravelDrip";
+        ? "Create your Travel-Drip account"
+        : "Welcome to Travel-Drip";
   }
   if (authCopy) {
     authCopy.textContent = isGuest
@@ -3228,7 +3228,7 @@ function setAuthMode(mode, scrollIntoView = false) {
         ? "Create an account, verify your email, then choose whether you are planning solo, with a group, or for a corporate retreat."
         : "Plan unforgettable vacations, destination weddings, birthdays, corporate retreats, cruises, and group adventures, all in one place. Organize itineraries, invite friends and family, manage shared budgets, store tickets and boarding passes, receive real-time travel updates, and relive every memory together.";
   }
-  if (bottomCopy) bottomCopy.textContent = isGuest ? "Need a full TravelDrip profile?" : isSignup ? "Already have an account?" : "New to TravelDrip?";
+  if (bottomCopy) bottomCopy.textContent = isGuest ? "Need a full Travel-Drip profile?" : isSignup ? "Already have an account?" : "New to Travel-Drip?";
   $("#landingSignupButton").hidden = isSignup;
   $("#landingLoginButton").hidden = !isSignup && !isGuest;
   if (authMessage) {
@@ -4003,7 +4003,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   if (!state.session?.user && !previewAccess && location.pathname !== "/admin.html") {
     rememberProtectedTarget(resolvedTarget);
     setAuthMode("signin");
-    if ($("#authMessage")) $("#authMessage").textContent = "Sign in to continue to that TravelDrip page.";
+    if ($("#authMessage")) $("#authMessage").textContent = "Sign in to continue to that Travel-Drip page.";
     return;
   }
   const requestedCorporatePath = normalizeAppPath(location.pathname).startsWith("/corporate");
@@ -4084,7 +4084,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   updateDashboardWidgets();
   if ($("#currentPageTitle")) $("#currentPageTitle").textContent = routeDefinitions[resolvedTarget].label;
   renderGlobalDestinationHeader(resolvedTarget);
-  document.title = `${routeDefinitions[resolvedTarget].label} - TravelDrip`;
+  document.title = `${routeDefinitions[resolvedTarget].label} - Travel-Drip`;
   document.body.classList.remove("sidebar-open");
   $("#sidebarMenuButton")?.setAttribute("aria-expanded", "false");
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -4853,7 +4853,7 @@ function wireLocalInteractions() {
       addAuditEntry("Private driver booking prepared", `${company} selected for ${destination}.`);
       await saveSyncedEvent("private_driver_booking_prepared", payload);
     } else {
-      $("#privateDriverMessage").textContent = `Quote requested from ${company}. TravelDrip will attach pickup, drop-off, passengers, vehicle type, and booking type.`;
+      $("#privateDriverMessage").textContent = `Quote requested from ${company}. Travel-Drip will attach pickup, drop-off, passengers, vehicle type, and booking type.`;
       addAuditEntry("Private driver quote requested", `${company} quote requested for ${destination}.`);
       await saveSyncedEvent("private_driver_quote_requested", payload);
     }
@@ -4881,14 +4881,14 @@ function wireLocalInteractions() {
     const account = state.connectedRideAccounts[state.selectedRideProvider];
     $("#rideMessage").textContent = account?.connected
       ? `${state.selectedRideProvider} selected and connected. You can launch the official provider app, start a ride, or share trip details.`
-      : `Connect your ${state.selectedRideProvider} account to continue. TravelDrip never asks for ride-share passwords.`;
+      : `Connect your ${state.selectedRideProvider} account to continue. Travel-Drip never asks for ride-share passwords.`;
   });
 
   $("#connectRideAccountButton")?.addEventListener("click", async () => {
     const provider = state.selectedRideProvider;
     state.connectedRideAccounts[provider] = { connected: true, account: "Connected rider profile", status: "Account Connected" };
     renderRideAccount();
-    $("#rideMessage").textContent = `${provider} account connected through secure provider authorization. Passwords are never requested or stored by TravelDrip.`;
+    $("#rideMessage").textContent = `${provider} account connected through secure provider authorization. Passwords are never requested or stored by Travel-Drip.`;
     addAuditEntry("Ride share account connected", `${provider} account authorized for transportation launch and receipt import.`);
     await saveSyncedEvent("ride_account_connected", { provider });
   });
@@ -4897,7 +4897,7 @@ function wireLocalInteractions() {
     const provider = state.selectedRideProvider;
     state.connectedRideAccounts[provider] = { connected: true, account: "Connected rider profile", status: "Account Reconnected" };
     renderRideAccount();
-    $("#rideMessage").textContent = `${provider} account reconnected. Access can be revoked from TravelDrip or the provider account settings.`;
+    $("#rideMessage").textContent = `${provider} account reconnected. Access can be revoked from Travel-Drip or the provider account settings.`;
     addAuditEntry("Ride share account reconnected", `${provider} authorization refreshed.`);
     await saveSyncedEvent("ride_account_reconnected", { provider });
   });
@@ -5014,7 +5014,7 @@ function wireLocalInteractions() {
       const action = button.dataset.reservationAction;
       const reminderMessage = $("#reservationReminderMessage");
       if (reminderMessage) {
-        reminderMessage.textContent = `${action} opened for the assigned reservation. TravelDrip keeps attendees, meeting details, confirmations, and quick actions attached to the booking.`;
+        reminderMessage.textContent = `${action} opened for the assigned reservation. Travel-Drip keeps attendees, meeting details, confirmations, and quick actions attached to the booking.`;
       }
       addAuditEntry("Reservation reminder action", `${action} selected from reservation and paid excursion reminders.`);
       await saveSyncedEvent("reservation_reminder_action", {
@@ -5176,18 +5176,18 @@ function wireLocalInteractions() {
   $("#aiInviteCopyButton")?.addEventListener("click", async () => {
     const type = $(".trip-type-selector button.active")?.dataset.tripType || "solo";
     const tones = {
-      solo: "I created a TravelDrip itinerary so you can follow my plans, see check-ins, and stay connected while I travel.",
-      group: "You're invited to an unforgettable TravelDrip adventure with shared plans, RSVP tracking, group memories, and easy updates.",
-      corporate: "You are invited to our company retreat. TravelDrip will keep your assigned travel, agenda, announcements, and important documents organized.",
-      wedding: "We would love for you to join our wedding weekend. TravelDrip will keep ceremony, reception, hotel block, shuttle, RSVP, and memory details in one place.",
-      birthday: "You're invited to celebrate with us. TravelDrip will keep dinner, activities, contributions, reminders, and photos organized for the birthday trip.",
-      anniversary: "Please join our anniversary celebration. TravelDrip will keep dinner, travel, activities, reminders, and shared memories organized.",
-      family_reunion: "You're invited to the family reunion. TravelDrip will keep room plans, meals, activities, announcements, RSVP details, and family photos together.",
-      conference: "You're invited to the conference. TravelDrip will keep sessions, speakers, venue rooms, badges, hotels, transportation, and agenda updates organized.",
-      graduation_trip: "You're invited to the graduation trip. TravelDrip will keep travel plans, dinner, celebration schedule, contributions, reminders, and photos organized.",
-      church_retreat: "You're invited to the church retreat. TravelDrip will keep worship, sessions, meals, transportation groups, emergency contacts, and announcements organized.",
-      bachelor_bachelorette: "You're invited to the celebration trip. TravelDrip will keep activities, dinner, nightlife, transportation, polls, shared costs, and photos organized.",
-      special_event: "You're invited to this special event. TravelDrip will keep schedule, travel, RSVP, reminders, media, and updates organized."
+      solo: "I created a Travel-Drip itinerary so you can follow my plans, see check-ins, and stay connected while I travel.",
+      group: "You're invited to an unforgettable Travel-Drip adventure with shared plans, RSVP tracking, group memories, and easy updates.",
+      corporate: "You are invited to our company retreat. Travel-Drip will keep your assigned travel, agenda, announcements, and important documents organized.",
+      wedding: "We would love for you to join our wedding weekend. Travel-Drip will keep ceremony, reception, hotel block, shuttle, RSVP, and memory details in one place.",
+      birthday: "You're invited to celebrate with us. Travel-Drip will keep dinner, activities, contributions, reminders, and photos organized for the birthday trip.",
+      anniversary: "Please join our anniversary celebration. Travel-Drip will keep dinner, travel, activities, reminders, and shared memories organized.",
+      family_reunion: "You're invited to the family reunion. Travel-Drip will keep room plans, meals, activities, announcements, RSVP details, and family photos together.",
+      conference: "You're invited to the conference. Travel-Drip will keep sessions, speakers, venue rooms, badges, hotels, transportation, and agenda updates organized.",
+      graduation_trip: "You're invited to the graduation trip. Travel-Drip will keep travel plans, dinner, celebration schedule, contributions, reminders, and photos organized.",
+      church_retreat: "You're invited to the church retreat. Travel-Drip will keep worship, sessions, meals, transportation groups, emergency contacts, and announcements organized.",
+      bachelor_bachelorette: "You're invited to the celebration trip. Travel-Drip will keep activities, dinner, nightlife, transportation, polls, shared costs, and photos organized.",
+      special_event: "You're invited to this special event. Travel-Drip will keep schedule, travel, RSVP, reminders, media, and updates organized."
     };
     $("#inviteMessageInput").value = tones[type] || tones.solo;
     $("#invitePreviewMessage").textContent = $("#inviteMessageInput").value;
@@ -5468,13 +5468,13 @@ function wireLocalInteractions() {
   });
 
   $("#generateHashtagsButton")?.addEventListener("click", () => {
-    $("#hashtagList").innerHTML = ["#TravelDrip", "#Santorini", "#Vacation", "#TravelTogether", "#IslandViews", "#SharedMemories"].map((tag) => `<span>${tag}</span>`).join("");
+    $("#hashtagList").innerHTML = ["#Travel-Drip", "#Santorini", "#Vacation", "#TravelTogether", "#IslandViews", "#SharedMemories"].map((tag) => `<span>${tag}</span>`).join("");
     updateSocialPreview("AI hashtags generated for this trip memory.");
   });
 
   $("#regenerateCaptionButton")?.addEventListener("click", () => {
     $("#captionText").value = "Blue water, golden light, and a day full of moments worth saving.";
-    $("#hashtagList").innerHTML = ["#TravelDrip", "#TravelMemories", "#SantoriniSunset", "#ExploreMore"].map((tag) => `<span>${tag}</span>`).join("");
+    $("#hashtagList").innerHTML = ["#Travel-Drip", "#TravelMemories", "#SantoriniSunset", "#ExploreMore"].map((tag) => `<span>${tag}</span>`).join("");
     updateSocialPreview("Caption and hashtags regenerated.");
   });
 
@@ -5516,7 +5516,7 @@ function wireLocalInteractions() {
   });
 
   $("#shareNowButton")?.addEventListener("click", async () => {
-    updateSocialPreview("Share request queued. TravelDrip will ask for final confirmation before publishing.");
+    updateSocialPreview("Share request queued. Travel-Drip will ask for final confirmation before publishing.");
     addAuditEntry("Social share requested", `Platforms: ${getSelectedSharePlatforms().join(", ") || "none selected"}.`);
     await saveSyncedEvent("social_share_requested", { platforms: getSelectedSharePlatforms() });
   });
@@ -5574,7 +5574,7 @@ function wireLocalInteractions() {
     renderRoute("dashboardHome", { updateHistory: true, replace: true });
   });
   $("#contactCorporateAdminButton")?.addEventListener("click", () => {
-    $("#corporateAccessMessage").textContent = "Administrator contact request prepared. TravelDrip does not reveal whether the code, employee, or event exists.";
+    $("#corporateAccessMessage").textContent = "Administrator contact request prepared. Travel-Drip does not reveal whether the code, employee, or event exists.";
     addAuditEntry("Corporate access help requested", "Safe admin contact workflow opened from secure access gate.");
   });
   $("#submitCorporateVoteButton")?.addEventListener("click", async () => {
@@ -5671,7 +5671,7 @@ function wireLocalInteractions() {
         fullName: "Jordan Smith",
         username: "jordan",
         tripType: "Group Trip",
-        tripName: "TravelDrip test trip",
+        tripName: "Travel-Drip test trip",
         destination: "Dubai",
         tripStatus: "planning",
         tags: ["Trip Planning"]
@@ -5835,7 +5835,7 @@ function wireLocalInteractions() {
       state.profileCover.savedDataUrl = "";
       localStorage.removeItem("traveldripProfileCover");
       renderProfileCover();
-      setProfilePhotoMessage("Cover photo removed. Your profile header now uses the default TravelDrip gradient.");
+      setProfilePhotoMessage("Cover photo removed. Your profile header now uses the default Travel-Drip gradient.");
       await saveSyncedEvent("profile_cover_removed", { source: "my_profile" });
     });
   });
@@ -5855,7 +5855,7 @@ function wireLocalInteractions() {
       renderProfilePhoto();
       setProfilePhotoMessage(action === "Remove Profile Photo"
         ? "Profile photo removed from preview. Save changes to keep the default initials avatar."
-        : "Default TravelDrip initials avatar restored. Save changes to apply it everywhere.");
+        : "Default Travel-Drip initials avatar restored. Save changes to apply it everywhere.");
       addAuditEntry("Profile photo action", `${action} selected.`);
       await saveSyncedEvent("profile_photo_action", { action });
     });
@@ -6174,7 +6174,7 @@ function wireLocalInteractions() {
   renderAiPlanner();
   $("#aiPlannerStartButton")?.addEventListener("click", () => {
     renderRoute("aiTravelPlanner", { updateHistory: true });
-    $("#aiPlannerStatus").textContent = "AI planning started. Answer one prompt at a time and TravelDrip will build the draft as you go.";
+    $("#aiPlannerStatus").textContent = "AI planning started. Answer one prompt at a time and Travel-Drip will build the draft as you go.";
   });
   $("#aiPlannerReplies")?.addEventListener("click", (event) => {
     const button = event.target.closest("[data-ai-answer]");
@@ -6323,7 +6323,7 @@ function wireLocalInteractions() {
   });
   $$("[data-onboarding-choice]").forEach((button) => {
     button.addEventListener("click", () => {
-      $("#authMessage").textContent = `${button.dataset.onboardingChoice} selected. Continue into TravelDrip to finish your guided setup.`;
+      $("#authMessage").textContent = `${button.dataset.onboardingChoice} selected. Continue into Travel-Drip to finish your guided setup.`;
       enterAppPreview();
     });
   });
@@ -6334,8 +6334,8 @@ function wireLocalInteractions() {
         "Forgot Password": "Password reset opens a secure email recovery flow when Supabase auth is fully configured.",
         "Verify Email": "Email verification status is checked after registration and before live account sync.",
         "Two-Factor Authentication": "Two-factor setup appears after sign-in when production auth requires an extra verification step.",
-        "Terms of Service": "Terms of Service opens the TravelDrip usage, payment, content, and account rules in the legal policy area.",
-        "Privacy Policy": "Privacy Policy opens the TravelDrip privacy, security, and data protection guidance in Admin."
+        "Terms of Service": "Terms of Service opens the Travel-Drip usage, payment, content, and account rules in the legal policy area.",
+        "Privacy Policy": "Privacy Policy opens the Travel-Drip privacy, security, and data protection guidance in Admin."
       };
       const detail = messages[workflow] || "Authentication workflow opened.";
       $("#authMessage").textContent = detail;
@@ -6567,10 +6567,10 @@ function addMessageNotification(conversation, direction = "received") {
   addInAppNotification("Messages", detail);
 
   if ("Notification" in window && Notification.permission === "granted") {
-    new Notification(direction === "sent" ? "TravelDrip message sent" : "New TravelDrip message", {
+    new Notification(direction === "sent" ? "Travel-Drip message sent" : "New Travel-Drip message", {
       body: direction === "sent"
         ? `${conversation} message sent.`
-        : `${conversation} has a new message. Open TravelDrip to view details.`,
+        : `${conversation} has a new message. Open Travel-Drip to view details.`,
       icon: "icons/icon-192.png",
       tag: `traveldrip-message-${direction}-${conversation.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`
     });
@@ -6635,7 +6635,7 @@ function renderNavigationAudit() {
   $("#navWorkflowCount").textContent = `${audit.workflowCount} checked`;
   $("#navigationAuditList").innerHTML = [
     `<div><strong>Main navigation</strong><span>${audit.targetCount} section buttons validate against real screen IDs and route through browser history instead of scroll-only jumps.</span></div>`,
-    `<div><strong>Deep links</strong><span>${audit.routeCount} app routes map to dedicated TravelDrip screens for refresh, bookmarks, and back/forward navigation.</span></div>`,
+    `<div><strong>Deep links</strong><span>${audit.routeCount} app routes map to dedicated Travel-Drip screens for refresh, bookmarks, and back/forward navigation.</span></div>`,
     `<div><strong>Role permissions</strong><span>${audit.restrictedCards} role-gated corporate panels enforce employee, organizer, owner, and finance visibility messaging.</span></div>`,
     `<div><strong>Modals and workflows</strong><span>Wallet PIN dialog, auth tabs, ride-share connection, receipt scanner, bill split, and fallback workflow messages are wired.</span></div>`,
     audit.issues.length
@@ -6656,7 +6656,7 @@ function getSecurityAudit() {
     ["Role-based access", Boolean($("#rolePreview") && $$("[data-visible-roles]").length)],
     ["Corporate privacy", text.includes("Employees cannot see") || text.includes("Financial privacy enforced")],
     ["No raw card storage messaging", text.includes("card data must never touch this app") || text.includes("No raw card storage")],
-    ["Secure notification copy", text.includes("Never include sensitive information") || text.includes("Open TravelDrip to view details")],
+    ["Secure notification copy", text.includes("Never include sensitive information") || text.includes("Open Travel-Drip to view details")],
     ["File upload controls", text.includes("Approved file types only") && text.includes("executable upload blocking")],
     ["Fraud monitoring", text.includes("Rapid PIN failures") && text.includes("Unusual refunds")],
     ["Navigation audit", Boolean($("#navigationAuditList"))]
@@ -6937,7 +6937,7 @@ async function enableNotifications() {
     body: JSON.stringify({ subscription })
   });
 
-  alert("Notifications are enabled for TravelDrip.");
+  alert("Notifications are enabled for Travel-Drip.");
 }
 
 async function sendAdminNotification(event) {

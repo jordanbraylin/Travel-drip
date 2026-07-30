@@ -1,4 +1,4 @@
-# TravelDrip Section 64 Verification Report
+# Travel-Drip Section 64 Verification Report
 
 Status: Implemented with local static validation
 
@@ -9,7 +9,7 @@ Status: Implemented with local static validation
 - Expanded the Travel dashboard summary cards with a dedicated Travel Documents card.
 - Added Wallet smart quick actions for Add Funds, Split Bill, Request Payment, and View Virtual Card.
 - Added a Payment Methods card to the Wallet dashboard.
-- Restyled the flight pass as a TravelDrip digital boarding pass with passenger, flight, route, boarding time, departure time, gate, seat, group, status, QR-style code, and barcode.
+- Restyled the flight pass as a Travel-Drip digital boarding pass with passenger, flight, route, boarding time, departure time, gate, seat, group, status, QR-style code, and barcode.
 - Preserved the existing redesigned My Profile section.
 - Updated cache version to `traveldrip-v92` so the new UI is not hidden behind the old service-worker cache.
 

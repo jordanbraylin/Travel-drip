@@ -1,10 +1,10 @@
-# TravelDrip Backend Scalability and Reliability Report
+# Travel-Drip Backend Scalability and Reliability Report
 
 Date: July 21, 2026
 
 Final readiness status: Not Ready for Production
 
-This report documents the TravelDrip backend scalability, storage, reliability, privacy, and recovery requirements. The current repository includes a Supabase/PostgreSQL schema foundation, Vercel serverless API routes, Row-Level Security policies, audit logging concepts, and client-side readiness messaging. Production readiness still requires real environment configuration, migrations, provider integrations, load testing, backup verification, restore testing, monitoring, and security testing.
+This report documents the Travel-Drip backend scalability, storage, reliability, privacy, and recovery requirements. The current repository includes a Supabase/PostgreSQL schema foundation, Vercel serverless API routes, Row-Level Security policies, audit logging concepts, and client-side readiness messaging. Production readiness still requires real environment configuration, migrations, provider integrations, load testing, backup verification, restore testing, monitoring, and security testing.
 
 ## Database Architecture
 
@@ -141,6 +141,6 @@ Actual targets must be validated against production-like infrastructure and adju
 
 ## Final Recommendation
 
-Do not mark the TravelDrip backend as production-ready yet.
+Do not mark the Travel-Drip backend as production-ready yet.
 
 Recommended next step: deploy to staging with production-like Supabase data, apply migrations, configure object storage and queues, enable monitoring/alerts, run load tests, verify RLS and financial idempotency, complete a restore drill, and record results in `backend_scalability_test_runs` and `backend_backup_restore_tests`.

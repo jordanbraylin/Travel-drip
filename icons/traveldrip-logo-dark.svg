@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" role="img" aria-labelledby="title">
-  <title id="title">TravelDrip logo for dark backgrounds</title>
+  <title id="title">Travel-Drip logo for dark backgrounds</title>
   <rect width="1280" height="360" rx="52" fill="#081B2D"/>
   <image href="traveldrip-logo-icon.svg" x="34" y="30" width="300" height="300"/>
-  <text x="380" y="203" fill="#F8FDFF" font-family="Inter, Avenir Next, Arial Rounded MT Bold, Arial, sans-serif" font-size="116" font-weight="900" letter-spacing="-2">TravelDrip</text>
+  <text x="380" y="203" fill="#F8FDFF" font-family="Inter, Avenir Next, Arial Rounded MT Bold, Arial, sans-serif" font-size="116" font-weight="900" letter-spacing="-2">Travel-Drip</text>
   <text x="386" y="266" fill="#B6CAD8" font-family="Inter, Avenir Next, Arial, sans-serif" font-size="30" font-weight="750" letter-spacing="1.5">PLAN TOGETHER. TRAVEL BETTER.</text>
 </svg>

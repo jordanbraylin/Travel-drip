@@ -1,4 +1,4 @@
--- TravelDrip production backend foundation.
+-- Travel-Drip production backend foundation.
 -- Run this after supabase.sql in the Supabase SQL editor.
 -- It is intentionally additive and rerunnable for the current project.
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = "traveldrip-v133";
+const CACHE_NAME = "traveldrip-v162";
 const APP_SHELL = [
   "/",
   "/index.html",
@@ -81,7 +81,7 @@ self.addEventListener("fetch", (event) => {
 
 self.addEventListener("push", (event) => {
   const data = event.data ? event.data.json() : {};
-  const title = data.title || "TravelDrip";
+  const title = data.title || "Travel-Drip";
   const options = {
     body: data.body || "You have a trip update.",
     icon: "/icons/icon.svg",

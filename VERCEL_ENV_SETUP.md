@@ -1,4 +1,4 @@
-# Vercel Environment Variables for TravelDrip
+# Vercel Environment Variables for Travel-Drip
 
 I could not add these directly from this workspace because the Vercel CLI is not installed and this environment is not connected to your Vercel account.
 
@@ -13,7 +13,7 @@ NEXT_PUBLIC_SUPABASE_URL=https://bfuiqmmbsgfcnyeneunv.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY
 ```
 
-TravelDrip also supports `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_URL`, and the older `SUPABASE_ANON_KEY`, but the `NEXT_PUBLIC_*` names above match your requested setup.
+Travel-Drip also supports `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_URL`, and the older `SUPABASE_ANON_KEY`, but the `NEXT_PUBLIC_*` names above match your requested setup.
 
 After these are saved and the site is redeployed, the Sign Up and Log in forms use live Supabase email/password auth. If Supabase email confirmation is enabled, users will see a message to verify their email before logging in.
 

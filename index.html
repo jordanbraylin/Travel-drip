@@ -4,24 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0096c7">
-  <meta name="description" content="TravelDrip helps travelers plan solo trips, group trips, corporate retreats, budgets, memories, and live updates.">
+  <meta name="description" content="Travel-Drip helps travelers plan solo trips, group trips, corporate retreats, budgets, memories, and live updates.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="TravelDrip">
+  <meta name="apple-mobile-web-app-title" content="Travel-Drip">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="application-name" content="TravelDrip">
+  <meta name="application-name" content="Travel-Drip">
     <link rel="stylesheet" href="styles.css?v=115">
-    <link rel="stylesheet" href="navigation.css?v=18">
-  <title>TravelDrip</title>
+    <link rel="stylesheet" href="navigation.css?v=45">
+  <title>Travel-Drip</title>
 </head>
 <body>
   <div class="loader" id="loader" aria-live="polite">
     <div class="loader-card">
-      <img class="loader-logo" src="icons/traveldrip-logo-stacked.svg" alt="TravelDrip">
-      <h1>TravelDrip</h1>
+      <img class="loader-logo" src="icons/traveldrip-logo-stacked.svg" alt="Travel-Drip">
+      <h1>Travel-Drip</h1>
       <p>Syncing your group trip...</p>
       <div class="loader-bar"><span></span></div>
     </div>
@@ -29,14 +29,14 @@
 
   <div class="shell">
     <aside class="sidebar" aria-label="Primary">
-      <a class="brand" href="index.html" data-route-link="dashboardHome" aria-label="TravelDrip home">
+      <a class="brand" href="index.html" data-route-link="dashboardHome" aria-label="Travel-Drip home">
         <picture class="brand-logo-wrap">
           <source media="(max-width: 720px)" srcset="icons/traveldrip-logo-icon.svg">
-          <img class="brand-logo sidebar-wordmark" src="icons/traveldrip-logo-white.svg" alt="TravelDrip">
+          <img class="brand-logo sidebar-wordmark" src="icons/traveldrip-logo-white.svg" alt="Travel-Drip">
         </picture>
-        <span class="brand-copy"><strong>TravelDrip</strong><small>Plan together. Travel better.</small></span>
+        <span class="brand-copy"><strong>Travel-Drip</strong><small>Plan together. Travel better.</small></span>
       </a>
-      <nav class="nav grouped-nav" aria-label="TravelDrip navigation">
+      <nav class="nav grouped-nav" aria-label="Travel-Drip navigation">
         <details class="nav-group" data-consumer-nav open>
           <summary>Dashboard</summary>
           <button class="active" type="button" data-main-nav-id="dashboard">Overview</button>
@@ -121,7 +121,7 @@
         </details>
       </nav>
       <div class="install-card">
-        <strong>Add TravelDrip to your phone</strong>
+        <strong>Add Travel-Drip to your phone</strong>
         <span>Tap install when prompted, or use your browser share menu and choose Add to Home Screen.</span>
         <button class="light-button" type="button" id="installButton" hidden>Install app</button>
       </div>
@@ -163,8 +163,8 @@
 
       <section class="auth-panel auth-landing" id="authPanel" hidden>
         <header class="auth-landing-nav">
-          <a class="auth-brand" href="index.html" aria-label="TravelDrip home">
-            <img class="auth-brand-logo" src="icons/traveldrip-logo-white.svg" alt="TravelDrip">
+          <a class="auth-brand" href="index.html" aria-label="Travel-Drip home">
+            <img class="auth-brand-logo" src="icons/traveldrip-logo-white.svg" alt="Travel-Drip">
           </a>
           <div class="auth-nav-actions">
             <button class="auth-link-button" type="button" id="showLoginButton" role="tab" aria-controls="authForm" aria-selected="true">Log in</button>
@@ -189,7 +189,7 @@
           <div class="auth-card" aria-live="polite">
             <div>
               <p class="eyebrow">Live account</p>
-              <h2 id="authTitle">Welcome to TravelDrip</h2>
+              <h2 id="authTitle">Welcome to Travel-Drip</h2>
               <p class="auth-sync-note">Sign in to keep your trips, events, plans, memories, and travel companions seamlessly synced across all of your devices, so you're always ready for your next adventure.</p>
             </div>
             <div class="auth-switch" role="tablist" aria-label="Account access">
@@ -280,13 +280,13 @@
               <button type="button" id="enterAppButton">Preview app</button>
             </div>
             <p class="small" id="authMessage">Create an account or log in to enable live sync.</p>
-            <p class="small auth-new-user-note">New to TravelDrip? Start planning your next trip or event today.</p>
-            <p class="auth-bottom-link"><span id="authBottomCopy">New to TravelDrip?</span> <button type="button" id="landingSignupButton">Create your account</button><button type="button" id="landingLoginButton" hidden>I already have an account</button></p>
-            <section class="pwa-install-mini" aria-label="Install TravelDrip">
-              <strong>Install TravelDrip free</strong>
+            <p class="small auth-new-user-note">New to Travel-Drip? Start planning your next trip or event today.</p>
+            <p class="auth-bottom-link"><span id="authBottomCopy">New to Travel-Drip?</span> <button type="button" id="landingSignupButton">Create your account</button><button type="button" id="landingLoginButton" hidden>I already have an account</button></p>
+            <section class="pwa-install-mini" aria-label="Install Travel-Drip">
+              <strong>Install Travel-Drip free</strong>
               <span>Add it to your phone or desktop from the browser. No App Store or Google Play download required.</span>
               <div>
-                <button class="ghost-button" type="button" id="authInstallButton" hidden>Install TravelDrip</button>
+                <button class="ghost-button" type="button" id="authInstallButton" hidden>Install Travel-Drip</button>
                 <button type="button" id="iosInstallHelpButton">How to add to Home Screen</button>
               </div>
             </section>
@@ -297,8 +297,8 @@
       <section class="pwa-panel" data-dashboard-only>
         <div>
           <p class="eyebrow">Progressive Web App</p>
-          <h2>Install TravelDrip for trip alerts</h2>
-          <p>Android and desktop: use Install TravelDrip when prompted. iPhone and iPad: open in Safari, tap Share, choose Add to Home Screen, then tap Add.</p>
+          <h2>Install Travel-Drip for trip alerts</h2>
+          <p>Android and desktop: use Install Travel-Drip when prompted. iPhone and iPad: open in Safari, tap Share, choose Add to Home Screen, then tap Add.</p>
         </div>
         <button class="ghost-button" type="button" id="inlineInstallButton" hidden>Install app</button>
         <button class="light-button" type="button" id="profileInstallHelpButton">iPhone instructions</button>
@@ -338,11 +338,11 @@
         <button type="button" data-main-nav-id="planning">Planning</button>
         <button type="button" data-main-nav-id="itinerary" data-travel-section="itinerary">Itinerary</button>
         <button type="button" data-main-nav-id="events">Events</button>
-        <button type="button" class="corporate-tab" data-target="enterpriseRbac">Corporate</button>
         <button type="button" data-main-nav-id="wallet">Wallet</button>
         <button type="button" data-main-nav-id="memories">Memories</button>
         <button type="button" data-main-nav-id="chat">Chat</button>
         <button type="button" data-main-nav-id="important-info">Important Info</button>
+        <button type="button" class="corporate-tab" data-target="enterpriseRbac">Corporate</button>
         <button type="button" data-main-nav-id="settings">Settings</button>
       </nav>
 
@@ -414,7 +414,7 @@
         <article><span>Target spend</span><strong>$1,250</strong><small>per person</small></article>
       </section>
 
-      <section class="travel-social-strip" data-dashboard-only aria-label="TravelDrip social highlights">
+      <section class="travel-social-strip" data-dashboard-only aria-label="Travel-Drip social highlights">
         <article><span>🌴</span><strong>Next Adventure</strong><small>18 days until Dubai</small></article>
         <article><span>📸</span><strong>New Memories</strong><small>12 photos ready to share</small></article>
         <article><span>🎉</span><strong>Achievement</strong><small>Beach Lover badge unlocked</small></article>
@@ -425,7 +425,7 @@
         <div class="section-heading compact">
           <div>
             <p class="eyebrow">Smart Dashboard</p>
-            <h2>Today in TravelDrip</h2>
+            <h2>Today in Travel-Drip</h2>
           </div>
           <div class="dashboard-controls">
             <label>Trip type
@@ -772,7 +772,7 @@
             <div class="ai-planner-shell">
               <section class="ai-planner-chat" aria-live="polite">
                 <div class="ai-planner-message assistant">
-                  <strong>TravelDrip AI</strong>
+                  <strong>Travel-Drip AI</strong>
                   <p id="aiPlannerQuestion">What type of trip are you planning?</p>
                 </div>
                 <div class="ai-planner-replies" id="aiPlannerReplies">
@@ -911,7 +911,7 @@
               <div class="guided-step">
                 <span>Step 1</span>
                 <h3>What type of trip are you planning?</h3>
-                <p>Choose a trip type first so TravelDrip can show the right tools, permissions, and workflows.</p>
+                <p>Choose a trip type first so Travel-Drip can show the right tools, permissions, and workflows.</p>
                 <div class="trip-type-selector" aria-label="Choose trip type">
                   <button type="button" data-trip-type="solo" aria-pressed="false">
                     <strong>Solo Trip</strong><span>Private planning, personal budget, AI recommendations, documents, packing, journal, and memories.</span>
@@ -959,7 +959,7 @@
                 <h3 id="tripDetailsTitle">Solo trip details</h3>
                 <form class="trip-creation-form" id="tripCreationForm">
                   <label>Event name<input id="tripNameInput" type="text" value="Tokyo solo food sprint"></label>
-                  <label class="wide">Event description<textarea id="eventDescriptionInput">A tailored TravelDrip event with invitations, schedule, travel, wallet, messages, media, and notifications.</textarea></label>
+                  <label class="wide">Event description<textarea id="eventDescriptionInput">A tailored Travel-Drip event with invitations, schedule, travel, wallet, messages, media, and notifications.</textarea></label>
                   <label>Destination<input id="tripDestinationInput" type="text" value="Tokyo, Japan"></label>
                   <label>Start date<input id="tripStartInput" type="date" value="2026-08-08"></label>
                   <label>End date<input id="tripEndInput" type="date" value="2026-08-13"></label>
@@ -1023,7 +1023,7 @@
                       <label>RSVP deadline<input id="inviteDeadlineInput" type="date" value="2026-07-30"></label>
                       <label>Theme color<select id="inviteThemeInput"><option>Ocean blue</option><option>Sunset orange</option><option>Sand beige</option><option>Corporate navy</option></select></label>
                       <label id="companyLogoField" hidden>Company logo<input id="companyLogoInput" type="file" accept="image/*"></label>
-                      <label class="wide">Welcome message<textarea id="inviteMessageInput">You're invited to join the trip plan, view key details, and RSVP in TravelDrip.</textarea></label>
+                      <label class="wide">Welcome message<textarea id="inviteMessageInput">You're invited to join the trip plan, view key details, and RSVP in Travel-Drip.</textarea></label>
                       <label class="wide">Personal note<textarea id="inviteNoteInput">I would love for you to be part of this travel experience.</textarea></label>
                     </div>
                     <button class="ghost-button" type="button" id="aiInviteCopyButton">AI write invitation</button>
@@ -1248,17 +1248,31 @@
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Messages</p>
-                <h2>Group chats and private messages</h2>
+                <h2>Chat, plan, laugh, repeat</h2>
+                <p>Turn trip updates into the fun part: vote on what is next, drop a memory, and keep the whole crew moving together.</p>
               </div>
               <button class="primary-button" type="button" id="newConversationButton">New message</button>
             </div>
 
-            <section class="messages-hub" aria-label="TravelDrip messaging dashboard">
+            <section class="messages-hub" aria-label="Travel-Drip messaging dashboard">
               <div class="message-search-row">
                 <label>Search messages
                   <input id="messageSearchInput" type="search" placeholder="Search chats, people, polls, photos, files, and links">
                 </label>
                 <button class="ghost-button" type="button" id="messageAiButton">Ask AI in chat</button>
+              </div>
+              <div class="chat-vibe-strip" aria-label="Trip chat shortcuts">
+                <div class="chat-vibe-copy">
+                  <p class="eyebrow">Trip energy</p>
+                  <strong>Make the group chat the launchpad for the next great moment.</strong>
+                  <span>Quick drops for plans, memories, votes, and meetups.</span>
+                </div>
+                <div class="chat-vibe-actions">
+                  <button type="button" data-chat-tool="Poll"><span aria-hidden="true">🎉</span> Vote on dinner</button>
+                  <button type="button" data-chat-tool="Photo"><span aria-hidden="true">📸</span> Drop a memory</button>
+                  <button type="button" data-chat-tool="Location"><span aria-hidden="true">📍</span> Share your pin</button>
+                  <button type="button" data-chat-tool="Itinerary Card"><span aria-hidden="true">🗺️</span> Plan the next stop</button>
+                </div>
               </div>
               <div class="message-tabs" role="tablist" aria-label="Messages tabs">
                 <button class="active" type="button" data-message-tab="group">Group Chats</button>
@@ -1493,7 +1507,7 @@
                 <div>
                   <p class="eyebrow">No accounts connected</p>
                   <h3>Connect Your Favorite Platforms</h3>
-                  <p>Share your travel memories directly from TravelDrip to your favorite social networks.</p>
+                  <p>Share your travel memories directly from Travel-Drip to your favorite social networks.</p>
                 </div>
                 <div class="empty-connect-grid">
                   <button type="button" data-social-action="connect" data-social-platform="Instagram"><span class="brand-mark instagram" aria-label="Instagram logo">IG</span>Connect Instagram</button>
@@ -1591,7 +1605,7 @@
                     </article>
                     <article class="platform-card" data-platform-card data-platform="YouTube" data-status="not-connected">
                       <span class="brand-mark youtube" aria-label="YouTube logo">▶</span>
-                      <div><strong>YouTube</strong><small>TravelDrip with Jordan</small></div>
+                      <div><strong>YouTube</strong><small>Travel-Drip with Jordan</small></div>
                       <span class="profile-initials" aria-label="Default YouTube profile avatar">TJ</span>
                       <span class="connection-status">Not Connected</span>
                       <div class="platform-actions">
@@ -1631,7 +1645,7 @@
                   <label class="caption-label" for="captionText">Instagram caption preview</label>
                   <textarea id="captionText">Sunsets, great food, and unforgettable memories in Santorini.</textarea>
                   <div class="hashtag-list" id="hashtagList">
-                    <span>#TravelDrip</span><span>#Santorini</span><span>#Vacation</span><span>#TravelTogether</span>
+                    <span>#Travel-Drip</span><span>#Santorini</span><span>#Vacation</span><span>#TravelTogether</span>
                   </div>
                   <div class="social-action-row">
                     <button class="primary-button" type="button" id="generateCaptionButton">Generate Caption</button>
@@ -1679,7 +1693,7 @@
                     <div>
                       <p id="sharePreviewCaption">Sunsets, great food, and unforgettable memories in Santorini.</p>
                       <div class="hashtag-list compact" id="sharePreviewHashtags">
-                        <span>#TravelDrip</span><span>#Santorini</span><span>#Vacation</span><span>#TravelTogether</span>
+                        <span>#Travel-Drip</span><span>#Santorini</span><span>#Vacation</span><span>#TravelTogether</span>
                       </div>
                       <div class="selected-platforms" id="sharePreviewPlatforms" aria-live="polite"></div>
                     </div>
@@ -2212,7 +2226,7 @@
                 <div class="faq-list">
                   <div><strong>What time is hotel check-in?</strong><span>3:00 PM. Early bags can be held by the front desk.</span></div>
                   <div><strong>Are meals provided?</strong><span>Breakfast and official group dinners are included.</span></div>
-                  <div><strong>What happens if my flight is delayed?</strong><span>Update your flight status in TravelDrip and contact transportation support.</span></div>
+                  <div><strong>What happens if my flight is delayed?</strong><span>Update your flight status in Travel-Drip and contact transportation support.</span></div>
                 </div>
               </details>
 
@@ -2269,7 +2283,7 @@
               <article>
                 <span>Personal balance</span>
                 <strong>$1,050</strong>
-                <small>Jordan's available personal TravelDrip balance.</small>
+                <small>Jordan's available personal Travel-Drip balance.</small>
               </article>
               <article>
                 <span>Trip balance</span>
@@ -2389,7 +2403,7 @@
                 <article>
                   <p class="eyebrow">Payment Methods</p>
                   <strong>2 linked methods</strong>
-                  <small>Visa debit, Apple Pay, and TravelDrip Wallet are ready for PIN-gated checkout.</small>
+                  <small>Visa debit, Apple Pay, and Travel-Drip Wallet are ready for PIN-gated checkout.</small>
                   <button type="button" data-wallet-action="Add Payment Method">Manage Methods</button>
                 </article>
               </section>
@@ -2411,6 +2425,7 @@
                 <article><span>Recent Transactions</span><strong>12 records</strong><small>Chronological wallet feed with method, category, amount, and status.</small><button type="button" data-wallet-section="transactions">View Feed</button></article>
               </section>
             </section>
+            <section class="wallet-operations-panel" aria-label="Wallet operations">
             <div class="trip-wallet-card">
               <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=900&auto=format&fit=crop" alt="Miami beach trip wallet cover">
               <div>
@@ -2454,13 +2469,14 @@
             <div class="budget-line"><span>Flights</span><strong>$3,200</strong></div><div class="bar"><i style="--w:50%"></i></div>
             <div class="budget-line"><span>Stay</span><strong>$2,100</strong></div><div class="bar"><i style="--w:33%"></i></div>
             <div class="budget-line"><span>Food and events</span><strong>$1,100</strong></div><div class="bar"><i style="--w:17%"></i></div>
+            </section>
           </section>
 
           <section class="panel virtual-card-panel" id="virtualCard" data-route-support="walletPanel">
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Virtual wallet card</p>
-                <h2>TravelDrip card access</h2>
+                <h2>Travel-Drip card access</h2>
               </div>
               <span class="card-status" id="cardStatus">Locked</span>
             </div>
@@ -2621,7 +2637,7 @@
                   </div>
                 </div>
                 <div class="payment-method-grid">
-                  <button type="button" data-bill-pay="TravelDrip Wallet">Pay from Wallet</button>
+                  <button type="button" data-bill-pay="Travel-Drip Wallet">Pay from Wallet</button>
                   <button type="button" data-bill-pay="Linked card">Linked card</button>
                   <button type="button" data-bill-pay="Apple Pay">Apple Pay</button>
                   <button type="button" data-bill-pay="Google Wallet">Google Wallet</button>
@@ -2856,7 +2872,7 @@
                 <section class="travel-focus-panel" data-travel-panel="boarding">
                   <div class="travel-focus-header"><span class="travel-focus-icon">🎫</span><div><p class="eyebrow">Boarding Passes</p><h3>Upcoming, active, completed, and cancelled passes</h3><p>Each pass uses its own visual ticket. Official QR or barcode is shown only when imported from a valid provider document.</p></div><button class="primary-button" type="button" data-travel-focus-action="Save Offline">Save Offline</button></div>
                   <div class="travel-pass-filters"><button class="active" type="button">Upcoming</button><button type="button">Active</button><button type="button">Completed</button><button type="button">Cancelled</button></div>
-                  <div class="visual-pass-grid single-focus-pass"><article class="visual-pass-card visual-pass-card--flight digital-boarding-pass"><div class="pass-topline"><span>Flight boarding pass</span><strong>On Time</strong></div><div class="pass-provider"><b>TravelDrip Pass</b><span>Verified travel document</span></div><div class="pass-route"><b>MIA</b><i></i><b>HND</b></div><h4>DL 241 • Miami to Tokyo</h4><dl><div><dt>Passenger</dt><dd>Jordan Smith</dd></div><div><dt>Flight</dt><dd>DL 241</dd></div><div><dt>Boarding</dt><dd>7:55 AM</dd></div><div><dt>Departs</dt><dd>8:45 AM</dd></div><div><dt>Gate</dt><dd>B18</dd></div><div><dt>Seat</dt><dd>14A</dd></div><div><dt>Group</dt><dd>3</dd></div><div><dt>Status</dt><dd>Checked In</dd></div></dl><div class="official-code" aria-label="QR code for boarding pass"></div><div class="barcode-strip" aria-label="Barcode for boarding pass"></div><div class="pass-actions"><button type="button" data-pass-action="View Boarding Pass">View Details</button><button type="button" data-pass-action="Save Offline">Save Offline</button></div></article></div>
+                  <div class="visual-pass-grid single-focus-pass"><article class="visual-pass-card visual-pass-card--flight digital-boarding-pass"><div class="pass-topline"><span>Flight boarding pass</span><strong>On Time</strong></div><div class="pass-provider"><b>Travel-Drip Pass</b><span>Verified travel document</span></div><div class="pass-route"><b>MIA</b><i></i><b>HND</b></div><h4>DL 241 • Miami to Tokyo</h4><dl><div><dt>Passenger</dt><dd>Jordan Smith</dd></div><div><dt>Flight</dt><dd>DL 241</dd></div><div><dt>Boarding</dt><dd>7:55 AM</dd></div><div><dt>Departs</dt><dd>8:45 AM</dd></div><div><dt>Gate</dt><dd>B18</dd></div><div><dt>Seat</dt><dd>14A</dd></div><div><dt>Group</dt><dd>3</dd></div><div><dt>Status</dt><dd>Checked In</dd></div></dl><div class="official-code" aria-label="QR code for boarding pass"></div><div class="barcode-strip" aria-label="Barcode for boarding pass"></div><div class="pass-actions"><button type="button" data-pass-action="View Boarding Pass">View Details</button><button type="button" data-pass-action="Save Offline">Save Offline</button></div></article></div>
                 </section>
                 <section class="travel-focus-panel" data-travel-panel="weather">
                   <div class="travel-focus-header"><span class="travel-focus-icon">🌦️</span><div><p class="eyebrow">Weather</p><h3>Destination forecast</h3><p>Full weather stays here; Travel Home only shows a preview. Live provider status is labeled until connected.</p></div><button class="primary-button" type="button" data-travel-focus-action="Refresh Weather">Refresh</button></div>
@@ -3053,7 +3069,7 @@
                   <div class="visual-pass-grid">
                     <article class="visual-pass-card visual-pass-card--flight digital-boarding-pass">
                       <div class="pass-topline"><span>Flight boarding pass</span><strong>Checked In</strong></div>
-                      <div class="pass-provider"><b>TravelDrip Pass</b><span>Verified travel document</span></div>
+                      <div class="pass-provider"><b>Travel-Drip Pass</b><span>Verified travel document</span></div>
                       <div class="pass-route"><b>MIA</b><i></i><b>HND</b></div>
                       <h4>DL 241 • Miami to Tokyo</h4>
                       <dl>
@@ -3356,7 +3372,7 @@
               <div>
                 <p class="eyebrow">Account connection</p>
                 <h3 id="rideConnectionTitle">Connect your Careem account to continue.</h3>
-                <span id="rideConnectionMeta">TravelDrip never asks for or stores ride-share passwords. Provider authentication opens through supported OAuth, app link, or secure web flow.</span>
+                <span id="rideConnectionMeta">Travel-Drip never asks for or stores ride-share passwords. Provider authentication opens through supported OAuth, app link, or secure web flow.</span>
               </div>
               <div class="ride-account-actions">
                 <button class="primary-button" type="button" id="connectRideAccountButton">Connect account</button>
@@ -3525,8 +3541,8 @@
               <div><strong>Security</strong><span>Users can revoke access anytime. Ride activity is audit logged and production data should be encrypted at rest.</span></div>
             </div>
             <div class="payment-method-grid">
-              <button type="button" data-ride-pay="TravelDrip Wallet">Wallet</button>
-              <button type="button" data-ride-pay="TravelDrip Virtual Card">Virtual Card</button>
+              <button type="button" data-ride-pay="Travel-Drip Wallet">Wallet</button>
+              <button type="button" data-ride-pay="Travel-Drip Virtual Card">Virtual Card</button>
               <button type="button" data-ride-pay="Apple Pay">Apple Pay</button>
               <button type="button" data-ride-pay="Google Wallet">Google Wallet</button>
               <button type="button" data-ride-pay="Linked payment method">Linked payment</button>
@@ -3630,7 +3646,7 @@
               <article><span>Restaurant</span><strong>Ocean Rooftop Grill</strong><small>7:30 PM • leave by 6:55 PM</small><button type="button" data-reservation-action="View Reservation">View Reservation</button></article>
               <article><span>Activity</span><strong>Catamaran Sunset Cruise</strong><small>5:00 PM • check-in closes 4:30 PM</small><button type="button" data-reservation-action="View Excursion Details">View Details</button></article>
             </section>
-            <p class="security-note">TravelDrip keeps every traveler informed across friends, family, and corporate retreat trips with push, email, SMS where available, and in-app alerts.</p>
+            <p class="security-note">Travel-Drip keeps every traveler informed across friends, family, and corporate retreat trips with push, email, SMS where available, and in-app alerts.</p>
             <div class="alert-category-grid">
               <label><input type="checkbox" data-alert-category="Flights" checked> Flight delays, cancellations, gate changes, check-in reminders</label>
               <label><input type="checkbox" data-alert-category="Hotels" checked> Hotel check-in/out reminders and reservation updates</label>
@@ -3729,7 +3745,7 @@
                 <div>
                   <p class="eyebrow">Smart departure alert</p>
                   <h4>Leave in 20 minutes</h4>
-                  <p id="departureAlertCopy">TravelDrip checks current location, traffic, walking time, public transportation, and ride-share estimates before sending time-to-leave alerts.</p>
+                  <p id="departureAlertCopy">Travel-Drip checks current location, traffic, walking time, public transportation, and ride-share estimates before sending time-to-leave alerts.</p>
                 </div>
                 <button class="primary-button" type="button" id="calculateDepartureButton">Calculate departure</button>
               </div>
@@ -3761,7 +3777,7 @@
                 <div>
                   <p class="eyebrow">AI Trip Manager</p>
                   <h4>Proactive booking guidance</h4>
-                  <p id="reservationAiCopy">Your dinner reservation is in two hours. If traffic increases, TravelDrip will recommend leaving earlier and surface gear or check-in requirements.</p>
+                  <p id="reservationAiCopy">Your dinner reservation is in two hours. If traffic increases, Travel-Drip will recommend leaving earlier and surface gear or check-in requirements.</p>
                 </div>
                 <button class="ghost-button" type="button" id="reservationAiReviewButton">Review today</button>
               </div>
@@ -3813,7 +3829,7 @@
                   <p class="eyebrow">Profile Card</p>
                   <h3>Jordan Smith</h3>
                   <p>@jordansmith</p>
-                  <strong>Planning unforgettable trips, events, and shared memories with TravelDrip.</strong>
+                  <strong>Planning unforgettable trips, events, and shared memories with Travel-Drip.</strong>
                 </div>
                 <dl>
                   <div><dt>Home</dt><dd>Miami, Florida</dd></div>
@@ -3952,9 +3968,9 @@
                 <div><span class="profile-photo-avatar small" data-profile-initials>JS</span><strong>Notifications</strong></div>
               </div>
               <div class="profile-photo-policy-grid">
-                <div><strong>Upload guidance</strong><span>JPG, JPEG, PNG, HEIC, or WEBP. Max 5 MB. TravelDrip previews the image before saving.</span></div>
+                <div><strong>Upload guidance</strong><span>JPG, JPEG, PNG, HEIC, or WEBP. Max 5 MB. Travel-Drip previews the image before saving.</span></div>
                 <div><strong>Corporate accounts</strong><span>Companies can allow employee uploads, sync company directory photos, or display company-issued photos when policy requires it.</span></div>
-                <div><strong>Default avatar</strong><span>If no photo is uploaded, TravelDrip shows initials such as JS for Jordan Smith.</span></div>
+                <div><strong>Default avatar</strong><span>If no photo is uploaded, Travel-Drip shows initials such as JS for Jordan Smith.</span></div>
               </div>
               <div class="button-row">
                 <button class="primary-button" type="button" id="saveProfilePhotoButton">Save Changes</button>
@@ -3968,7 +3984,7 @@
                 <label>Full name<input id="profileFullNameInput" value="Jordan Smith"></label>
                 <label>Username<input id="profileUsernameInput" value="@jordansmith"></label>
                 <label>Display name<input value="Jordan"></label>
-                <label>Bio<textarea rows="3">Planning unforgettable trips, events, and shared memories with TravelDrip.</textarea></label>
+                <label>Bio<textarea rows="3">Planning unforgettable trips, events, and shared memories with Travel-Drip.</textarea></label>
               </article>
               <article>
                 <p class="eyebrow">Public Profile Details</p>
@@ -4075,8 +4091,8 @@
                 </section>
                 <section class="settings-section" data-settings-panel="payments">
                   <div><p class="eyebrow">Payments and Wallet Administration</p><h3>Payment methods, refunds, wallet security, virtual cards, and spending limits</h3><p>Financial administration is separate from personal profile editing.</p></div>
-                  <div class="settings-row"><div><strong>Payment methods</strong><span>Debit card and TravelDrip Wallet preview available.</span></div><button type="button" data-target="walletPanel">Open Wallet</button></div>
-                  <div class="settings-row"><div><strong>Refund preferences</strong><span>Unused eligible funds return to original method or TravelDrip Wallet.</span></div><button type="button" data-target="walletPanel">Manage</button></div>
+                  <div class="settings-row"><div><strong>Payment methods</strong><span>Debit card and Travel-Drip Wallet preview available.</span></div><button type="button" data-target="walletPanel">Open Wallet</button></div>
+                  <div class="settings-row"><div><strong>Refund preferences</strong><span>Unused eligible funds return to original method or Travel-Drip Wallet.</span></div><button type="button" data-target="walletPanel">Manage</button></div>
                   <div class="settings-row"><div><strong>Virtual card controls</strong><span>Freeze, reveal, wallet pass, and transaction permission controls.</span></div><button type="button" data-target="walletPanel">Review</button></div>
                   <div class="settings-row"><div><strong>Spending limits</strong><span>Organizer and finance-admin controlled where supported.</span></div><span class="status-pill">Role gated</span></div>
                 </section>
@@ -4085,7 +4101,7 @@
                   <div class="settings-row"><div><strong>App theme</strong><span>Tropical Paradise</span></div><select id="settingsThemeSelector" aria-label="App theme mirror"><option value="tropical">Tropical Paradise</option><option value="sunset">Sunset Escape</option><option value="ocean">Ocean Breeze</option><option value="miami">Miami Nights</option><option value="cruise">Cruise Life</option><option value="festival">Festival Vibes</option></select></div>
                   <div class="settings-row"><div><strong>Currency display</strong><span>US Dollar</span></div><select aria-label="Currency display"><option>USD</option><option>EUR</option><option>GBP</option><option>JPY</option></select></div>
                   <div class="settings-row"><div><strong>Weather units</strong><span>Fahrenheit</span></div><select aria-label="Weather units"><option>Fahrenheit</option><option>Celsius</option></select></div>
-                  <div class="settings-row"><div><strong>Install app</strong><span>Add TravelDrip free from the browser on mobile or desktop.</span></div><button type="button" id="settingsInstallButton">Install</button></div>
+                  <div class="settings-row"><div><strong>Install app</strong><span>Add Travel-Drip free from the browser on mobile or desktop.</span></div><button type="button" id="settingsInstallButton">Install</button></div>
                 </section>
                 <section class="settings-section" data-settings-panel="accessibility">
                   <div><p class="eyebrow">Accessibility</p><h3>Motion, text, contrast, captions, and keyboard support</h3><p>Controls stay row-based with full-width mobile behavior.</p></div>
@@ -4101,7 +4117,7 @@
                   <div class="settings-row"><div><strong>Social connections</strong><span>Instagram, TikTok, Facebook, Threads, LinkedIn, Pinterest, YouTube, and X.</span></div><button type="button" data-target="adminPanel" data-settings-focus="socialMediaHub">Manage</button></div>
                   <div class="settings-row" data-admin-only><div><strong>Production providers</strong><span>Email, SMS, payments, maps, flight data, hotel data, AI, monitoring, and storage credentials.</span></div><button type="button" data-corporate-access-admin="Review Provider Integrations">Review</button></div>
                   <div class="settings-row" data-admin-only><div><strong>GoHighLevel CRM</strong><span id="ghlConnectionStatus">Connection status is available to administrators. API credentials remain server-side.</span></div><button type="button" id="ghlTestConnectionButton">Test connection</button></div>
-                  <div class="settings-row" data-admin-only><div><strong>CRM activity sync</strong><span id="ghlLastSyncStatus">Sync contacts, tags, trip fields, opportunities, and workflows without blocking TravelDrip.</span></div><button type="button" id="ghlSyncTestContactButton">Sync test contact</button></div>
+                  <div class="settings-row" data-admin-only><div><strong>CRM activity sync</strong><span id="ghlLastSyncStatus">Sync contacts, tags, trip fields, opportunities, and workflows without blocking Travel-Drip.</span></div><button type="button" id="ghlSyncTestContactButton">Sync test contact</button></div>
                   <div class="settings-row" data-admin-only><div><strong>Automatic CRM syncing</strong><span>Registration and qualifying trip activity can be retried from Admin when GoHighLevel is unavailable.</span></div><label class="settings-toggle"><input type="checkbox" id="ghlSyncEnabled" checked><span></span></label></div>
                 </section>
                 <section class="settings-section" data-settings-panel="data">
@@ -4114,7 +4130,7 @@
                 <p class="small" id="settingsStatusMessage">Admin categories are separated from My Profile. Rows remain readable and controls stay aligned across desktop and mobile.</p>
               </div>
             </section>
-            <section class="theme-studio" aria-label="TravelDrip theme settings">
+            <section class="theme-studio" aria-label="Travel-Drip theme settings">
               <div>
                 <p class="eyebrow">Theme Studio</p>
                 <h3>Tropical Social Edition</h3>
@@ -4203,24 +4219,24 @@
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Copyright Policy</p>
-                <h2>Respecting owned content, creator rights, and TravelDrip assets</h2>
+                <h2>Respecting owned content, creator rights, and Travel-Drip assets</h2>
               </div>
               <span class="compliance-badge">Policy draft</span>
             </div>
             <div class="policy-summary-grid">
-              <article><span>TravelDrip content</span><strong>Protected</strong><small>Brand, interface copy, designs, icons, and app materials.</small></article>
+              <article><span>Travel-Drip content</span><strong>Protected</strong><small>Brand, interface copy, designs, icons, and app materials.</small></article>
               <article><span>User uploads</span><strong>User-owned</strong><small>Travelers keep rights to photos, files, captions, and trip memories they upload.</small></article>
               <article><span>Shared access</span><strong>Limited license</strong><small>Uploads are used only to operate, display, sync, and improve the app experience.</small></article>
               <article><span>Reports</span><strong>Review process</strong><small>Copyright concerns can be reviewed and removed when verified.</small></article>
             </div>
             <div class="copyright-columns">
               <div>
-                <h3>TravelDrip-owned materials</h3>
-                <p>All TravelDrip names, logos, interface layouts, product text, graphics, software, workflows, and original site materials are owned by TravelDrip or its licensors unless marked otherwise. Users may not copy, resell, modify, scrape, or redistribute these materials without written permission.</p>
+                <h3>Travel-Drip-owned materials</h3>
+                <p>All Travel-Drip names, logos, interface layouts, product text, graphics, software, workflows, and original site materials are owned by Travel-Drip or its licensors unless marked otherwise. Users may not copy, resell, modify, scrape, or redistribute these materials without written permission.</p>
               </div>
               <div>
                 <h3>User content</h3>
-                <p>Users retain ownership of photos, videos, documents, captions, reviews, receipts, and trip content they upload. By adding content, users give TravelDrip permission to host, process, resize, display, share with selected trip members, and sync that content as needed to provide the service.</p>
+                <p>Users retain ownership of photos, videos, documents, captions, reviews, receipts, and trip content they upload. By adding content, users give Travel-Drip permission to host, process, resize, display, share with selected trip members, and sync that content as needed to provide the service.</p>
               </div>
               <div>
                 <h3>Prohibited content</h3>
@@ -4228,16 +4244,16 @@
               </div>
               <div>
                 <h3>Copyright complaints</h3>
-                <p>Copyright owners can request review by providing the copyrighted work, the TravelDrip content location, contact information, a good-faith statement, and a statement that the report is accurate. Verified infringing content may be removed or restricted.</p>
+                <p>Copyright owners can request review by providing the copyrighted work, the Travel-Drip content location, contact information, a good-faith statement, and a statement that the report is accurate. Verified infringing content may be removed or restricted.</p>
               </div>
             </div>
             <div class="copyright-process">
               <div><strong>1. Report</strong><span>Submit the content location, ownership details, and why the use is unauthorized.</span></div>
-              <div><strong>2. Review</strong><span>TravelDrip reviews the request, preserves relevant audit information, and may temporarily restrict disputed content.</span></div>
+              <div><strong>2. Review</strong><span>Travel-Drip reviews the request, preserves relevant audit information, and may temporarily restrict disputed content.</span></div>
               <div><strong>3. Action</strong><span>Content may be removed, restored, or escalated if the uploader provides valid permission or a counter-notice.</span></div>
-              <div><strong>4. Repeat misuse</strong><span>Accounts that repeatedly upload infringing content may lose upload access or be removed from TravelDrip.</span></div>
+              <div><strong>4. Repeat misuse</strong><span>Accounts that repeatedly upload infringing content may lose upload access or be removed from Travel-Drip.</span></div>
             </div>
-            <p class="small">This mock policy is product copy for the TravelDrip prototype and should be reviewed by a qualified attorney before production launch.</p>
+            <p class="small">This mock policy is product copy for the Travel-Drip prototype and should be reviewed by a qualified attorney before production launch.</p>
           </section>
 
           <section class="panel">
@@ -4335,7 +4351,7 @@
               <button class="ghost-button" type="button" data-target="itineraryAlerts">Review notifications</button>
               <button class="ghost-button" type="button" data-target="socialHub">Review messaging</button>
             </div>
-            <p class="small" id="goLiveStatusMessage">Do not mark TravelDrip Ready for Production until all critical production checks pass with real provider credentials and user journey tests.</p>
+            <p class="small" id="goLiveStatusMessage">Do not mark Travel-Drip Ready for Production until all critical production checks pass with real provider credentials and user journey tests.</p>
           </section>
 
           <section class="panel audit-panel" data-route-support="groupBank walletPanel">
@@ -4373,7 +4389,7 @@
   <section class="update-available-banner" id="updateAvailableBanner" role="status" aria-live="polite" hidden>
     <div>
       <strong>Update available</strong>
-      <span>A fresh TravelDrip version is ready.</span>
+      <span>A fresh Travel-Drip version is ready.</span>
     </div>
     <button type="button" id="reloadUpdateButton">Reload</button>
   </section>
@@ -4385,15 +4401,15 @@
 
   <dialog class="pin-dialog install-help-dialog" id="installHelpDialog" aria-labelledby="installHelpTitle">
     <form method="dialog" class="pin-card">
-      <p class="eyebrow">Install TravelDrip</p>
-      <h2 id="installHelpTitle">Add TravelDrip to your Home Screen</h2>
+      <p class="eyebrow">Install Travel-Drip</p>
+      <h2 id="installHelpTitle">Add Travel-Drip to your Home Screen</h2>
       <ol class="install-steps">
-        <li>Open TravelDrip in Safari on iPhone or iPad.</li>
+        <li>Open Travel-Drip in Safari on iPhone or iPad.</li>
         <li>Tap the Share icon in the browser toolbar.</li>
         <li>Choose Add to Home Screen.</li>
-        <li>Tap Add and launch TravelDrip like an app.</li>
+        <li>Tap Add and launch Travel-Drip like an app.</li>
       </ol>
-      <p class="small">Android Chrome, Microsoft Edge, and desktop Chrome can show an Install TravelDrip prompt automatically when available.</p>
+      <p class="small">Android Chrome, Microsoft Edge, and desktop Chrome can show an Install Travel-Drip prompt automatically when available.</p>
       <div class="dialog-actions">
         <button class="primary-button" value="close" type="submit">Got it</button>
       </div>
@@ -4445,6 +4461,6 @@
 
   <script src="https://link.msgsndr.com/js/external-tracking.js" data-tracking-id="tk_684cd074f7154fbebd60d6f62b2d331b"></script>
   <script src="public-config.js?v=2"></script>
-  <script defer src="app.js?v=59"></script>
+  <script defer src="app.js?v=61"></script>
 </body>
 </html>

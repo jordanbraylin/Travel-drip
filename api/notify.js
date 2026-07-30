@@ -84,7 +84,7 @@ export default async function handler(request, response) {
   }
 
   const requestBody = getRequestBody(request);
-  const title = String(requestBody.title || "TravelDrip update").slice(0, 80);
+  const title = String(requestBody.title || "Travel-Drip update").slice(0, 80);
   const body = String(requestBody.body || "You have a trip update.").slice(0, 180);
   const url = getNotificationUrl(requestBody.url);
 

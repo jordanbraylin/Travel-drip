@@ -73,7 +73,7 @@ async function ghlRequest(path, method, config, body) {
 function splitName(name = "") {
   const parts = String(name).trim().split(/\s+/).filter(Boolean);
   return {
-    firstName: parts.shift() || "TravelDrip",
+    firstName: parts.shift() || "Travel-Drip",
     lastName: parts.join(" ")
   };
 }
@@ -83,11 +83,11 @@ function normalizeTags(tags = []) {
 }
 
 function buildContact(user, input, config) {
-  const name = sanitizeText(input.fullName || user.user_metadata?.full_name || user.email?.split("@")[0] || "TravelDrip traveler", "TravelDrip traveler", 120);
+  const name = sanitizeText(input.fullName || user.user_metadata?.full_name || user.email?.split("@")[0] || "Travel-Drip traveler", "Travel-Drip traveler", 120);
   const { firstName, lastName } = splitName(name);
   const email = sanitizeText(input.email || user.email, "", 160).toLowerCase();
   const tripType = sanitizeText(input.tripType || "", "", 60);
-  const tags = normalizeTags(["TravelDrip User", "New Traveler", tripType, ...(input.tags || [])]);
+  const tags = normalizeTags(["Travel-Drip User", "New Traveler", tripType, ...(input.tags || [])]);
   const customFields = Object.entries({
     username: input.username,
     user_type: input.userType,
@@ -117,7 +117,7 @@ function buildContact(user, input, config) {
     locationId: config.locationId,
     tags,
     customFields,
-    source: "TravelDrip",
+    source: "Travel-Drip",
     createNewIfDuplicateAllowed: false
   };
 }
@@ -209,7 +209,7 @@ export default async function handler(request, response) {
         pipelineId: config.pipelineId,
         pipelineStageId: config.pipelineStageId || undefined,
         locationId: config.locationId,
-        name: sanitizeText(input.tripName, "TravelDrip trip", 120),
+        name: sanitizeText(input.tripName, "Travel-Drip trip", 120),
         status: "open",
         contactId,
         monetaryValue: Number(input.budget || 0) || undefined
@@ -230,6 +230,6 @@ export default async function handler(request, response) {
     response.status(200).json({ ok: true, contactId: contactId || null, opportunity: opportunityResult, workflow: workflowResult, syncedAt: new Date().toISOString() });
   } catch (error) {
     await writeSyncLog(supabase, user.id, "failed", input, error.message);
-    response.status(502).json({ error: "GoHighLevel sync failed. The TravelDrip workflow was not blocked; retry from Admin." });
+    response.status(502).json({ error: "GoHighLevel sync failed. The Travel-Drip workflow was not blocked; retry from Admin." });
   }
 }

@@ -4,7 +4,7 @@ export default function handler(_request, response) {
   applySecurityHeaders(response);
   response.status(200).json({
     ok: true,
-    app: "TravelDrip",
+    app: "Travel-Drip",
     supabaseUrlConfigured: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL),
     supabasePublishableKeyConfigured: Boolean(
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY

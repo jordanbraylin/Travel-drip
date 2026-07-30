@@ -1,4 +1,4 @@
-# TravelDrip Backend Architecture
+# Travel-Drip Backend Architecture
 
 This project now includes a production-oriented backend foundation for Supabase and Vercel serverless APIs.
 

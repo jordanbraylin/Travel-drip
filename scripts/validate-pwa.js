@@ -13,8 +13,8 @@ const offline = read("offline.html");
 const envExample = read(".env.example");
 const vercel = JSON.parse(read("vercel.json"));
 
-if (manifest.name !== "TravelDrip") fail("manifest name must be TravelDrip");
-if (manifest.short_name !== "TravelDrip") fail("manifest short_name must be TravelDrip");
+if (manifest.name !== "Travel-Drip") fail("manifest name must be Travel-Drip");
+if (manifest.short_name !== "Travel-Drip") fail("manifest short_name must be Travel-Drip");
 if (manifest.display !== "standalone") fail("manifest display must be standalone");
 if (manifest.start_url !== "/") fail("manifest start_url must be /");
 if (manifest.orientation !== "portrait-primary") fail("manifest orientation must be portrait-primary");
@@ -61,4 +61,4 @@ if (!vercel.rewrites?.some((rewrite) => rewrite.source === "/offline" && rewrite
   fail("vercel.json missing /offline rewrite");
 }
 
-console.log("TravelDrip PWA validation passed.");
+console.log("Travel-Drip PWA validation passed.");

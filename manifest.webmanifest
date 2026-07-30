@@ -1,6 +1,6 @@
 {
-  "name": "TravelDrip",
-  "short_name": "TravelDrip",
+  "name": "Travel-Drip",
+  "short_name": "Travel-Drip",
   "description": "AI-powered travel and event planning platform",
   "start_url": "/",
   "scope": "/",
@@ -33,9 +33,9 @@
   ],
   "shortcuts": [
     {
-      "name": "Open TravelDrip",
+      "name": "Open Travel-Drip",
       "short_name": "Home",
-      "description": "Open the TravelDrip dashboard",
+      "description": "Open the Travel-Drip dashboard",
       "url": "/home",
       "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     },

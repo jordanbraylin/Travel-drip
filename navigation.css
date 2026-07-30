@@ -1,4 +1,4 @@
-/* TravelDrip navigation layers: keep controls above content and decorative surfaces click-safe. */
+/* Travel-Drip navigation layers: keep controls above content and decorative surfaces click-safe. */
 :root {
   --z-content: 1;
   --z-banner: 10;
@@ -1523,6 +1523,593 @@ body.app-routed main :where(
   }
 }
 
+/* Wallet tab: organized balance, actions, workspace, and operations sections. */
+#walletPanel {
+  display: grid !important;
+  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  align-content: start !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+#walletPanel > .section-heading,
+#walletPanel > .wallet-dashboard-header,
+#walletPanel > .wallet-smart-actions,
+#walletPanel > .wallet-redesign-shell,
+#walletPanel > .wallet-operations-panel {
+  grid-column: 1 / -1 !important;
+  min-width: 0;
+  margin: 0 !important;
+}
+
+#walletPanel > .section-heading {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  padding: 13px 15px !important;
+  border: 1px solid rgba(15, 23, 42, 0.09) !important;
+  border-radius: 16px !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05) !important;
+}
+
+#walletPanel > .section-heading h2 {
+  margin: 0 !important;
+  max-width: none !important;
+  font-size: clamp(1.25rem, 2vw, 1.7rem) !important;
+  line-height: 1.15 !important;
+}
+
+#walletPanel > .section-heading p:not(.eyebrow) {
+  max-width: 720px !important;
+  margin-top: 4px !important;
+  font-size: 0.78rem !important;
+  line-height: 1.4 !important;
+}
+
+#walletPanel > .wallet-dashboard-header {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-auto-rows: max-content !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+#walletPanel > .wallet-dashboard-header > article {
+  display: grid !important;
+  grid-column: auto !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 12px !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  border-radius: 14px !important;
+  background: #ffffff !important;
+  box-shadow: 0 7px 16px rgba(15, 23, 42, 0.05) !important;
+}
+
+#walletPanel > .wallet-dashboard-header > article:nth-child(3n + 1) {
+  background: linear-gradient(135deg, #e7fbff, #ffffff 72%) !important;
+}
+
+#walletPanel > .wallet-dashboard-header > article:nth-child(3n + 2) {
+  background: linear-gradient(135deg, #ecfdf5, #ffffff 72%) !important;
+}
+
+#walletPanel > .wallet-dashboard-header > article:nth-child(3n + 3) {
+  background: linear-gradient(135deg, #fff7ed, #ffffff 72%) !important;
+}
+
+#walletPanel > .wallet-dashboard-header > article span {
+  color: #567084 !important;
+  font-size: 0.65rem !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+#walletPanel > .wallet-dashboard-header > article strong {
+  margin: 0 !important;
+  color: #0f2f3a !important;
+  font-size: 1.08rem !important;
+  line-height: 1.1 !important;
+  overflow-wrap: anywhere;
+}
+
+#walletPanel > .wallet-dashboard-header > article small {
+  color: #64788a !important;
+  font-size: 0.67rem !important;
+  line-height: 1.3 !important;
+  overflow-wrap: anywhere;
+}
+
+#walletPanel > .wallet-smart-actions {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  align-items: stretch !important;
+}
+
+#walletPanel > .wallet-smart-actions button {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 36px !important;
+  padding: 7px 9px !important;
+  border-radius: 10px !important;
+  font-size: 0.7rem !important;
+  line-height: 1.2 !important;
+  white-space: normal !important;
+}
+
+#walletPanel > .wallet-redesign-shell {
+  display: grid !important;
+  grid-template-columns: minmax(170px, 210px) minmax(0, 1fr) !important;
+  gap: 12px !important;
+  align-items: start !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#walletPanel > .wallet-redesign-shell > .wallet-section-nav {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  align-content: start !important;
+  gap: 5px !important;
+  min-width: 0;
+  padding: 8px !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, 0.82) !important;
+  box-shadow: 0 7px 16px rgba(15, 23, 42, 0.04) !important;
+}
+
+#walletPanel > .wallet-redesign-shell > .wallet-section-nav button {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 32px !important;
+  padding: 7px 8px !important;
+  border: 1px solid transparent !important;
+  border-radius: 8px !important;
+  color: #526477 !important;
+  font-size: 0.69rem !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+  white-space: normal !important;
+}
+
+#walletPanel > .wallet-redesign-shell > .wallet-section-nav button.active,
+#walletPanel > .wallet-redesign-shell > .wallet-section-nav button:hover,
+#walletPanel > .wallet-redesign-shell > .wallet-section-nav button:focus-visible {
+  border-color: rgba(8, 127, 140, 0.16) !important;
+  background: #e9fbfd !important;
+  color: #087f8c !important;
+}
+
+#walletPanel > .wallet-redesign-shell > .wallet-home-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-auto-rows: max-content !important;
+  gap: 10px !important;
+  align-items: start !important;
+  min-width: 0;
+  margin: 0 !important;
+}
+
+#walletPanel .wallet-home-grid > * {
+  grid-column: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  align-self: start !important;
+  padding: 12px !important;
+  border-radius: 14px !important;
+}
+
+#walletPanel .wallet-home-grid > .wallet-balance-hero {
+  grid-column: span 2 !important;
+  background: linear-gradient(135deg, #e6fbff, #ffffff 72%) !important;
+}
+
+#walletPanel .wallet-home-grid > .wallet-summary-card {
+  display: grid !important;
+  gap: 5px !important;
+}
+
+#walletPanel .wallet-home-grid :where(span, small) {
+  overflow-wrap: anywhere;
+}
+
+#walletPanel .wallet-home-grid strong {
+  font-size: 1rem !important;
+  line-height: 1.15 !important;
+}
+
+#walletPanel .wallet-home-grid small {
+  font-size: 0.68rem !important;
+  line-height: 1.3 !important;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-trip-card-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-auto-rows: max-content !important;
+  gap: 10px !important;
+  align-items: start !important;
+  min-width: 0;
+  grid-column: 2;
+  margin: 0 !important;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-trip-card-grid > * {
+  grid-column: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 12px !important;
+  border-radius: 14px !important;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-trip-card-grid .wallet-trip-tile {
+  grid-template-columns: 72px minmax(0, 1fr) !important;
+  align-items: center;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-trip-card-grid .wallet-trip-tile img {
+  width: 72px !important;
+  height: 72px !important;
+  aspect-ratio: 1 !important;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-trip-card-grid .wallet-trip-tile button {
+  grid-column: 1 / -1;
+  width: auto !important;
+  justify-self: start;
+  min-height: 30px;
+  padding: 6px 8px;
+  font-size: 0.67rem;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-virtual-preview {
+  display: grid !important;
+  gap: 6px !important;
+}
+
+#walletPanel .wallet-virtual-preview .wallet-mini-actions {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 5px !important;
+}
+
+#walletPanel .wallet-virtual-preview .wallet-mini-actions button {
+  width: auto !important;
+  min-height: 29px;
+  padding: 5px 7px;
+  font-size: 0.65rem;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-dashboard-sections,
+#walletPanel > .wallet-redesign-shell .wallet-section-card-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-auto-rows: max-content !important;
+  gap: 9px !important;
+  align-items: start !important;
+  min-width: 0;
+  margin: 0 !important;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-dashboard-sections > *,
+#walletPanel > .wallet-redesign-shell .wallet-section-card-grid > * {
+  grid-column: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  align-self: start !important;
+  padding: 11px !important;
+  border-radius: 13px !important;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-dashboard-sections > article:first-child {
+  grid-column: span 2 !important;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-dashboard-sections > article:not(:first-child),
+#walletPanel > .wallet-redesign-shell .wallet-section-card-grid > article {
+  display: grid !important;
+  gap: 5px !important;
+}
+
+#walletPanel > .wallet-redesign-shell :where(.wallet-dashboard-sections, .wallet-section-card-grid) strong {
+  font-size: 0.78rem !important;
+  line-height: 1.2 !important;
+  overflow-wrap: anywhere;
+}
+
+#walletPanel > .wallet-redesign-shell :where(.wallet-dashboard-sections, .wallet-section-card-grid) small {
+  font-size: 0.67rem !important;
+  line-height: 1.3 !important;
+  overflow-wrap: anywhere;
+}
+
+#walletPanel > .wallet-redesign-shell :where(.wallet-dashboard-sections, .wallet-section-card-grid) button {
+  width: auto !important;
+  justify-self: start;
+  min-height: 29px !important;
+  margin-top: 3px;
+  padding: 5px 8px !important;
+  border-radius: 8px !important;
+  font-size: 0.65rem !important;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-quick-actions-redesign {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 7px !important;
+  min-width: 0;
+  margin: 0 !important;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-quick-actions-redesign button {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 32px !important;
+  padding: 6px 7px !important;
+  border-radius: 9px !important;
+  font-size: 0.67rem !important;
+  white-space: normal !important;
+}
+
+#walletPanel > .wallet-operations-panel {
+  display: grid !important;
+  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  align-items: start !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#walletPanel > .wallet-operations-panel > .trip-wallet-card {
+  grid-column: span 8 !important;
+  display: grid !important;
+  grid-template-columns: 78px minmax(0, 1fr) minmax(0, 1fr) !important;
+  gap: 10px !important;
+  align-items: center !important;
+  min-width: 0;
+  min-height: 0 !important;
+  padding: 11px !important;
+  border-radius: 13px !important;
+}
+
+#walletPanel > .wallet-operations-panel > .trip-wallet-card img {
+  width: 78px !important;
+  height: 58px !important;
+  aspect-ratio: auto !important;
+  border-radius: 9px;
+  object-fit: cover;
+}
+
+#walletPanel > .wallet-operations-panel > .wallet-total {
+  grid-column: span 4 !important;
+  display: flex !important;
+  min-width: 0;
+  min-height: 0 !important;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  padding: 11px !important;
+  border-radius: 13px !important;
+}
+
+#walletPanel > .wallet-operations-panel > .wallet-total strong {
+  font-size: 1.35rem;
+  line-height: 1.1;
+}
+
+#walletPanel > .wallet-operations-panel > .security-note,
+#walletPanel > .wallet-operations-panel > #walletMessage {
+  grid-column: 1 / -1 !important;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 9px 11px !important;
+  font-size: 0.69rem !important;
+  line-height: 1.35 !important;
+}
+
+#walletPanel > .wallet-operations-panel > .wallet-breakdown {
+  grid-column: 1 / -1 !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}
+
+#walletPanel > .wallet-operations-panel > .wallet-breakdown > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 9px !important;
+  border-radius: 11px;
+}
+
+#walletPanel > .wallet-operations-panel > .wallet-action-grid {
+  grid-column: 1 / -1 !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}
+
+#walletPanel > .wallet-operations-panel > .wallet-action-grid button {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 66px !important;
+  padding: 9px !important;
+  border-radius: 11px !important;
+  text-align: left;
+}
+
+#walletPanel > .wallet-operations-panel > .range-wrap,
+#walletPanel > .wallet-operations-panel > .funds-form {
+  min-width: 0;
+  min-height: 0;
+  padding: 10px !important;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 11px;
+  background: #ffffff;
+}
+
+#walletPanel > .wallet-operations-panel > .range-wrap {
+  grid-column: span 5 !important;
+}
+
+#walletPanel > .wallet-operations-panel > .funds-form {
+  grid-column: span 7 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 8px !important;
+  align-items: end;
+}
+
+#walletPanel > .wallet-operations-panel > .funds-form button {
+  width: auto !important;
+  min-height: 34px;
+  padding: 7px 10px;
+  font-size: 0.68rem;
+}
+
+#walletPanel > .wallet-operations-panel > .shared-wallet-ledger {
+  grid-column: 1 / -1 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  min-width: 0;
+}
+
+#walletPanel > .wallet-operations-panel > .shared-wallet-ledger > div {
+  display: grid !important;
+  gap: 4px !important;
+  min-width: 0;
+  padding: 9px !important;
+  border-radius: 11px !important;
+  background: #ffffff;
+}
+
+#walletPanel > .wallet-operations-panel > .budget-line,
+#walletPanel > .wallet-operations-panel > .bar {
+  grid-column: 1 / -1 !important;
+  margin: 0 !important;
+}
+
+#walletPanel > .wallet-operations-panel > .budget-line {
+  display: flex !important;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 9px;
+  border-radius: 9px 9px 0 0;
+  background: #ffffff;
+  font-size: 0.72rem;
+}
+
+#walletPanel > .wallet-operations-panel > .bar {
+  height: 6px;
+  margin-top: -10px !important;
+  border-radius: 0 0 9px 9px;
+}
+
+@media (max-width: 1050px) {
+  #walletPanel > .wallet-dashboard-header,
+  #walletPanel > .wallet-redesign-shell .wallet-home-grid,
+  #walletPanel > .wallet-redesign-shell .wallet-dashboard-sections,
+  #walletPanel > .wallet-redesign-shell .wallet-section-card-grid,
+  #walletPanel > .wallet-operations-panel > .wallet-breakdown {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #walletPanel > .wallet-redesign-shell .wallet-home-grid > .wallet-balance-hero,
+  #walletPanel > .wallet-redesign-shell .wallet-dashboard-sections > article:first-child {
+    grid-column: span 2 !important;
+  }
+
+  #walletPanel > .wallet-redesign-shell .wallet-trip-card-grid,
+  #walletPanel > .wallet-redesign-shell .wallet-quick-actions-redesign,
+  #walletPanel > .wallet-operations-panel > .wallet-action-grid,
+  #walletPanel > .wallet-operations-panel > .shared-wallet-ledger {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 780px) {
+  #walletPanel > .section-heading {
+    flex-direction: column !important;
+  }
+
+  #walletPanel > .wallet-dashboard-header,
+  #walletPanel > .wallet-smart-actions,
+  #walletPanel > .wallet-redesign-shell,
+  #walletPanel > .wallet-redesign-shell .wallet-home-grid,
+  #walletPanel > .wallet-redesign-shell .wallet-trip-card-grid,
+  #walletPanel > .wallet-redesign-shell .wallet-dashboard-sections,
+  #walletPanel > .wallet-redesign-shell .wallet-section-card-grid,
+  #walletPanel > .wallet-redesign-shell .wallet-quick-actions-redesign,
+  #walletPanel > .wallet-operations-panel,
+  #walletPanel > .wallet-operations-panel > .wallet-breakdown,
+  #walletPanel > .wallet-operations-panel > .wallet-action-grid,
+  #walletPanel > .wallet-operations-panel > .shared-wallet-ledger {
+    grid-template-columns: 1fr !important;
+  }
+
+  #walletPanel > .wallet-redesign-shell .wallet-home-grid > .wallet-balance-hero,
+  #walletPanel > .wallet-redesign-shell .wallet-dashboard-sections > article:first-child,
+  #walletPanel > .wallet-redesign-shell .wallet-trip-card-grid,
+  #walletPanel > .wallet-redesign-shell .wallet-quick-actions-redesign,
+  #walletPanel > .wallet-operations-panel > .trip-wallet-card,
+  #walletPanel > .wallet-operations-panel > .wallet-total,
+  #walletPanel > .wallet-operations-panel > .range-wrap,
+  #walletPanel > .wallet-operations-panel > .funds-form {
+    grid-column: 1 / -1 !important;
+  }
+
+  #walletPanel > .wallet-redesign-shell > .wallet-section-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #walletPanel > .wallet-redesign-shell .wallet-trip-card-grid .wallet-trip-tile {
+    grid-template-columns: 72px minmax(0, 1fr) !important;
+  }
+
+  #walletPanel > .wallet-operations-panel > .funds-form {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #walletPanel > .wallet-smart-actions,
+  #walletPanel > .wallet-redesign-shell > .wallet-section-nav {
+    grid-template-columns: 1fr !important;
+  }
+
+  #walletPanel > .wallet-operations-panel > .trip-wallet-card {
+    grid-template-columns: 1fr !important;
+  }
+
+  #walletPanel > .wallet-operations-panel > .trip-wallet-card img {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16 / 7 !important;
+  }
+}
+
 /* App-wide text containment: titles and descriptions never live in a narrow side column. */
 body.app-routed [data-route-component]:not([hidden]) :where(
   .smart-widget,
@@ -2451,7 +3038,7 @@ body.app-routed :where(.card-heading, .social-card-header, .ride-card-heading) >
   }
 }
 
-/* TravelDrip Pass workspace: the ticket is the surface, not a nested parent card. */
+/* Travel-Drip Pass workspace: the ticket is the surface, not a nested parent card. */
 #rideShareHub .travel-pass-workspace {
   display: grid !important;
   gap: 14px !important;
@@ -2744,5 +3331,3542 @@ body.app-routed [data-route-component]:not([hidden]) :where(
     .settings-row
   ) {
     padding: 11px !important;
+  }
+}
+
+/* Itinerary tab: compact, organized planning workspace. */
+#itineraryAlerts {
+  display: grid !important;
+  gap: 14px !important;
+  align-content: start !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+#itineraryAlerts > .section-heading,
+#itineraryAlerts .itinerary-timeline-dashboard > .section-heading,
+#itineraryAlerts .reservation-reminder-panel > .section-heading {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 13px 15px !important;
+  border: 1px solid rgba(15, 23, 42, 0.09) !important;
+  border-radius: 16px !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05) !important;
+}
+
+#itineraryAlerts > .section-heading h2 {
+  max-width: none !important;
+  font-size: clamp(1.25rem, 2vw, 1.7rem) !important;
+  line-height: 1.15 !important;
+}
+
+#itineraryAlerts > .section-heading p:not(.eyebrow) {
+  max-width: 720px !important;
+  margin-top: 4px !important;
+  font-size: 0.78rem !important;
+  line-height: 1.4 !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard {
+  display: grid !important;
+  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  grid-auto-rows: max-content !important;
+  gap: 12px !important;
+  align-items: start !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card {
+  display: flex !important;
+  grid-column: span 3 !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 7px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 12px !important;
+  border-radius: 15px !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06) !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--today {
+  grid-column: span 6 !important;
+  padding: 15px !important;
+  border-color: rgba(14, 116, 144, 0.22) !important;
+  background: linear-gradient(135deg, #e8fbff, #ffffff 68%) !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card > span {
+  font-size: 0.63rem !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.08em !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card > h3 {
+  max-width: 100% !important;
+  margin: 0 !important;
+  font-size: 0.95rem !important;
+  line-height: 1.2 !important;
+  overflow-wrap: anywhere;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--today > h3 {
+  font-size: clamp(1.12rem, 2vw, 1.55rem) !important;
+  line-height: 1.12 !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card > p {
+  max-width: 100% !important;
+  margin: 0 !important;
+  font-size: 0.71rem !important;
+  line-height: 1.35 !important;
+  overflow-wrap: anywhere;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card > button,
+#itineraryAlerts > .itinerary-dashboard .itinerary-action-row button {
+  width: auto !important;
+  min-height: 31px !important;
+  margin-top: 3px !important;
+  padding: 6px 9px !important;
+  border-radius: 9px !important;
+  font-size: 0.68rem !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard .itinerary-action-row {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px !important;
+  width: 100%;
+  margin-top: 3px !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard .route-preview-line {
+  height: 29px !important;
+  margin: 0 !important;
+  border-radius: 9px !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard .weather-orb {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 12px !important;
+}
+
+#itineraryAlerts > .itinerary-timeline-dashboard,
+#itineraryAlerts > .reservation-reminder-panel {
+  display: grid !important;
+  gap: 10px !important;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#itineraryAlerts .itinerary-timeline-dashboard > .section-heading h3,
+#itineraryAlerts .reservation-reminder-panel > .section-heading h3 {
+  margin: 0 !important;
+  font-size: 1rem !important;
+  line-height: 1.2 !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  min-width: 0;
+  margin: 0 !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list details {
+  min-width: 0 !important;
+  margin: 0 !important;
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.09) !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list details summary {
+  display: grid !important;
+  grid-template-columns: 24px 62px minmax(0, 1fr) auto !important;
+  gap: 7px !important;
+  align-items: center !important;
+  min-width: 0;
+  min-height: 0 !important;
+  padding: 9px 10px !important;
+  font-size: 0.72rem !important;
+  line-height: 1.25 !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list details summary > * {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+#itineraryAlerts .itinerary-timeline-list details summary strong {
+  font-size: 0.74rem !important;
+  line-height: 1.2 !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list details summary time,
+#itineraryAlerts .itinerary-timeline-list details summary em {
+  white-space: nowrap;
+  font-size: 0.67rem !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list details p {
+  margin: 0 !important;
+  padding: 0 10px 10px 101px !important;
+  color: #607286;
+  font-size: 0.69rem !important;
+  line-height: 1.35 !important;
+  overflow-wrap: anywhere;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid,
+#itineraryAlerts .reservation-reminder-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  grid-auto-rows: max-content !important;
+  gap: 10px !important;
+  align-items: start !important;
+  min-width: 0;
+  margin: 0 !important;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid > article,
+#itineraryAlerts .reservation-reminder-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 12px !important;
+  border-radius: 14px !important;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid > article > strong,
+#itineraryAlerts > .upcoming-reservation-grid > article > small,
+#itineraryAlerts .reservation-reminder-card h4,
+#itineraryAlerts .reservation-reminder-card p,
+#itineraryAlerts .reservation-reminder-card li {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid > article > strong,
+#itineraryAlerts .reservation-reminder-card h4 {
+  margin: 0 !important;
+  font-size: 0.82rem !important;
+  line-height: 1.2 !important;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid > article > small,
+#itineraryAlerts .reservation-reminder-card p,
+#itineraryAlerts .reservation-reminder-card li {
+  font-size: 0.68rem !important;
+  line-height: 1.35 !important;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid > article button,
+#itineraryAlerts .reservation-reminder-card .mini-action-row button {
+  width: auto !important;
+  min-height: 30px !important;
+  margin-top: 3px !important;
+  padding: 6px 8px !important;
+  border-radius: 8px !important;
+  font-size: 0.66rem !important;
+}
+
+#itineraryAlerts .reservation-reminder-card .mini-action-row {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 5px !important;
+  width: 100%;
+}
+
+#itineraryAlerts .security-note {
+  margin: 0 !important;
+  padding: 9px 11px !important;
+  font-size: 0.7rem !important;
+  line-height: 1.35 !important;
+}
+
+#itineraryAlerts > .alert-category-grid,
+#itineraryAlerts > .alert-preview-list {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 7px !important;
+  min-width: 0;
+  margin: 0 !important;
+}
+
+#itineraryAlerts > .alert-category-grid label,
+#itineraryAlerts > .alert-preview-list > div {
+  min-width: 0;
+  padding: 8px 9px !important;
+  border-radius: 10px !important;
+  font-size: 0.67rem !important;
+  line-height: 1.3 !important;
+  overflow-wrap: anywhere;
+}
+
+#itineraryAlerts > .alert-preview-list > div {
+  display: grid;
+  gap: 3px;
+}
+
+#itineraryAlerts > .delivery-preferences {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px !important;
+  margin: 0 !important;
+}
+
+#itineraryAlerts > .delivery-preferences label {
+  padding: 6px 8px !important;
+  font-size: 0.67rem !important;
+}
+
+#itineraryAlerts .reservation-preferences-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 9px !important;
+  min-width: 0;
+}
+
+#itineraryAlerts .reservation-preferences-grid > div {
+  min-width: 0;
+  padding: 10px !important;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+#itineraryAlerts .reservation-preferences-grid h4 {
+  margin: 0 0 6px !important;
+  font-size: 0.78rem !important;
+}
+
+#itineraryAlerts .reservation-preferences-grid label {
+  display: block;
+  margin: 4px 0;
+  color: #607286;
+  font-size: 0.67rem;
+  line-height: 1.3;
+}
+
+@media (max-width: 1100px) {
+  #itineraryAlerts > .itinerary-dashboard > .itinerary-card,
+  #itineraryAlerts > .itinerary-dashboard > .itinerary-card--today {
+    grid-column: span 6 !important;
+  }
+
+  #itineraryAlerts > .upcoming-reservation-grid,
+  #itineraryAlerts .reservation-reminder-grid,
+  #itineraryAlerts .reservation-preferences-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #itineraryAlerts > .alert-category-grid,
+  #itineraryAlerts > .alert-preview-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 700px) {
+  #itineraryAlerts > .section-heading,
+  #itineraryAlerts .itinerary-timeline-dashboard > .section-heading,
+  #itineraryAlerts .reservation-reminder-panel > .section-heading {
+    flex-direction: column !important;
+  }
+
+  #itineraryAlerts > .itinerary-dashboard,
+  #itineraryAlerts .itinerary-timeline-list,
+  #itineraryAlerts > .upcoming-reservation-grid,
+  #itineraryAlerts .reservation-reminder-grid,
+  #itineraryAlerts .reservation-preferences-grid,
+  #itineraryAlerts > .alert-category-grid,
+  #itineraryAlerts > .alert-preview-list {
+    grid-template-columns: 1fr !important;
+  }
+
+  #itineraryAlerts > .itinerary-dashboard > .itinerary-card,
+  #itineraryAlerts > .itinerary-dashboard > .itinerary-card--today {
+    grid-column: 1 / -1 !important;
+  }
+
+  #itineraryAlerts .itinerary-timeline-list details summary {
+    grid-template-columns: 24px minmax(0, 1fr) auto !important;
+  }
+
+  #itineraryAlerts .itinerary-timeline-list details summary time {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  #itineraryAlerts .itinerary-timeline-list details summary em {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+
+  #itineraryAlerts .itinerary-timeline-list details p {
+    padding-left: 55px !important;
+  }
+}
+
+/* Final wallet cascade: keep trip summary content in a readable card layout. */
+#walletPanel > .wallet-redesign-shell .wallet-trip-card-grid .wallet-trip-tile {
+  display: grid !important;
+  grid-template-columns: 72px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-trip-card-grid .wallet-trip-tile > div {
+  display: grid !important;
+  min-width: 0;
+  gap: 3px;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-trip-card-grid .wallet-trip-tile > div > * {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 480px) {
+  #walletPanel > .wallet-redesign-shell .wallet-trip-card-grid .wallet-trip-tile {
+    grid-template-columns: 1fr !important;
+  }
+
+  #walletPanel > .wallet-redesign-shell .wallet-trip-card-grid .wallet-trip-tile img {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16 / 7 !important;
+  }
+}
+
+/* Global widget density: remove unused vertical space without shrinking controls below touch size. */
+body.app-routed main > section.panel:not([hidden]) {
+  min-height: 0 !important;
+  align-content: start !important;
+  gap: 12px !important;
+  padding: 0 !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) > .section-heading {
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 12px 14px !important;
+  gap: 10px !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(
+  .smart-widget,
+  .travel-widget,
+  .dashboard-widget,
+  .travel-dashboard-card,
+  .travel-booking-summary article,
+  .travel-transport-summary article,
+  .travel-focus-grid article,
+  .travel-provider-cards article,
+  .travel-result-card,
+  .travel-support-card,
+  .event-experience-card,
+  .itinerary-card,
+  .reservation-reminder-card,
+  .travel-document-card,
+  .wallet-summary-card,
+  .wallet-trip-tile,
+  .wallet-virtual-preview,
+  .wallet-section-card-grid article,
+  .memory-media-card,
+  .social-card,
+  .platform-card,
+  .ride-clean-card,
+  .transport-record-card,
+  .settings-row,
+  .security-list > div,
+  .navigation-status-grid > div,
+  .security-status-grid > article,
+  .security-control-grid > article
+) {
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 12px !important;
+  gap: 8px !important;
+  align-self: start !important;
+  box-sizing: border-box;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(
+  .smart-dashboard-grid,
+  .widget-grid,
+  .dashboard-widget-grid,
+  .dashboard-widgets,
+  .travel-dashboard-sections,
+  .travel-booking-summary,
+  .travel-transport-summary,
+  .travel-focus-grid,
+  .travel-provider-cards,
+  .wallet-dashboard-header,
+  .wallet-home-grid,
+  .wallet-trip-card-grid,
+  .wallet-dashboard-sections,
+  .wallet-section-card-grid,
+  .wallet-action-grid,
+  .info-status-grid,
+  .important-info-grid,
+  .security-status-grid,
+  .security-control-grid,
+  .memory-gallery-grid,
+  .memory-album-grid,
+  .platform-grid,
+  .message-support-grid,
+  .event-experience-grid,
+  .event-operations-grid,
+  .corporate-home-grid,
+  .reservation-reminder-grid,
+  .itinerary-dashboard,
+  .upcoming-reservation-grid
+) {
+  grid-auto-rows: max-content !important;
+  align-items: start !important;
+  gap: 10px !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(
+  .smart-widget,
+  .travel-widget,
+  .dashboard-widget,
+  .travel-dashboard-card,
+  .event-experience-card,
+  .itinerary-card,
+  .reservation-reminder-card,
+  .travel-document-card,
+  .wallet-summary-card,
+  .wallet-trip-tile,
+  .wallet-virtual-preview,
+  .memory-media-card,
+  .social-card,
+  .platform-card,
+  .ride-clean-card,
+  .transport-record-card,
+  .settings-row
+) :where(h1, h2, h3, h4, h5, h6, p, span, strong, small, em, label, li) {
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  word-break: normal;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(
+  .smart-widget,
+  .travel-widget,
+  .dashboard-widget,
+  .travel-dashboard-card,
+  .event-experience-card,
+  .itinerary-card,
+  .reservation-reminder-card,
+  .travel-document-card,
+  .wallet-summary-card,
+  .wallet-trip-tile,
+  .wallet-virtual-preview,
+  .memory-media-card,
+  .social-card,
+  .platform-card,
+  .ride-clean-card,
+  .transport-record-card,
+  .settings-row
+) > :where(button, .primary-button, .ghost-button) {
+  width: auto !important;
+  max-width: 100%;
+  min-height: 32px;
+  margin-top: 3px !important;
+  white-space: normal !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(
+  .widget-toolbar,
+  .widget-meta,
+  .button-row,
+  .mini-action-row,
+  .memory-card-actions,
+  .platform-actions,
+  .explore-card-actions,
+  .itinerary-action-row,
+  .corporate-card-actions
+) {
+  gap: 6px !important;
+  margin-block: 3px 0 !important;
+}
+
+@media (max-width: 760px) {
+  body.app-routed main > section.panel:not([hidden]) > .section-heading {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  body.app-routed main > section.panel:not([hidden]) :where(
+    .smart-widget,
+    .travel-widget,
+    .dashboard-widget,
+    .travel-dashboard-card,
+    .event-experience-card,
+    .itinerary-card,
+    .reservation-reminder-card,
+    .travel-document-card,
+    .wallet-summary-card,
+    .wallet-trip-tile,
+    .wallet-virtual-preview,
+    .memory-media-card,
+    .social-card,
+    .platform-card,
+    .ride-clean-card,
+    .transport-record-card,
+    .settings-row
+  ) {
+    padding: 11px !important;
+  }
+}
+
+/* Wallet text visibility: labels wrap inside their cards instead of being clipped. */
+#walletPanel,
+#walletPanel * {
+  min-width: 0;
+}
+
+#walletPanel :where(
+  .wallet-section-nav button,
+  .wallet-dashboard-header article,
+  .wallet-home-grid > *,
+  .wallet-trip-card-grid > *,
+  .wallet-dashboard-sections > *,
+  .wallet-section-card-grid > *,
+  .wallet-operations-panel > *,
+  .wallet-action-grid button,
+  .wallet-breakdown > *,
+  .shared-wallet-ledger > div
+) {
+  overflow: visible !important;
+  max-height: none !important;
+  height: auto !important;
+}
+
+#walletPanel :where(
+  h2,
+  h3,
+  h4,
+  p,
+  span,
+  strong,
+  small,
+  em,
+  label,
+  li,
+  button
+) {
+  max-width: 100% !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  line-height: 1.35;
+}
+
+#walletPanel .wallet-section-nav button {
+  overflow: visible !important;
+  text-overflow: clip !important;
+  text-align: left !important;
+}
+
+#walletPanel :where(
+  .wallet-dashboard-header article,
+  .wallet-summary-card,
+  .wallet-balance-hero,
+  .wallet-trip-tile,
+  .wallet-virtual-preview,
+  .wallet-dashboard-sections article,
+  .wallet-section-card-grid article,
+  .wallet-operations-panel > *,
+  .wallet-action-grid button
+) {
+  min-height: 0 !important;
+}
+
+/* Global horizontal text flow: keep titles, descriptions, and main information full-width. */
+body.app-routed main > section.panel:not([hidden]) :where(
+  .smart-widget,
+  .travel-widget,
+  .dashboard-widget,
+  .travel-dashboard-card,
+  .travel-booking-summary article,
+  .travel-transport-summary article,
+  .travel-focus-grid article,
+  .travel-provider-cards article,
+  .travel-result-card,
+  .travel-support-card,
+  .event-experience-card,
+  .itinerary-card,
+  .reservation-reminder-card,
+  .travel-document-card,
+  .wallet-summary-card,
+  .wallet-trip-tile,
+  .wallet-virtual-preview,
+  .wallet-section-card-grid article,
+  .memory-media-card,
+  .social-card,
+  .platform-card,
+  .ride-clean-card,
+  .transport-record-card,
+  .settings-row
+) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  overflow: visible !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(
+  .smart-widget,
+  .travel-widget,
+  .dashboard-widget,
+  .travel-dashboard-card,
+  .travel-booking-summary article,
+  .travel-transport-summary article,
+  .travel-focus-grid article,
+  .travel-provider-cards article,
+  .travel-result-card,
+  .travel-support-card,
+  .event-experience-card,
+  .itinerary-card,
+  .reservation-reminder-card,
+  .travel-document-card,
+  .wallet-summary-card,
+  .wallet-trip-tile,
+  .wallet-virtual-preview,
+  .wallet-section-card-grid article,
+  .memory-media-card,
+  .social-card,
+  .platform-card,
+  .ride-clean-card,
+  .transport-record-card,
+  .settings-row
+) :where(h1, h2, h3, h4, h5, h6) {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  grid-column: 1 / -1 !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.25 !important;
+  text-align: left !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(
+  .smart-widget,
+  .travel-widget,
+  .dashboard-widget,
+  .travel-dashboard-card,
+  .travel-booking-summary article,
+  .travel-transport-summary article,
+  .travel-focus-grid article,
+  .travel-provider-cards article,
+  .travel-result-card,
+  .travel-support-card,
+  .event-experience-card,
+  .itinerary-card,
+  .reservation-reminder-card,
+  .travel-document-card,
+  .wallet-summary-card,
+  .wallet-trip-tile,
+  .wallet-virtual-preview,
+  .wallet-section-card-grid article,
+  .memory-media-card,
+  .social-card,
+  .platform-card,
+  .ride-clean-card,
+  .transport-record-card,
+  .settings-row
+) :where(p, .widget-meta, .widget-toolbar > span, .widget-toolbar > strong) {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  writing-mode: horizontal-tb !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.35 !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(
+  .smart-widget,
+  .travel-widget,
+  .dashboard-widget,
+  .travel-dashboard-card,
+  .travel-booking-summary article,
+  .travel-transport-summary article,
+  .travel-focus-grid article,
+  .travel-provider-cards article,
+  .travel-result-card,
+  .travel-support-card,
+  .event-experience-card,
+  .itinerary-card,
+  .reservation-reminder-card,
+  .travel-document-card,
+  .wallet-summary-card,
+  .wallet-trip-tile,
+  .wallet-virtual-preview,
+  .wallet-section-card-grid article,
+  .memory-media-card,
+  .social-card,
+  .platform-card,
+  .ride-clean-card,
+  .transport-record-card,
+  .settings-row
+) > .widget-toolbar {
+  width: 100% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+/* All authenticated panel headings and copy stay horizontal, regardless of the tab's card class. */
+body.app-routed main > section.panel:not([hidden]) :where(h1, h2, h3, h4, h5, h6) {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.25 !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(p, strong, small, span, label, dt, dd, li) {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.4 !important;
+}
+
+/* AI item recognition: keep detected items and diner controls in separate, flexible rows. */
+#splitBill .receipt-workspace {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.08fr) minmax(260px, 0.74fr) !important;
+  align-items: start !important;
+  gap: 14px !important;
+  min-width: 0 !important;
+}
+
+#splitBill .receipt-items-panel,
+#splitBill .payment-status-panel,
+#splitBill .receipt-item-list,
+#splitBill .receipt-item-list > article,
+#splitBill .receipt-item-detail,
+#splitBill .receipt-claim-panel,
+#splitBill .receipt-claim-grid {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+#splitBill .receipt-items-panel {
+  overflow: visible !important;
+}
+
+#splitBill .receipt-items-panel > .section-heading {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+#splitBill .receipt-items-panel > .section-heading > div {
+  flex: 1 1 260px !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+#splitBill .receipt-items-panel > .section-heading > button {
+  flex: 0 1 auto !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+}
+
+#splitBill .receipt-item-list {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+  overflow: visible !important;
+}
+
+#splitBill .receipt-item-list > article {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.05fr) minmax(220px, 0.95fr) !important;
+  align-items: start !important;
+  gap: 12px !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
+
+#splitBill .receipt-item-detail,
+#splitBill .receipt-claim-panel,
+#splitBill .receipt-claim-grid,
+#splitBill .receipt-item-actions {
+  width: 100% !important;
+}
+
+#splitBill .receipt-claim-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)) !important;
+  gap: 6px !important;
+}
+
+#splitBill .receipt-claim-grid label {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#splitBill .receipt-item-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+#splitBill .receipt-item-actions button {
+  flex: 0 1 auto !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+}
+
+@media (max-width: 900px) {
+  #splitBill .receipt-workspace,
+  #splitBill .receipt-item-list > article {
+    grid-template-columns: 1fr !important;
+  }
+
+  #splitBill .receipt-claim-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 520px) {
+  #splitBill .receipt-claim-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* App content color pass: standard light widgets use dark, readable typography. */
+body.app-routed main > section.panel:not([hidden]) :where(
+  .smart-widget,
+  .travel-widget,
+  .dashboard-widget,
+  .travel-dashboard-card,
+  .travel-booking-summary article,
+  .travel-transport-summary article,
+  .travel-focus-grid article,
+  .travel-provider-cards article,
+  .travel-result-card,
+  .travel-support-card,
+  .event-experience-card,
+  .itinerary-card:not(.itinerary-card--featured),
+  .reservation-reminder-card,
+  .travel-document-card,
+  .wallet-summary-card,
+  .wallet-trip-tile,
+  .wallet-section-card-grid article,
+  .memory-media-card,
+  .social-card,
+  .platform-card,
+  .ride-clean-card,
+  .transport-record-card,
+  .settings-row,
+  .receipt-items-panel,
+  .payment-status-panel,
+  .receipt-item-list > article,
+  .bill-tools-grid > div,
+  .receipt-history-panel
+) :where(h1, h2, h3, h4, h5, h6, strong, p, span, small, label, dt, dd, li) {
+  color: var(--ink) !important;
+  text-shadow: none !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(
+  .smart-widget,
+  .travel-widget,
+  .dashboard-widget,
+  .travel-dashboard-card,
+  .travel-booking-summary article,
+  .travel-transport-summary article,
+  .travel-focus-grid article,
+  .travel-provider-cards article,
+  .travel-result-card,
+  .travel-support-card,
+  .event-experience-card,
+  .itinerary-card:not(.itinerary-card--featured),
+  .reservation-reminder-card,
+  .travel-document-card,
+  .wallet-summary-card,
+  .wallet-trip-tile,
+  .wallet-section-card-grid article,
+  .memory-media-card,
+  .social-card,
+  .platform-card,
+  .ride-clean-card,
+  .transport-record-card,
+  .settings-row,
+  .receipt-items-panel,
+  .payment-status-panel,
+  .receipt-item-list > article,
+  .bill-tools-grid > div,
+  .receipt-history-panel
+) :where(button, a) {
+  color: var(--ink) !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(
+  .smart-widget,
+  .travel-widget,
+  .dashboard-widget,
+  .travel-dashboard-card,
+  .travel-booking-summary article,
+  .travel-transport-summary article,
+  .travel-focus-grid article,
+  .travel-provider-cards article,
+  .travel-result-card,
+  .travel-support-card,
+  .event-experience-card,
+  .itinerary-card:not(.itinerary-card--featured),
+  .reservation-reminder-card,
+  .travel-document-card,
+  .wallet-summary-card,
+  .wallet-trip-tile,
+  .wallet-section-card-grid article,
+  .memory-media-card,
+  .social-card,
+  .platform-card,
+  .ride-clean-card,
+  .transport-record-card,
+  .settings-row,
+  .receipt-items-panel,
+  .payment-status-panel,
+  .receipt-item-list > article,
+  .bill-tools-grid > div,
+  .receipt-history-panel
+) :where(.eyebrow, .widget-toolbar span, .widget-meta, small, .small) {
+  color: var(--muted) !important;
+}
+
+/* Navigation chrome stays white on its dark toolbar surfaces. */
+body.app-routed :where(.sidebar, .mobile-nav),
+body.app-routed :where(.sidebar, .mobile-nav) :where(button, a, summary, span, strong, small, p) {
+  color: #fff !important;
+}
+
+body.app-routed :where(.sidebar, .mobile-nav) :where(.nav-group summary, .nav button, .nav a, .mobile-nav button) {
+  color: rgba(255, 255, 255, 0.86) !important;
+}
+
+body.app-routed :where(.sidebar, .mobile-nav) :where(.nav .active, .nav a:hover, .nav button:hover, .mobile-nav button.active) {
+  color: #fff !important;
+}
+
+/* Itinerary Smart Dashboard: independent tiles with no oversized parent widget. */
+#itineraryAlerts {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 12px !important;
+  align-content: start !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard {
+  display: grid !important;
+  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  grid-auto-rows: max-content !important;
+  gap: 12px !important;
+  align-items: start !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card,
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--today,
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--route,
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--weather,
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--transport,
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--alerts,
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--progress {
+  grid-column: span 4 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  align-self: start !important;
+  padding: 14px !important;
+  gap: 7px !important;
+  border-radius: 15px !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06) !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--today {
+  padding: 14px !important;
+  background: linear-gradient(135deg, #e8fbff, #ffffff 68%) !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card :where(h3, p, span) {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+#itineraryAlerts > .itinerary-timeline-dashboard,
+#itineraryAlerts > .reservation-reminder-panel,
+#itineraryAlerts > .upcoming-reservation-grid,
+#itineraryAlerts > .reservation-reminder-panel > .reservation-reminder-grid,
+#itineraryAlerts > .alert-category-grid,
+#itineraryAlerts > .delivery-preferences,
+#itineraryAlerts > .alert-preview-list {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 9px !important;
+  align-items: start !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list details {
+  display: grid !important;
+  align-content: start !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list details summary {
+  min-width: 0 !important;
+  min-height: 50px !important;
+  height: auto !important;
+  overflow-wrap: anywhere !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list details summary :where(strong, em, time, span),
+#itineraryAlerts .itinerary-timeline-list details > p {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+  white-space: normal !important;
+}
+
+#itineraryAlerts .upcoming-reservation-grid,
+#itineraryAlerts .reservation-reminder-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  align-items: start !important;
+  min-width: 0 !important;
+}
+
+#itineraryAlerts .upcoming-reservation-grid > article,
+#itineraryAlerts .reservation-reminder-grid > .reservation-reminder-card {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  align-self: start !important;
+}
+
+@media (max-width: 1000px) {
+  #itineraryAlerts > .itinerary-dashboard,
+  #itineraryAlerts .itinerary-timeline-list,
+  #itineraryAlerts .upcoming-reservation-grid,
+  #itineraryAlerts .reservation-reminder-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #itineraryAlerts > .itinerary-dashboard > .itinerary-card,
+  #itineraryAlerts > .itinerary-dashboard > .itinerary-card--today,
+  #itineraryAlerts > .itinerary-dashboard > .itinerary-card--route,
+  #itineraryAlerts > .itinerary-dashboard > .itinerary-card--weather,
+  #itineraryAlerts > .itinerary-dashboard > .itinerary-card--transport,
+  #itineraryAlerts > .itinerary-dashboard > .itinerary-card--alerts,
+  #itineraryAlerts > .itinerary-dashboard > .itinerary-card--progress {
+    grid-column: span 1 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #itineraryAlerts > .itinerary-dashboard,
+  #itineraryAlerts .itinerary-timeline-list,
+  #itineraryAlerts .upcoming-reservation-grid,
+  #itineraryAlerts .reservation-reminder-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  #itineraryAlerts > .itinerary-dashboard > .itinerary-card {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* Itinerary Dashboard header: align the title block and status without a tall wrapper. */
+#itineraryAlerts > .section-heading {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: start !important;
+  justify-content: initial !important;
+  gap: 12px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 13px 15px !important;
+  border: 1px solid rgba(15, 23, 42, 0.09) !important;
+  border-radius: 15px !important;
+  background: #ffffff !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05) !important;
+}
+
+#itineraryAlerts > .section-heading > div {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+#itineraryAlerts > .section-heading .eyebrow {
+  margin: 0 !important;
+  line-height: 1.2 !important;
+}
+
+#itineraryAlerts > .section-heading h2 {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 3px 0 0 !important;
+  font-size: clamp(1.2rem, 2vw, 1.65rem) !important;
+  line-height: 1.15 !important;
+  overflow-wrap: anywhere !important;
+}
+
+#itineraryAlerts > .section-heading p:not(.eyebrow) {
+  width: 100% !important;
+  max-width: 70ch !important;
+  margin: 6px 0 0 !important;
+  font-size: 0.78rem !important;
+  line-height: 1.4 !important;
+}
+
+#itineraryAlerts > .section-heading .compliance-badge {
+  align-self: start !important;
+  justify-self: end !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  text-align: center !important;
+}
+
+@media (max-width: 640px) {
+  #itineraryAlerts > .section-heading {
+    grid-template-columns: 1fr !important;
+  }
+
+  #itineraryAlerts > .section-heading .compliance-badge {
+    justify-self: start !important;
+  }
+}
+
+/* Global parent widget cleanup: keep route wrappers transparent so their child widgets remain independent. */
+body.app-routed main > section.panel:not([hidden]) :where(
+  .travel-overview-card,
+  .travel-selected-tile,
+  .travel-workspace,
+  .travel-workspace-grid,
+  .travel-settings-shell,
+  .travel-settings-main,
+  .travel-settings-content,
+  .travel-itinerary-dashboard,
+  .itinerary-dashboard,
+  .itinerary-timeline-dashboard,
+  .upcoming-reservation-grid,
+  .reservation-reminder-panel,
+  .reservation-reminder-grid,
+  .alert-category-grid,
+  .delivery-preferences,
+  .alert-preview-list,
+  .wallet-redesign-shell,
+  .wallet-home-grid,
+  .wallet-trip-card-grid,
+  .wallet-dashboard-sections,
+  .wallet-section-card-grid,
+  .memories-gallery-shell,
+  .memory-gallery-grid,
+  .memory-album-grid,
+  .settings-shell,
+  .admin-settings-shell,
+  .settings-main-panel,
+  .messages-layout,
+  .message-support-grid,
+  .social-hub-layout,
+  .platform-grid,
+  .travel-focus-grid,
+  .travel-booking-summary,
+  .travel-transport-summary,
+  .travel-provider-cards,
+  .visual-pass-grid,
+  .ride-recommendation-grid,
+  .private-driver-list,
+  .transport-record-list
+) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin-block: 0 !important;
+  padding: 0 !important;
+  align-items: start !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(
+  .travel-workspace,
+  .travel-workspace-grid,
+  .travel-itinerary-dashboard,
+  .itinerary-dashboard,
+  .itinerary-timeline-dashboard,
+  .upcoming-reservation-grid,
+  .reservation-reminder-grid,
+  .wallet-home-grid,
+  .wallet-trip-card-grid,
+  .wallet-dashboard-sections,
+  .wallet-section-card-grid,
+  .memory-gallery-grid,
+  .memory-album-grid,
+  .platform-grid,
+  .travel-focus-grid,
+  .travel-booking-summary,
+  .travel-transport-summary,
+  .travel-provider-cards,
+  .visual-pass-grid,
+  .ride-recommendation-grid,
+  .private-driver-list,
+  .transport-record-list
+) {
+  display: grid !important;
+  gap: 12px !important;
+  grid-auto-rows: max-content !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(
+  .travel-settings-shell,
+  .travel-settings-main,
+  .travel-settings-content,
+  .wallet-redesign-shell,
+  .memories-gallery-shell,
+  .settings-shell,
+  .admin-settings-shell,
+  .settings-main-panel,
+  .messages-layout,
+  .message-support-grid,
+  .social-hub-layout
+) {
+  overflow: visible !important;
+}
+
+/* Itinerary matches the Events dashboard while retaining its schedule and alert details. */
+#itineraryAlerts {
+  display: grid !important;
+  gap: 14px !important;
+  overflow: hidden !important;
+}
+
+#itineraryAlerts > .section-heading,
+#itineraryAlerts .itinerary-timeline-dashboard > .section-heading,
+#itineraryAlerts .reservation-reminder-panel > .section-heading {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 12px 14px !important;
+  border: 1px solid rgba(8, 127, 140, 0.12) !important;
+  border-radius: 15px !important;
+  background: #ffffff !important;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.055) !important;
+}
+
+#itineraryAlerts > .section-heading > div,
+#itineraryAlerts .itinerary-timeline-dashboard > .section-heading > div,
+#itineraryAlerts .reservation-reminder-panel > .section-heading > div {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+#itineraryAlerts > .section-heading h2,
+#itineraryAlerts .itinerary-timeline-dashboard > .section-heading h3,
+#itineraryAlerts .reservation-reminder-panel > .section-heading h3 {
+  margin: 2px 0 0 !important;
+  color: #0f2f3a !important;
+  font-size: clamp(1.05rem, 1.7vw, 1.45rem) !important;
+  line-height: 1.18 !important;
+}
+
+#itineraryAlerts > .section-heading p:not(.eyebrow) {
+  max-width: 760px !important;
+  margin: 5px 0 0 !important;
+  color: #5f7882 !important;
+  font-size: 0.78rem !important;
+  line-height: 1.42 !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  align-items: start !important;
+  margin: 0 !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-end !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  min-height: 158px !important;
+  height: auto !important;
+  padding: 13px !important;
+  border: 1px solid rgba(8, 127, 140, 0.12) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(135deg, rgba(8, 189, 184, 0.1), rgba(255, 138, 92, 0.08)), #ffffff !important;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.09) !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--featured,
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--today {
+  grid-column: span 2 !important;
+  background:
+    linear-gradient(180deg, rgba(5, 18, 24, 0.08), rgba(5, 18, 24, 0.78)),
+    url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1100&auto=format&fit=crop") center/cover !important;
+  color: #ffffff !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card :where(span, h3, p, button) {
+  position: relative !important;
+  z-index: 1 !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card span {
+  width: fit-content !important;
+  padding: 4px 7px !important;
+  border-radius: 999px !important;
+  color: #174650 !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+  font-size: 0.62rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.04em !important;
+  line-height: 1.15 !important;
+  text-transform: uppercase !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card h3 {
+  width: 100% !important;
+  margin: 0 !important;
+  color: #0f2f3a !important;
+  font-size: 0.98rem !important;
+  line-height: 1.2 !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card p {
+  width: 100% !important;
+  margin: 0 !important;
+  color: #5f7882 !important;
+  font-size: 0.72rem !important;
+  line-height: 1.35 !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--featured :where(span, h3, p),
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--today :where(span, h3, p) {
+  color: rgba(255, 255, 255, 0.92) !important;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.42) !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--featured h3,
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--today h3 {
+  color: #ffffff !important;
+  font-size: clamp(1.08rem, 1.8vw, 1.45rem) !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card button,
+#itineraryAlerts .itinerary-action-row button,
+#itineraryAlerts > .upcoming-reservation-grid button,
+#itineraryAlerts .reservation-reminder-card button {
+  width: fit-content !important;
+  min-width: 0 !important;
+  min-height: 32px !important;
+  padding: 0 10px !important;
+  border-radius: 10px !important;
+  background: #eef7f5 !important;
+  color: #174650 !important;
+  font-size: 0.7rem !important;
+  line-height: 1.2 !important;
+}
+
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--featured button,
+#itineraryAlerts > .itinerary-dashboard > .itinerary-card--today button {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+#itineraryAlerts > .itinerary-timeline-dashboard,
+#itineraryAlerts > .upcoming-reservation-grid,
+#itineraryAlerts .reservation-reminder-panel {
+  display: grid !important;
+  gap: 10px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list,
+#itineraryAlerts .upcoming-reservation-grid,
+#itineraryAlerts .reservation-reminder-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  align-items: start !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list details,
+#itineraryAlerts > .upcoming-reservation-grid > article,
+#itineraryAlerts .reservation-reminder-card {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  align-self: start !important;
+  border: 1px solid rgba(8, 127, 140, 0.12) !important;
+  border-radius: 14px !important;
+  background: #ffffff !important;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.055) !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list details summary {
+  min-width: 0 !important;
+  padding: 11px !important;
+  font-size: 0.72rem !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list details > p {
+  padding: 0 11px 11px !important;
+  font-size: 0.7rem !important;
+  line-height: 1.35 !important;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid > article,
+#itineraryAlerts .reservation-reminder-card {
+  display: grid !important;
+  gap: 6px !important;
+  padding: 12px !important;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid > article > span,
+#itineraryAlerts .reservation-reminder-card > span {
+  color: #47707a !important;
+  font-size: 0.62rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid > article > strong,
+#itineraryAlerts .reservation-reminder-card h4 {
+  margin: 0 !important;
+  color: #0f2f3a !important;
+  font-size: 0.9rem !important;
+  line-height: 1.2 !important;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid > article > small,
+#itineraryAlerts .reservation-reminder-card p,
+#itineraryAlerts .reservation-reminder-card li {
+  color: #5f7882 !important;
+  font-size: 0.7rem !important;
+  line-height: 1.35 !important;
+}
+
+#itineraryAlerts .alert-category-grid,
+#itineraryAlerts .delivery-preferences,
+#itineraryAlerts .alert-preview-list {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+#itineraryAlerts .alert-category-grid label,
+#itineraryAlerts .delivery-preferences label,
+#itineraryAlerts .alert-preview-list > div {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 10px !important;
+  border: 1px solid rgba(8, 127, 140, 0.12) !important;
+  border-radius: 14px !important;
+  background: linear-gradient(135deg, rgba(8, 189, 184, 0.1), rgba(255, 138, 92, 0.08)), #ffffff !important;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.055) !important;
+  color: #5f7882 !important;
+  font-size: 0.7rem !important;
+  line-height: 1.3 !important;
+}
+
+#itineraryAlerts .delivery-preferences {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+#itineraryAlerts .alert-preview-list > div {
+  display: grid !important;
+  gap: 4px !important;
+}
+
+#itineraryAlerts .alert-preview-list strong {
+  color: #0f2f3a !important;
+}
+
+@media (max-width: 1100px) {
+  #itineraryAlerts > .itinerary-dashboard,
+  #itineraryAlerts .itinerary-timeline-list,
+  #itineraryAlerts .upcoming-reservation-grid,
+  #itineraryAlerts .reservation-reminder-grid,
+  #itineraryAlerts .alert-category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #itineraryAlerts > .itinerary-dashboard > .itinerary-card--featured,
+  #itineraryAlerts > .itinerary-dashboard > .itinerary-card--today {
+    grid-column: span 2 !important;
+  }
+
+  #itineraryAlerts .delivery-preferences {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  #itineraryAlerts > .section-heading,
+  #itineraryAlerts .itinerary-timeline-dashboard > .section-heading,
+  #itineraryAlerts .reservation-reminder-panel > .section-heading {
+    grid-template-columns: 1fr !important;
+  }
+
+  #itineraryAlerts > .itinerary-dashboard,
+  #itineraryAlerts .itinerary-timeline-list,
+  #itineraryAlerts .upcoming-reservation-grid,
+  #itineraryAlerts .reservation-reminder-grid,
+  #itineraryAlerts .alert-category-grid,
+  #itineraryAlerts .delivery-preferences {
+    grid-template-columns: 1fr !important;
+  }
+
+  #itineraryAlerts > .itinerary-dashboard > .itinerary-card--featured,
+  #itineraryAlerts > .itinerary-dashboard > .itinerary-card--today {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* Final widget text-flow hardening: all visible widget copy stays horizontal and card-contained. */
+body.app-routed main > section.panel:not([hidden]) :where(
+  [data-widget],
+  .smart-widget,
+  .travel-widget,
+  .dashboard-card,
+  .dashboard-widget,
+  .corporate-widget,
+  .cruise-widget,
+  .flight-widget,
+  .hotel-information,
+  .notifications-widget,
+  .weather-widget,
+  .ai-widget,
+  .status-card,
+  .info-status-grid,
+  .travel-current-trip-card,
+  .travel-dashboard-card,
+  .travel-map-card,
+  .travel-info-list,
+  .travel-support-card,
+  .daily-itinerary-card,
+  .upcoming-widget,
+  .memory-card,
+  .memory-media-card,
+  .memory-ai-card,
+  .memory-upload-card,
+  .memory-settings-card,
+  .conversation-card,
+  .chat-detail-card,
+  .social-card,
+  .platform-card,
+  .event-experience-card,
+  .event-create-card,
+  .itinerary-card,
+  .reservation-reminder-card,
+  .smart-departure-card,
+  .reservation-ai-card,
+  .ride-clean-card,
+  .transport-record-card,
+  .travel-document-card,
+  .wallet-summary-card,
+  .trip-wallet-card,
+  .wallet-section-card-grid article,
+  .virtual-card-panel,
+  .visual-pass-card,
+  .corporate-card-preview,
+  .corporate-acceptance-card,
+  .permission-card,
+  .admin-panel,
+  .settings-row
+) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(
+  [data-widget],
+  .smart-widget,
+  .travel-widget,
+  .dashboard-card,
+  .dashboard-widget,
+  .corporate-widget,
+  .cruise-widget,
+  .flight-widget,
+  .hotel-information,
+  .notifications-widget,
+  .weather-widget,
+  .ai-widget,
+  .status-card,
+  .travel-current-trip-card,
+  .travel-dashboard-card,
+  .travel-map-card,
+  .travel-support-card,
+  .daily-itinerary-card,
+  .upcoming-widget,
+  .memory-card,
+  .memory-media-card,
+  .memory-ai-card,
+  .memory-upload-card,
+  .memory-settings-card,
+  .conversation-card,
+  .chat-detail-card,
+  .social-card,
+  .platform-card,
+  .event-experience-card,
+  .event-create-card,
+  .itinerary-card,
+  .reservation-reminder-card,
+  .smart-departure-card,
+  .reservation-ai-card,
+  .ride-clean-card,
+  .transport-record-card,
+  .travel-document-card,
+  .wallet-summary-card,
+  .trip-wallet-card,
+  .wallet-section-card-grid article,
+  .virtual-card-panel,
+  .visual-pass-card,
+  .corporate-card-preview,
+  .corporate-acceptance-card,
+  .permission-card,
+  .admin-panel,
+  .settings-row
+) :where(h1, h2, h3, h4, h5, h6, p, strong, small, label, dt, dd, li) {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin-inline: 0 !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.35 !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(
+  [data-widget],
+  .smart-widget,
+  .travel-widget,
+  .dashboard-card,
+  .dashboard-widget,
+  .corporate-widget,
+  .cruise-widget,
+  .flight-widget,
+  .hotel-information,
+  .notifications-widget,
+  .weather-widget,
+  .ai-widget,
+  .status-card,
+  .travel-current-trip-card,
+  .travel-dashboard-card,
+  .travel-map-card,
+  .travel-info-list,
+  .travel-support-card,
+  .daily-itinerary-card,
+  .upcoming-widget,
+  .memory-card,
+  .memory-media-card,
+  .memory-ai-card,
+  .memory-upload-card,
+  .memory-settings-card,
+  .conversation-card,
+  .chat-detail-card,
+  .social-card,
+  .platform-card,
+  .event-experience-card,
+  .event-create-card,
+  .itinerary-card,
+  .reservation-reminder-card,
+  .smart-departure-card,
+  .reservation-ai-card,
+  .ride-clean-card,
+  .transport-record-card,
+  .travel-document-card,
+  .wallet-summary-card,
+  .trip-wallet-card,
+  .wallet-section-card-grid article,
+  .virtual-card-panel,
+  .visual-pass-card,
+  .corporate-card-preview,
+  .corporate-acceptance-card,
+  .permission-card,
+  .admin-panel,
+  .settings-row
+) :where(.section-heading, .widget-toolbar, .card-top, .card-meta, .card-content, .widget-content, .widget-main, .widget-info, .details, .info) {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+body.app-routed main > section.panel:not([hidden]) :where(
+  [data-widget],
+  .smart-widget,
+  .travel-widget,
+  .dashboard-card,
+  .dashboard-widget,
+  .corporate-widget,
+  .cruise-widget,
+  .flight-widget,
+  .hotel-information,
+  .notifications-widget,
+  .weather-widget,
+  .ai-widget,
+  .status-card,
+  .travel-current-trip-card,
+  .travel-dashboard-card,
+  .travel-map-card,
+  .travel-info-list,
+  .travel-support-card,
+  .daily-itinerary-card,
+  .upcoming-widget,
+  .memory-card,
+  .memory-media-card,
+  .memory-ai-card,
+  .memory-upload-card,
+  .memory-settings-card,
+  .conversation-card,
+  .chat-detail-card,
+  .social-card,
+  .platform-card,
+  .event-experience-card,
+  .event-create-card,
+  .itinerary-card,
+  .reservation-reminder-card,
+  .smart-departure-card,
+  .reservation-ai-card,
+  .ride-clean-card,
+  .transport-record-card,
+  .travel-document-card,
+  .wallet-summary-card,
+  .trip-wallet-card,
+  .wallet-section-card-grid article,
+  .virtual-card-panel,
+  .visual-pass-card,
+  .corporate-card-preview,
+  .corporate-acceptance-card,
+  .permission-card,
+  .admin-panel,
+  .settings-row
+) :where(button, a) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Bubble text rows must span the widget, never collapse beside an icon or into a one-letter column. */
+body.app-routed main > section.panel:not([hidden]) :where(
+  [data-widget],
+  .smart-widget,
+  .travel-widget,
+  .dashboard-card,
+  .dashboard-widget,
+  .corporate-widget,
+  .cruise-widget,
+  .flight-widget,
+  .hotel-information,
+  .notifications-widget,
+  .weather-widget,
+  .ai-widget,
+  .status-card,
+  .travel-current-trip-card,
+  .travel-dashboard-card,
+  .travel-map-card,
+  .travel-info-list,
+  .travel-support-card,
+  .daily-itinerary-card,
+  .upcoming-widget,
+  .memory-card,
+  .memory-media-card,
+  .memory-ai-card,
+  .memory-upload-card,
+  .memory-settings-card,
+  .conversation-card,
+  .chat-detail-card,
+  .social-card,
+  .platform-card,
+  .event-experience-card,
+  .event-create-card,
+  .itinerary-card,
+  .reservation-reminder-card,
+  .smart-departure-card,
+  .reservation-ai-card,
+  .ride-clean-card,
+  .transport-record-card,
+  .travel-document-card,
+  .wallet-summary-card,
+  .trip-wallet-card,
+  .wallet-section-card-grid article,
+  .virtual-card-panel,
+  .visual-pass-card,
+  .corporate-card-preview,
+  .corporate-acceptance-card,
+  .permission-card,
+  .admin-panel,
+  .settings-row
+) :where(h1, h2, h3, h4, h5, h6, p, strong, small, label, li) {
+  grid-column: 1 / -1 !important;
+  flex: 0 1 auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  writing-mode: horizontal-tb !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Travel tab card repair: boarding pass, rail ticket, and hotel reservation use independent readable layouts. */
+#rideShareHub [data-travel-panel="boarding"],
+#rideShareHub [data-travel-panel="trains"],
+#rideShareHub [data-travel-panel="hotels"] {
+  display: grid !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .travel-focus-header,
+#rideShareHub [data-travel-panel="trains"] .travel-focus-header,
+#rideShareHub [data-travel-panel="hotels"] .travel-focus-header {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+  min-width: 0 !important;
+  height: auto !important;
+  padding: 12px 14px !important;
+  border: 1px solid rgba(8, 127, 140, 0.12) !important;
+  border-radius: 15px !important;
+  background: linear-gradient(135deg, rgba(236, 253, 245, 0.96), rgba(240, 249, 255, 0.96)), #ffffff !important;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.055) !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .travel-focus-header > div,
+#rideShareHub [data-travel-panel="trains"] .travel-focus-header > div,
+#rideShareHub [data-travel-panel="hotels"] .travel-focus-header > div {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .travel-focus-header h3,
+#rideShareHub [data-travel-panel="trains"] .travel-focus-header h3,
+#rideShareHub [data-travel-panel="hotels"] .travel-focus-header h3,
+#rideShareHub [data-travel-panel="boarding"] .travel-focus-header p:not(.eyebrow),
+#rideShareHub [data-travel-panel="trains"] .travel-focus-header p:not(.eyebrow),
+#rideShareHub [data-travel-panel="hotels"] .travel-focus-header p:not(.eyebrow) {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 2px 0 0 !important;
+  writing-mode: horizontal-tb !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .visual-pass-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 10px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-areas:
+    "topline"
+    "provider"
+    "route"
+    "flight"
+    "details"
+    "code"
+    "barcode"
+    "actions" !important;
+  gap: 10px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 16px !important;
+  border: 1px solid rgba(8, 127, 140, 0.16) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(180deg, #0f2f3a 0 170px, #ffffff 170px) !important;
+  color: #0f2f3a !important;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.12) !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass::before {
+  display: none !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .pass-topline,
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .pass-provider,
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .pass-route,
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass h4,
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass dl,
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .official-code,
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .barcode-strip,
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .pass-actions {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  grid-column: 1 / -1 !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .pass-topline {
+  grid-area: topline !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: #ffffff !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .pass-topline strong {
+  display: inline-flex !important;
+  width: fit-content !important;
+  grid-column: auto !important;
+  color: #ffffff !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .pass-provider {
+  grid-area: provider !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: baseline !important;
+  gap: 6px 10px !important;
+  color: #ffffff !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .pass-provider b,
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .pass-provider span {
+  display: inline !important;
+  width: auto !important;
+  grid-column: auto !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .pass-route {
+  grid-area: route !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 70px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 12px !important;
+  color: #ffffff !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .pass-route b {
+  display: block !important;
+  width: auto !important;
+  grid-column: auto !important;
+  color: #ffffff !important;
+  font-size: clamp(1.8rem, 4vw, 3rem) !important;
+  line-height: 1 !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass h4 {
+  grid-area: flight !important;
+  color: #0f2f3a !important;
+  font-size: clamp(1rem, 1.6vw, 1.3rem) !important;
+  line-height: 1.2 !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass dl {
+  grid-area: details !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass dl > div {
+  min-width: 0 !important;
+  padding: 8px !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  border-radius: 10px !important;
+  background: #f8fafc !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass dl dt,
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass dl dd {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  writing-mode: horizontal-tb !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass dl dt {
+  color: #64748b !important;
+  font-size: 0.62rem !important;
+  font-weight: 850 !important;
+  text-transform: uppercase !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass dl dd {
+  color: #0f2f3a !important;
+  font-size: 0.76rem !important;
+  font-weight: 850 !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .official-code {
+  grid-area: code !important;
+  justify-self: start !important;
+  width: 92px !important;
+  height: 92px !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .barcode-strip {
+  grid-area: barcode !important;
+  height: 38px !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .pass-actions {
+  grid-area: actions !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass .pass-actions button {
+  width: auto !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+}
+
+#rideShareHub [data-travel-panel="trains"] .travel-focus-grid,
+#rideShareHub [data-travel-panel="hotels"] .travel-focus-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  align-items: start !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+#rideShareHub [data-travel-panel="trains"] .travel-focus-grid > article {
+  display: grid !important;
+  grid-template-columns: minmax(110px, 0.65fr) minmax(0, 1.35fr) minmax(0, 1.5fr) auto !important;
+  align-items: center !important;
+  gap: 8px 12px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 13px !important;
+  border: 1px solid rgba(8, 127, 140, 0.12) !important;
+  border-radius: 15px !important;
+  background: linear-gradient(135deg, rgba(8, 189, 184, 0.1), rgba(255, 138, 92, 0.08)), #ffffff !important;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.07) !important;
+}
+
+#rideShareHub [data-travel-panel="trains"] .travel-focus-grid > article :where(span, strong, small, button) {
+  grid-column: auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  writing-mode: horizontal-tb !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#rideShareHub [data-travel-panel="trains"] .travel-focus-grid > article span {
+  color: #47707a !important;
+  font-size: 0.65rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+}
+
+#rideShareHub [data-travel-panel="trains"] .travel-focus-grid > article strong {
+  color: #0f2f3a !important;
+  font-size: 1rem !important;
+  line-height: 1.2 !important;
+}
+
+#rideShareHub [data-travel-panel="trains"] .travel-focus-grid > article small {
+  color: #5f7882 !important;
+  font-size: 0.74rem !important;
+  line-height: 1.3 !important;
+}
+
+#rideShareHub [data-travel-panel="hotels"] .travel-focus-grid > article {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  align-content: start !important;
+  gap: 7px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 13px !important;
+  border: 1px solid rgba(8, 127, 140, 0.12) !important;
+  border-radius: 15px !important;
+  background: #ffffff !important;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.07) !important;
+}
+
+#rideShareHub [data-travel-panel="hotels"] .travel-focus-grid > article img {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 150px !important;
+  min-height: 0 !important;
+  object-fit: cover !important;
+  border-radius: 11px !important;
+}
+
+#rideShareHub [data-travel-panel="hotels"] .travel-focus-grid > article :where(span, strong, small, button) {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  writing-mode: horizontal-tb !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#rideShareHub [data-travel-panel="hotels"] .travel-focus-grid > article span {
+  color: #47707a !important;
+  font-size: 0.65rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+}
+
+#rideShareHub [data-travel-panel="hotels"] .travel-focus-grid > article strong {
+  color: #0f2f3a !important;
+  font-size: 1rem !important;
+  line-height: 1.2 !important;
+}
+
+#rideShareHub [data-travel-panel="hotels"] .travel-focus-grid > article small {
+  color: #5f7882 !important;
+  font-size: 0.74rem !important;
+  line-height: 1.35 !important;
+}
+
+@media (max-width: 900px) {
+  #rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #rideShareHub [data-travel-panel="trains"] .travel-focus-grid > article {
+    grid-template-columns: minmax(100px, 0.7fr) minmax(0, 1.3fr) auto !important;
+  }
+
+  #rideShareHub [data-travel-panel="trains"] .travel-focus-grid > article small {
+    grid-column: 2 / -1 !important;
+  }
+}
+
+@media (max-width: 680px) {
+  #rideShareHub [data-travel-panel="boarding"] .travel-focus-header,
+  #rideShareHub [data-travel-panel="trains"] .travel-focus-header,
+  #rideShareHub [data-travel-panel="hotels"] .travel-focus-header {
+    grid-template-columns: auto minmax(0, 1fr) !important;
+  }
+
+  #rideShareHub [data-travel-panel="boarding"] .travel-focus-header > button,
+  #rideShareHub [data-travel-panel="trains"] .travel-focus-header > button,
+  #rideShareHub [data-travel-panel="hotels"] .travel-focus-header > button {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+
+  #rideShareHub [data-travel-panel="trains"] .travel-focus-grid,
+  #rideShareHub [data-travel-panel="hotels"] .travel-focus-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  #rideShareHub [data-travel-panel="trains"] .travel-focus-grid > article {
+    grid-template-columns: 1fr !important;
+  }
+
+  #rideShareHub [data-travel-panel="trains"] .travel-focus-grid > article :where(span, strong, small, button) {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+}
+
+/* Travel-Drip Pass workspace: prevent the legacy narrow side rail from collapsing pass titles. */
+#rideShareHub #travelBoardingPasses {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+#rideShareHub #travelBoardingPasses .pass-filter-row,
+#rideShareHub #travelBoardingPasses .pass-control-row {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+#rideShareHub #travelBoardingPasses .pass-control-row {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  align-items: end !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  align-items: start !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-auto-rows: max-content !important;
+  gap: 9px !important;
+  align-content: start !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 15px !important;
+  border: 1px solid rgba(8, 127, 140, 0.15) !important;
+  border-top: 4px solid #0ea5b7 !important;
+  border-radius: 18px !important;
+  background: #ffffff !important;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08) !important;
+  overflow: hidden !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card.digital-boarding-pass {
+  background: linear-gradient(180deg, #0f2f3a 0 154px, #ffffff 154px) !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card.digital-boarding-pass::before {
+  display: none !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card :where(.pass-topline, .pass-provider, .pass-route, h4, dl, .pass-note, .official-code, .barcode-strip, .pass-actions) {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  grid-column: 1 / -1 !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card .pass-topline {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card .pass-topline span,
+#rideShareHub #travelBoardingPasses .visual-pass-card .pass-topline strong {
+  display: inline-flex !important;
+  width: auto !important;
+  max-width: 100% !important;
+  grid-column: auto !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card .pass-topline span {
+  color: #47707a !important;
+  font-size: 0.7rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.04em !important;
+  line-height: 1.2 !important;
+  text-transform: uppercase !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card.digital-boarding-pass .pass-topline span,
+#rideShareHub #travelBoardingPasses .visual-pass-card.digital-boarding-pass .pass-topline strong {
+  color: #ffffff !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card .pass-topline strong {
+  justify-self: end !important;
+  padding: 5px 8px !important;
+  border-radius: 999px !important;
+  background: #dff7f4 !important;
+  font-size: 0.68rem !important;
+  line-height: 1.15 !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card.digital-boarding-pass .pass-topline strong {
+  background: rgba(255, 255, 255, 0.18) !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card .pass-provider {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: baseline !important;
+  gap: 5px 9px !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card .pass-provider b,
+#rideShareHub #travelBoardingPasses .visual-pass-card .pass-provider span {
+  display: inline !important;
+  width: auto !important;
+  grid-column: auto !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card .pass-provider b {
+  color: #ffffff !important;
+  font-size: 1rem !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card .pass-provider span {
+  color: rgba(255, 255, 255, 0.78) !important;
+  font-size: 0.7rem !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card .pass-route {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 7px !important;
+  color: #0f2f3a !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card .pass-route b {
+  display: block !important;
+  width: auto !important;
+  grid-column: auto !important;
+  color: #0f2f3a !important;
+  font-size: clamp(1.1rem, 2vw, 1.7rem) !important;
+  line-height: 1.05 !important;
+  overflow-wrap: anywhere !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card.digital-boarding-pass .pass-route b {
+  color: #ffffff !important;
+  font-size: clamp(1.35rem, 2.6vw, 2.1rem) !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card .pass-route i {
+  display: block !important;
+  width: 100% !important;
+  height: 2px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #0ea5b7, #ff8a5c) !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card.digital-boarding-pass .pass-route i {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.24), #ffffff, rgba(255, 255, 255, 0.24)) !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card h4 {
+  color: #0f2f3a !important;
+  font-size: clamp(0.98rem, 1.4vw, 1.16rem) !important;
+  line-height: 1.2 !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card dl {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 7px !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card dl > div {
+  min-width: 0 !important;
+  padding: 7px !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  border-radius: 9px !important;
+  background: #f8fafc !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card dl :where(dt, dd) {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  writing-mode: horizontal-tb !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card dl dt {
+  color: #64748b !important;
+  font-size: 0.6rem !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+  text-transform: uppercase !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card dl dd {
+  color: #0f2f3a !important;
+  font-size: 0.74rem !important;
+  font-weight: 850 !important;
+  line-height: 1.25 !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card .pass-note {
+  color: #64748b !important;
+  font-size: 0.72rem !important;
+  line-height: 1.35 !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card .pass-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 7px !important;
+  align-items: start !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card .pass-actions button {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 32px !important;
+  padding: 0 9px !important;
+  border-radius: 9px !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card .official-code {
+  justify-self: start !important;
+  width: 76px !important;
+  height: 76px !important;
+}
+
+#rideShareHub #travelBoardingPasses .visual-pass-card .barcode-strip {
+  height: 32px !important;
+}
+
+@media (max-width: 760px) {
+  #rideShareHub #travelBoardingPasses .visual-pass-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 520px) {
+  #rideShareHub #travelBoardingPasses .pass-control-row,
+  #rideShareHub #travelBoardingPasses .visual-pass-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  #rideShareHub #travelBoardingPasses .visual-pass-card .pass-route {
+    grid-template-columns: minmax(0, 1fr) 26px minmax(0, 1fr) !important;
+  }
+}
+
+/* Itinerary reservation titles: keep Real-time ready and each booking label horizontal. */
+#itineraryAlerts > .section-heading .compliance-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-self: end !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  padding: 6px 10px !important;
+  white-space: normal !important;
+  writing-mode: horizontal-tb !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+  text-align: center !important;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(180px, 1fr)) !important;
+  gap: 10px !important;
+  align-items: start !important;
+  min-width: 0 !important;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid > article {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-auto-rows: max-content !important;
+  align-content: start !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 12px !important;
+  overflow: visible !important;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid > article > span,
+#itineraryAlerts > .upcoming-reservation-grid > article > strong,
+#itineraryAlerts > .upcoming-reservation-grid > article > small,
+#itineraryAlerts > .upcoming-reservation-grid > article > button {
+  grid-column: 1 / -1 !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  writing-mode: horizontal-tb !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid > article > span {
+  display: inline-flex !important;
+  width: fit-content !important;
+  color: #47707a !important;
+  font-size: 0.65rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.04em !important;
+  line-height: 1.15 !important;
+  text-transform: uppercase !important;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid > article > strong {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  color: #0f2f3a !important;
+  font-size: 0.98rem !important;
+  line-height: 1.2 !important;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid > article > small {
+  display: block !important;
+  width: 100% !important;
+  color: #5f7882 !important;
+  font-size: 0.72rem !important;
+  line-height: 1.35 !important;
+}
+
+#itineraryAlerts > .upcoming-reservation-grid > article > button {
+  justify-self: start !important;
+  width: fit-content !important;
+  min-width: 0 !important;
+  min-height: 32px !important;
+}
+
+@media (max-width: 1100px) {
+  #itineraryAlerts > .upcoming-reservation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  #itineraryAlerts > .section-heading .compliance-badge {
+    justify-self: start !important;
+  }
+
+  #itineraryAlerts > .upcoming-reservation-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Itinerary overflow repair: keep timeline cards and alert controls compact, readable, and inside the route. */
+#itineraryAlerts {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  box-sizing: border-box !important;
+}
+
+#itineraryAlerts > :where(.itinerary-dashboard, .itinerary-timeline-dashboard, .upcoming-reservation-grid, .alert-category-grid, .delivery-preferences, .alert-preview-list, .reservation-reminder-panel) {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  align-items: start !important;
+  grid-auto-rows: max-content !important;
+  overflow: visible !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  gap: 10px !important;
+  align-items: start !important;
+  grid-auto-rows: max-content !important;
+  overflow: visible !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list > details {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  align-self: start !important;
+  overflow: hidden !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list > details summary {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, auto) minmax(0, 1fr) auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  white-space: normal !important;
+  writing-mode: horizontal-tb !important;
+  overflow-wrap: anywhere !important;
+}
+
+#itineraryAlerts .itinerary-timeline-list > details summary :where(span, time, strong, em),
+#itineraryAlerts .itinerary-timeline-list > details > p {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  writing-mode: horizontal-tb !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#itineraryAlerts > .security-note {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 12px 14px !important;
+  box-sizing: border-box !important;
+  border: 1px solid rgba(8, 127, 140, 0.18) !important;
+  border-left: 4px solid #0ea5b7 !important;
+  border-radius: 14px !important;
+  background: #effaff !important;
+  box-shadow: none !important;
+  color: #276371 !important;
+  line-height: 1.35 !important;
+  overflow: visible !important;
+  writing-mode: horizontal-tb !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#itineraryAlerts > .alert-category-grid,
+#itineraryAlerts > .delivery-preferences,
+#itineraryAlerts > .alert-preview-list {
+  height: auto !important;
+  min-height: 0 !important;
+  align-items: start !important;
+  grid-auto-rows: max-content !important;
+  overflow: visible !important;
+}
+
+#itineraryAlerts > .alert-category-grid > label,
+#itineraryAlerts > .delivery-preferences > label,
+#itineraryAlerts > .alert-preview-list > div {
+  display: flex !important;
+  align-items: flex-start !important;
+  align-self: start !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+  writing-mode: horizontal-tb !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#itineraryAlerts > .alert-category-grid > label > input,
+#itineraryAlerts > .delivery-preferences > label > input {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  margin-top: 2px !important;
+}
+
+@media (max-width: 1100px) {
+  #itineraryAlerts .itinerary-timeline-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  #itineraryAlerts .itinerary-timeline-list {
+    grid-template-columns: 1fr !important;
+  }
+
+  #itineraryAlerts .itinerary-timeline-list > details summary {
+    grid-template-columns: auto minmax(0, 1fr) auto !important;
+  }
+}
+
+/* Route view repair: keep the tab bar in flow and prevent Itinerary sections from inheriting the page grid. */
+body.signed-in-shell main > .trip-tab-bar {
+  position: relative !important;
+  top: auto !important;
+  z-index: var(--z-sticky-nav) !important;
+  scroll-margin-top: 0 !important;
+}
+
+#itineraryAlerts > * {
+  grid-column: 1 / -1 !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+#itineraryAlerts > .alert-category-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  align-items: start !important;
+  grid-auto-rows: max-content !important;
+}
+
+#itineraryAlerts > .delivery-preferences {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  align-items: start !important;
+  grid-auto-rows: max-content !important;
+}
+
+#itineraryAlerts > .alert-preview-list {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  align-items: start !important;
+  grid-auto-rows: max-content !important;
+}
+
+#itineraryAlerts > .itinerary-timeline-dashboard,
+#itineraryAlerts > .upcoming-reservation-grid,
+#itineraryAlerts > .security-note,
+#itineraryAlerts > .button-row,
+#itineraryAlerts > #alertMessage,
+#itineraryAlerts > .reservation-reminder-panel {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+@media (max-width: 1100px) {
+  #itineraryAlerts > .alert-category-grid,
+  #itineraryAlerts > .alert-preview-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #itineraryAlerts > .delivery-preferences {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  #itineraryAlerts > .alert-category-grid,
+  #itineraryAlerts > .delivery-preferences,
+  #itineraryAlerts > .alert-preview-list {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Wallet route repair: the shell is one full-width flow; only its widgets form columns. */
+body.signed-in-shell .global-destination-header:not([hidden]) {
+  position: relative !important;
+  top: auto !important;
+  z-index: var(--z-banner) !important;
+}
+
+#walletPanel {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-auto-rows: max-content !important;
+  align-items: start !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+
+#walletPanel > * {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+#walletPanel > .wallet-redesign-shell {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-auto-rows: max-content !important;
+  align-items: start !important;
+  gap: 12px !important;
+  overflow: visible !important;
+}
+
+#walletPanel > .wallet-redesign-shell > .wallet-section-nav,
+#walletPanel > .wallet-redesign-shell > .wallet-home-grid,
+#walletPanel > .wallet-redesign-shell > .wallet-trip-card-grid,
+#walletPanel > .wallet-redesign-shell > .wallet-dashboard-sections,
+#walletPanel > .wallet-redesign-shell > .wallet-quick-actions-redesign,
+#walletPanel > .wallet-redesign-shell > .wallet-section-card-grid {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+#walletPanel > .wallet-redesign-shell > .wallet-section-nav {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)) !important;
+  align-items: start !important;
+}
+
+#walletPanel > .wallet-redesign-shell > .wallet-home-grid,
+#walletPanel > .wallet-redesign-shell > .wallet-dashboard-sections,
+#walletPanel > .wallet-redesign-shell > .wallet-section-card-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-auto-rows: max-content !important;
+  align-items: start !important;
+}
+
+#walletPanel > .wallet-redesign-shell > .wallet-trip-card-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-auto-rows: max-content !important;
+  align-items: start !important;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-home-grid > .wallet-balance-hero,
+#walletPanel > .wallet-redesign-shell .wallet-dashboard-sections > article:first-child {
+  grid-column: auto !important;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-dashboard-sections > article,
+#walletPanel > .wallet-redesign-shell .wallet-section-card-grid > article,
+#walletPanel > .wallet-redesign-shell .wallet-home-grid > *,
+#walletPanel > .wallet-redesign-shell .wallet-trip-card-grid > * {
+  align-self: start !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  writing-mode: horizontal-tb !important;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-metric-list {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-auto-rows: max-content !important;
+  gap: 8px !important;
+  align-items: start !important;
+}
+
+#walletPanel > .wallet-redesign-shell .wallet-metric-list > div {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 3px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 9px !important;
+  align-self: start !important;
+  writing-mode: horizontal-tb !important;
+}
+
+#walletPanel > .wallet-redesign-shell :where(h2, h3, h4, p, span, strong, small, label, button) {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  writing-mode: horizontal-tb !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#walletPanel > .wallet-redesign-shell :where(.wallet-dashboard-sections > article > *, .wallet-section-card-grid > article > *, .wallet-metric-list > div > *) {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+@media (max-width: 1100px) {
+  #walletPanel > .wallet-redesign-shell > .wallet-home-grid,
+  #walletPanel > .wallet-redesign-shell > .wallet-dashboard-sections,
+  #walletPanel > .wallet-redesign-shell > .wallet-section-card-grid,
+  #walletPanel > .wallet-redesign-shell .wallet-metric-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  #walletPanel > .wallet-redesign-shell > .wallet-section-nav,
+  #walletPanel > .wallet-redesign-shell > .wallet-home-grid,
+  #walletPanel > .wallet-redesign-shell > .wallet-trip-card-grid,
+  #walletPanel > .wallet-redesign-shell > .wallet-dashboard-sections,
+  #walletPanel > .wallet-redesign-shell > .wallet-quick-actions-redesign,
+  #walletPanel > .wallet-redesign-shell > .wallet-section-card-grid,
+  #walletPanel > .wallet-redesign-shell .wallet-metric-list {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* AI receipt workspace repair: keep the bill splitter full width so recognition and diner controls never collapse into a narrow side column. */
+#splitBill {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-auto-rows: max-content !important;
+  align-items: start !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+#splitBill > * {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
+}
+
+#splitBill .bill-redesign-grid,
+#splitBill .bill-main-column,
+#splitBill .bill-side-column,
+#splitBill .receipt-workspace {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  align-items: start !important;
+  box-sizing: border-box !important;
+}
+
+#splitBill .receipt-workspace {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr) !important;
+  grid-auto-rows: max-content !important;
+  gap: 14px !important;
+  overflow: visible !important;
+}
+
+#splitBill .receipt-items-panel,
+#splitBill .payment-status-panel,
+#splitBill .receipt-items-panel > .section-heading,
+#splitBill .receipt-item-list,
+#splitBill .receipt-item-list > article,
+#splitBill .receipt-item-detail,
+#splitBill .receipt-claim-panel,
+#splitBill .receipt-claim-grid {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
+}
+
+#splitBill .receipt-items-panel > .section-heading {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: start !important;
+  gap: 10px !important;
+  overflow: visible !important;
+}
+
+#splitBill .receipt-items-panel > .section-heading > div {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+#splitBill .receipt-items-panel > .section-heading :where(.eyebrow, h3, p) {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#splitBill .receipt-items-panel > .section-heading > button {
+  width: auto !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+}
+
+#splitBill .receipt-items-panel > .section-heading .eyebrow {
+  font-size: 0.72rem !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.08em !important;
+}
+
+#splitBill .receipt-items-panel > .section-heading h3 {
+  font-size: clamp(1.05rem, 1.8vw, 1.35rem) !important;
+  line-height: 1.22 !important;
+}
+
+#splitBill .receipt-item-list {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-auto-rows: max-content !important;
+  align-items: start !important;
+  gap: 10px !important;
+  overflow: visible !important;
+}
+
+#splitBill .receipt-item-list > article {
+  display: grid !important;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr) !important;
+  grid-auto-rows: max-content !important;
+  align-items: start !important;
+  gap: 12px !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+#splitBill .receipt-item-detail,
+#splitBill .receipt-claim-panel,
+#splitBill .receipt-claim-grid,
+#splitBill .receipt-item-actions {
+  display: grid !important;
+  grid-auto-rows: max-content !important;
+  align-content: start !important;
+  overflow: visible !important;
+}
+
+#splitBill .receipt-claim-grid {
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)) !important;
+  gap: 7px !important;
+}
+
+#splitBill .receipt-claim-grid label,
+#splitBill .receipt-item-actions button {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 38px !important;
+  box-sizing: border-box !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#splitBill .receipt-claim-grid label > input {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 16px !important;
+  margin: 0 !important;
+}
+
+#splitBill :where(h1, h2, h3, h4, h5, h6, p, strong, span, small, em, label, button, a) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 1120px) {
+  #splitBill .bill-redesign-grid,
+  #splitBill .receipt-workspace {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  #splitBill .bill-side-column {
+    position: static !important;
+  }
+}
+
+@media (max-width: 760px) {
+  #splitBill .receipt-items-panel > .section-heading,
+  #splitBill .receipt-item-list > article {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 520px) {
+  #splitBill .receipt-claim-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* AI recognition widget repair: stack the review workspace so its heading never collapses into a letter-wide column. */
+#splitBill .receipt-workspace {
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 14px !important;
+}
+
+#splitBill .receipt-items-panel > .section-heading {
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: 8px !important;
+}
+
+#splitBill .receipt-items-panel > .section-heading > div,
+#splitBill .receipt-items-panel > .section-heading :where(.eyebrow, h3, p) {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#splitBill .receipt-items-panel > .section-heading > button {
+  justify-self: start !important;
+  width: auto !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+#splitBill .receipt-items-panel > .section-heading .eyebrow {
+  color: #087f8c !important;
+  font-size: 0.72rem !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.08em !important;
+}
+
+#splitBill .receipt-items-panel > .section-heading h3 {
+  color: #10202f !important;
+  font-size: clamp(1.08rem, 2vw, 1.35rem) !important;
+  line-height: 1.24 !important;
+}
+
+#splitBill .receipt-item-list > article {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+/* Wallet contrast repair: light wallet cards keep dark text even when a vibrant theme uses light global ink tokens. */
+#walletPanel :where(
+  .section-heading,
+  .wallet-dashboard-header,
+  .wallet-smart-actions,
+  .wallet-redesign-shell,
+  .wallet-home-grid,
+  .wallet-trip-card-grid,
+  .wallet-dashboard-sections,
+  .wallet-section-card-grid,
+  .wallet-operations-panel,
+  .wallet-action-grid,
+  .wallet-breakdown,
+  .shared-wallet-ledger,
+  .security-note,
+  .budget-line
+) {
+  color: #10202f !important;
+}
+
+#walletPanel :where(
+  h2, h3, h4, p, span, strong, label, time, em, dt, dd, li,
+  .wallet-dashboard-header article,
+  .wallet-summary-card,
+  .wallet-balance-hero,
+  .wallet-trip-tile,
+  .wallet-virtual-preview,
+  .wallet-dashboard-sections article,
+  .wallet-section-card-grid article,
+  .wallet-operations-panel > *,
+  .wallet-action-grid button,
+  .wallet-breakdown > *,
+  .shared-wallet-ledger > div
+) {
+  color: #10202f !important;
+  text-shadow: none !important;
+}
+
+#walletPanel :where(
+  .eyebrow,
+  small,
+  .small,
+  .wallet-dashboard-header small,
+  .wallet-dashboard-sections small,
+  .wallet-section-card-grid small,
+  .wallet-trip-tile small,
+  .wallet-virtual-preview small,
+  .wallet-operations-panel p,
+  .wallet-breakdown span,
+  .shared-wallet-ledger span,
+  .shared-wallet-ledger time,
+  .security-note
+) {
+  color: #607280 !important;
+}
+
+#walletPanel :where(.section-heading .eyebrow, .wallet-dashboard-sections .eyebrow) {
+  color: #087f8c !important;
+}
+
+#walletPanel :where(button, .ghost-button, .wallet-section-nav button, .wallet-action-grid button) {
+  color: #174650 !important;
+  text-shadow: none !important;
+}
+
+#walletPanel :where(button.active, .primary-button) {
+  color: #ffffff !important;
+}
+
+#walletPanel :where(input, select, textarea) {
+  color: #10202f !important;
+  background: #ffffff !important;
+}
+
+/* Chat vibe refresh: make the social hub feel energetic while keeping shortcuts compact. */
+#socialHub .chat-vibe-strip {
+  display: grid !important;
+  grid-template-columns: minmax(230px, 0.9fr) minmax(0, 1.7fr) !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 14px !important;
+  border: 1px solid rgba(8, 127, 140, 0.16) !important;
+  border-radius: 18px !important;
+  background:
+    linear-gradient(120deg, rgba(18, 199, 216, 0.16), rgba(255, 107, 74, 0.12) 56%, rgba(255, 209, 102, 0.18)),
+    #ffffff !important;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06) !important;
+}
+
+#socialHub .chat-vibe-copy {
+  display: grid !important;
+  gap: 4px !important;
+  min-width: 0 !important;
+}
+
+#socialHub .chat-vibe-copy .eyebrow {
+  margin: 0 !important;
+  color: #087f8c !important;
+  font-size: 0.68rem !important;
+  letter-spacing: 0.1em !important;
+}
+
+#socialHub .chat-vibe-copy strong,
+#socialHub .chat-vibe-copy span {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  color: #10202f !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+#socialHub .chat-vibe-copy strong {
+  font-size: 0.94rem !important;
+  line-height: 1.25 !important;
+}
+
+#socialHub .chat-vibe-copy span {
+  color: #607280 !important;
+  font-size: 0.73rem !important;
+  line-height: 1.35 !important;
+}
+
+#socialHub .chat-vibe-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+}
+
+#socialHub .chat-vibe-actions button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  min-height: 38px !important;
+  max-width: 100% !important;
+  padding: 8px 11px !important;
+  border: 1px solid rgba(8, 127, 140, 0.16) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  color: #174650 !important;
+  font-size: 0.73rem !important;
+  font-weight: 850 !important;
+  line-height: 1.2 !important;
+  white-space: normal !important;
+}
+
+#socialHub .chat-vibe-actions button:hover,
+#socialHub .chat-vibe-actions button:focus-visible {
+  background: #174650 !important;
+  color: #ffffff !important;
+  border-color: #174650 !important;
+  outline: 0;
+}
+
+@media (max-width: 900px) {
+  #socialHub .chat-vibe-strip {
+    grid-template-columns: 1fr !important;
+  }
+
+  #socialHub .chat-vibe-actions {
+    justify-content: flex-start !important;
+  }
+}
+
+@media (max-width: 520px) {
+  #socialHub .chat-vibe-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #socialHub .chat-vibe-actions button {
+    width: 100% !important;
   }
 }

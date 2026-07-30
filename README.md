@@ -1,6 +1,6 @@
-# TravelDrip
+# Travel-Drip
 
-TravelDrip is a Vercel-ready PWA for travel planning with Supabase auth, realtime trip events, and admin-triggered web push notifications.
+Travel-Drip is a Vercel-ready PWA for travel planning with Supabase auth, realtime trip events, and admin-triggered web push notifications.
 
 ## Launch on Vercel
 
@@ -33,7 +33,7 @@ See `BACKEND_ARCHITECTURE.md` for the full backend table, API, RLS, audit, and p
 
 ## Corporate guest access portal
 
-TravelDrip now includes a Corporate Guest Portal entry from the login screen for invited employees, contractors, speakers, vendors, and event attendees. The production API is `/api/guest-access`.
+Travel-Drip now includes a Corporate Guest Portal entry from the login screen for invited employees, contractors, speakers, vendors, and event attendees. The production API is `/api/guest-access`.
 
 For Supabase/Vercel production use:
 
@@ -60,53 +60,53 @@ The current wallet UI includes the shared Trip Virtual Wallet, Group Bank dashbo
 
 Every eligible group trip, event, cruise, or corporate retreat should have one shared trip wallet, one unique wallet identifier, one masked trip wallet card, one transaction ledger, one contribution ledger, and one audit trail. Member contributions are pooled into the trip wallet balance while each user's contribution history, refundable balance, and refund activity remain separately tracked.
 
-For a real secured wallet, connect the Add funds action to Stripe Checkout, Stripe Payment Intents, or another PCI-compliant provider. Keep card data out of TravelDrip, verify PIN/payment state on a serverless API route, store only provider transaction IDs/idempotency keys, and use Supabase Row Level Security for trip wallet and contribution records.
+For a real secured wallet, connect the Add funds action to Stripe Checkout, Stripe Payment Intents, or another PCI-compliant provider. Keep card data out of Travel-Drip, verify PIN/payment state on a serverless API route, store only provider transaction IDs/idempotency keys, and use Supabase Row Level Security for trip wallet and contribution records.
 
 Core rule: users always see their own contributions, and money not committed to deposits, reservations, flights, hotels, activities, or group purchases remains refundable to the original contributor.
 
 ## Virtual wallet card and mobile wallet access
 
-The app now includes a TravelDrip virtual wallet card surface connected to eligible available wallet funds. It shows masked card details, spendable balance, card status, recent card transactions, mobile wallet provisioning actions, Tap to Pay as a customer guidance, spending controls, refund handling, corporate retreat restrictions, and PIN-gated sensitive actions.
+The app now includes a Travel-Drip virtual wallet card surface connected to eligible available wallet funds. It shows masked card details, spendable balance, card status, recent card transactions, mobile wallet provisioning actions, Tap to Pay as a customer guidance, spending controls, refund handling, corporate retreat restrictions, and PIN-gated sensitive actions.
 
 For production, the virtual card must be issued through an authorized banking, card-issuing, or payment-processing partner. Store only provider card IDs, masked card numbers, token references, controls, and ledger records. Do not store raw card numbers or CVV values in Supabase or browser code unless the entire system is certified for that scope. Apple Pay, Google Wallet, Samsung Wallet, and contactless NFC purchases require issuer/card-network wallet token provisioning.
 
-Tap to Pay as a customer means the traveler spends from the TravelDrip virtual card at a merchant NFC terminal. Tap to Pay as a merchant, where a user accepts someone else's card payment on their phone, is a separate merchant-processing feature and is not part of the initial card surface.
+Tap to Pay as a customer means the traveler spends from the Travel-Drip virtual card at a merchant NFC terminal. Tap to Pay as a merchant, where a user accepts someone else's card payment on their phone, is a separate merchant-processing feature and is not part of the initial card surface.
 
 ## Smart restaurant bill split
 
-TravelDrip now includes a Smart Restaurant Bill Split calculator for group meals. Users can enter bill subtotal, tax, tip, fees, discounts, and diner count, then preview equal, custom, percentage, or itemized splits in real time. The screen includes receipt scan simulation, AI tip guidance, payment-method options for TravelDrip Wallet, linked cards, Apple Pay, Google Wallet, and outside-app payment status.
+Travel-Drip now includes a Smart Restaurant Bill Split calculator for group meals. Users can enter bill subtotal, tax, tip, fees, discounts, and diner count, then preview equal, custom, percentage, or itemized splits in real time. The screen includes receipt scan simulation, AI tip guidance, payment-method options for Travel-Drip Wallet, linked cards, Apple Pay, Google Wallet, and outside-app payment status.
 
 For production, restaurant bills and participant shares should sync through Supabase using `restaurant_bills` and `restaurant_bill_shares`. Payment settlement should be handled by the wallet/payment processor, with each paid portion reflected in the wallet ledger. Corporate retreat mode should keep employee views limited to their own assigned meal and portion while finance admins can view total meal expenses, invoices, department allocations, and budget impact.
 
 ## Smart ride share hub
 
-TravelDrip now includes a Smart Ride Share Hub for transportation planning and cost splitting. It recommends common providers by destination, including Uber/Lyft in the United States and Canada, Uber/Bolt in the United Kingdom, Uber/DiDi in Mexico, Uber/99 in Brazil, GO/Uber in Japan, Grab in Singapore/Malaysia/Thailand, Grab/Gojek in Indonesia, Uber/Ola in India, and Careem/Uber in the United Arab Emirates.
+Travel-Drip now includes a Smart Ride Share Hub for transportation planning and cost splitting. It recommends common providers by destination, including Uber/Lyft in the United States and Canada, Uber/Bolt in the United Kingdom, Uber/DiDi in Mexico, Uber/99 in Brazil, GO/Uber in Japan, Grab in Singapore/Malaysia/Thailand, Grab/Gojek in Indonesia, Uber/Ola in India, and Careem/Uber in the United Arab Emirates.
 
-The hub supports favorite pickup and drop-off locations, provider launch placeholders, ride sharing with the group, receipt import simulation, AI transportation advice, equal/custom/percentage fare splitting, and payment method options for TravelDrip Wallet, TravelDrip Virtual Card, Apple Pay, Google Wallet, and linked payment methods. Production ride expenses should sync through `ride_share_expenses` and `ride_share_expense_shares`, then update wallet ledgers and trip transportation summaries after processor confirmation.
+The hub supports favorite pickup and drop-off locations, provider launch placeholders, ride sharing with the group, receipt import simulation, AI transportation advice, equal/custom/percentage fare splitting, and payment method options for Travel-Drip Wallet, Travel-Drip Virtual Card, Apple Pay, Google Wallet, and linked payment methods. Production ride expenses should sync through `ride_share_expenses` and `ride_share_expense_shares`, then update wallet ledgers and trip transportation summaries after processor confirmation.
 
 Corporate retreat mode should limit employee visibility to their own assigned transportation, pickup time, driver details when available, and pickup/drop-off locations. Finance and event admins can view total transportation costs, vehicle assignments, department spending, vendor invoices, and budget utilization.
 
 ## Group chat and private messaging
 
-TravelDrip now includes a dedicated Messages hub with Group Chats and Private Messages tabs. Group conversations show trip/event photos, last messages, unread counts, online-member counts, pinned announcements, attachments, polls, itinerary cards, payment requests, ride-share invitations, and AI Trip Manager responses. Private messages support one-on-one conversations with trip members, friends, teammates, organizers, hosts, vendors, and event staff.
+Travel-Drip now includes a dedicated Messages hub with Group Chats and Private Messages tabs. Group conversations show trip/event photos, last messages, unread counts, online-member counts, pinned announcements, attachments, polls, itinerary cards, payment requests, ride-share invitations, and AI Trip Manager responses. Private messages support one-on-one conversations with trip members, friends, teammates, organizers, hosts, vendors, and event staff.
 
 Messaging permissions adapt by trip type: solo trips default to private messaging, group trips automatically create trip chats, corporate retreats can separate announcements, team chats, admin chat, finance chat, transportation chat, and event support, and weddings/events can support custom rooms such as wedding party, family, guests, vendors, and event staff. Production data extends `chat_rooms` and `messages` with participants, shared items, reactions, reports, read state, pinned messages, and room permissions.
 
 ## User profile photos
 
-TravelDrip now includes optional profile photo setup during account creation and a full profile-photo manager in the Profile/Security area. Users can upload from their library, take a camera photo, drag and drop on web, preview the avatar, adjust crop shape, zoom, rotate, remove the photo, restore initials, and choose privacy: public, friends only, trip members only, organization only, or private.
+Travel-Drip now includes optional profile photo setup during account creation and a full profile-photo manager in the Profile/Security area. Users can upload from their library, take a camera photo, drag and drop on web, preview the avatar, adjust crop shape, zoom, rotate, remove the photo, restore initials, and choose privacy: public, friends only, trip members only, organization only, or private.
 
 Production profile-photo support extends `profiles` with avatar storage, thumbnail, source, visibility, moderation status, and metadata fields. `profile_photo_uploads` records file type, size, crop settings, optimized variants, upload source, and moderation status. Store real images in Supabase Storage or another secure object store, validate file types and size, optimize variants server-side, and never expose private storage paths without an authorized signed URL.
 
 ## Smart itinerary notifications
 
-TravelDrip now includes Smart Itinerary Notifications for flight status changes, hotel reminders, transportation updates, itinerary edits, activity changes, payment deadlines, wallet activity, meeting point reminders, weather impacts, emergency announcements, and important travel updates.
+Travel-Drip now includes Smart Itinerary Notifications for flight status changes, hotel reminders, transportation updates, itinerary edits, activity changes, payment deadlines, wallet activity, meeting point reminders, weather impacts, emergency announcements, and important travel updates.
 
 Travelers can choose alert categories and delivery channels: push, email, SMS where available, and in-app alerts. Emergency announcements remain always-on for traveler safety. Production preference sync is represented in `itinerary_notification_preferences`, while sent/queued itinerary alerts can be recorded in `itinerary_notification_events`.
 
 ## AI Travel Planner
 
-TravelDrip now includes an AI Travel Planner route at `/ai-planner` with a prominent Home Dashboard action. The planner asks one question at a time, remembers answers for the current planning session, adapts output for solo, group, cruise, and corporate travel, and generates an editable itinerary preview with estimated costs, travel windows, travel style, and trip-mode guidance.
+Travel-Drip now includes an AI Travel Planner route at `/ai-planner` with a prominent Home Dashboard action. The planner asks one question at a time, remembers answers for the current planning session, adapts output for solo, group, cruise, and corporate travel, and generates an editable itinerary preview with estimated costs, travel windows, travel style, and trip-mode guidance.
 
 Planner actions include Start Planning, Save Progress, Regenerate Itinerary, Create Trip, Share Trip, Export PDF, Add to Calendar, and Delete Planner Memory. Production persistence is represented in `ai_travel_preferences` and `ai_travel_plans`; users must be able to review, edit, or delete saved preferences and conversations.
 
@@ -116,19 +116,19 @@ Internal app pages now include a compact rotating destination header below the m
 
 ## Reservation and paid excursion reminders
 
-TravelDrip now includes reminder workflows for confirmed restaurant reservations, paid excursions, cruise activities, and corporate assigned events. The itinerary notification screen shows reminder schedules for confirmation, 24-hour, 2-hour, 30-minute, and smart departure alerts, plus quick actions for viewing reservations, tickets, itinerary details, directions, venue/organizer contact, companion reminders, sharing with trip members, and calendar sync.
+Travel-Drip now includes reminder workflows for confirmed restaurant reservations, paid excursions, cruise activities, and corporate assigned events. The itinerary notification screen shows reminder schedules for confirmation, 24-hour, 2-hour, 30-minute, and smart departure alerts, plus quick actions for viewing reservations, tickets, itinerary details, directions, venue/organizer contact, companion reminders, sharing with trip members, and calendar sync.
 
 Production reminder data is represented in `reservation_reminder_preferences`, `reservation_records`, `reservation_attendees`, `reservation_reminders`, and `reservation_calendar_syncs`. Scheduled jobs should queue reminder notifications only for assigned attendees, calculate time-to-leave guidance from traffic/location/provider data, and keep corporate employees limited to their own assigned meals, sessions, transportation, and activities.
 
 ## Cruise vacation mode
 
-TravelDrip now supports Cruise Vacation as a guided trip type. The app includes a cruise overview, ship details, cabin assignment, port schedule, shore excursions, onboard schedule, dining reservations, cruise wallet, cruise documents, notifications, AI Cruise Manager, group cruise features, corporate cruise visibility rules, and post-cruise memories.
+Travel-Drip now supports Cruise Vacation as a guided trip type. The app includes a cruise overview, ship details, cabin assignment, port schedule, shore excursions, onboard schedule, dining reservations, cruise wallet, cruise documents, notifications, AI Cruise Manager, group cruise features, corporate cruise visibility rules, and post-cruise memories.
 
 Production cruise data is represented in `supabase-backend.sql` with `cruise_bookings`, `cruise_cabins`, `cruise_ports`, `cruise_excursions`, `cruise_onboard_activities`, and `cruise_dining_reservations`. Cruise line imports, live excursion availability, ship maps, and onboard account spending require provider integrations before they can be production-live.
 
 ## Daily memory reminder
 
-TravelDrip now includes an End-of-Day Memory Prompt inside the Memories/Social hub. After a travel day or final itinerary item ends, travelers can be prompted to upload photos, videos, take a photo, record a video, add notes, generate an AI journal, create a highlight reel, or skip for now.
+Travel-Drip now includes an End-of-Day Memory Prompt inside the Memories/Social hub. After a travel day or final itinerary item ends, travelers can be prompted to upload photos, videos, take a photo, record a video, add notes, generate an AI journal, create a highlight reel, or skip for now.
 
 Users choose visibility before upload: private, trip members, friends, shared album, company only, or public profile. Nothing is shared automatically. Production data is represented in `daily_memory_preferences`, `daily_memory_prompts`, and `daily_memory_items`.
 
@@ -146,9 +146,9 @@ For production, organizers/admins should be the only roles allowed to edit `trip
 
 ## Add to home screen
 
-Android Chrome: open TravelDrip, tap the install prompt or the browser menu, then choose Install app.
+Android Chrome: open Travel-Drip, tap the install prompt or the browser menu, then choose Install app.
 
-iPhone Safari: open TravelDrip, tap Share, choose Add to Home Screen, then tap Add. iOS notification support requires the app to be added to the home screen first.
+iPhone Safari: open Travel-Drip, tap Share, choose Add to Home Screen, then tap Add. iOS notification support requires the app to be added to the home screen first.
 
 ## QA checklist
 

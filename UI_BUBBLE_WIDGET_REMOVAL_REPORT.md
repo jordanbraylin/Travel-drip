@@ -1,4 +1,4 @@
-# TravelDrip Section 67 Bubble Widget Removal Report
+# Travel-Drip Section 67 Bubble Widget Removal Report
 
 Status: Implemented with static validation. Rendered browser validation remains blocked by this environment.
 
@@ -31,7 +31,7 @@ Status: Implemented with static validation. Rendered browser validation remains 
   - no duplicate IDs detected.
 
 ## Rendered Validation Blocker
-- The in-app browser blocks direct and claimed `file://` TravelDrip pages by URL policy.
+- The in-app browser blocks direct and claimed `file://` Travel-Drip pages by URL policy.
 - Localhost preview was previously blocked by the sandbox, so full rendered viewport inspection cannot be completed here.
 
 ## Recommendation

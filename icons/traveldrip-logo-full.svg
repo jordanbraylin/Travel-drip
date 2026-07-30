@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" role="img" aria-labelledby="title desc">
-  <title id="title">TravelDrip primary full-color logo</title>
-  <desc id="desc">TravelDrip wordmark with a globe, airplane, curved path, and subtle droplet mark.</desc>
+  <title id="title">Travel-Drip primary full-color logo</title>
+  <desc id="desc">Travel-Drip wordmark with a globe, airplane, curved path, and subtle droplet mark.</desc>
   <defs>
     <linearGradient id="markOcean" x1="58" y1="48" x2="312" y2="312" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#00A7D8"/>
@@ -28,7 +28,7 @@
     <path d="M196 241c0 26-21 47-47 47s-47-21-47-47c0-33 47-75 47-75s47 42 47 75z" fill="url(#dropGradient)"/>
     <circle cx="149" cy="243" r="13" fill="#FFFFFF"/>
   </g>
-  <text x="380" y="203" fill="url(#wordGradient)" font-family="Inter, Avenir Next, Arial Rounded MT Bold, Arial, sans-serif" font-size="116" font-weight="900" letter-spacing="-2">TravelDrip</text>
+  <text x="380" y="203" fill="url(#wordGradient)" font-family="Inter, Avenir Next, Arial Rounded MT Bold, Arial, sans-serif" font-size="116" font-weight="900" letter-spacing="-2">Travel-Drip</text>
   <path d="M1088 218c0 28-22 50-50 50s-50-22-50-50c0-35 50-80 50-80s50 45 50 80z" fill="url(#dropGradient)" opacity=".95"/>
   <circle cx="1038" cy="220" r="13" fill="#FFFFFF"/>
   <text x="386" y="266" fill="#607280" font-family="Inter, Avenir Next, Arial, sans-serif" font-size="30" font-weight="750" letter-spacing="1.5">PLAN TOGETHER. TRAVEL BETTER.</text>

@@ -104,7 +104,7 @@ async function listEvents(request, response, supabase, user) {
 
 async function createEvent(response, supabase, user, body) {
   const eventType = normalizeEventType(body.eventType || body.event_type || body.tripType || body.trip_type);
-  const title = sanitizeText(body.title || body.name || body.eventName || body.event_name, "Untitled TravelDrip event", 180);
+  const title = sanitizeText(body.title || body.name || body.eventName || body.event_name, "Untitled Travel-Drip event", 180);
   const destination = sanitizeText(body.destination, "Destination TBD", 180);
   const details = getEventDetails(body);
   const modules = eventModules[eventType] || eventModules.special_event;

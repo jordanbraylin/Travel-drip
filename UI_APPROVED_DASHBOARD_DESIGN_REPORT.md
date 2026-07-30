@@ -1,4 +1,4 @@
-# TravelDrip Approved Dashboard Design Report
+# Travel-Drip Approved Dashboard Design Report
 
 ## Status
 

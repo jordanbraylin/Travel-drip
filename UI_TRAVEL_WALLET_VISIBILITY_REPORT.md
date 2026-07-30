@@ -1,4 +1,4 @@
-# TravelDrip UI Validation Report - Section 62
+# Travel-Drip UI Validation Report - Section 62
 
 ## Travel Widgets Redesigned
 

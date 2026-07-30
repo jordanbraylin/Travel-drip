@@ -5660,7 +5660,7 @@ body.app-routed main > section.panel:not([hidden]) :where(.travel-settings-main,
   font-weight: 900;
 }
 
-/* Vibrant TravelDrip theme accents */
+/* Vibrant Travel-Drip theme accents */
 .ai-solo-manager,
 .ai-caption-panel,
 .memory-ai-card,
@@ -7005,7 +7005,7 @@ code {
   }
 }
 
-/* Clean, vibrant TravelDrip redesign layer */
+/* Clean, vibrant Travel-Drip redesign layer */
 :root {
   --ink: #10202f;
   --muted: #607280;
@@ -9471,7 +9471,7 @@ body[data-travel-theme="miami"] .social-card p {
   }
 }
 
-/* TravelDrip brand identity refresh */
+/* Travel-Drip brand identity refresh */
 .brand-logo-wrap,
 .brand-logo,
 .auth-brand-logo,

@@ -1,4 +1,4 @@
-# TravelDrip Event Planning Implementation Report
+# Travel-Drip Event Planning Implementation Report
 
 ## Status
 

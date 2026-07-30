@@ -147,7 +147,7 @@ async function listTrips(request, response, supabase, user) {
 
 async function createTrip(response, supabase, user, body) {
   const tripType = normalizeTripType(body.tripType || body.trip_type);
-  const title = sanitizeText(body.title || body.name || body.tripName, "Untitled TravelDrip trip", 140);
+  const title = sanitizeText(body.title || body.name || body.tripName, "Untitled Travel-Drip trip", 140);
   const destination = sanitizeText(body.destination, "Destination TBD", 160);
   const modules = defaultModulesByType[tripType] || defaultModulesByType.default;
   const featureFlags = {

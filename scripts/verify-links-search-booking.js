@@ -53,7 +53,7 @@ const routeSupportTargets = unique(matchAll(html, /\bdata-route-support=["']([^"
 const extractedRouteComponents = unique(matchAll(html, /\bid=["']([^"']+)["'][^>]*\bdata-route-extract\b/g));
 const dashboardOnlyIds = unique(matchAll(html, /<[^>]*\bid=["']([^"']+)["'][^>]*\bdata-dashboard-only\b[^>]*>/g));
 const dashboardOnlyRequiredIds = ["dashboardHome", "dashboardWidgets"];
-const todayHeadingCount = countMatches(html, /Today in TravelDrip/g);
+const todayHeadingCount = countMatches(html, /Today in Travel-Drip/g);
 const travelDocumentCardCount = countMatches(html, /class=["'][^"']*\btravel-document-card\b[^"']*["']/g);
 const fullWidthWidgetCss = navigationCss.split("/* Full-width Smart Dashboard pass")[1] || "";
 const routeTypographyCss = navigationCss.split("/* App-wide route typography:")[1] || "";
@@ -122,7 +122,7 @@ for (const required of ["dailyMemoryPanel", "socialMediaHub"]) {
 const dashboardOnlyIssues = dashboardOnlyRequiredIds
   .filter((id) => !dashboardOnlyIds.includes(id))
   .map((id) => `Dashboard-only section is not marked: ${id}`);
-if (todayHeadingCount !== 1) dashboardOnlyIssues.push(`Expected one Today in TravelDrip heading, found ${todayHeadingCount}`);
+if (todayHeadingCount !== 1) dashboardOnlyIssues.push(`Expected one Today in Travel-Drip heading, found ${todayHeadingCount}`);
 if (!app.includes("[data-dashboard-only]") || !app.includes("section.hidden = !isHome")) {
   dashboardOnlyIssues.push("Route renderer does not explicitly toggle dashboard-only sections");
 }
@@ -168,16 +168,33 @@ const outerWrapperIssues = outerWrapperSelectors
   .map((selector) => `Missing outer-wrapper cleanup selector: ${selector}`);
 
 const focusedLayoutChecks = [
-  ["Itinerary layout", html.includes('id="itineraryAlerts"') && html.includes("itinerary-card--today") && navigationCss.includes("#itineraryAlerts .itinerary-dashboard") && navigationCss.includes("grid-template-columns: repeat(12, minmax(0, 1fr))") && navigationCss.includes(".itinerary-dashboard > .itinerary-card--today")],
+  ["Itinerary layout", html.includes('id="itineraryAlerts"') && html.includes("itinerary-card--today") && html.includes("itinerary-timeline-list") && navigationCss.includes("#itineraryAlerts > .itinerary-dashboard") && navigationCss.includes("grid-template-columns: repeat(12, minmax(0, 1fr))") && navigationCss.includes("#itineraryAlerts .itinerary-timeline-list details summary") && navigationCss.includes("#itineraryAlerts .reservation-preferences-grid")],
   ["Memories layout", html.includes('id="memoriesPanel"') && navigationCss.includes("#memoriesPanel .memory-gallery-grid") && navigationCss.includes("#memoriesPanel .memory-media-card")],
   ["Event controls and cards", html.includes('id="eventsPanel"') && navigationCss.includes("#eventsPanel .event-dashboard-tabs") && navigationCss.includes("#eventsPanel .event-experience-card")],
-  ["Wallet formatting", html.includes('id="walletPanel"') && navigationCss.includes("#walletPanel .wallet-dashboard-header") && navigationCss.includes("#walletPanel .wallet-smart-actions")],
+  ["Wallet formatting", html.includes('id="walletPanel"') && html.includes('class="wallet-operations-panel"') && navigationCss.includes("#walletPanel > .wallet-dashboard-header") && navigationCss.includes("#walletPanel > .wallet-redesign-shell") && navigationCss.includes("#walletPanel > .wallet-operations-panel") && navigationCss.includes("Wallet text visibility") && navigationCss.includes("grid-template-columns: repeat(3, minmax(0, 1fr))")],
   ["Smart Travel Search icon", html.includes('<span class="travel-search-icon" aria-hidden="true"></span>') && navigationCss.includes("#rideShareHub .travel-search-icon::after") && navigationCss.includes("#rideShareHub .travel-smart-search-row")],
   ["Chat layout", html.includes('id="socialHub"') && navigationCss.includes("#socialHub .messages-layout") && navigationCss.includes("#socialHub .chat-workspace") && navigationCss.includes("#socialHub .conversation-details-panel")],
+  ["Chat vibe shortcuts", html.includes("chat-vibe-strip") && html.includes("Vote on dinner") && html.includes("Drop a memory") && navigationCss.includes("Chat vibe refresh") && navigationCss.includes("#socialHub .chat-vibe-actions")],
   ["Widget headers stay on top", html.includes('class="widget-toolbar"') && navigationCss.includes("body.app-routed :where(.smart-widget, .travel-widget, [data-widget]) > .widget-toolbar") && navigationCss.includes("grid-column: 1 / -1 !important")],
   ["Wallet and boarding pass visuals", html.includes('class="card-chip"') && html.includes("digital-boarding-pass") && navigationCss.includes("#virtualCard .virtual-card") && navigationCss.includes("#rideShareHub .digital-boarding-pass")],
-  ["TravelDrip Pass workspace", html.includes('id="travelBoardingPasses"') && navigationCss.includes("#rideShareHub .travel-pass-workspace") && navigationCss.includes("single-focus-pass")],
-  ["Compact widget sizing", navigationCss.includes("Compact Smart Dashboard density") && navigationCss.includes("grid-auto-rows: max-content") && navigationCss.includes("min-height: 0 !important")]
+  ["Travel-Drip Pass workspace", html.includes('id="travelBoardingPasses"') && navigationCss.includes("#rideShareHub .travel-pass-workspace") && navigationCss.includes("single-focus-pass")],
+  ["AI item recognition layout", html.includes('class="receipt-items-panel"') && html.includes('class="receipt-item-list"') && navigationCss.includes("#splitBill .receipt-workspace") && navigationCss.includes("#splitBill .receipt-item-list > article") && navigationCss.includes("#splitBill .receipt-claim-grid")],
+  ["Readable app widget text", navigationCss.includes("App content color pass") && navigationCss.includes("color: var(--ink) !important") && navigationCss.includes("color: var(--muted) !important")],
+  ["White sidebar toolbar", navigationCss.includes("Navigation chrome stays white") && navigationCss.includes("body.app-routed :where(.sidebar, .mobile-nav)")],
+  ["Itinerary Smart Dashboard", navigationCss.includes("Itinerary Smart Dashboard") && navigationCss.includes("#itineraryAlerts > .itinerary-dashboard > .itinerary-card") && navigationCss.includes("#itineraryAlerts > .itinerary-dashboard") && navigationCss.includes("background: transparent !important") && navigationCss.includes("grid-template-columns: repeat(4, minmax(0, 1fr)) !important") && navigationCss.includes("#itineraryAlerts > .itinerary-timeline-dashboard")],
+  ["Itinerary Dashboard header", html.includes("Itinerary Dashboard") && navigationCss.includes("Itinerary Dashboard header") && navigationCss.includes("#itineraryAlerts > .section-heading") && navigationCss.includes("grid-template-columns: minmax(0, 1fr) auto !important")],
+  ["Compact widget sizing", navigationCss.includes("Compact Smart Dashboard density") && navigationCss.includes("grid-auto-rows: max-content") && navigationCss.includes("min-height: 0 !important")],
+  ["No oversized parent widgets", navigationCss.includes("Global parent widget cleanup") && navigationCss.includes("background: transparent !important") && navigationCss.includes("border: 0 !important") && navigationCss.includes("box-shadow: none !important") && navigationCss.includes("grid-auto-rows: max-content !important")],
+  ["Itinerary matches Events styling", navigationCss.includes("Itinerary matches the Events dashboard") && navigationCss.includes("#itineraryAlerts > .itinerary-dashboard") && navigationCss.includes("grid-template-columns: repeat(4, minmax(0, 1fr)) !important") && navigationCss.includes("#itineraryAlerts .itinerary-timeline-list") && navigationCss.includes("#itineraryAlerts .alert-category-grid")],
+  ["Travel boarding, rail, and hotel widgets", html.includes('data-travel-panel="boarding"') && html.includes('data-travel-panel="trains"') && html.includes('data-travel-panel="hotels"') && navigationCss.includes("Travel tab card repair") && navigationCss.includes('#rideShareHub [data-travel-panel="boarding"] .digital-boarding-pass') && navigationCss.includes('#rideShareHub [data-travel-panel="trains"] .travel-focus-grid > article') && navigationCss.includes('#rideShareHub [data-travel-panel="hotels"] .travel-focus-grid > article')],
+  ["Travel-Drip Pass card widths", html.includes('id="travelBoardingPasses"') && navigationCss.includes("Travel-Drip Pass workspace: prevent the legacy narrow side rail") && navigationCss.includes("#rideShareHub #travelBoardingPasses .visual-pass-grid") && navigationCss.includes("grid-template-columns: repeat(3, minmax(0, 1fr)) !important") && navigationCss.includes("#rideShareHub #travelBoardingPasses .visual-pass-card h4")],
+  ["Itinerary reservation titles", html.includes("Real-time ready") && html.includes("Ocean Rooftop Grill") && html.includes("Catamaran Sunset Cruise") && navigationCss.includes("Itinerary reservation titles") && navigationCss.includes("#itineraryAlerts > .upcoming-reservation-grid > article") && navigationCss.includes("grid-template-columns: repeat(4, minmax(180px, 1fr)) !important")],
+  ["Itinerary no overflow and compact alert controls", html.includes('class="security-note"') && html.includes('class="alert-category-grid"') && navigationCss.includes("Itinerary overflow repair") && navigationCss.includes("#itineraryAlerts > .security-note") && navigationCss.includes("min-height: 0 !important") && navigationCss.includes("grid-auto-rows: max-content !important") && navigationCss.includes("#itineraryAlerts .itinerary-timeline-list")],
+  ["Itinerary route stays full-width", navigationCss.includes("Route view repair") && navigationCss.includes("#itineraryAlerts > *") && navigationCss.includes("#itineraryAlerts > .alert-category-grid") && navigationCss.includes("grid-column: 1 / -1 !important") && navigationCss.includes("position: relative !important")],
+  ["Wallet route stays readable", html.includes('id="walletPanel"') && html.includes("wallet-metric-list") && navigationCss.includes("Wallet route repair") && navigationCss.includes("#walletPanel > *") && navigationCss.includes("#walletPanel > .wallet-redesign-shell > .wallet-dashboard-sections") && navigationCss.includes("#walletPanel > .wallet-redesign-shell .wallet-metric-list") && navigationCss.includes("grid-template-columns: repeat(3, minmax(0, 1fr)) !important")],
+  ["Wallet contrast stays readable", html.includes('id="walletPanel"') && navigationCss.includes("Wallet contrast repair") && navigationCss.includes("color: #10202f !important") && navigationCss.includes("color: #607280 !important") && navigationCss.includes("#walletPanel :where(input, select, textarea)")],
+  ["AI receipt workspace stays readable", html.includes('id="splitBill"') && html.includes('class="receipt-workspace"') && navigationCss.includes("AI receipt workspace repair") && navigationCss.includes("#splitBill > *") && navigationCss.includes("#splitBill .receipt-item-list") && navigationCss.includes("#splitBill .receipt-claim-grid") && navigationCss.includes("writing-mode: horizontal-tb !important")],
+  ["AI recognition widget stays horizontal", html.includes('id="aiBillReviewButton"') && navigationCss.includes("AI recognition widget repair") && navigationCss.includes("#splitBill .receipt-workspace") && navigationCss.includes("#splitBill .receipt-items-panel > .section-heading") && navigationCss.includes("grid-template-columns: minmax(0, 1fr) !important")]
 ];
 const focusedLayoutIssues = focusedLayoutChecks
   .filter(([, passed]) => !passed)
@@ -196,7 +213,7 @@ const corporateExperienceIssues = corporateExperienceChecks
   .map(([label]) => `${label} is missing or disconnected`);
 
 const textContainmentChecks = [
-  ["Horizontal text flow", navigationCss.includes("writing-mode: horizontal-tb !important") && navigationCss.includes("word-break: normal !important")],
+  ["Horizontal text flow", navigationCss.includes("Global horizontal text flow") && navigationCss.includes("All authenticated panel headings") && navigationCss.includes("Final widget text-flow hardening") && navigationCss.includes("Bubble text rows must span the widget") && navigationCss.includes("grid-column: 1 / -1 !important") && navigationCss.includes("writing-mode: horizontal-tb !important") && navigationCss.includes("word-break: normal !important")],
   ["Full-width widget titles", navigationCss.includes(".memory-media-card") && navigationCss.includes("h1, h2, h3, h4, h5, h6") && navigationCss.includes("width: 100% !important")],
   ["No narrow photo caption column", navigationCss.includes(".memory-media-card {\n  grid-template-columns: none !important;")],
   ["Contained photos and captions", navigationCss.includes(".memory-media-card img") && navigationCss.includes("overflow-wrap: anywhere !important")],
@@ -393,7 +410,7 @@ results.finalStatus = finalStatus;
 results.criticalIssues = criticalIssues;
 
 const ok = (value) => value ? "PASS" : "REVIEW";
-const report = `# TravelDrip Links, Search, Date Picker, Booking, and Real-Time Updates Verification
+const report = `# Travel-Drip Links, Search, Date Picker, Booking, and Real-Time Updates Verification
 
 Generated: ${results.generatedAt}
 
@@ -445,9 +462,9 @@ ${routeIsolationIssues.length ? `### Route Isolation Issues\n${routeIsolationIss
 
 - Dashboard-only section markers: ${ok(dashboardOnlyIssues.length === 0)}
 - Marked sections: ${dashboardOnlyIds.join(", ") || "none"}
-- Today in TravelDrip heading count: ${todayHeadingCount}
+- Today in Travel-Drip heading count: ${todayHeadingCount}
 
-${dashboardOnlyIssues.length ? `### Dashboard-Only Issues\n${dashboardOnlyIssues.map((issue) => `- ${issue}`).join("\n")}` : "Today in TravelDrip is defined once inside the Dashboard widget section, and the route renderer hides all dashboard-only sections on other routes."}
+${dashboardOnlyIssues.length ? `### Dashboard-Only Issues\n${dashboardOnlyIssues.map((issue) => `- ${issue}`).join("\n")}` : "Today in Travel-Drip is defined once inside the Dashboard widget section, and the route renderer hides all dashboard-only sections on other routes."}
 
 ## Side Toolbar Navigation Verification
 
@@ -481,7 +498,7 @@ ${outerWrapperIssues.length ? `### Outer Wrapper Issues\n${outerWrapperIssues.ma
 
 ## Focused Route Layout Verification
 
-- Itinerary, Events, Memories, Wallet, Smart Travel Search, Chat, widget headers, TravelDrip Pass, and compact sizing: ${ok(focusedLayoutIssues.length === 0)}
+- Itinerary, Events, Memories, Wallet, Smart Travel Search, Chat, widget headers, Travel-Drip Pass, and compact sizing: ${ok(focusedLayoutIssues.length === 0)}
 
 ${focusedLayoutChecks.map(([label, passed]) => `- ${label}: ${ok(passed)}`).join("\n")}
 

@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-29T18:04:24.740Z",
+  "generatedAt": "2026-07-30T18:03:32.555Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
   },
   "totals": {
     "screenIds": 565,
-    "buttons": 781,
+    "buttons": 785,
     "hrefLinks": 15,
     "dataTargets": 99,
     "uniqueDataTargets": 17,
@@ -192,6 +192,10 @@
         "status": "PASS"
       },
       {
+        "label": "Chat vibe shortcuts",
+        "status": "PASS"
+      },
+      {
         "label": "Widget headers stay on top",
         "status": "PASS"
       },
@@ -200,11 +204,75 @@
         "status": "PASS"
       },
       {
-        "label": "TravelDrip Pass workspace",
+        "label": "Travel-Drip Pass workspace",
+        "status": "PASS"
+      },
+      {
+        "label": "AI item recognition layout",
+        "status": "PASS"
+      },
+      {
+        "label": "Readable app widget text",
+        "status": "PASS"
+      },
+      {
+        "label": "White sidebar toolbar",
+        "status": "PASS"
+      },
+      {
+        "label": "Itinerary Smart Dashboard",
+        "status": "PASS"
+      },
+      {
+        "label": "Itinerary Dashboard header",
         "status": "PASS"
       },
       {
         "label": "Compact widget sizing",
+        "status": "PASS"
+      },
+      {
+        "label": "No oversized parent widgets",
+        "status": "PASS"
+      },
+      {
+        "label": "Itinerary matches Events styling",
+        "status": "PASS"
+      },
+      {
+        "label": "Travel boarding, rail, and hotel widgets",
+        "status": "PASS"
+      },
+      {
+        "label": "Travel-Drip Pass card widths",
+        "status": "PASS"
+      },
+      {
+        "label": "Itinerary reservation titles",
+        "status": "PASS"
+      },
+      {
+        "label": "Itinerary no overflow and compact alert controls",
+        "status": "PASS"
+      },
+      {
+        "label": "Itinerary route stays full-width",
+        "status": "PASS"
+      },
+      {
+        "label": "Wallet route stays readable",
+        "status": "PASS"
+      },
+      {
+        "label": "Wallet contrast stays readable",
+        "status": "PASS"
+      },
+      {
+        "label": "AI receipt workspace stays readable",
+        "status": "PASS"
+      },
+      {
+        "label": "AI recognition widget stays horizontal",
         "status": "PASS"
       }
     ],

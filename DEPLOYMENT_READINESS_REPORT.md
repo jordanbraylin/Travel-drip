@@ -1,10 +1,10 @@
-# TravelDrip Deployment Readiness Report
+# Travel-Drip Deployment Readiness Report
 
 Date: July 21, 2026
 
 Final status: Not Ready for Production
 
-TravelDrip is ready for a Vercel demo/staging redeploy after the latest local fixes, but it should not be marked production-ready for real users until the blocking provider-backed checks below pass. The app now includes an in-app Production Readiness panel in the Security Center area so the go-live decision is visible inside the product experience.
+Travel-Drip is ready for a Vercel demo/staging redeploy after the latest local fixes, but it should not be marked production-ready for real users until the blocking provider-backed checks below pass. The app now includes an in-app Production Readiness panel in the Security Center area so the go-live decision is visible inside the product experience.
 
 ## Live Deployment Check
 
@@ -115,6 +115,6 @@ Quality assurance:
 
 ## Publish Recommendation
 
-Do not market TravelDrip as production-ready for real users yet.
+Do not market Travel-Drip as production-ready for real users yet.
 
 Recommended next step: add the missing Vercel environment variables, redeploy from Git, confirm `/api/health` returns all critical booleans as `true`, then execute the full production QA checklist against the deployed URL.

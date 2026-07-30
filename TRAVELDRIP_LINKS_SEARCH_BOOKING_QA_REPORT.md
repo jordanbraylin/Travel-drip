@@ -1,6 +1,6 @@
-# TravelDrip Links, Search, Date Picker, Booking, and Real-Time Updates Verification
+# Travel-Drip Links, Search, Date Picker, Booking, and Real-Time Updates Verification
 
-Generated: 2026-07-29T18:04:24.740Z
+Generated: 2026-07-30T18:03:32.555Z
 
 ## Final Status
 
@@ -10,7 +10,7 @@ This local verification checks static routes, link targets, search/date field wi
 
 ## Summary
 
-- Total buttons inspected: 781
+- Total buttons inspected: 785
 - Total links inspected: 15
 - Data-target controls inspected: 99
 - Working local data-target routes: 17/17
@@ -50,9 +50,9 @@ Chat owns messaging only; Daily Memory is mounted under Memories and Social Medi
 
 - Dashboard-only section markers: PASS
 - Marked sections: corporateHome, dashboardHome, dashboardWidgets
-- Today in TravelDrip heading count: 1
+- Today in Travel-Drip heading count: 1
 
-Today in TravelDrip is defined once inside the Dashboard widget section, and the route renderer hides all dashboard-only sections on other routes.
+Today in Travel-Drip is defined once inside the Dashboard widget section, and the route renderer hides all dashboard-only sections on other routes.
 
 ## Side Toolbar Navigation Verification
 
@@ -95,7 +95,7 @@ Route roots and visible inner shells are transparent; individual widgets retain 
 
 ## Focused Route Layout Verification
 
-- Itinerary, Events, Memories, Wallet, Smart Travel Search, Chat, widget headers, TravelDrip Pass, and compact sizing: PASS
+- Itinerary, Events, Memories, Wallet, Smart Travel Search, Chat, widget headers, Travel-Drip Pass, and compact sizing: PASS
 
 - Itinerary layout: PASS
 - Memories layout: PASS
@@ -103,10 +103,27 @@ Route roots and visible inner shells are transparent; individual widgets retain 
 - Wallet formatting: PASS
 - Smart Travel Search icon: PASS
 - Chat layout: PASS
+- Chat vibe shortcuts: PASS
 - Widget headers stay on top: PASS
 - Wallet and boarding pass visuals: PASS
-- TravelDrip Pass workspace: PASS
+- Travel-Drip Pass workspace: PASS
+- AI item recognition layout: PASS
+- Readable app widget text: PASS
+- White sidebar toolbar: PASS
+- Itinerary Smart Dashboard: PASS
+- Itinerary Dashboard header: PASS
 - Compact widget sizing: PASS
+- No oversized parent widgets: PASS
+- Itinerary matches Events styling: PASS
+- Travel boarding, rail, and hotel widgets: PASS
+- Travel-Drip Pass card widths: PASS
+- Itinerary reservation titles: PASS
+- Itinerary no overflow and compact alert controls: PASS
+- Itinerary route stays full-width: PASS
+- Wallet route stays readable: PASS
+- Wallet contrast stays readable: PASS
+- AI receipt workspace stays readable: PASS
+- AI recognition widget stays horizontal: PASS
 
 Focused route grids, compact event controls, horizontal widget text, wallet summaries, and the Smart Travel Search icon are present.
 

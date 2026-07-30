@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" role="img" aria-labelledby="title desc">
-  <title id="title">TravelDrip secondary logo</title>
-  <desc id="desc">Secondary TravelDrip logo with a compact icon and rounded startup-style wordmark.</desc>
+  <title id="title">Travel-Drip secondary logo</title>
+  <desc id="desc">Secondary Travel-Drip logo with a compact icon and rounded startup-style wordmark.</desc>
   <defs>
     <linearGradient id="secondaryMark" x1="44" y1="34" x2="228" y2="226" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#00A7D8"/>
@@ -22,7 +22,7 @@
     <path d="M196 241c0 26-21 47-47 47s-47-21-47-47c0-33 47-75 47-75s47 42 47 75z" fill="#FF744F"/>
     <circle cx="149" cy="243" r="13" fill="#FFFFFF"/>
   </g>
-  <text x="256" y="151" fill="url(#secondaryWord)" font-family="Inter, Avenir Next, Arial Rounded MT Bold, Arial, sans-serif" font-size="82" font-weight="900" letter-spacing="-1.2">TravelDrip</text>
+  <text x="256" y="151" fill="url(#secondaryWord)" font-family="Inter, Avenir Next, Arial Rounded MT Bold, Arial, sans-serif" font-size="82" font-weight="900" letter-spacing="-1.2">Travel-Drip</text>
   <path d="M738 172h80" fill="none" stroke="#FFD45D" stroke-width="10" stroke-linecap="round"/>
   <path d="M853 171c0 18-15 33-33 33s-33-15-33-33c0-23 33-53 33-53s33 30 33 53z" fill="#FF4FAD"/>
 </svg>

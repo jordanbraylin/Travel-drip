@@ -1,4 +1,4 @@
-# TravelDrip UI Validation Report - Section 63
+# Travel-Drip UI Validation Report - Section 63
 
 ## My Profile Redesign
 

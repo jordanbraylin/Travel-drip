@@ -1,4 +1,4 @@
-# TravelDrip Section 68 Compact Dashboard Tables Report
+# Travel-Drip Section 68 Compact Dashboard Tables Report
 
 Status: Implemented with static validation. Rendered browser validation remains blocked by this environment.
 
@@ -32,7 +32,7 @@ Status: Implemented with static validation. Rendered browser validation remains 
   - no duplicate IDs detected.
 
 ## Rendered Validation Blocker
-- The in-app browser blocks local `file://` TravelDrip pages by URL policy.
+- The in-app browser blocks local `file://` Travel-Drip pages by URL policy.
 - Localhost preview was previously blocked by the sandbox, so full rendered viewport inspection cannot be completed here.
 
 ## Recommendation

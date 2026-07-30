@@ -1,4 +1,4 @@
-# TravelDrip Section 65 Emergency Overlap Fix Report
+# Travel-Drip Section 65 Emergency Overlap Fix Report
 
 Status: Implemented with static validation. Rendered browser validation is blocked in this sandbox.
 

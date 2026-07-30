@@ -1,4 +1,4 @@
-# TravelDrip Section 66 Global Overlap Fix Report
+# Travel-Drip Section 66 Global Overlap Fix Report
 
 Status: Implemented with static validation. Rendered browser validation is blocked by this environment.
 
