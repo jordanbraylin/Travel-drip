@@ -1,0 +1,516 @@
+{
+  "generatedAt": "2026-07-30T18:08:17.476Z",
+  "package": {
+    "name": "traveldrip",
+    "version": "1.0.0"
+  },
+  "totals": {
+    "screenIds": 565,
+    "buttons": 785,
+    "hrefLinks": 15,
+    "dataTargets": 99,
+    "uniqueDataTargets": 17,
+    "mainNavigationControls": 32,
+    "mainNavigationItems": 10,
+    "routeDefinitions": 19,
+    "dateInputs": 7,
+    "searchInputs": 10,
+    "actionAttributeTypes": 83,
+    "apiRoutes": 15
+  },
+  "linkAndRouteVerification": {
+    "workingLocalTargets": 17,
+    "targetIssues": [],
+    "ariaIssues": [],
+    "linkIssues": [],
+    "externalHrefs": [
+      "https://maps.google.com",
+      "https://maps.google.com",
+      "https://maps.google.com"
+    ],
+    "placeholderHrefs": []
+  },
+  "mainNavigationVerification": {
+    "requiredItems": [
+      "dashboard",
+      "planning",
+      "itinerary",
+      "events",
+      "travel",
+      "wallet",
+      "chat",
+      "important-info",
+      "memories",
+      "settings"
+    ],
+    "configuredItems": [
+      "chat",
+      "dashboard",
+      "events",
+      "important-info",
+      "itinerary",
+      "memories",
+      "planning",
+      "settings",
+      "travel",
+      "wallet"
+    ],
+    "configuredPaths": [
+      "/chat",
+      "/dashboard",
+      "/events",
+      "/important-info",
+      "/itinerary",
+      "/memories",
+      "/planning",
+      "/settings",
+      "/travel",
+      "/wallet"
+    ],
+    "renderedControlCount": 32,
+    "issues": []
+  },
+  "routeIsolationVerification": {
+    "requiredExtractedComponents": [
+      "dailyMemoryPanel",
+      "socialMediaHub"
+    ],
+    "extractedComponents": [
+      "dailyMemoryPanel",
+      "socialMediaHub"
+    ],
+    "supportedRoutes": [
+      "adminPanel",
+      "groupBank",
+      "itineraryAlerts",
+      "memoriesPanel",
+      "rideShareHub",
+      "tripsPanel",
+      "walletPanel"
+    ],
+    "issues": [],
+    "status": "PASS"
+  },
+  "dashboardOnlyVerification": {
+    "requiredIds": [
+      "dashboardHome",
+      "dashboardWidgets"
+    ],
+    "markedIds": [
+      "corporateHome",
+      "dashboardHome",
+      "dashboardWidgets"
+    ],
+    "todayHeadingCount": 1,
+    "issues": [],
+    "status": "PASS"
+  },
+  "toolbarNavigationVerification": {
+    "requiredRoutes": {
+      "dashboard": "/dashboard",
+      "planning": "/planning",
+      "itinerary": "/itinerary",
+      "events": "/events",
+      "travel": "/travel",
+      "wallet": "/wallet",
+      "chat": "/chat",
+      "important-info": "/important-info",
+      "memories": "/memories",
+      "settings": "/settings"
+    },
+    "sidebarItems": [
+      "chat",
+      "dashboard",
+      "events",
+      "important-info",
+      "itinerary",
+      "memories",
+      "planning",
+      "settings",
+      "travel",
+      "wallet"
+    ],
+    "issues": [],
+    "status": "PASS"
+  },
+  "fullWidthWidgetVerification": {
+    "issues": [],
+    "status": "PASS"
+  },
+  "travelDocumentsVerification": {
+    "cardCount": 4,
+    "requiredClasses": [
+      "travel-documents-section",
+      "travel-documents-grid",
+      "travel-document-card__title",
+      "travel-document-card__description",
+      "travel-document-card__due",
+      "travel-document-card__status"
+    ],
+    "issues": [],
+    "status": "PASS"
+  },
+  "outerWrapperVerification": {
+    "selectors": [
+      "[data-route-component]:not([hidden])",
+      ".messages-hub",
+      ".travel-workspace",
+      ".ride-hub-redesign",
+      ".reservation-reminder-panel",
+      ".wallet-redesign-shell",
+      ".memories-gallery-shell",
+      ".settings-shell",
+      ".admin-settings-shell"
+    ],
+    "issues": [],
+    "status": "PASS"
+  },
+  "focusedRouteLayoutVerification": {
+    "checks": [
+      {
+        "label": "Itinerary layout",
+        "status": "PASS"
+      },
+      {
+        "label": "Memories layout",
+        "status": "PASS"
+      },
+      {
+        "label": "Event controls and cards",
+        "status": "PASS"
+      },
+      {
+        "label": "Wallet formatting",
+        "status": "PASS"
+      },
+      {
+        "label": "Smart Travel Search icon",
+        "status": "PASS"
+      },
+      {
+        "label": "Chat layout",
+        "status": "PASS"
+      },
+      {
+        "label": "Chat vibe shortcuts",
+        "status": "PASS"
+      },
+      {
+        "label": "Widget headers stay on top",
+        "status": "PASS"
+      },
+      {
+        "label": "Wallet and boarding pass visuals",
+        "status": "PASS"
+      },
+      {
+        "label": "Travel-Drip Pass workspace",
+        "status": "PASS"
+      },
+      {
+        "label": "AI item recognition layout",
+        "status": "PASS"
+      },
+      {
+        "label": "Readable app widget text",
+        "status": "PASS"
+      },
+      {
+        "label": "White sidebar toolbar",
+        "status": "PASS"
+      },
+      {
+        "label": "Itinerary Smart Dashboard",
+        "status": "PASS"
+      },
+      {
+        "label": "Itinerary Dashboard header",
+        "status": "PASS"
+      },
+      {
+        "label": "Compact widget sizing",
+        "status": "PASS"
+      },
+      {
+        "label": "No oversized parent widgets",
+        "status": "PASS"
+      },
+      {
+        "label": "Itinerary matches Events styling",
+        "status": "PASS"
+      },
+      {
+        "label": "Travel boarding, rail, and hotel widgets",
+        "status": "PASS"
+      },
+      {
+        "label": "Travel-Drip Pass card widths",
+        "status": "PASS"
+      },
+      {
+        "label": "Itinerary reservation titles",
+        "status": "PASS"
+      },
+      {
+        "label": "Itinerary no overflow and compact alert controls",
+        "status": "PASS"
+      },
+      {
+        "label": "Itinerary route stays full-width",
+        "status": "PASS"
+      },
+      {
+        "label": "Wallet route stays readable",
+        "status": "PASS"
+      },
+      {
+        "label": "Wallet contrast stays readable",
+        "status": "PASS"
+      },
+      {
+        "label": "AI receipt workspace stays readable",
+        "status": "PASS"
+      },
+      {
+        "label": "AI recognition widget stays horizontal",
+        "status": "PASS"
+      },
+      {
+        "label": "Overview Memories collage stays contained",
+        "status": "PASS"
+      }
+    ],
+    "issues": [],
+    "status": "PASS"
+  },
+  "corporateExperienceVerification": {
+    "checks": [
+      {
+        "label": "Visible Corporate navigation entry",
+        "status": "PASS"
+      },
+      {
+        "label": "Corporate tab entry",
+        "status": "PASS"
+      },
+      {
+        "label": "Secure corporate access gate",
+        "status": "PASS"
+      },
+      {
+        "label": "Policy and conditions",
+        "status": "PASS"
+      },
+      {
+        "label": "Role and finance restrictions",
+        "status": "PASS"
+      },
+      {
+        "label": "Corporate entry styling",
+        "status": "PASS"
+      }
+    ],
+    "issues": [],
+    "status": "PASS"
+  },
+  "textContainmentVerification": {
+    "checks": [
+      {
+        "label": "Horizontal text flow",
+        "status": "PASS"
+      },
+      {
+        "label": "Full-width widget titles",
+        "status": "PASS"
+      },
+      {
+        "label": "No narrow photo caption column",
+        "status": "PASS"
+      },
+      {
+        "label": "Contained photos and captions",
+        "status": "PASS"
+      },
+      {
+        "label": "Wrapped widget actions",
+        "status": "PASS"
+      }
+    ],
+    "issues": [],
+    "status": "PASS"
+  },
+  "datePickerVerification": {
+    "status": "Native browser date/datetime-local controls present locally; full custom popover/mobile calendar QA requires browser/device testing.",
+    "fields": [
+      {
+        "id": "eventDateInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      },
+      {
+        "id": "eventRsvpInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      },
+      {
+        "id": "tripStartInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      },
+      {
+        "id": "tripEndInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      },
+      {
+        "id": "eventRsvpDeadlineInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      },
+      {
+        "id": "inviteDeadlineInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      },
+      {
+        "id": "flightDepartureDateInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      }
+    ],
+    "ranges": [
+      {
+        "start": "tripStartInput",
+        "end": "tripEndInput",
+        "fieldsPresent": true,
+        "bothReferencedInApp": true,
+        "invalidRangeGuardPresent": true
+      },
+      {
+        "start": "tripStartInput",
+        "end": "inviteDeadlineInput",
+        "fieldsPresent": true,
+        "bothReferencedInApp": true,
+        "invalidRangeGuardPresent": true
+      },
+      {
+        "start": "tripStartInput",
+        "end": "eventRsvpDeadlineInput",
+        "fieldsPresent": true,
+        "bothReferencedInApp": true,
+        "invalidRangeGuardPresent": true
+      }
+    ]
+  },
+  "searchVerification": {
+    "status": "Local UI search fields are present; provider-backed travel search requires live integrations.",
+    "fields": [
+      {
+        "id": "globalSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "exploreSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "messageSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "infoSearch",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "travelSmartSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "travelSettingsSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "transportSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "rideHubSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "privateDriverSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "settingsSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      }
+    ],
+    "missingAppReferences": []
+  },
+  "bookingAndRealtimeVerification": {
+    "status": "Not production-complete without live provider credentials and deployed callback/webhook testing.",
+    "providerSignals": [
+      {
+        "label": "Provider-required labeling",
+        "present": true
+      },
+      {
+        "label": "Estimated pricing labeling",
+        "present": true
+      },
+      {
+        "label": "Manual data labeling",
+        "present": true
+      },
+      {
+        "label": "Booking not marked confirmed without provider",
+        "present": true
+      },
+      {
+        "label": "Realtime limitations stated",
+        "present": true
+      }
+    ],
+    "apiRoutes": [
+      "_security.js",
+      "admin-status.js",
+      "audit.js",
+      "config.js",
+      "events.js",
+      "explore.js",
+      "ghl-sync.js",
+      "guest-access.js",
+      "health.js",
+      "invitations.js",
+      "notify.js",
+      "rsvp.js",
+      "schedule.js",
+      "subscribe.js",
+      "trips.js"
+    ]
+  },
+  "productionTesting": {
+    "status": "Not run by this local script.",
+    "reason": "Network access, provider credentials, and browser/device farm access are outside this local workspace execution."
+  },
+  "finalStatus": "Ready with Documented Limitations",
+  "criticalIssues": []
+}

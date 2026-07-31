@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 220" role="img" aria-labelledby="title desc">
+  <title id="title">Travel-Drip horizontal logo</title>
+  <desc id="desc">Compact Travel-Drip horizontal logo with airplane, globe, and droplet mark.</desc>
+  <defs>
+    <linearGradient id="ocean" x1="28" y1="24" x2="192" y2="196" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00A7D8"/>
+      <stop offset=".52" stop-color="#20D7D2"/>
+      <stop offset="1" stop-color="#8357FF"/>
+    </linearGradient>
+    <linearGradient id="word" x1="238" y1="56" x2="810" y2="154" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#081B2D"/>
+      <stop offset=".7" stop-color="#0077B6"/>
+      <stop offset="1" stop-color="#FF4FAD"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(18 24) scale(.55)">
+    <use href="#base"/>
+  </g>
+  <defs>
+    <g id="base">
+      <circle cx="150" cy="150" r="132" fill="url(#ocean)"/>
+      <circle cx="150" cy="150" r="96" fill="#F8FDFF"/>
+      <path d="M62 150h176M150 54c31 30 46 62 46 96s-15 66-46 96M150 54c-31 30-46 62-46 96s15 66 46 96" fill="none" stroke="#0096C7" stroke-width="11" stroke-linecap="round"/>
+      <path d="M82 103c42 17 94 17 136 0M82 197c42-17 94-17 136 0" fill="none" stroke="#20D7D2" stroke-width="11" stroke-linecap="round"/>
+      <path d="M235 25l71-28c13-5 25 9 17 20l-40 66 40 33c9 8 4 23-8 23l-65-1-49 64c-8 10-24 4-23-9l7-80-68-44c-11-7-7-24 7-25l78-6 33-13z" fill="#FFFFFF"/>
+      <path d="M196 241c0 26-21 47-47 47s-47-21-47-47c0-33 47-75 47-75s47 42 47 75z" fill="#FF6B4A"/>
+    </g>
+  </defs>
+  <text x="208" y="133" fill="url(#word)" font-family="Inter, Avenir Next, Arial Rounded MT Bold, Arial, sans-serif" font-size="86" font-weight="900" letter-spacing="-1.5">Travel-Drip</text>
+</svg>

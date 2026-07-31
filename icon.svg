@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Travel-Drip app icon</title>
+  <desc id="desc">A sleek airplane circles a minimalist globe with a premium droplet pin.</desc>
+  <defs>
+    <linearGradient id="td-bg" x1="68" y1="58" x2="452" y2="462" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00A7D8"/>
+      <stop offset=".42" stop-color="#20D7D2"/>
+      <stop offset=".72" stop-color="#8357FF"/>
+      <stop offset="1" stop-color="#FF4FAD"/>
+    </linearGradient>
+    <linearGradient id="td-sunset" x1="160" y1="104" x2="402" y2="410" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFD45D"/>
+      <stop offset=".55" stop-color="#FF8A3D"/>
+      <stop offset="1" stop-color="#FF4FAD"/>
+    </linearGradient>
+    <filter id="td-shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#081B2D" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="116" fill="#081B2D"/>
+  <rect x="30" y="30" width="452" height="452" rx="94" fill="url(#td-bg)"/>
+  <path d="M76 332C141 222 243 154 391 138" fill="none" stroke="#FFFFFF" stroke-width="15" stroke-linecap="round" stroke-dasharray="2 30" opacity=".76"/>
+  <g filter="url(#td-shadow)">
+    <circle cx="252" cy="252" r="122" fill="#F8FDFF"/>
+    <circle cx="252" cy="252" r="96" fill="#E6FBFF"/>
+    <path d="M158 252h188M252 156c30 29 45 61 45 96s-15 67-45 96M252 156c-30 29-45 61-45 96s15 67 45 96" fill="none" stroke="#00A7D8" stroke-width="12" stroke-linecap="round"/>
+    <path d="M176 205c45 18 105 18 152 0M176 299c45-18 105-18 152 0" fill="none" stroke="#20D7D2" stroke-width="12" stroke-linecap="round"/>
+  </g>
+  <path d="M358 114l78-31c14-6 27 9 19 22l-44 73 44 36c10 8 4 25-9 25l-72-1-54 70c-8 11-26 4-25-10l8-89-74-48c-12-8-7-27 7-28l88-7 34-12z" fill="#FFFFFF"/>
+  <path d="M356 116l-17 104 73-42 43-74c8-13-5-28-19-22l-80 34z" fill="#DFFBFF" opacity=".82"/>
+  <path d="M308 352c0 30-24 54-54 54s-54-24-54-54c0-38 54-86 54-86s54 48 54 86z" fill="url(#td-sunset)"/>
+  <circle cx="254" cy="354" r="17" fill="#FFFFFF" opacity=".92"/>
+</svg>

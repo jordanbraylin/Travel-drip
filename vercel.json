@@ -1,0 +1,53 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "framework": null,
+  "buildCommand": null,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(self), microphone=(), geolocation=(self)" },
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' https://esm.sh https://link.msgsndr.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://images.unsplash.com; connect-src 'self' https://esm.sh https://link.msgsndr.com https://*.supabase.co wss://*.supabase.co; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/register", "destination": "/index.html" },
+    { "source": "/offline", "destination": "/offline.html" },
+    { "source": "/login", "destination": "/index.html" },
+    { "source": "/home", "destination": "/index.html" },
+    { "source": "/dashboard", "destination": "/index.html" },
+    { "source": "/planning", "destination": "/index.html" },
+    { "source": "/planning/:path*", "destination": "/index.html" },
+    { "source": "/itinerary", "destination": "/index.html" },
+    { "source": "/itinerary/:path*", "destination": "/index.html" },
+    { "source": "/events", "destination": "/index.html" },
+    { "source": "/travel", "destination": "/index.html" },
+    { "source": "/travel/:path*", "destination": "/index.html" },
+    { "source": "/wallet", "destination": "/index.html" },
+    { "source": "/wallet/:path*", "destination": "/index.html" },
+    { "source": "/chat", "destination": "/index.html" },
+    { "source": "/chat/:path*", "destination": "/index.html" },
+    { "source": "/important-info", "destination": "/index.html" },
+    { "source": "/important-info/:path*", "destination": "/index.html" },
+    { "source": "/explore", "destination": "/index.html" },
+    { "source": "/explore/:path*", "destination": "/index.html" },
+    { "source": "/trips", "destination": "/index.html" },
+    { "source": "/trips/:path*", "destination": "/index.html" },
+    { "source": "/messages", "destination": "/index.html" },
+    { "source": "/messages/:path*", "destination": "/index.html" },
+    { "source": "/memories", "destination": "/index.html" },
+    { "source": "/memories/:path*", "destination": "/index.html" },
+    { "source": "/corporate", "destination": "/index.html" },
+    { "source": "/corporate/:path*", "destination": "/index.html" },
+    { "source": "/profile", "destination": "/index.html" },
+    { "source": "/profile/:path*", "destination": "/index.html" },
+    { "source": "/settings", "destination": "/index.html" },
+    { "source": "/settings/:path*", "destination": "/index.html" }
+  ]
+}

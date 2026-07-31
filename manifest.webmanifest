@@ -1,0 +1,50 @@
+{
+  "name": "Travel-Drip",
+  "short_name": "Travel-Drip",
+  "description": "AI-powered travel and event planning platform",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "window-controls-overlay", "browser"],
+  "orientation": "portrait-primary",
+  "background_color": "#071116",
+  "theme_color": "#0096c7",
+  "categories": ["travel", "productivity", "social"],
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Open Travel-Drip",
+      "short_name": "Home",
+      "description": "Open the Travel-Drip dashboard",
+      "url": "/home",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Explore trips",
+      "short_name": "Explore",
+      "description": "Discover destinations, restaurants, nightlife, activities, and events",
+      "url": "/explore",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

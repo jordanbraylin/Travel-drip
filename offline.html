@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0096c7">
+  <meta name="description" content="Travel-Drip offline mode">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>Travel-Drip Offline</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #071116;
+      color: #effaff;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        linear-gradient(rgba(7, 17, 22, 0.72), rgba(7, 17, 22, 0.88)),
+        url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format&fit=crop") center / cover;
+    }
+
+    main {
+      width: min(520px, 100%);
+      padding: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 22px;
+      background: rgba(7, 17, 22, 0.78);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
+      backdrop-filter: blur(16px);
+    }
+
+    img {
+      width: 190px;
+      max-width: 70vw;
+      height: auto;
+    }
+
+    h1 {
+      margin: 28px 0 10px;
+      font-size: clamp(32px, 8vw, 56px);
+      line-height: 0.98;
+    }
+
+    p {
+      color: rgba(239, 250, 255, 0.78);
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    a,
+    button {
+      min-height: 46px;
+      border: 0;
+      border-radius: 999px;
+      padding: 0 18px;
+      display: inline-grid;
+      place-items: center;
+      background: #00c2c7;
+      color: #071116;
+      font: inherit;
+      font-weight: 850;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="icons/traveldrip-logo-white.svg" alt="Travel-Drip">
+    <h1>You are offline.</h1>
+    <p>Travel-Drip can reopen cached public screens, but live login, wallet actions, uploads, notifications, and private corporate documents need a secure connection.</p>
+    <p>Reconnect to keep trip data synced and avoid duplicate financial or sensitive actions.</p>
+    <a href="/">Try Travel-Drip again</a>
+  </main>
+  <script src="https://link.msgsndr.com/js/external-tracking.js" data-tracking-id="tk_684cd074f7154fbebd60d6f62b2d331b"></script>
+</body>
+</html>
