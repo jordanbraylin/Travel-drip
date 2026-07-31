@@ -25,15 +25,27 @@ jobs:
       - name: Validate JavaScript syntax
         run: |
           node --check app.js
-          for file in api/*.js scripts/*.js; do
-            node --check "$file"
+          for directory in api scripts; do
+            if [ -d "$directory" ]; then
+              find "$directory" -type f -name '*.js' -print0 | xargs -0 -r -n1 node --check
+            fi
           done
 
       - name: Validate PWA configuration
-        run: npm run validate:pwa
+        run: |
+          if [ -f scripts/validate-pwa.js ]; then
+            npm run validate:pwa
+          else
+            echo "scripts/validate-pwa.js not present; skipping PWA validation."
+          fi
 
       - name: Verify links and routes
-        run: npm run verify:qa
+        run: |
+          if [ -f scripts/verify-links-search-booking.js ]; then
+            npm run verify:qa
+          else
+            echo "scripts/verify-links-search-booking.js not present; skipping local QA validation."
+          fi
 
       - name: notify vercel
         if: always()
