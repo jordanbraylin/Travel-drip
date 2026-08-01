@@ -3,12 +3,29 @@ const state = {
   session: null,
   pendingWalletPayment: null,
   pendingSecureAction: null,
+  walletAccess: {
+    status: "unknown",
+    role: "member",
+    tripId: "",
+    canContribute: false,
+    canTapToPay: false,
+    canManageCard: false,
+    providerRequired: true
+  },
+  activeTripId: sessionStorage.getItem("traveldripActiveTripId") || "",
+  ownershipTransfer: {
+    status: "idle",
+    tripId: sessionStorage.getItem("traveldripActiveTripId") || "",
+    entityType: "auto",
+    members: []
+  },
   authMode: "signin",
   guestSessionToken: sessionStorage.getItem("traveldripGuestSessionToken") || "",
   isAdmin: false,
   adminStatusCheckedFor: "",
   hasEnteredApp: sessionStorage.getItem("traveldripEnteredApp") === "true",
   pendingProtectedTarget: sessionStorage.getItem("traveldripPendingProtectedTarget") || "dashboardHome",
+  authConfirmation: sessionStorage.getItem("traveldripAuthConfirmation") || "",
   corporateAccess: {
     verified: sessionStorage.getItem("traveldripCorporateAccessVerified") === "true",
     eventId: sessionStorage.getItem("traveldripCorporateEventId") || "",
@@ -36,8 +53,10 @@ const state = {
   config: {
     supabaseUrl: "",
     supabaseAnonKey: "",
+    stripePublishableKey: "",
     vapidPublicKey: ""
   },
+  trustedContacts: [],
   selectedRideProvider: "Careem",
   liveDestinationIndex: 0,
   liveDestinationPaused: false,
@@ -56,6 +75,12 @@ const state = {
   aiPlanner: {
     step: Number(sessionStorage.getItem("traveldripAiPlannerStep") || 0),
     answers: parseJson(sessionStorage.getItem("traveldripAiPlannerAnswers"), {})
+  },
+  liveSearch: {
+    exploreResults: [],
+    travelResults: [],
+    privateDriverResults: [],
+    aiResearch: null
   }
 };
 
@@ -1946,6 +1971,514 @@ async function apiRequest(path, options = {}) {
   return data;
 }
 
+function formatWalletMoney(cents, currency = "USD") {
+  return new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency: String(currency || "USD").toUpperCase(),
+    maximumFractionDigits: 2
+  }).format(Number(cents || 0) / 100);
+}
+
+function renderWalletContributions(access) {
+  const scope = $("#walletContributionVisibility");
+  const message = $("#walletContributionMessage");
+  const ledger = $("#sharedWalletLedger");
+  const memberTable = $("#memberTable");
+  const contributions = Array.isArray(access.contributions) ? access.contributions : [];
+  const isAdminView = access.contributionVisibility === "all_members";
+  const isRestricted = access.contributionVisibility === "restricted";
+  const currency = access.wallet?.currency || "USD";
+
+  if (scope) scope.textContent = isRestricted
+    ? "Finance details restricted by trip policy"
+    : (isAdminView ? "Admin view • all member contributions" : "Personal view • your contributions only");
+  if (message) {
+    const personalTotal = contributions
+      .filter((contribution) => !state.session?.user?.id || contribution.userId === state.session.user.id)
+      .reduce((total, contribution) => total + Number(contribution.amountCents || 0), 0);
+    message.textContent = isRestricted
+      ? "Corporate and business-trip financial details are limited to authorized finance roles."
+      : isAdminView
+      ? `${contributions.length} contribution record${contributions.length === 1 ? "" : "s"} across the active trip members.`
+      : `Your recorded contributions total ${formatWalletMoney(personalTotal, currency)}. Pending payments are not added to the shared balance.`;
+  }
+
+  if (access.status !== "ready") return;
+
+  const makeContributionRow = (contribution) => {
+    const row = document.createElement("div");
+    const time = document.createElement("time");
+    time.textContent = contribution.createdAt ? new Date(contribution.createdAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" }) : "Recent";
+    const title = document.createElement("strong");
+    title.textContent = `${contribution.memberName || "Trip member"} contribution`;
+    const detail = document.createElement("span");
+    detail.textContent = `${formatWalletMoney(contribution.amountCents, contribution.currency || currency)} ${contribution.status || "pending"} • ${contribution.refundableCents ? formatWalletMoney(contribution.refundableCents, contribution.currency || currency) + " refundable" : "refund status pending"}`;
+    row.append(time, title, detail);
+    return row;
+  };
+
+  if (ledger) {
+    ledger.replaceChildren();
+    if (!contributions.length) {
+      const empty = document.createElement("div");
+      empty.className = "wallet-ledger-empty";
+      empty.textContent = isAdminView ? "No member contributions have been confirmed yet." : "Your contribution history will appear here after secure checkout confirmation.";
+      ledger.append(empty);
+    } else {
+      contributions.forEach((contribution) => ledger.append(makeContributionRow(contribution)));
+    }
+  }
+
+  if (memberTable) {
+    memberTable.replaceChildren();
+    const header = document.createElement("div");
+    header.setAttribute("role", "row");
+    ["Member", "Deposited", "Refundable", "Status"].forEach((label) => {
+      const cell = document.createElement("strong");
+      cell.setAttribute("role", "columnheader");
+      cell.textContent = label;
+      header.append(cell);
+    });
+    memberTable.append(header);
+    if (!contributions.length) {
+      const row = document.createElement("div");
+      row.setAttribute("role", "row");
+      const cell = document.createElement("span");
+      cell.textContent = isAdminView ? "No confirmed deposits yet." : "Your confirmed deposits will appear here.";
+      cell.setAttribute("role", "cell");
+      row.append(cell);
+      memberTable.append(row);
+    } else {
+      contributions.forEach((contribution) => {
+        const row = document.createElement("div");
+        row.setAttribute("role", "row");
+        [
+          contribution.memberName || "Trip member",
+          formatWalletMoney(contribution.amountCents, contribution.currency || currency),
+          formatWalletMoney(contribution.refundableCents, contribution.currency || currency),
+          contribution.status || "pending"
+        ].forEach((value) => {
+          const cell = document.createElement("span");
+          cell.setAttribute("role", "cell");
+          cell.textContent = value;
+          row.append(cell);
+        });
+        memberTable.append(row);
+      });
+    }
+  }
+}
+
+function renderWalletNotifications(access) {
+  const status = $("#walletNotificationStatus");
+  const message = $("#walletNotificationMessage");
+  const list = $("#walletNotificationList");
+  const notifications = Array.isArray(access.recentNotifications) ? access.recentNotifications : [];
+  if (status) status.textContent = access.pushNotificationsConfigured ? "Wallet alerts are on" : "In-app wallet alerts are on";
+  if (message) message.textContent = access.pushNotificationsConfigured
+    ? "Deposit confirmations and due-payment reminders use in-app alerts and can pop up as browser push after Notify is enabled."
+    : "Deposit confirmations and due-payment reminders appear in-app. Add VAPID keys and tap Notify to enable browser push alerts.";
+  if (!list || access.status !== "ready") return;
+  list.replaceChildren();
+  notifications.forEach((notification) => {
+    const item = document.createElement("div");
+    const title = document.createElement("strong");
+    title.textContent = notification.title;
+    const body = document.createElement("span");
+    body.textContent = notification.body;
+    item.append(title, body);
+    list.append(item);
+  });
+}
+
+function renderWalletAccess() {
+  const access = state.walletAccess;
+  const roleLabel = {
+    owner: "Trip owner",
+    admin: "Trip admin",
+    organizer: "Trip organizer",
+    finance_admin: "Finance admin",
+    member: "Trip member"
+  }[access.role] || "Trip member";
+  const roleElement = $("#walletAccessRole");
+  const message = $("#walletAccessMessage");
+  const badge = $("#walletAccessBadge");
+  const tapButton = $("#tapToPayButton");
+  const adminControls = $("#walletCardAdminControls");
+  const fundsForm = $("#fundsForm");
+  const fundsInput = $("#fundAmount");
+  const fundsSubmit = fundsForm?.querySelector("button[type='submit']");
+  const paymentRequestForm = $("#paymentRequestForm");
+
+  if (roleElement) roleElement.textContent = roleLabel;
+  if (badge) {
+    badge.textContent = access.status === "ready"
+      ? (access.canManageCard ? "Admin card controls" : "Member funding only")
+      : "Role checked on server";
+    badge.dataset.state = access.canManageCard ? "admin" : access.status;
+  }
+  if (adminControls) adminControls.hidden = !access.canManageCard;
+  if (paymentRequestForm) paymentRequestForm.hidden = !access.canManageCard;
+  if (tapButton) {
+    tapButton.hidden = !access.canManageCard;
+    tapButton.disabled = !access.canTapToPay;
+    tapButton.textContent = access.canTapToPay ? "Tap to pay with shared card" : "Tap to pay • issuer setup required";
+    tapButton.title = access.canTapToPay ? "Start the authorized shared-card tap-to-pay flow" : "An authorized card issuer must provision this trip card first";
+  }
+  if (fundsInput) fundsInput.disabled = !access.canContribute;
+  if (fundsSubmit) fundsSubmit.disabled = !access.canContribute;
+  if (message) {
+    if (access.status === "loading") {
+      message.textContent = "Checking your trip role and shared-card permissions...";
+    } else if (access.status === "error") {
+      message.textContent = access.message || "Wallet permissions could not be loaded. Refresh after signing in.";
+    } else if (!state.session?.user && !isFilePreview) {
+      message.textContent = "Sign in to load your trip role. Members can add their own funds; only trip admins can use shared-card controls.";
+    } else if (access.canManageCard) {
+      message.textContent = access.canTapToPay
+        ? `${roleLabel} access confirmed. You can start an issuer-authorized tap-to-pay purchase from the shared card.`
+        : `${roleLabel} access confirmed. Card controls are visible, but tap-to-pay stays disabled until the issuer provisions the trip card.`;
+    } else if (access.canContribute) {
+      message.textContent = `${roleLabel} access confirmed. You can add your own funds through secure hosted checkout. Shared-card controls stay with the trip admin.`;
+    } else {
+      message.textContent = "This trip does not currently accept member contributions.";
+    }
+  }
+  renderWalletContributions(access);
+  renderWalletNotifications(access);
+}
+
+function syncWalletSummary(wallet) {
+  if (!wallet) return;
+  const format = (cents) => `$${(Number(cents || 0) / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const available = format(wallet.availableCents);
+  const contributions = format(wallet.totalContributionsCents);
+  ["#walletTotal", "#walletMetric"].forEach((selector) => {
+    if ($(selector)) $(selector).textContent = contributions;
+  });
+  if ($("#tripTotalContributions")) $("#tripTotalContributions").textContent = contributions;
+  if ($("#tripAvailableBalance")) $("#tripAvailableBalance").textContent = available;
+  if ($("#bankTotalCollected")) $("#bankTotalCollected").textContent = contributions;
+}
+
+async function loadWalletAccess() {
+  state.walletAccess = { ...state.walletAccess, status: "loading", message: "" };
+  renderWalletAccess();
+  if (!state.session?.access_token || isFilePreview) {
+    state.walletAccess = {
+      ...state.walletAccess,
+      status: isFilePreview ? "preview" : "unknown",
+      canContribute: false,
+      canTapToPay: false,
+      canManageCard: false
+    };
+    renderWalletAccess();
+    return;
+  }
+
+  try {
+    const storedTripId = sessionStorage.getItem("traveldripActiveTripId") || "";
+    const query = storedTripId ? `?tripId=${encodeURIComponent(storedTripId)}` : "";
+    const result = await apiRequest(`/api/wallet${query}`);
+    if (result.skipped) throw new Error("Wallet permissions require a deployed authenticated session.");
+    state.walletAccess = { ...result, status: "ready" };
+    syncWalletSummary(result.wallet);
+    if (result.tripId) {
+      state.activeTripId = result.tripId;
+      state.ownershipTransfer.tripId = result.tripId;
+      sessionStorage.setItem("traveldripActiveTripId", result.tripId);
+    }
+  } catch (error) {
+    state.walletAccess = {
+      ...state.walletAccess,
+      status: "error",
+      canContribute: false,
+      canTapToPay: false,
+      canManageCard: false,
+      message: error.message || "Wallet permissions could not be loaded."
+    };
+  }
+  renderWalletAccess();
+  if (state.activeTripId && $("#ownershipTransferPanel")) loadOwnershipMembers();
+}
+
+function setOwnershipTransferMessage(message, tone = "") {
+  const element = $("#ownershipTransferMessage");
+  if (!element) return;
+  element.textContent = message;
+  element.dataset.tone = tone;
+}
+
+function renderOwnershipTransferMembers() {
+  const select = $("#ownershipTransferMemberSelect");
+  const transferButton = $("#transferOwnershipButton");
+  if (!select) return;
+  const members = state.ownershipTransfer.members || [];
+  select.replaceChildren();
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = members.length ? "Select an active trip member" : "No eligible active members found";
+  select.appendChild(placeholder);
+  members.forEach((member) => {
+    const option = document.createElement("option");
+    option.value = member.userId;
+    option.textContent = member.username ? `${member.fullName} (@${member.username})` : member.fullName;
+    select.appendChild(option);
+  });
+  select.disabled = !members.length || state.ownershipTransfer.status !== "ready";
+  if (transferButton) transferButton.disabled = select.disabled || !select.value;
+  const role = $("#ownershipTransferRole");
+  if (role) {
+    role.textContent = state.ownershipTransfer.status === "ready" ? "Owner access confirmed" : "Owner only";
+    role.dataset.state = state.ownershipTransfer.status === "ready" ? "admin" : state.ownershipTransfer.status;
+  }
+}
+
+async function loadOwnershipMembers() {
+  let tripId = state.activeTripId || sessionStorage.getItem("traveldripActiveTripId") || "";
+  const entityType = $("#ownershipTransferEntityType")?.value || "auto";
+  state.ownershipTransfer = {
+    ...state.ownershipTransfer,
+    status: "loading",
+    tripId,
+    entityType,
+    members: []
+  };
+  renderOwnershipTransferMembers();
+  if (!state.session?.access_token || isFilePreview) {
+    state.ownershipTransfer.status = isFilePreview ? "preview" : "idle";
+    renderOwnershipTransferMembers();
+    setOwnershipTransferMessage("Sign in on the deployed app to verify owner access and load real active trip members.");
+    return;
+  }
+
+  try {
+    if (!tripId) {
+      const tripList = await apiRequest("/api/trips?status=active");
+      const selectedTrip = (tripList.trips || []).find((trip) => trip.myRole === "owner") || tripList.trips?.[0];
+      tripId = selectedTrip?.id || "";
+      if (tripId) {
+        state.activeTripId = tripId;
+        state.ownershipTransfer.tripId = tripId;
+        sessionStorage.setItem("traveldripActiveTripId", tripId);
+      }
+    }
+    if (!tripId) {
+      state.ownershipTransfer.status = "idle";
+      renderOwnershipTransferMembers();
+      setOwnershipTransferMessage("No active trip was found. Create or join a trip before managing ownership.");
+      return;
+    }
+    const result = await apiRequest(`/api/ownership-transfer?tripId=${encodeURIComponent(tripId)}&entityType=${encodeURIComponent(entityType)}`);
+    if (result.skipped) throw new Error("Ownership transfer requires a deployed authenticated session.");
+    state.ownershipTransfer = {
+      ...state.ownershipTransfer,
+      status: "ready",
+      entityType: result.entityType || entityType,
+      members: result.members || []
+    };
+    if ($("#ownershipTransferEntityType")) $("#ownershipTransferEntityType").value = result.entityType || entityType;
+    renderOwnershipTransferMembers();
+    const targetName = result.entityType === "event" ? "event" : "trip";
+    setOwnershipTransferMessage(
+      result.members?.length
+        ? `Owner access confirmed for "${result.trip?.title || targetName}". Choose an active member to receive full ownership.`
+        : `Owner access confirmed, but there are no other active members available to receive ownership.`,
+      "success"
+    );
+  } catch (error) {
+    state.ownershipTransfer = { ...state.ownershipTransfer, status: "error", members: [] };
+    renderOwnershipTransferMembers();
+    setOwnershipTransferMessage(error.message || "Ownership controls could not be loaded. Only the current owner can transfer access.", "error");
+  }
+}
+
+async function transferOwnership() {
+  const tripId = state.ownershipTransfer.tripId || state.activeTripId || sessionStorage.getItem("traveldripActiveTripId") || "";
+  const newOwnerUserId = $("#ownershipTransferMemberSelect")?.value || "";
+  const entityType = state.ownershipTransfer.entityType || $("#ownershipTransferEntityType")?.value || "auto";
+  const leaveAfterTransfer = Boolean($("#ownershipTransferLeaveInput")?.checked);
+  if (!tripId || !newOwnerUserId) {
+    setOwnershipTransferMessage("Load active members and select the person who should receive ownership.", "error");
+    return;
+  }
+  const selectedMember = state.ownershipTransfer.members.find((member) => member.userId === newOwnerUserId);
+  const memberName = selectedMember?.fullName || "this active member";
+  const leaveCopy = leaveAfterTransfer
+    ? " Your access will change to former participant and you will leave the trip/event."
+    : " You will remain an organizer without owner-level control.";
+  if (!window.confirm(`Transfer full ownership to ${memberName}?${leaveCopy}`)) return;
+
+  const transferButton = $("#transferOwnershipButton");
+  if (transferButton) {
+    transferButton.disabled = true;
+    transferButton.textContent = "Transferring...";
+  }
+  try {
+    const result = await apiRequest("/api/ownership-transfer", {
+      method: "POST",
+      body: JSON.stringify({
+        tripId,
+        entityType,
+        newOwnerUserId,
+        leaveAfterTransfer
+      })
+    });
+    if (result.skipped) throw new Error("Ownership transfer requires a deployed authenticated session.");
+    state.ownershipTransfer.status = "transferred";
+    state.ownershipTransfer.members = [];
+    renderOwnershipTransferMembers();
+    setOwnershipTransferMessage(result.message || "Ownership transferred successfully. The new owner now has full access.", "success");
+    addAuditEntry("Trip ownership transferred", `${memberName} received full ${result.entityType || entityType} ownership. Previous owner access: ${leaveAfterTransfer ? "left" : "organizer"}.`);
+  } catch (error) {
+    setOwnershipTransferMessage(error.message || "Ownership could not be transferred. No permissions were changed.", "error");
+    if (transferButton) transferButton.disabled = false;
+  } finally {
+    if (transferButton) transferButton.textContent = "Transfer full ownership";
+  }
+}
+
+function liveSearchMessage(target, message, tone = "") {
+  const selectors = {
+    explore: "#exploreProviderStatus",
+    travel: "#travelLiveSearchStatus",
+    privateDriver: "#privateDriverLiveStatus"
+  };
+  const element = $(selectors[target]);
+  if (!element) return;
+  element.textContent = message;
+  element.dataset.tone = tone;
+}
+
+async function searchLiveTravelPlaces({ category, query = "", destination = "", target }) {
+  liveSearchMessage(target, "Searching live travel sources...", "loading");
+  try {
+    const result = await apiRequest("/api/travel-search", {
+      method: "POST",
+      body: JSON.stringify({ category, q: query, destination, limit: 8 })
+    });
+    if (result.skipped) throw new Error("Live search requires a signed-in deployed app.");
+    const results = result.results || [];
+    if (target === "explore") {
+      state.liveSearch.exploreResults = results;
+      renderLiveExploreResults(results);
+    }
+    if (target === "travel") {
+      state.liveSearch.travelResults = results;
+      renderLiveTravelResults(results);
+    }
+    if (target === "privateDriver") {
+      state.liveSearch.privateDriverResults = results;
+      renderLivePrivateDriverResults(results);
+    }
+    liveSearchMessage(target, results.length
+      ? `${results.length} live result${results.length === 1 ? "" : "s"} from ${result.sourceLabel || "an outside source"}. Verify details before booking.`
+      : "No live results matched. Try a broader destination or search term.", results.length ? "success" : "empty");
+    return result;
+  } catch (error) {
+    liveSearchMessage(target, `${error.message} Local estimates remain available.`, "error");
+    if (target === "explore") renderLiveExploreResults([]);
+    if (target === "travel") renderLiveTravelResults([]);
+    if (target === "privateDriver") renderLivePrivateDriverResults([]);
+    return { error: error.message };
+  }
+}
+
+function renderLiveExploreResults(results = []) {
+  const grid = $("#exploreLiveResultsGrid");
+  if (!grid) return;
+  grid.hidden = !results.length;
+  grid.innerHTML = results.map((item) => `
+    <article class="explore-card live-source-card">
+      <div class="live-source-card__body">
+        <span class="eyebrow">Live result • ${escapeHtml(item.sourceLabel || "Outside source")}</span>
+        <strong class="discovery-title">${escapeHtml(item.title)}</strong>
+        <span class="discovery-location">${escapeHtml(item.location || "Destination details available")}</span>
+        <span class="discovery-description">${escapeHtml(item.description)}</span>
+        <span class="explore-card-meta">
+          <strong>${escapeHtml(item.price || "Price varies")}</strong>
+          <small>${item.rating ? `${Number(item.rating).toFixed(1)} rating` : "Provider rating available"}</small>
+          <small>${escapeHtml(item.status || "Provider details available")}</small>
+        </span>
+      </div>
+      <div class="explore-card-actions">
+        <button type="button" data-live-result-url="${escapeHtml(item.actions?.directions || item.providerUrl || "")}">Get Directions</button>
+        <button type="button" data-live-result-url="${escapeHtml(item.actions?.website || item.providerUrl || "")}">Visit Website</button>
+      </div>
+    </article>
+  `).join("");
+}
+
+function renderLiveTravelResults(results = []) {
+  const container = $("#travelLiveResults");
+  if (!container) return;
+  container.hidden = !results.length;
+  container.innerHTML = results.map((item) => `
+    <article class="travel-live-result-card">
+      <div>
+        <span class="eyebrow">Live ${escapeHtml(item.sourceLabel || "outside source")}</span>
+        <strong>${escapeHtml(item.title)}</strong>
+        <small>${escapeHtml(item.location || "Provider location available")}</small>
+        <small>${escapeHtml(item.description)}</small>
+      </div>
+      <div class="button-row">
+        <button type="button" data-live-result-url="${escapeHtml(item.actions?.directions || item.providerUrl || "")}">Directions</button>
+        <button type="button" data-live-result-url="${escapeHtml(item.actions?.website || item.providerUrl || "")}">Provider</button>
+      </div>
+    </article>
+  `).join("");
+}
+
+function renderLivePrivateDriverResults(results = []) {
+  const container = $("#privateDriverLiveList");
+  if (!container) return;
+  container.hidden = !results.length;
+  container.innerHTML = results.map((item) => `
+    <article class="private-driver-live-card">
+      <span class="eyebrow">Live provider • ${escapeHtml(item.sourceLabel || "Outside source")}</span>
+      <strong>${escapeHtml(item.title)}</strong>
+      <small>${escapeHtml(item.location || "Destination location available")}</small>
+      <small>${escapeHtml(item.description)}</small>
+      <div class="private-driver-actions">
+        <button type="button" data-live-result-url="${escapeHtml(item.actions?.website || item.providerUrl || "")}">Open provider</button>
+        <button type="button" data-live-result-url="${escapeHtml(item.actions?.directions || item.providerUrl || "")}">Directions</button>
+      </div>
+    </article>
+  `).join("");
+}
+
+async function runLiveAiResearch() {
+  const status = $("#aiPlannerStatus");
+  const research = $("#aiPlannerExternalResearch");
+  if (status) status.textContent = "AI is researching current travel sources...";
+  if (research) research.innerHTML = `<p class="small">Searching current destinations, activities, restaurants, and transportation sources...</p>`;
+  try {
+    const response = await apiRequest("/api/ai-planner", {
+      method: "POST",
+      body: JSON.stringify({
+        answers: state.aiPlanner.answers,
+        query: $("#aiPlannerResearchInput")?.value.trim() || ""
+      })
+    });
+    if (response.skipped) throw new Error("Live AI research requires a signed-in deployed app.");
+    state.liveSearch.aiResearch = response;
+    if (research) {
+      research.innerHTML = `
+        <div class="ai-external-research__header">
+          <span class="eyebrow">${escapeHtml(response.sourceLabel || "Live AI research")}</span>
+          <strong>Current source-backed guidance</strong>
+        </div>
+        <p>${escapeHtml(response.text || "No research summary was returned.")}</p>
+        ${(response.citations || []).length ? `<div class="ai-research-sources"><strong>Sources</strong>${response.citations.map((citation) => `<a href="${escapeHtml(citation.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(citation.title)}</a>`).join("")}</div>` : `<small>No source links were returned. Verify recommendations before booking.</small>`}
+      `;
+    }
+    if (status) status.textContent = "Live AI research is ready. Source links are shown below the summary; verify availability before booking.";
+  } catch (error) {
+    if (research) research.innerHTML = `<p class="small">${escapeHtml(error.message)} Local planning estimates remain available.</p>`;
+    if (status) status.textContent = "Live AI research is unavailable. Configure the AI provider in Vercel and try again.";
+  }
+}
+
 async function ghlRequest(payload = {}) {
   if (isFilePreview || !state.session?.access_token) return { skipped: true, reason: "CRM sync requires a deployed authenticated session" };
   if ($("#ghlSyncEnabled") && !$("#ghlSyncEnabled").checked && payload.action !== "test-connection") {
@@ -2130,6 +2663,8 @@ function renderExplore(categoryKey = getActiveExploreCategory()) {
   const destination = $("#exploreDestinationInput")?.value.trim() || "your destination";
   const tripType = $("#exploreTripTypeFilter")?.selectedOptions?.[0]?.textContent || "selected trip";
   const items = getExploreItems(categoryKey);
+  state.liveSearch.exploreResults = [];
+  renderLiveExploreResults([]);
 
   $$("#exploreTabs button").forEach((button) => {
     const active = button.dataset.exploreCategory === categoryKey;
@@ -2997,6 +3532,135 @@ function currency(value) {
   })}`;
 }
 
+function renderTrustedContacts() {
+  const list = $("#trustedContactsList");
+  if (!list) return;
+  if (!state.session?.user) {
+    list.innerHTML = `<p class="small">Sign in to load your private trusted contacts.</p>`;
+    return;
+  }
+  if (!state.trustedContacts.length) {
+    list.innerHTML = `<p class="small">No trusted contacts saved yet.</p>`;
+    return;
+  }
+  list.innerHTML = state.trustedContacts.map((contact) => `
+    <article class="trusted-contact-row">
+      <div>
+        <strong>${escapeHtml(contact.name)}</strong>
+        <span>${escapeHtml(contact.relationship)} • ${escapeHtml(contact.phone)}${contact.email ? ` • ${escapeHtml(contact.email)}` : ""}</span>
+        ${contact.is_primary ? `<em class="status-pill">Primary</em>` : ""}
+      </div>
+      <button class="ghost-button" type="button" data-trusted-contact-delete="${escapeHtml(contact.id)}">Remove</button>
+    </article>
+  `).join("");
+}
+
+async function loadTrustedContacts() {
+  if (!state.supabase || !state.session?.user) {
+    state.trustedContacts = [];
+    renderTrustedContacts();
+    return;
+  }
+  const { data, error } = await state.supabase
+    .from("trusted_contacts")
+    .select("id, name, relationship, phone, email, is_primary, created_at")
+    .order("is_primary", { ascending: false })
+    .order("created_at", { ascending: true });
+  if (error) {
+    $("#trustedContactsStatus") && ($("#trustedContactsStatus").textContent = "Trusted contacts are unavailable until the Supabase migration is applied.");
+    return;
+  }
+  state.trustedContacts = data || [];
+  renderTrustedContacts();
+}
+
+async function saveTrustedContact(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const status = $("#trustedContactsStatus");
+  if (!state.supabase || !state.session?.user) {
+    if (status) status.textContent = "Sign in before saving a trusted contact.";
+    return;
+  }
+  const submit = form.querySelector("button[type='submit']");
+  if (submit) submit.disabled = true;
+  if (status) status.textContent = "Saving securely...";
+  const payload = {
+    user_id: state.session.user.id,
+    name: $("#trustedContactNameInput").value.trim(),
+    relationship: $("#trustedContactRelationshipInput").value.trim(),
+    phone: $("#trustedContactPhoneInput").value.trim(),
+    email: $("#trustedContactEmailInput").value.trim() || null,
+    is_primary: $("#trustedContactPrimaryInput").checked
+  };
+  const { error } = await state.supabase.from("trusted_contacts").insert(payload);
+  if (error) {
+    if (status) status.textContent = error.message.includes("trusted_contacts")
+      ? "Apply the trusted contacts Supabase migration before saving."
+      : "We could not save that contact. Please try again.";
+  } else {
+    form.reset();
+    if (status) status.textContent = "Trusted contact saved to your protected account data.";
+    await loadTrustedContacts();
+  }
+  if (submit) submit.disabled = false;
+}
+
+async function deleteTrustedContact(contactId) {
+  if (!state.supabase || !state.session?.user || !contactId) return;
+  const status = $("#trustedContactsStatus");
+  if (status) status.textContent = "Removing contact...";
+  const { error } = await state.supabase
+    .from("trusted_contacts")
+    .delete()
+    .eq("id", contactId)
+    .eq("user_id", state.session.user.id);
+  if (error) {
+    if (status) status.textContent = "We could not remove that contact. Please try again.";
+    return;
+  }
+  if (status) status.textContent = "Trusted contact removed.";
+  await loadTrustedContacts();
+}
+
+async function loadProfileDetails() {
+  if (!state.supabase || !state.session?.user) return;
+  const { data } = await state.supabase
+    .from("profiles")
+    .select("full_name, username, bio")
+    .eq("id", state.session.user.id)
+    .maybeSingle();
+  if (!data) return;
+  if (data.full_name && $("#profileFullNameInput")) $("#profileFullNameInput").value = data.full_name;
+  if (data.username && $("#profileUsernameInput")) $("#profileUsernameInput").value = data.username;
+  if (data.bio && $("#profileBioInput")) $("#profileBioInput").value = data.bio;
+  if (data.full_name) {
+    state.profilePhoto.initials = initialsFromName(data.full_name);
+    renderProfilePhoto();
+  }
+}
+
+async function saveProfileDetails() {
+  const status = $("#profileDetailsMessage");
+  if (!state.supabase || !state.session?.user) {
+    if (status) status.textContent = "Sign in before saving profile details.";
+    return;
+  }
+  const payload = {
+    id: state.session.user.id,
+    full_name: $("#profileFullNameInput")?.value.trim() || null,
+    username: $("#profileUsernameInput")?.value.trim().replace(/^@/, "") || null,
+    bio: $("#profileBioInput")?.value.trim() || null
+  };
+  const { error } = await state.supabase.from("profiles").upsert(payload, { onConflict: "id" });
+  if (status) status.textContent = error ? "Profile details could not be saved. Please try again." : "Profile details saved securely.";
+  if (!error) {
+    state.profilePhoto.initials = initialsFromName(payload.full_name || "Travel-Drip traveler");
+    localStorage.setItem("traveldripProfileInitials", state.profilePhoto.initials);
+    renderProfilePhoto();
+  }
+}
+
 async function loadConfig() {
   const publicConfig = window.TRAVELDRIP_PUBLIC_CONFIG || {};
 
@@ -3005,6 +3669,7 @@ async function loadConfig() {
       ...state.config,
       supabaseUrl: publicConfig.supabaseUrl || state.config.supabaseUrl,
       supabaseAnonKey: publicConfig.supabaseAnonKey || state.config.supabaseAnonKey,
+      stripePublishableKey: publicConfig.stripePublishableKey || state.config.stripePublishableKey,
       vapidPublicKey: publicConfig.vapidPublicKey || state.config.vapidPublicKey
     };
     setSyncStatus(state.config.supabaseAnonKey ? "Connecting" : "Needs public key");
@@ -3019,6 +3684,7 @@ async function loadConfig() {
         ...serverConfig,
         supabaseUrl: serverConfig.supabaseUrl || publicConfig.supabaseUrl || state.config.supabaseUrl,
         supabaseAnonKey: serverConfig.supabaseAnonKey || publicConfig.supabaseAnonKey || state.config.supabaseAnonKey,
+        stripePublishableKey: serverConfig.stripePublishableKey || publicConfig.stripePublishableKey || state.config.stripePublishableKey,
         vapidPublicKey: serverConfig.vapidPublicKey || publicConfig.vapidPublicKey || state.config.vapidPublicKey
       };
     } catch (error) {
@@ -3035,10 +3701,29 @@ async function loadConfig() {
     state.supabase = createClient(state.config.supabaseUrl, state.config.supabaseAnonKey);
     const { data } = await state.supabase.auth.getSession();
     state.session = data.session;
-    state.supabase.auth.onAuthStateChange((_event, session) => {
+    loadWalletAccess();
+    state.supabase.auth.onAuthStateChange((event, session) => {
       state.session = session;
       updateAuthUi();
+      loadWalletAccess();
       subscribeToLiveData();
+      loadProfileDetails();
+      loadTrustedContacts();
+      window.setTimeout(() => {
+        if (event === "SIGNED_IN" && session && !state.authConfirmation) {
+          ensureProfileForSession().then(({ error }) => {
+            const confirmation = error
+              ? "Your account is verified, but your profile could not be confirmed as saved. Please retry profile sync from My Profile."
+              : "Your information is confirmed saved. Your dashboard is ready — start planning your first trip.";
+            enterAppPreview({ confirmation, forceDashboard: true });
+          }).catch(() => {
+            setAuthConfirmation("Your account is verified, but profile sync needs attention. Please retry from My Profile.");
+            enterAppPreview({ forceDashboard: true });
+          });
+        } else {
+          ensureProfileForSession().catch(() => {});
+        }
+      }, 0);
     });
     setSyncStatus("Connected");
   } else {
@@ -3078,6 +3763,7 @@ function updateAuthUi() {
     if (!showGate) authPanel.classList.remove("show-form");
     renderGlobalDestinationHeader(getTargetFromRoute());
   }
+  renderAuthConfirmation();
 
   if (appAccess && !showGate && routeDefinitions[getTargetFromRoute()]) {
     renderRoute(getTargetFromRoute(), { replace: true });
@@ -3108,6 +3794,34 @@ function consumeProtectedTarget() {
   state.pendingProtectedTarget = "dashboardHome";
   sessionStorage.removeItem("traveldripPendingProtectedTarget");
   return target;
+}
+
+function renderAuthConfirmation() {
+  const message = $("#authConfirmationMessage");
+  if (!message) return;
+  const visible = Boolean(state.authConfirmation && state.session?.user);
+  message.hidden = !visible;
+  message.textContent = visible ? state.authConfirmation : "";
+}
+
+function setAuthConfirmation(message) {
+  state.authConfirmation = message;
+  if (message) sessionStorage.setItem("traveldripAuthConfirmation", message);
+  else sessionStorage.removeItem("traveldripAuthConfirmation");
+  renderAuthConfirmation();
+}
+
+async function ensureProfileForSession({ fullName = "", username = "" } = {}) {
+  if (!state.supabase || !state.session?.user) return { error: null };
+
+  const metadata = state.session.user.user_metadata || {};
+  const profile = {
+    id: state.session.user.id,
+    full_name: String(fullName || metadata.full_name || "").trim() || null,
+    username: String(username || metadata.username || "").trim().replace(/^@/, "") || null
+  };
+
+  return state.supabase.from("profiles").upsert(profile, { onConflict: "id" });
 }
 
 async function checkAdminAccess() {
@@ -3249,19 +3963,25 @@ function setAuthMode(mode, scrollIntoView = false) {
   if (scrollIntoView) authPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function enterAppPreview() {
+function enterAppPreview({ confirmation = "", forceDashboard = false } = {}) {
   state.hasEnteredApp = true;
   sessionStorage.setItem("traveldripEnteredApp", "true");
+  if (confirmation) setAuthConfirmation(confirmation);
   $("#authPanel")?.classList.remove("show-form");
   if ($("#authPanel")) $("#authPanel").hidden = true;
   document.body.classList.remove("auth-screen");
-  const target = consumeProtectedTarget();
+  const target = forceDashboard ? "dashboardHome" : consumeProtectedTarget();
+  if (forceDashboard) {
+    state.pendingProtectedTarget = "dashboardHome";
+    sessionStorage.removeItem("traveldripPendingProtectedTarget");
+  }
   const appRoute = getRouteForTarget(target);
   if (location.hash === "#login" || location.hash === "#register" || location.pathname === "/login" || location.pathname === "/register") {
     history.replaceState({ target }, "", appRoute);
   }
   setAuthenticatedShellVisible(Boolean(state.session?.user) || isFilePreview);
   renderRoute(target, { replace: true });
+  renderAuthConfirmation();
 }
 
 function showAuthSetupMessage() {
@@ -3282,11 +4002,16 @@ async function signIn(email, password) {
   }
 
   const { data, error } = await state.supabase.auth.signInWithPassword({ email, password });
-  $("#authMessage").textContent = error ? error.message : "Logged in. Your trip data is syncing now.";
+  $("#authMessage").textContent = error ? error.message : "Logged in. Confirming your saved information...";
   if (!error) {
     state.session = data.session || state.session;
+    loadWalletAccess();
+    const profileResult = await ensureProfileForSession();
+    const confirmation = profileResult.error
+      ? "Signed in, but your profile could not be confirmed as saved. Please retry profile sync from My Profile."
+      : "Your information is confirmed saved. Welcome back — your dashboard is ready to start planning.";
     queueGhlSync({ eventType: "user_login", tags: ["Trip Planning"] });
-    enterAppPreview();
+    enterAppPreview({ confirmation, forceDashboard: true });
   }
 }
 
@@ -3317,7 +4042,12 @@ async function signUp(fullName, username, email, password) {
 
   if (data.session) {
     state.session = data.session;
-    $("#authMessage").textContent = "Account created. You are logged in and your trip data is syncing.";
+    loadWalletAccess();
+    const profileResult = await ensureProfileForSession({ fullName, username });
+    const confirmation = profileResult.error
+      ? "Account created, but your profile could not be confirmed as saved. Please retry profile sync from My Profile."
+      : "Your information is confirmed saved. Your dashboard is ready — start planning your first trip.";
+    $("#authMessage").textContent = confirmation;
     queueGhlSync({
       eventType: "user_registration_completed",
       fullName,
@@ -3326,14 +4056,14 @@ async function signUp(fullName, username, email, password) {
       userType: "traveler",
       tags: ["New Traveler", "Trip Planning"]
     });
-    enterAppPreview();
+    enterAppPreview({ confirmation, forceDashboard: true });
     return;
   }
 
   $("#signupForm").hidden = true;
   $("#verificationPanel").hidden = false;
   $("#authOnboardingPanel").hidden = true;
-  $("#authMessage").textContent = "Account created. Check your email to verify your address, then continue to onboarding.";
+  $("#authMessage").textContent = "Account created. Your information is securely stored. Check your email to verify your address, then sign in to open your saved dashboard and start planning.";
 }
 
 async function sendMagicLink(email) {
@@ -3455,10 +4185,26 @@ async function signOut() {
   state.session = null;
   state.hasEnteredApp = false;
   sessionStorage.removeItem("traveldripEnteredApp");
+  setAuthConfirmation("");
   state.isAdmin = false;
   state.adminStatusCheckedFor = "";
+  state.walletAccess = {
+    status: "unknown",
+    role: "member",
+    tripId: "",
+    canContribute: false,
+    canTapToPay: false,
+    canManageCard: false,
+    providerRequired: true
+  };
+  state.activeTripId = "";
+  state.ownershipTransfer = { status: "idle", tripId: "", entityType: "auto", members: [] };
+  sessionStorage.removeItem("traveldripActiveTripId");
   setAuthMode("signin");
   updateAuthUi();
+  renderWalletAccess();
+  renderOwnershipTransferMembers();
+  setOwnershipTransferMessage("Sign in as the current trip or event owner to manage ownership transfers.");
 }
 
 const mainNavigation = Object.freeze([
@@ -4177,6 +4923,27 @@ function wireLocalInteractions() {
     $("#exploreStatusMessage").textContent = `${button.dataset.exploreSubfilter} filter ${button.classList.contains("active") ? "applied" : "removed"}. Results remain in ${exploreCategories[getActiveExploreCategory()].label}.`;
   });
 
+  $("#exploreLiveSearchButton")?.addEventListener("click", () => {
+    searchLiveTravelPlaces({
+      category: getActiveExploreCategory(),
+      query: $("#exploreSearchInput")?.value.trim() || "",
+      destination: $("#exploreDestinationInput")?.value.trim() || "",
+      target: "explore"
+    });
+  });
+
+  $("#exploreSearchInput")?.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    $("#exploreLiveSearchButton")?.click();
+  });
+
+  $("#exploreLiveResultsGrid")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-live-result-url]");
+    const url = button?.dataset.liveResultUrl || "";
+    if (/^https?:\/\//i.test(url)) window.open(url, "_blank", "noopener,noreferrer");
+  });
+
   $("#exploreResultsGrid")?.addEventListener("click", (event) => {
     const actionButton = event.target.closest("[data-explore-action]");
     if (actionButton) {
@@ -4233,17 +5000,18 @@ function wireLocalInteractions() {
     const perPerson = Number(event.target.value);
     $("#depositValue").textContent = `$${perPerson.toLocaleString()}`;
     $("#depositMetric").textContent = `$${perPerson.toLocaleString()} each`;
-    $("#walletTotal").textContent = `$${(perPerson * 8).toLocaleString()}`;
-    $("#walletMetric").textContent = `$${(perPerson * 8).toLocaleString()}`;
-    $("#tripTotalContributions").textContent = `$${(perPerson * 8).toLocaleString()}`;
-    $("#bankTotalCollected").textContent = `$${(perPerson * 8).toLocaleString()}`;
-    await saveSyncedEvent("wallet", { perPerson });
+    await saveSyncedEvent("wallet_planning_target_updated", { perPerson, estimateOnly: true });
   });
 
   $("#fundsForm")?.addEventListener("submit", (event) => {
     event.preventDefault();
     const amount = Number($("#fundAmount").value);
     const walletMessage = $("#walletMessage");
+
+    if (!state.walletAccess.canContribute) {
+      walletMessage.textContent = "Funding is unavailable until an active trip membership and secure payment provider are confirmed.";
+      return;
+    }
 
     if (!Number.isFinite(amount) || amount < 10 || amount > 5000) {
       walletMessage.textContent = "Enter a fund amount between $10 and $5,000.";
@@ -4256,6 +5024,39 @@ function wireLocalInteractions() {
     $("#walletPin").value = "";
     $("#pinDialog").showModal();
     $("#walletPin").focus();
+  });
+
+  $("#paymentRequestForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const message = $("#paymentRequestMessage");
+    if (!state.walletAccess.canManageCard) {
+      if (message) message.textContent = "Only an authorized trip finance role can create payment reminders.";
+      return;
+    }
+    const title = $("#paymentRequestTitle")?.value.trim();
+    const amount = Number($("#paymentRequestAmount")?.value);
+    const dueAt = $("#paymentRequestDueAt")?.value;
+    if (!title || !Number.isFinite(amount) || amount < 10 || amount > 5000 || !dueAt) {
+      if (message) message.textContent = "Add a title, an amount between $10 and $5,000, and a due date/time.";
+      return;
+    }
+    try {
+      const result = await apiRequest("/api/wallet", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "create_payment_request",
+          tripId: state.walletAccess.tripId,
+          title,
+          amountCents: Math.round(amount * 100),
+          dueAt: new Date(dueAt).toISOString()
+        })
+      });
+      if (message) message.textContent = `Payment reminder created for ${result.notifiedMembers || 0} active trip member(s).`;
+      event.target.reset();
+      await loadWalletAccess();
+    } catch (error) {
+      if (message) message.textContent = error.message || "Payment reminder could not be created.";
+    }
   });
 
   $("#pinForm")?.addEventListener("submit", async (event) => {
@@ -4272,20 +5073,28 @@ function wireLocalInteractions() {
     const action = state.pendingSecureAction;
 
     if (action?.type === "add_funds" && amount) {
-      const currentWallet = Number($("#walletTotal").textContent.replace(/[^0-9.]/g, ""));
-      const nextWallet = currentWallet + amount;
-      const currentContributions = Number($("#tripTotalContributions")?.textContent.replace(/[^0-9.]/g, "") || currentWallet);
-      const currentAvailable = Number($("#tripAvailableBalance")?.textContent.replace(/[^0-9.]/g, "") || 0);
-      $("#walletTotal").textContent = `$${nextWallet.toLocaleString()}`;
-      $("#walletMetric").textContent = `$${nextWallet.toLocaleString()}`;
-      $("#tripTotalContributions").textContent = `$${(currentContributions + amount).toLocaleString()}`;
-      $("#bankTotalCollected").textContent = `$${(currentContributions + amount).toLocaleString()}`;
-      $("#tripAvailableBalance").textContent = `$${(currentAvailable + amount).toLocaleString()}`;
-      $("#walletMessage").textContent = `Confirmed: $${amount.toLocaleString()} was added after PIN verification.`;
-      $("#myDeposited").textContent = `$${(1050 + amount).toLocaleString()}`;
-      $("#sharedWalletLedger")?.insertAdjacentHTML("afterbegin", `<div><time>${new Date().toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}</time><strong>Jordan contribution</strong><span>+$${amount.toLocaleString()} completed • PIN verified • Refundable until allocated</span></div>`);
-      addAuditEntry("Funds deposited", `You added $${amount.toLocaleString()} after Wallet PIN confirmation.`);
-      await saveSyncedEvent("wallet_payment", { amount, tripWalletId: "TDW-MIA-4829", confirmedWithPin: true, idempotencyProtected: true });
+      try {
+        const idempotencyKey = `wallet-${state.walletAccess.tripId}-${state.session.user.id}-${Date.now()}`;
+        const result = await apiRequest("/api/wallet", {
+          method: "POST",
+          body: JSON.stringify({
+            action: "create_contribution_checkout",
+            tripId: state.walletAccess.tripId,
+            amountCents: Math.round(amount * 100),
+            idempotencyKey
+          })
+        });
+        if (result.skipped || !result.checkoutUrl) throw new Error("Secure hosted checkout is not available in this preview.");
+        $("#walletMessage").textContent = "Secure checkout is ready. Complete payment in the hosted provider window; the wallet updates after webhook confirmation.";
+        window.location.assign(result.checkoutUrl);
+        return;
+      } catch (error) {
+        $("#walletMessage").textContent = error.message || "Secure checkout could not be started. No balance was changed.";
+        state.pendingWalletPayment = null;
+        state.pendingSecureAction = null;
+        $("#pinDialog").close();
+        return;
+      }
     }
 
     if (action?.type === "refund") {
@@ -4394,6 +5203,23 @@ function wireLocalInteractions() {
     $("#walletPin").value = "";
     $("#pinDialog").showModal();
     $("#walletPin").focus();
+  });
+
+  $("#tapToPayButton")?.addEventListener("click", async () => {
+    if (!state.walletAccess.canManageCard || !state.walletAccess.tripId) return;
+    const message = $("#cardMessage");
+    try {
+      const result = await apiRequest("/api/wallet", {
+        method: "POST",
+        body: JSON.stringify({ action: "tap_to_pay", tripId: state.walletAccess.tripId })
+      });
+      if (result.skipped) throw new Error("Admin card access requires a deployed authenticated session.");
+      if (message) message.textContent = result.message || "Admin card access granted. Complete the issuer authorization flow.";
+      addAuditEntry("Admin shared-card access", "Trip role and issuer card status were checked before starting tap-to-pay.");
+      await saveSyncedEvent("trip_wallet_admin_tap_to_pay_started", { tripId: state.walletAccess.tripId, providerRequired: false });
+    } catch (error) {
+      if (message) message.textContent = error.message || "Shared-card tap-to-pay is not available.";
+    }
   });
 
   [
@@ -4606,6 +5432,16 @@ function wireLocalInteractions() {
     renderTravelSmartSearchResults(event.target.value);
   });
 
+  $("#travelLiveSearchButton")?.addEventListener("click", () => {
+    const query = $("#travelSmartSearchInput")?.value.trim() || "";
+    searchLiveTravelPlaces({
+      category: /hotel|stay|lodging/i.test(query) ? "hotels" : /driver|ride|transfer|transport|airport/i.test(query) ? "transport" : /restaurant|food|dinner|cafe/i.test(query) ? "food" : "activities",
+      query,
+      destination: $("#travelCurrentDestination")?.textContent.trim() || "Tokyo",
+      target: "travel"
+    });
+  });
+
   $("#clearTravelSearchButton")?.addEventListener("click", () => {
     const input = $("#travelSmartSearchInput");
     if (input) input.value = "";
@@ -4647,6 +5483,12 @@ function wireLocalInteractions() {
     }
     addAuditEntry("Smart Travel Search result opened", `${destination.title} opened.`);
     await saveSyncedEvent("travel_smart_search_opened", { section, route: destination.route });
+  });
+
+  $("#travelLiveResults")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-live-result-url]");
+    const url = button?.dataset.liveResultUrl || "";
+    if (/^https?:\/\//i.test(url)) window.open(url, "_blank", "noopener,noreferrer");
   });
 
   $("#travelSettingsTripSelect")?.addEventListener("change", async (event) => {
@@ -4829,6 +5671,13 @@ function wireLocalInteractions() {
     $("#rideMessage").textContent = `Searched ${query} in ${destination}. Results can be booked, quoted, or added to the transportation split.`;
     addAuditEntry("Private driver search", `${query} searched in ${destination}.`);
     await saveSyncedEvent("private_driver_search", { destination, query });
+    await searchLiveTravelPlaces({ category: "transport", query, destination, target: "privateDriver" });
+  });
+
+  $("#privateDriverLiveList")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-live-result-url]");
+    const url = button?.dataset.liveResultUrl || "";
+    if (/^https?:\/\//i.test(url)) window.open(url, "_blank", "noopener,noreferrer");
   });
 
   $("#privateDriverList")?.addEventListener("click", async (event) => {
@@ -5096,6 +5945,14 @@ function wireLocalInteractions() {
     $("#soloModeMessage").textContent = "Choose a trip type to customize the form, features, permissions, and AI setup.";
   });
 
+  $("#loadOwnershipMembersButton")?.addEventListener("click", loadOwnershipMembers);
+  $("#ownershipTransferEntityType")?.addEventListener("change", loadOwnershipMembers);
+  $("#ownershipTransferMemberSelect")?.addEventListener("change", () => {
+    const button = $("#transferOwnershipButton");
+    if (button) button.disabled = !$("#ownershipTransferMemberSelect")?.value || state.ownershipTransfer.status !== "ready";
+  });
+  $("#transferOwnershipButton")?.addEventListener("click", transferOwnership);
+
   $("#tripCreationForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!validateTripDateRanges()) {
@@ -5139,6 +5996,14 @@ function wireLocalInteractions() {
         $("#soloModeMessage").textContent = `${config.label} configured locally. Sign in on the deployed app to persist this event to Supabase.`;
       } else {
         $("#soloModeMessage").textContent = `${config.label} created and saved to Supabase: ${tripName}. Event modules, permissions, audit log, and wallet setup were initialized.`;
+        const createdTripId = result.event?.id || result.trip?.id || "";
+        if (createdTripId) {
+          state.activeTripId = createdTripId;
+          state.ownershipTransfer.tripId = createdTripId;
+          sessionStorage.setItem("traveldripActiveTripId", createdTripId);
+          if ($("#ownershipTransferEntityType")) $("#ownershipTransferEntityType").value = result.event ? "event" : "trip";
+          await loadOwnershipMembers();
+        }
       }
     } catch (error) {
       $("#soloModeMessage").textContent = `Event setup could not be saved: ${error.message}. Your form data is still visible so you can retry.`;
@@ -5751,6 +6616,12 @@ function wireLocalInteractions() {
     addAuditEntry("AI widget opened", "Dashboard Ask AI action opened travel assistant context.");
   });
   $("#infoSearch")?.addEventListener("input", filterImportantInfo);
+  $("#trustedContactForm")?.addEventListener("submit", saveTrustedContact);
+  $("#trustedContactsList")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-trusted-contact-delete]");
+    if (button) deleteTrustedContact(button.dataset.trustedContactDelete);
+  });
+  $("#saveProfileDetailsButton")?.addEventListener("click", saveProfileDetails);
   $$(".trip-check").forEach((checkbox) => {
     checkbox.addEventListener("change", updateChecklistProgress);
   });
@@ -6185,6 +7056,7 @@ function wireLocalInteractions() {
     answerAiPlanner(input?.value || "");
     if (input) input.value = "";
   });
+  $("#aiLiveResearchButton")?.addEventListener("click", runLiveAiResearch);
   $("#aiPlannerFreeformInput")?.addEventListener("keydown", (event) => {
     if (event.key !== "Enter") return;
     event.preventDefault();
@@ -6560,6 +7432,20 @@ function addInAppNotification(category, detail) {
   }
 }
 
+function showWalletNotification(notification) {
+  if (!notification) return;
+  addInAppNotification("Wallet", `${notification.title}: ${notification.body}`);
+  if ("Notification" in window && Notification.permission === "granted") {
+    new Notification(notification.title || "Travel-Drip wallet alert", {
+      body: notification.body || "Open Travel-Drip to review your trip wallet.",
+      icon: "icons/icon-192.png",
+      tag: `traveldrip-wallet-${notification.id || Date.now()}`
+    });
+  }
+  const status = $("#walletNotificationStatus");
+  if (status) status.textContent = "New wallet alert";
+}
+
 function addMessageNotification(conversation, direction = "received") {
   const detail = direction === "sent"
     ? `${conversation} message sent. Conversation members will be notified.`
@@ -6796,30 +7682,52 @@ async function saveSyncedEvent(type, payload) {
 }
 
 function subscribeToLiveData() {
-  if (!state.supabase || !state.session || window.tripChannel) return;
-  window.tripChannel = state.supabase
-    .channel("trip_events:dubai-weekend")
-    .on("postgres_changes", {
-      event: "INSERT",
-      schema: "public",
-      table: "trip_events",
-      filter: "trip_id=eq.dubai-weekend"
-    }, ({ new: event }) => {
-      if (event.user_id === state.session.user.id) return;
-      if (event.event_type === "message") {
-        const conversation = event.payload.conversation || "Trip chat";
-        appendMessage("Traveler", event.payload.text);
-        addMessageNotification(conversation, "received");
-        addAuditEntry("Message notification received", `${conversation}: incoming message notification displayed.`);
-      }
-      if (event.event_type === "wallet") {
-        const perPerson = Number(event.payload.perPerson);
-        $("#deposit").value = String(perPerson);
-        $("#depositValue").textContent = `$${perPerson.toLocaleString()}`;
-        $("#walletTotal").textContent = `$${(perPerson * 8).toLocaleString()}`;
-      }
-    })
-    .subscribe((status) => setSyncStatus(status === "SUBSCRIBED" ? "Live" : "Connected"));
+  if (!state.supabase || !state.session) return;
+  const userId = state.session.user.id;
+  if (!window.tripChannel) {
+    window.tripChannel = state.supabase
+      .channel("trip_events:dubai-weekend")
+      .on("postgres_changes", {
+        event: "INSERT",
+        schema: "public",
+        table: "trip_events",
+        filter: "trip_id=eq.dubai-weekend"
+      }, ({ new: event }) => {
+        if (event.user_id === state.session.user.id) return;
+        if (event.event_type === "message") {
+          const conversation = event.payload.conversation || "Trip chat";
+          appendMessage("Traveler", event.payload.text);
+          addMessageNotification(conversation, "received");
+          addAuditEntry("Message notification received", `${conversation}: incoming message notification displayed.`);
+        }
+        if (event.event_type === "wallet") {
+          const perPerson = Number(event.payload.perPerson);
+          $("#deposit").value = String(perPerson);
+          $("#depositValue").textContent = `$${perPerson.toLocaleString()}`;
+          $("#walletTotal").textContent = `$${(perPerson * 8).toLocaleString()}`;
+        }
+      })
+      .subscribe((status) => setSyncStatus(status === "SUBSCRIBED" ? "Live" : "Connected"));
+  }
+
+  if (window.walletNotificationUserId !== userId) {
+    if (window.walletNotificationChannel) state.supabase.removeChannel(window.walletNotificationChannel);
+    window.walletNotificationUserId = userId;
+    window.walletNotificationChannel = state.supabase
+      .channel(`wallet_notifications:${userId}`)
+      .on("postgres_changes", {
+        event: "INSERT",
+        schema: "public",
+        table: "notifications",
+        filter: `user_id=eq.${userId}`
+      }, ({ new: notification }) => {
+        if (["wallet_deposit_confirmed", "wallet_payment_request", "wallet_payment_due"].includes(notification.notification_type)) {
+          showWalletNotification(notification);
+          loadWalletAccess();
+        }
+      })
+      .subscribe();
+  }
 }
 
 async function registerServiceWorker() {
@@ -6972,6 +7880,8 @@ async function init() {
   wireConnectivityStatus();
   await registerServiceWorker();
   await loadConfig();
+  await loadProfileDetails();
+  await loadTrustedContacts();
   updateAuthUi();
   subscribeToLiveData();
   hideLoader();

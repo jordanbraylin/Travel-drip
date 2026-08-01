@@ -2,6 +2,21 @@
 
 Travel-Drip is a Vercel-ready PWA for travel planning with Supabase auth, realtime trip events, and admin-triggered web push notifications.
 
+## Beta launch on Render
+
+The repository includes `render.yaml` for an installable static PWA beta. The Render static deployment supports the browser experience, Supabase Auth, and the protected trusted-contact flow. The existing `/api` functions are Vercel serverless functions; keep Vercel for those server-side notification/admin routes until they are ported to a Render web service.
+
+1. In Render, create a Blueprint from the `jordanbraylin/Travel-drip` GitHub repository.
+2. Confirm the service root is the directory containing `render.yaml`, `package.json`, and `index.html` (the committed app root).
+3. Add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and the Stripe test publishable key as `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` to the Render service. The build creates `public-config.js` from these values; do not paste a service-role key or Stripe secret key into Render's public build variables or any browser file.
+4. Run `supabase.sql`, `supabase-backend.sql`, and `supabase-event-planning.sql` in the Supabase SQL editor. Then run `supabase-beta.sql` and `supabase-ownership-transfer.sql` to create the profile metadata trigger, protected trusted-contact table, and atomic owner-transfer function.
+5. In Supabase Auth URL Configuration, add the Render URL, `/login`, and `/register` as allowed redirect URLs.
+6. After the first deploy, install the beta from the browser and test sign-up, email verification, sign-in, profile save, trusted-contact create/remove, sign-out, and a fresh browser session.
+
+Render's static beta does not run the existing Vercel `/api` functions. Do not label push-admin, payment, guest-access, or other server-only workflows as live on Render until those endpoints are deployed to a compatible server runtime and their secrets are configured there.
+
+Public store-readiness pages are available at `/privacy.html` and `/terms.html`. Review them with the final business/legal contact before using them in App Store or Google Play metadata.
+
 ## Launch on Vercel
 
 1. Create a free Vercel account and install the Vercel CLI if needed.
@@ -17,17 +32,28 @@ Travel-Drip is a Vercel-ready PWA for travel planning with Supabase auth, realti
 2. Open the SQL editor and run `supabase.sql`.
 3. Run `supabase-backend.sql` to add the production backend foundation for trips, events, invitations, RSVP, schedules, wallet ledgers, receipts, role permissions, notifications, and audit logs.
 4. Run `supabase-event-planning.sql` to add explicit event-planning tables, event-specific RLS, and the expanded event type constraint for weddings, birthdays, anniversaries, reunions, conferences, graduation trips, church retreats, bachelor/bachelorette trips, and special events.
-5. The project URL is already set to `https://bfuiqmmbsgfcnyeneunv.supabase.co`; copy your publishable key into Vercel as `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
-6. Copy your service role key into Vercel as `SUPABASE_SERVICE_ROLE_KEY`. Never put this key in browser code.
-7. Add your admin email to `SUPABASE_ADMIN_EMAILS`.
-7. In Supabase Auth settings, add your Vercel URL to the allowed redirect URLs.
-8. In Supabase Auth providers, make sure Email is enabled. If Confirm email is on, new users must verify their inbox before logging in.
-9. Add these allowed redirect URLs in Supabase Auth URL Configuration:
+5. Run `supabase-wallet-notifications.sql` to add trip wallet payment requests, contribution-confirmation notifications, due-payment scheduling, and notification realtime publication.
+6. The project URL is already set to `https://bfuiqmmbsgfcnyeneunv.supabase.co`; copy your publishable key into Vercel as `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
+7. Copy your service role key into Vercel as `SUPABASE_SERVICE_ROLE_KEY`. Never put this key in browser code.
+8. Add your admin email to `SUPABASE_ADMIN_EMAILS`.
+9. In Supabase Auth settings, add your Vercel URL to the allowed redirect URLs.
+10. In Supabase Auth providers, make sure Email is enabled. If Confirm email is on, new users must verify their inbox before logging in.
+11. Add these allowed redirect URLs in Supabase Auth URL Configuration:
    - `https://YOUR-VERCEL-DOMAIN.vercel.app`
    - `https://YOUR-VERCEL-DOMAIN.vercel.app/login`
    - `https://YOUR-VERCEL-DOMAIN.vercel.app/register`
 
 For local static preview login, paste only the browser-safe publishable key into `public-config.js`. Do not put service-role or private notification keys in that file.
+
+## Live outside-source travel search
+
+Explore and the Travel hub now have explicit **Search live sources** actions. In a deployed authenticated Vercel session, `/api/travel-search` calls Google Places Text Search server-side and normalizes current destination, activity, restaurant, hotel, and transportation results with provider links, map directions, ratings, and live/open status where supplied. Local catalog cards remain available as estimates and are not presented as live data.
+
+The AI Travel Planner has **Search live sources** as well. `/api/ai-planner` calls the OpenAI Responses API with the web-search tool, returns a source-backed summary, and displays citations. The AI prompt is limited to travel research and instructs the model to distinguish estimates from provider facts, avoid confidential corporate data, and remind travelers to verify before booking. `store: false` is used for this request.
+
+Configure `GOOGLE_PLACES_API_KEY`, `OPENAI_API_KEY`, and `OPENAI_MODEL` in Vercel as server-only variables. Do not put either secret in `public-config.js`, HTML, or browser JavaScript. Search is rate-limited at the API boundary and upstream failures/timeouts are reported without replacing local results. Live provider search is not available from the `file:` preview or the static Render service because those environments do not run the protected `/api` routes.
+
+The sign-up flow sends `full_name` and `username` as Auth metadata. The `supabase-beta.sql` trigger materializes those values into `profiles`; profile edits and trusted contacts are then written through the authenticated Supabase client and protected by RLS.
 
 See `BACKEND_ARCHITECTURE.md` for the full backend table, API, RLS, audit, and production integration notes. See `BACKEND_SCALABILITY_REPORT.md` for the backend scalability, data-storage, backup, restore, monitoring, load-test, and final readiness checklist.
 
@@ -56,11 +82,15 @@ Do not store raw access codes or employee IDs in browser storage, logs, analytic
 
 ## Wallet and payment security
 
-The current wallet UI includes the shared Trip Virtual Wallet, Group Bank dashboard, personal contribution ledger, refundable balance rules, admin controls, refund requests, leave-trip review, and permanent audit log surfaces. Adding funds, requesting refunds, and leaving-trip refund review require a 4-digit PIN confirmation in the mock UI. This confirms the intended user flow, but it is not a production payment processor.
+The current wallet UI includes the shared Trip Virtual Wallet, Group Bank dashboard, personal contribution ledger, refundable balance rules, admin controls, refund requests, leave-trip review, and permanent audit log surfaces. Requesting refunds and leaving-trip refund review still require a 4-digit PIN confirmation in the mock UI. Member funding uses the server-side provider flow described below; it is blocked when provider configuration is missing.
 
 Every eligible group trip, event, cruise, or corporate retreat should have one shared trip wallet, one unique wallet identifier, one masked trip wallet card, one transaction ledger, one contribution ledger, and one audit trail. Member contributions are pooled into the trip wallet balance while each user's contribution history, refundable balance, and refund activity remain separately tracked.
 
-For a real secured wallet, connect the Add funds action to Stripe Checkout, Stripe Payment Intents, or another PCI-compliant provider. Keep card data out of Travel-Drip, verify PIN/payment state on a serverless API route, store only provider transaction IDs/idempotency keys, and use Supabase Row Level Security for trip wallet and contribution records.
+The Add funds action now has a server-side Stripe Checkout path in `/api/wallet`: every active member of an eligible shared trip, event, or cruise can create a hosted contribution checkout, while corporate retreat and conference balances remain finance-controlled. The server derives the user and trip role from Supabase membership, returns a personal contribution ledger to members, and returns the full ledger only to authorized finance roles. The `/api/stripe-webhook` route verifies Stripe signatures and calls the idempotent `complete_trip_wallet_contribution` function before the shared balance changes. Deposit confirmation creates trip-scoped in-app notifications for active members. Authorized finance roles can create due-payment requests, and the Vercel cron at `/api/wallet-reminders` queues and dispatches due alerts. Configure `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `APP_BASE_URL`, and `CRON_SECRET`; otherwise funding is blocked and no local balance is changed. Keep card data out of Travel-Drip, store only provider transaction IDs/idempotency keys, and use Supabase Row Level Security for trip wallet and contribution records. `pk_test_...` is test mode only; it does not activate real funding, refunds, card spending, or wallet provisioning.
+
+## Transfer trip or event ownership
+
+The current trip or event owner can open **My Trips → Ownership & permissions**, load active members, and transfer full ownership to another active member. The server checks the authenticated owner, requires the recipient to be active in the trip (and event when applicable), updates `trips.owner_user_id` and `events.host_user_id` atomically, promotes the recipient to `owner`, and demotes the previous owner to `organizer` or `traveler/attendee` when they choose to leave. The `supabase-ownership-transfer.sql` function is service-role-only and writes both the shared audit log and event audit log; no browser role can call it directly. Ownership transfer is unavailable in file preview because it must never be simulated with local state.
 
 Core rule: users always see their own contributions, and money not committed to deposits, reservations, flights, hotels, activities, or group purchases remains refundable to the original contributor.
 
@@ -70,7 +100,7 @@ The app now includes a Travel-Drip virtual wallet card surface connected to elig
 
 For production, the virtual card must be issued through an authorized banking, card-issuing, or payment-processing partner. Store only provider card IDs, masked card numbers, token references, controls, and ledger records. Do not store raw card numbers or CVV values in Supabase or browser code unless the entire system is certified for that scope. Apple Pay, Google Wallet, Samsung Wallet, and contactless NFC purchases require issuer/card-network wallet token provisioning.
 
-Tap to Pay as a customer means the traveler spends from the Travel-Drip virtual card at a merchant NFC terminal. Tap to Pay as a merchant, where a user accepts someone else's card payment on their phone, is a separate merchant-processing feature and is not part of the initial card surface.
+Only trip owner, admin, organizer, or finance-admin roles receive shared-card controls and the admin tap-to-pay action. Membership is checked server-side; hiding a button in the browser is not the security boundary. Tap to Pay as a customer means the authorized admin spends from the Travel-Drip virtual card at a merchant NFC terminal. It remains provider-gated until an issuer provisions `provider_card_ref` and the required Apple/Google/Samsung/NFC tokenization. Tap to Pay as a merchant, where a user accepts someone else's card payment on their phone, is a separate merchant-processing feature and is not part of the initial card surface.
 
 ## Smart restaurant bill split
 

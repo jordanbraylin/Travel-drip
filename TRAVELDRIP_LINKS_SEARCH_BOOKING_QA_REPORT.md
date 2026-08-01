@@ -1,6 +1,6 @@
 # Travel-Drip Links, Search, Date Picker, Booking, and Real-Time Updates Verification
 
-Generated: 2026-07-30T18:08:17.476Z
+Generated: 2026-08-01T14:28:17.669Z
 
 ## Final Status
 
@@ -10,16 +10,16 @@ This local verification checks static routes, link targets, search/date field wi
 
 ## Summary
 
-- Total buttons inspected: 785
+- Total buttons inspected: 773
 - Total links inspected: 15
-- Data-target controls inspected: 99
+- Data-target controls inspected: 100
 - Working local data-target routes: 17/17
 - Shared main-navigation controls inspected: 32
 - Shared main-navigation items configured: 10/10
 - Route definitions found: 19
-- Date fields found: 7
-- Search fields found: 10
-- API route files found: 15
+- Date fields found: 8
+- Search fields found: 11
+- API route files found: 22
 - Critical local issues: 0
 
 ## Link and Redirect Verification
@@ -125,6 +125,12 @@ Route roots and visible inner shells are transparent; individual widgets retain 
 - AI receipt workspace stays readable: PASS
 - AI recognition widget stays horizontal: PASS
 - Overview Memories collage stays contained: PASS
+- Travel Home summary cards stay readable: PASS
+- My Profile widgets stay readable: PASS
+- Travel selected page panel removed: PASS
+- Travel Home avoids duplicate summaries: PASS
+- Travel uses one canonical navigation: PASS
+- Travel duplicate widgets are consolidated: PASS
 
 Focused route grids, compact event controls, horizontal widget text, wallet summaries, and the Smart Travel Search icon are present.
 
@@ -163,6 +169,7 @@ Status: Native browser date/datetime-local controls present locally; full custom
 - tripEndInput: type=date, app reference=yes, default value=yes
 - eventRsvpDeadlineInput: type=date, app reference=yes, default value=yes
 - inviteDeadlineInput: type=date, app reference=yes, default value=yes
+- paymentRequestDueAt: type=datetime-local, app reference=yes, default value=no
 - flightDepartureDateInput: type=date, app reference=yes, default value=yes
 
 ### Date Range Review
@@ -176,6 +183,7 @@ Status: Native browser date/datetime-local controls present locally; full custom
 Status: Local UI search fields are present; provider-backed travel search requires live integrations.
 
 - globalSearchInput: app reference=yes, placeholder/label=yes
+- aiPlannerResearchInput: app reference=yes, placeholder/label=yes
 - exploreSearchInput: app reference=yes, placeholder/label=yes
 - messageSearchInput: app reference=yes, placeholder/label=yes
 - infoSearch: app reference=yes, placeholder/label=yes
@@ -198,8 +206,10 @@ Status: Not production-complete without live provider credentials and deployed c
 
 ## API Surface
 
+- api/_push-notifications.js
 - api/_security.js
 - api/admin-status.js
+- api/ai-planner.js
 - api/audit.js
 - api/config.js
 - api/events.js
@@ -209,10 +219,15 @@ Status: Not production-complete without live provider credentials and deployed c
 - api/health.js
 - api/invitations.js
 - api/notify.js
+- api/ownership-transfer.js
 - api/rsvp.js
 - api/schedule.js
+- api/stripe-webhook.js
 - api/subscribe.js
+- api/travel-search.js
 - api/trips.js
+- api/wallet-reminders.js
+- api/wallet.js
 
 ## Remaining Production Limitations
 

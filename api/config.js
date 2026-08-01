@@ -10,6 +10,7 @@ export default function handler(_request, response) {
       || process.env.SUPABASE_PUBLISHABLE_KEY
       || process.env.SUPABASE_ANON_KEY
       || "",
+    stripePublishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "",
     vapidPublicKey: process.env.VAPID_PUBLIC_KEY || ""
   });
 }

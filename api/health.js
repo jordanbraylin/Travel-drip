@@ -20,6 +20,12 @@ export default function handler(_request, response) {
     ghlApiKeyConfigured: Boolean(process.env.GHL_API_KEY),
     ghlLocationConfigured: Boolean(process.env.GHL_LOCATION_ID),
     ghlPipelineConfigured: Boolean(process.env.GHL_PIPELINE_ID),
-    ghlWorkflowConfigured: Boolean(process.env.GHL_DEFAULT_WORKFLOW_ID)
+    ghlWorkflowConfigured: Boolean(process.env.GHL_DEFAULT_WORKFLOW_ID),
+    googlePlacesConfigured: Boolean(process.env.GOOGLE_PLACES_API_KEY || process.env.GOOGLE_MAPS_API_KEY),
+    openAiConfigured: Boolean(process.env.OPENAI_API_KEY),
+    openAiModelConfigured: Boolean(process.env.OPENAI_MODEL),
+    stripeSecretConfigured: Boolean(process.env.STRIPE_SECRET_KEY),
+    stripeWebhookConfigured: Boolean(process.env.STRIPE_WEBHOOK_SECRET),
+    appBaseUrlConfigured: Boolean(process.env.APP_BASE_URL)
   });
 }

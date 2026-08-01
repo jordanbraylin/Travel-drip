@@ -1247,6 +1247,20 @@ body.auth-screen .auth-panel[hidden] {
   line-height: 1.55;
 }
 
+.hero .auth-confirmation-banner {
+  max-width: 520px;
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(170, 255, 220, 0.5);
+  border-radius: 10px;
+  background: rgba(7, 35, 31, 0.66);
+  color: #e7fff5;
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.4;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14);
+}
+
 .destination-banner-meta {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -4623,6 +4637,448 @@ body.app-routed main :where(.trip-tab-bar button, .tabs .tab, .message-tabs butt
   body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome),
   body.app-routed main > section.panel:not([hidden]) :where(.travel-dashboard-sections, .travel-booking-summary, .travel-transport-summary, .travel-focus-grid, .travel-provider-cards, .wallet-dashboard-header, .wallet-home-grid, .wallet-trip-card-grid, .wallet-dashboard-sections, .wallet-section-card-grid, .wallet-action-grid, .info-status-grid, .important-info-grid, .security-status-grid, .security-control-grid, .backend-summary-grid, .backend-readiness-grid, .audit-grid, .memory-gallery-grid, .memory-album-grid, .platform-grid, .messages-layout, .message-support-grid) {
     grid-template-columns: 1fr !important;
+  }
+}
+
+.wallet-access-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 14px 0 18px;
+  padding: 14px 16px;
+  border: 1px solid rgba(16, 73, 92, 0.16);
+  border-left: 4px solid #13a5ba;
+  border-radius: 14px;
+  background: rgba(231, 248, 250, 0.76);
+}
+
+.wallet-access-banner > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.wallet-access-banner .eyebrow {
+  margin: 0;
+}
+
+.wallet-access-banner strong,
+.wallet-access-banner span {
+  overflow-wrap: anywhere;
+}
+
+.wallet-access-banner > div > span {
+  color: #496777;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.access-badge {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #d9f6e5;
+  color: #166534;
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.access-badge[data-state="admin"] {
+  background: #fff0c7;
+  color: #7a4b00;
+}
+
+#walletCardAdminControls {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+#walletCardAdminControls[hidden] {
+  display: none;
+}
+
+#walletCardAdminControls #tapToPayButton {
+  justify-self: start;
+}
+
+#walletCardAdminControls #tapToPayButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+}
+
+#fundsForm button:disabled,
+#fundsForm input:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.ownership-transfer-panel {
+  grid-column: 1 / -1 !important;
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(16, 73, 92, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 8px 20px rgba(15, 35, 45, 0.06);
+}
+
+.ownership-transfer-panel .section-heading {
+  align-items: flex-start;
+}
+
+.ownership-transfer-panel .section-heading p:not(.eyebrow) {
+  max-width: 680px;
+  margin: 5px 0 0;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.ownership-transfer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ownership-transfer-grid label,
+.ownership-transfer-check {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.ownership-transfer-grid select {
+  min-width: 0;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+}
+
+.ownership-transfer-grid select:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.ownership-transfer-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  padding: 9px 11px;
+  border: 1px solid rgba(16, 73, 92, 0.12);
+  border-radius: 10px;
+  background: rgba(231, 248, 250, 0.46);
+}
+
+.ownership-transfer-check input {
+  flex: 0 0 auto;
+}
+
+#transferOwnershipButton:disabled,
+#loadOwnershipMembersButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+#ownershipTransferMessage[data-tone="success"] {
+  color: #17633d;
+}
+
+#ownershipTransferMessage[data-tone="error"] {
+  color: #a23a32;
+}
+
+@media (max-width: 640px) {
+  .wallet-access-banner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .access-badge {
+    white-space: normal;
+  }
+
+  .ownership-transfer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Live provider search surfaces stay compact and clearly separate from local estimates. */
+.provider-status {
+  min-height: 20px;
+  margin: 0;
+  color: #5f7185;
+}
+
+.provider-status[data-tone="loading"] {
+  color: #0f7890;
+}
+
+.provider-status[data-tone="success"] {
+  color: #19734b;
+}
+
+.provider-status[data-tone="error"] {
+  color: #a63c3c;
+}
+
+.live-results-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px;
+}
+
+.live-source-card,
+.private-driver-live-card,
+.travel-live-result-card,
+.ai-external-research {
+  min-width: 0;
+  border: 1px solid rgba(8, 127, 140, 0.2);
+  background: linear-gradient(145deg, #ffffff, #f0fbf9);
+}
+
+.live-source-card__body,
+.private-driver-live-card,
+.travel-live-result-card {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 14px;
+}
+
+.live-source-card__body .discovery-title,
+.live-source-card__body .discovery-description,
+.live-source-card__body .discovery-location {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.travel-live-results {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.travel-live-result-card {
+  border-radius: 12px;
+}
+
+.travel-live-result-card > div:first-child,
+.private-driver-live-card {
+  align-content: start;
+}
+
+.travel-live-result-card strong,
+.travel-live-result-card small,
+.private-driver-live-card strong,
+.private-driver-live-card small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ai-external-research {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+}
+
+.ai-external-research .section-heading {
+  margin: 0;
+}
+
+.ai-research-input {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.ai-research-input input {
+  min-width: 0;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0 12px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+}
+
+.ai-external-research__results {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  color: #294d59;
+}
+
+.ai-external-research__results p {
+  margin: 0;
+  line-height: 1.55;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.ai-external-research__header,
+.ai-research-sources {
+  display: grid;
+  gap: 6px;
+}
+
+.ai-research-sources a {
+  color: #0b7182;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+  .live-results-grid,
+  .travel-live-results {
+    grid-template-columns: 1fr !important;
+  }
+
+  .travel-smart-search-row {
+    grid-template-columns: 34px minmax(0, 1fr) repeat(3, auto);
+  }
+}
+
+@media (max-width: 560px) {
+  .travel-smart-search-row {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .travel-smart-search-row button {
+    grid-column: span 1;
+  }
+}
+
+/* Beta account data: compact, readable trusted-contact controls. */
+.trusted-contacts-panel {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(15, 23, 42, 0.09);
+  border-radius: 16px;
+  background: rgba(248, 252, 255, 0.82);
+}
+
+.trusted-contact-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.trusted-contact-form label {
+  display: grid;
+  min-width: 0;
+  gap: 0.35rem;
+}
+
+.trusted-contact-form input[type="text"],
+.trusted-contact-form input[type="tel"],
+.trusted-contact-form input[type="email"] {
+  min-width: 0;
+  width: 100%;
+}
+
+.trusted-contact-primary {
+  display: flex !important;
+  align-items: center;
+  min-height: 42px;
+  gap: 0.5rem !important;
+}
+
+.trusted-contact-primary input {
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.trusted-contact-list {
+  display: grid;
+  min-width: 0;
+}
+
+.trusted-contact-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid rgba(15, 23, 42, 0.09);
+}
+
+.trusted-contact-row > div {
+  display: grid;
+  min-width: 0;
+  gap: 0.2rem;
+}
+
+.trusted-contact-row span {
+  min-width: 0;
+  color: #617286;
+  overflow-wrap: anywhere;
+}
+
+.trusted-contact-row button {
+  flex: 0 0 auto;
+}
+
+.trusted-contact-status {
+  min-height: 1.25rem;
+  margin: 0;
+}
+
+.profile-details-actions {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.profile-details-actions .small {
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .trusted-contact-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .trusted-contact-form {
+    grid-template-columns: 1fr;
+  }
+
+  .trusted-contact-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .trusted-contact-row button {
+    width: 100%;
+  }
+
+  .profile-details-actions {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 
@@ -13623,6 +14079,122 @@ body.auth-screen .auth-carousel blockquote {
 #walletPanel .shared-wallet-ledger {
   max-height: 260px;
   overflow: auto;
+}
+
+#walletPanel .payment-request-form {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.4fr) minmax(120px, 0.7fr) minmax(210px, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid rgba(19, 165, 186, 0.2);
+  border-radius: 14px;
+  background: #f0fbfc;
+}
+
+#walletPanel .payment-request-form[hidden] {
+  display: none;
+}
+
+#walletPanel .payment-request-form > div {
+  display: grid;
+  gap: 3px;
+}
+
+#walletPanel .payment-request-form > div span,
+#walletPanel .payment-request-form .small {
+  color: #496777;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+#walletPanel .payment-request-form label {
+  display: grid;
+  gap: 5px;
+  color: #173b4a;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+#walletPanel .payment-request-form input {
+  min-width: 0;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid rgba(16, 73, 92, 0.18);
+  border-radius: 9px;
+  background: #fff;
+  color: #102033;
+}
+
+#walletPanel .payment-request-form .small {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.wallet-ledger-meta,
+.wallet-notification-status {
+  display: grid;
+  gap: 3px;
+  margin: 12px 0 8px;
+  padding: 10px 12px;
+  border-left: 3px solid #13a5ba;
+  border-radius: 10px;
+  background: #eefaf6;
+}
+
+.wallet-ledger-meta span,
+.wallet-notification-status span {
+  color: #496777;
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.wallet-ledger-empty {
+  color: #496777;
+  font-size: 0.88rem;
+}
+
+.wallet-notification-list {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 14px;
+}
+
+.wallet-notification-list:empty {
+  display: none;
+}
+
+.wallet-notification-list > div {
+  display: grid;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid rgba(16, 73, 92, 0.12);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.wallet-notification-list span {
+  color: #496777;
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 820px) {
+  #walletPanel .payment-request-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  #walletPanel .payment-request-form > div,
+  #walletPanel .payment-request-form .small {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 520px) {
+  #walletPanel .payment-request-form {
+    grid-template-columns: 1fr;
+  }
 }
 
 .itinerary-dashboard {

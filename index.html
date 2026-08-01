@@ -310,6 +310,7 @@
           <p class="eyebrow" id="livePlanLocation">Live group plan • United Arab Emirates</p>
           <h1 id="livePlanTitle">Dubai long weekend</h1>
           <p id="livePlanDescription">Rooftop dinners, desert rides, beach clubs, and a shared wallet that keeps everyone even.</p>
+          <p class="auth-confirmation-banner" id="authConfirmationMessage" role="status" aria-live="polite" hidden></p>
           <div class="destination-banner-meta">
             <span id="livePlanFunFact">Fun fact: Dubai is home to the Burj Khalifa, famous worldwide for its record-setting height.</span>
             <span id="livePlanTip">Tip: Book popular rooftop dinners early and confirm modest dress codes for cultural stops.</span>
@@ -654,7 +655,10 @@
                 <h2>Plan celebrations, gatherings, and shared moments</h2>
                 <p>Create events, invite guests, manage RSVPs, coordinate budgets, collect memories, and keep every update in one event-focused workspace.</p>
               </div>
-              <button class="primary-button" type="button" data-event-dashboard-action="Create Event">Create Event</button>
+              <div class="button-row no-margin">
+                <button class="primary-button" type="button" data-event-dashboard-action="Create Event">Create Event</button>
+                <button class="ghost-button" type="button" data-target="tripsPanel">Manage ownership</button>
+              </div>
             </div>
             <div class="event-dashboard-tabs" role="tablist" aria-label="Event dashboard sections">
               <button class="active" type="button" data-event-dashboard-tab="Upcoming Events">Upcoming Events</button>
@@ -830,6 +834,20 @@
                 <button class="ghost-button" type="button" id="aiExportButton">Export PDF</button>
                 <button class="ghost-button" type="button" id="aiCalendarButton">Add to Calendar</button>
               </div>
+              <section class="ai-external-research" aria-label="Live AI travel research">
+                <div class="section-heading compact">
+                  <div>
+                    <p class="eyebrow">Live source research</p>
+                    <h3>Ask AI to search current travel sources</h3>
+                    <p>Research trips, activities, restaurants, hotels, and transportation with source links. Results are guidance, not booking confirmation.</p>
+                  </div>
+                  <button class="primary-button" type="button" id="aiLiveResearchButton">Search live sources</button>
+                </div>
+                <label class="ai-research-input">Optional research question
+                  <input id="aiPlannerResearchInput" type="search" placeholder="Best activities and private drivers near my destination">
+                </label>
+                <div id="aiPlannerExternalResearch" class="ai-external-research__results" aria-live="polite"></div>
+              </section>
               <p class="small" id="aiPlannerStatus">No planning session saved yet. AI answers stay private to your account and can be deleted anytime.</p>
             </section>
           </section>
@@ -875,12 +893,17 @@
             <div class="explore-subfilters" id="exploreSubfilters" aria-label="Explore filters"></div>
             <div class="explore-results-toolbar">
               <span id="exploreResultsSummary">Trending results for Miami group travel</span>
-              <button class="ghost-button" type="button" id="exploreRetryButton" hidden>Retry</button>
+              <div class="button-row no-margin">
+                <button class="primary-button" type="button" id="exploreLiveSearchButton">Search live sources</button>
+                <button class="ghost-button" type="button" id="exploreRetryButton" hidden>Retry</button>
+              </div>
             </div>
+            <p class="small provider-status" id="exploreProviderStatus">Local estimates are shown until you search live sources.</p>
             <div class="explore-skeleton-grid" id="exploreSkeleton" hidden>
               <div></div><div></div><div></div>
             </div>
             <div class="explore-results-grid" id="exploreResultsGrid" aria-live="polite"></div>
+            <div class="explore-results-grid live-results-grid" id="exploreLiveResultsGrid" aria-live="polite" hidden></div>
             <section class="explore-empty-state" id="exploreEmptyState" hidden>
               <h3>No exact matches were found.</h3>
               <p>Try changing your dates, destination, or budget.</p>
@@ -1078,6 +1101,40 @@
               </div>
             </section>
             <p class="small" id="soloModeMessage">Solo Trip selected. Group chat, voting, and shared wallet tools stay hidden until you invite others.</p>
+
+            <section class="ownership-transfer-panel" id="ownershipTransferPanel" aria-labelledby="ownershipTransferTitle">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Ownership &amp; permissions</p>
+                  <h3 id="ownershipTransferTitle">Transfer trip or event ownership</h3>
+                  <p>Only the current owner can transfer full control to an active member. The change updates trip and event permissions together.</p>
+                </div>
+                <span class="access-badge" id="ownershipTransferRole">Owner only</span>
+              </div>
+              <div class="ownership-transfer-grid">
+                <label>Workspace type
+                  <select id="ownershipTransferEntityType">
+                    <option value="auto">Detect trip or event</option>
+                    <option value="trip">Trip</option>
+                    <option value="event">Event</option>
+                  </select>
+                </label>
+                <label>New owner
+                  <select id="ownershipTransferMemberSelect" disabled>
+                    <option value="">Load active trip members first</option>
+                  </select>
+                </label>
+              </div>
+              <label class="ownership-transfer-check">
+                <input id="ownershipTransferLeaveInput" type="checkbox">
+                I am no longer attending and should leave after the transfer
+              </label>
+              <div class="button-row">
+                <button class="ghost-button" type="button" id="loadOwnershipMembersButton">Load active members</button>
+                <button class="primary-button" type="button" id="transferOwnershipButton" disabled>Transfer full ownership</button>
+              </div>
+              <p class="small" id="ownershipTransferMessage" role="status">Create or open a trip, then sign in to load active members. Ownership changes are recorded in the audit trail.</p>
+            </section>
 
             <div class="feature-toggle-grid" id="featureToggleGrid">
               <section>
@@ -2200,6 +2257,27 @@
                   <div><strong>Trip organizer</strong><span>Sarah Lee, +1 555 0142</span></div>
                   <div><strong>Company emergency</strong><span>Travel desk, +1 555 0199</span></div>
                 </div>
+                <section class="trusted-contacts-panel" id="trustedContactsPanel" aria-labelledby="trustedContactsTitle">
+                  <div class="section-heading compact">
+                    <div>
+                      <p class="eyebrow">Private to your account</p>
+                      <h3 id="trustedContactsTitle">My trusted contacts</h3>
+                      <p class="small">Store people Travel-Drip may reference for safety check-ins. Contacts are visible only to you unless you explicitly share them.</p>
+                    </div>
+                  </div>
+                  <form class="trusted-contact-form" id="trustedContactForm">
+                    <label>Name<input id="trustedContactNameInput" type="text" autocomplete="name" maxlength="120" required></label>
+                    <label>Relationship<input id="trustedContactRelationshipInput" type="text" maxlength="80" placeholder="Family, friend, or organizer" required></label>
+                    <label>Phone<input id="trustedContactPhoneInput" type="tel" autocomplete="tel" maxlength="40" required></label>
+                    <label>Email (optional)<input id="trustedContactEmailInput" type="email" autocomplete="email" maxlength="254"></label>
+                    <label class="trusted-contact-primary"><input id="trustedContactPrimaryInput" type="checkbox"> Primary safety contact</label>
+                    <button class="primary-button" type="submit">Save contact</button>
+                  </form>
+                  <div class="trusted-contact-list" id="trustedContactsList" aria-live="polite">
+                    <p class="small">Sign in to load your private trusted contacts.</p>
+                  </div>
+                  <p class="small trusted-contact-status" id="trustedContactsStatus" role="status"></p>
+                </section>
               </details>
 
               <details class="info-section">
@@ -2453,19 +2531,40 @@
               <button type="button" data-wallet-action="Trip Contributions"><span>Trip Contributions</span><strong>$6,400</strong><small>Member deposits and refundable balances.</small></button>
               <button type="button" data-wallet-action="Recent Transactions"><span>Recent Transactions</span><strong>12 records</strong><small>Completed, pending, and audit-logged payments.</small></button>
             </div>
-            <label class="range-wrap" for="deposit">Per-person deposit: <strong id="depositValue">$800</strong><input id="deposit" type="range" min="500" max="1200" step="50" value="800"></label>
+            <label class="range-wrap" for="deposit">Planning target per person: <strong id="depositValue">$800</strong><input id="deposit" type="range" min="500" max="1200" step="50" value="800"><small>This estimate does not move wallet funds. Members add funds through secure checkout below.</small></label>
             <form class="funds-form" id="fundsForm">
               <label>Add funds
                 <input id="fundAmount" type="number" min="10" max="5000" step="10" value="100" inputmode="decimal" required>
               </label>
-              <button class="primary-button wide" type="submit">Continue to PIN</button>
+              <button class="primary-button wide" type="submit">Continue to secure checkout</button>
             </form>
-            <p class="small" id="walletMessage">No wallet payment has been submitted in this session.</p>
+            <form class="payment-request-form" id="paymentRequestForm" hidden>
+              <div>
+                <p class="eyebrow">Admin payment reminder</p>
+                <strong>Request a trip payment</strong>
+                <span>Set a due time. The member receives an in-app alert, and a browser push when notifications are enabled.</span>
+              </div>
+              <label>Payment title<input id="paymentRequestTitle" type="text" maxlength="160" value="Upcoming trip payment" required></label>
+              <label>Amount<input id="paymentRequestAmount" type="number" min="10" max="5000" step="10" value="100" inputmode="decimal" required></label>
+              <label>Due date and time<input id="paymentRequestDueAt" type="datetime-local" required></label>
+              <button class="ghost-button" type="submit">Create payment reminder</button>
+              <p class="small" id="paymentRequestMessage">Payment reminders are sent to active trip members.</p>
+            </form>
+            <p class="small" id="walletMessage">Active trip members can add their own funds. The shared balance changes only after provider webhook confirmation.</p>
+            <div class="wallet-ledger-meta" aria-live="polite">
+              <strong id="walletContributionVisibility">Personal contribution view</strong>
+              <span id="walletContributionMessage">Sign in to load your contribution history.</span>
+            </div>
             <div class="shared-wallet-ledger" id="sharedWalletLedger" aria-label="Shared trip wallet ledger">
               <div><time>Jul 20, 2026 9:42 AM</time><strong>Jordan contribution</strong><span>+$100 completed • Debit card • Refundable</span></div>
               <div><time>Jul 19, 2026 6:15 PM</time><strong>Hotel deposit allocation</strong><span>-$1,200 approved • Organizer • Non-refundable hold</span></div>
               <div><time>Jul 18, 2026 3:05 PM</time><strong>Shared activity payment</strong><span>-$840 completed • Wallet card • Audit logged</span></div>
             </div>
+            <div class="wallet-notification-status" aria-live="polite">
+              <strong id="walletNotificationStatus">Wallet alerts are on</strong>
+              <span id="walletNotificationMessage">In-app deposit and payment reminders are enabled. Tap Notify for browser push alerts.</span>
+            </div>
+            <div class="wallet-notification-list" id="walletNotificationList" aria-label="Recent wallet notifications"></div>
             <div class="budget-line"><span>Flights</span><strong>$3,200</strong></div><div class="bar"><i style="--w:50%"></i></div>
             <div class="budget-line"><span>Stay</span><strong>$2,100</strong></div><div class="bar"><i style="--w:33%"></i></div>
             <div class="budget-line"><span>Food and events</span><strong>$1,100</strong></div><div class="bar"><i style="--w:17%"></i></div>
@@ -2479,6 +2578,14 @@
                 <h2>Travel-Drip card access</h2>
               </div>
               <span class="card-status" id="cardStatus">Locked</span>
+            </div>
+            <div class="wallet-access-banner" aria-live="polite">
+              <div>
+                <p class="eyebrow">Trip wallet permissions</p>
+                <strong id="walletAccessRole">Checking role</strong>
+                <span id="walletAccessMessage">Sign in to load your trip role and shared-card permissions.</span>
+              </div>
+              <span class="access-badge" id="walletAccessBadge">Role checked on server</span>
             </div>
             <div class="virtual-card">
               <div class="card-top"><span>Miami 2027</span><strong>Trip Wallet Card</strong></div>
@@ -2497,36 +2604,39 @@
               <div><span>Per purchase</span><strong id="purchaseLimitValue">$125</strong></div>
             </div>
             <p class="security-note">Only available shared trip-wallet funds can be spent. Reserved, pending, refund-review, restricted, or frozen balances cannot be used by the card.</p>
-            <div class="button-row">
-              <button class="primary-button" type="button" id="activateCardButton">Activate card</button>
-              <button class="ghost-button" type="button" id="lockCardButton">Unlock card</button>
-              <button class="ghost-button" type="button" id="revealCardButton">View details</button>
-              <button class="ghost-button" type="button" id="replaceCardButton">Report compromised</button>
-            </div>
-            <div class="wallet-provisioning">
-              <button type="button" id="appleWalletButton">Add to Apple Wallet</button>
-              <button type="button" id="googleWalletButton">Add to Google Wallet</button>
-              <button type="button" id="samsungWalletButton">Samsung Wallet</button>
+            <div id="walletCardAdminControls" hidden>
+              <div class="button-row">
+                <button class="primary-button" type="button" id="activateCardButton">Activate card</button>
+                <button class="ghost-button" type="button" id="lockCardButton">Unlock card</button>
+                <button class="ghost-button" type="button" id="revealCardButton">View details</button>
+                <button class="ghost-button" type="button" id="replaceCardButton">Report compromised</button>
+              </div>
+              <div class="wallet-provisioning">
+                <button type="button" id="appleWalletButton">Add to Apple Wallet</button>
+                <button type="button" id="googleWalletButton">Add to Google Wallet</button>
+                <button type="button" id="samsungWalletButton">Samsung Wallet</button>
+              </div>
+              <div class="spending-controls">
+                <label>Daily spending limit <input id="dailyLimit" type="range" min="50" max="1000" step="25" value="250"></label>
+                <label>Per-transaction limit <input id="purchaseLimit" type="range" min="25" max="500" step="25" value="125"></label>
+              </div>
+              <div class="control-grid">
+                <label><input type="checkbox" checked> Restaurants</label>
+                <label><input type="checkbox" checked> Transportation</label>
+                <label><input type="checkbox" checked> Activities</label>
+                <label><input type="checkbox"> International purchases</label>
+                <label><input type="checkbox" checked> Online purchases</label>
+                <label><input type="checkbox" checked> Contactless payments</label>
+                <label><input type="checkbox"> ATM withdrawals</label>
+                <label><input type="checkbox" checked> Emergency travel</label>
+              </div>
+              <button class="primary-button" type="button" id="tapToPayButton" hidden>Tap to pay with shared card</button>
             </div>
             <p class="small" id="cardMessage">Wallet provisioning requires identity verification, Wallet PIN, and an issuing bank/card processor integration.</p>
-            <div class="spending-controls">
-              <label>Daily spending limit <input id="dailyLimit" type="range" min="50" max="1000" step="25" value="250"></label>
-              <label>Per-transaction limit <input id="purchaseLimit" type="range" min="25" max="500" step="25" value="125"></label>
-            </div>
-            <div class="control-grid">
-              <label><input type="checkbox" checked> Restaurants</label>
-              <label><input type="checkbox" checked> Transportation</label>
-              <label><input type="checkbox" checked> Activities</label>
-              <label><input type="checkbox"> International purchases</label>
-              <label><input type="checkbox" checked> Online purchases</label>
-              <label><input type="checkbox" checked> Contactless payments</label>
-              <label><input type="checkbox"> ATM withdrawals</label>
-              <label><input type="checkbox" checked> Emergency travel</label>
-            </div>
             <div class="card-rules">
               <div><strong>Tap to Pay as customer</strong><span>Use Apple Pay, Google Wallet, or Samsung Wallet at compatible NFC terminals after wallet provisioning.</span></div>
-              <div><strong>Merchant Tap to Pay separate</strong><span>Accepting payments on a phone would require a separate merchant account and processor setup.</span></div>
-              <div><strong>Corporate cards</strong><span>Admins can assign allowances, trip dates, categories, and freezes without exposing the full company retreat budget to attendees.</span></div>
+              <div><strong>Shared-card permission</strong><span>Only the trip owner, trip admin, organizer, or finance admin can manage or start a shared-card purchase. Members can contribute their own funds.</span></div>
+              <div><strong>Provider-controlled security</strong><span>Card issuance, NFC tokenization, purchase authorization, and refunds must be completed by the connected PCI-compliant provider.</span></div>
             </div>
             <div class="card-ledger" id="cardLedger">
               <div><time>Jul 20, 2026 12:18 PM</time><strong>Marina Cafe</strong><span>-$42.80 pending • Dubai weekend • $337.20 left</span></div>
@@ -2682,6 +2792,7 @@
                 <input id="travelSmartSearchInput" type="search" placeholder="Search flights, hotels, destinations, reservations, or documents..." autocomplete="off" aria-label="Search flights, hotels, destinations, reservations, or documents">
                 <button type="button" id="voiceTravelSearchButton" aria-label="Start voice search">Voice</button>
                 <button type="button" id="clearTravelSearchButton">Clear</button>
+                <button class="primary-button" type="button" id="travelLiveSearchButton">Search live</button>
               </div>
               <div class="travel-search-suggestions" aria-label="Travel search suggestions">
                 <button type="button" data-travel-search-suggestion="boarding pass">Boarding pass</button>
@@ -2691,6 +2802,8 @@
                 <button type="button" data-travel-search-suggestion="travel documents">Travel documents</button>
               </div>
               <div class="travel-smart-results" id="travelSmartResults" aria-live="polite"></div>
+              <p class="small provider-status" id="travelLiveSearchStatus">Search live sources to find current activities, stays, restaurants, and transportation near the selected destination.</p>
+              <div class="travel-live-results" id="travelLiveResults" aria-live="polite" hidden></div>
             </section>
             <section class="travel-command-header" aria-label="Travel dashboard header">
               <article class="travel-command-trip">
@@ -2716,7 +2829,7 @@
                   <div>
                     <span>Current trip</span>
                     <strong>Miami to Tokyo Adventure</strong>
-                    <small>Tokyo • Jul 18 - Jul 28 • 4 travelers • Ready</small>
+                    <small id="travelCurrentDestination">Tokyo, Japan • Jul 18 - Jul 28 • 4 travelers • Ready</small>
                   </div>
                   <select id="travelSettingsTripSelect" aria-label="Switch current trip">
                     <option>Miami to Tokyo Adventure</option>
@@ -3365,6 +3478,8 @@
                 </label>
               </div>
               <div id="privateDriverList" class="private-driver-list" aria-label="Private driver companies"></div>
+              <p class="small provider-status" id="privateDriverLiveStatus">Search companies to include live destination-aware providers.</p>
+              <div id="privateDriverLiveList" class="private-driver-list private-driver-live-list" aria-label="Live private driver companies" hidden></div>
               <p class="small" id="privateDriverMessage">Private driver companies update based on the selected destination. Booking requires provider confirmation.</p>
             </section>
               </div>
@@ -3906,7 +4021,7 @@
                 <label>Full name<input id="profileFullNameInput" value="Jordan Smith"></label>
                 <label>Username<input id="profileUsernameInput" value="@jordansmith"></label>
                 <label>Display name<input value="Jordan"></label>
-                <label>Bio<textarea rows="3">Planning unforgettable trips, events, and shared memories with Travel-Drip.</textarea></label>
+                <label>Bio<textarea id="profileBioInput" rows="3">Planning unforgettable trips, events, and shared memories with Travel-Drip.</textarea></label>
               </article>
               <article>
                 <p class="eyebrow">Public Profile Details</p>
@@ -3922,6 +4037,10 @@
                 <label>Favorite destination<input value="Tokyo, Japan"></label>
                 <label>Fun travel fact<input value="I save the first sunset photo from every trip."></label>
               </article>
+              <div class="profile-details-actions">
+                <button class="primary-button" type="button" id="saveProfileDetailsButton">Save profile details</button>
+                <p class="small" id="profileDetailsMessage" role="status">Profile details are stored in your protected Supabase profile after you save.</p>
+              </div>
             </section>
             <section class="travel-badge-panel" aria-label="Travel badges">
               <div class="section-heading compact">

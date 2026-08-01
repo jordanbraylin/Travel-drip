@@ -15,6 +15,9 @@
       ]
     }
   ],
+  "crons": [
+    { "path": "/api/wallet-reminders", "schedule": "*/5 * * * *" }
+  ],
   "rewrites": [
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/register", "destination": "/index.html" },

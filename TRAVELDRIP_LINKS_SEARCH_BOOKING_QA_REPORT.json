@@ -1,22 +1,22 @@
 {
-  "generatedAt": "2026-07-30T18:08:17.476Z",
+  "generatedAt": "2026-08-01T14:28:17.669Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
   },
   "totals": {
-    "screenIds": 565,
-    "buttons": 785,
+    "screenIds": 611,
+    "buttons": 773,
     "hrefLinks": 15,
-    "dataTargets": 99,
+    "dataTargets": 100,
     "uniqueDataTargets": 17,
     "mainNavigationControls": 32,
     "mainNavigationItems": 10,
     "routeDefinitions": 19,
-    "dateInputs": 7,
-    "searchInputs": 10,
+    "dateInputs": 8,
+    "searchInputs": 11,
     "actionAttributeTypes": 83,
-    "apiRoutes": 15
+    "apiRoutes": 22
   },
   "linkAndRouteVerification": {
     "workingLocalTargets": 17,
@@ -278,6 +278,30 @@
       {
         "label": "Overview Memories collage stays contained",
         "status": "PASS"
+      },
+      {
+        "label": "Travel Home summary cards stay readable",
+        "status": "PASS"
+      },
+      {
+        "label": "My Profile widgets stay readable",
+        "status": "PASS"
+      },
+      {
+        "label": "Travel selected page panel removed",
+        "status": "PASS"
+      },
+      {
+        "label": "Travel Home avoids duplicate summaries",
+        "status": "PASS"
+      },
+      {
+        "label": "Travel uses one canonical navigation",
+        "status": "PASS"
+      },
+      {
+        "label": "Travel duplicate widgets are consolidated",
+        "status": "PASS"
       }
     ],
     "issues": [],
@@ -379,6 +403,12 @@
         "hasDefaultValue": true
       },
       {
+        "id": "paymentRequestDueAt",
+        "type": "datetime-local",
+        "referencedInApp": true,
+        "hasDefaultValue": false
+      },
+      {
         "id": "flightDepartureDateInput",
         "type": "date",
         "referencedInApp": true,
@@ -414,6 +444,11 @@
     "fields": [
       {
         "id": "globalSearchInput",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "aiPlannerResearchInput",
         "referencedInApp": true,
         "hasLabelOrPlaceholder": true
       },
@@ -490,8 +525,10 @@
       }
     ],
     "apiRoutes": [
+      "_push-notifications.js",
       "_security.js",
       "admin-status.js",
+      "ai-planner.js",
       "audit.js",
       "config.js",
       "events.js",
@@ -501,10 +538,15 @@
       "health.js",
       "invitations.js",
       "notify.js",
+      "ownership-transfer.js",
       "rsvp.js",
       "schedule.js",
+      "stripe-webhook.js",
       "subscribe.js",
-      "trips.js"
+      "travel-search.js",
+      "trips.js",
+      "wallet-reminders.js",
+      "wallet.js"
     ]
   },
   "productionTesting": {

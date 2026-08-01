@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: travel-drip-beta
+    runtime: static
+    buildCommand: npm run build:render
+    staticPublishPath: .
+    autoDeployTrigger: checksPass
+    previews:
+      generation: automatic
+    envVars:
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(self), microphone=(), geolocation=(self)
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

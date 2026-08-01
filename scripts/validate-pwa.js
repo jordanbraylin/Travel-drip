@@ -12,6 +12,10 @@ const html = read("index.html");
 const offline = read("offline.html");
 const envExample = read(".env.example");
 const vercel = JSON.parse(read("vercel.json"));
+const render = read("render.yaml");
+const betaMigration = read("supabase-beta.sql");
+const ownershipMigration = read("supabase-ownership-transfer.sql");
+const walletNotificationsMigration = read("supabase-wallet-notifications.sql");
 
 if (manifest.name !== "Travel-Drip") fail("manifest name must be Travel-Drip");
 if (manifest.short_name !== "Travel-Drip") fail("manifest short_name must be Travel-Drip");
@@ -52,13 +56,52 @@ for (const name of [
   "SUPABASE_ADMIN_EMAILS",
   "GUEST_ACCESS_PEPPER",
   "VAPID_PUBLIC_KEY",
-  "VAPID_PRIVATE_KEY"
+  "VAPID_PRIVATE_KEY",
+  "CRON_SECRET"
 ]) {
   if (!envExample.includes(`${name}=`)) fail(`.env.example missing ${name}`);
 }
 
 if (!vercel.rewrites?.some((rewrite) => rewrite.source === "/offline" && rewrite.destination === "/offline.html")) {
   fail("vercel.json missing /offline rewrite");
+}
+if (!vercel.crons?.some((cron) => cron.path === "/api/wallet-reminders")) {
+  fail("vercel.json missing wallet reminder cron");
+}
+
+for (const required of ["runtime: static", "staticPublishPath: .", "NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"]) {
+  if (!render.includes(required)) fail(`render.yaml missing ${required}`);
+}
+
+for (const legalPage of ["privacy.html", "terms.html"]) {
+  if (!fs.existsSync(legalPage)) fail(`missing public legal page ${legalPage}`);
+}
+
+for (const required of [
+  "create table if not exists public.trusted_contacts",
+  "enable row level security",
+  "Users read their own trusted contacts",
+  "Users create their own trusted contacts",
+  "on_auth_user_created_profile"
+]) {
+  if (!betaMigration.includes(required)) fail(`supabase-beta.sql missing ${required}`);
+}
+
+for (const required of [
+  "transfer_trip_or_event_ownership",
+  "revoke all on function public.transfer_trip_or_event_ownership",
+  "grant execute on function public.transfer_trip_or_event_ownership(uuid, uuid, uuid, boolean) to service_role"
+]) {
+  if (!ownershipMigration.includes(required)) fail(`supabase-ownership-transfer.sql missing ${required}`);
+}
+
+for (const required of [
+  "create table if not exists public.trip_wallet_payment_requests",
+  "notify_due_trip_wallet_payments",
+  "wallet_deposit_confirmed",
+  "grant execute on function public.notify_due_trip_wallet_payments() to service_role"
+]) {
+  if (!walletNotificationsMigration.includes(required)) fail(`supabase-wallet-notifications.sql missing ${required}`);
 }
 
 console.log("Travel-Drip PWA validation passed.");

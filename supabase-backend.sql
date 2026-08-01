@@ -19,6 +19,8 @@ create table if not exists public.profiles (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   full_name text,
+  username text,
+  bio text,
   avatar_url text,
   phone text,
   locale text not null default 'en-US',
@@ -26,10 +28,81 @@ create table if not exists public.profiles (
   notification_preferences jsonb not null default '{"push":true,"email":true,"sms":false,"in_app":true}'::jsonb
 );
 
+alter table public.profiles add column if not exists username text;
+alter table public.profiles add column if not exists bio text;
+
 drop trigger if exists set_profiles_updated_at on public.profiles;
 create trigger set_profiles_updated_at
 before update on public.profiles
 for each row execute function public.set_updated_at();
+
+create or replace function public.handle_new_user_profile()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.profiles (id, full_name, username)
+  values (
+    new.id,
+    nullif(new.raw_user_meta_data ->> 'full_name', ''),
+    nullif(new.raw_user_meta_data ->> 'username', '')
+  )
+  on conflict (id) do update
+    set full_name = coalesce(excluded.full_name, public.profiles.full_name),
+        username = coalesce(excluded.username, public.profiles.username),
+        updated_at = now();
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created_profile on auth.users;
+create trigger on_auth_user_created_profile
+after insert on auth.users
+for each row execute function public.handle_new_user_profile();
+
+create table if not exists public.trusted_contacts (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  name text not null check (char_length(trim(name)) between 1 and 120),
+  relationship text not null check (char_length(trim(relationship)) between 1 and 80),
+  phone text not null check (char_length(trim(phone)) between 3 and 40),
+  email text check (email is null or char_length(trim(email)) <= 254),
+  is_primary boolean not null default false,
+  metadata jsonb not null default '{}'::jsonb
+);
+
+drop trigger if exists set_trusted_contacts_updated_at on public.trusted_contacts;
+create trigger set_trusted_contacts_updated_at
+before update on public.trusted_contacts
+for each row execute function public.set_updated_at();
+
+create index if not exists idx_trusted_contacts_user on public.trusted_contacts(user_id, is_primary desc, created_at);
+
+alter table public.trusted_contacts enable row level security;
+revoke all on public.trusted_contacts from anon;
+grant select, insert, update, delete on public.trusted_contacts to authenticated;
+
+drop policy if exists "Users read their own trusted contacts" on public.trusted_contacts;
+create policy "Users read their own trusted contacts" on public.trusted_contacts
+  for select to authenticated using ((select auth.uid()) = user_id);
+
+drop policy if exists "Users create their own trusted contacts" on public.trusted_contacts;
+create policy "Users create their own trusted contacts" on public.trusted_contacts
+  for insert to authenticated with check ((select auth.uid()) = user_id);
+
+drop policy if exists "Users update their own trusted contacts" on public.trusted_contacts;
+create policy "Users update their own trusted contacts" on public.trusted_contacts
+  for update to authenticated
+  using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
+
+drop policy if exists "Users delete their own trusted contacts" on public.trusted_contacts;
+create policy "Users delete their own trusted contacts" on public.trusted_contacts
+  for delete to authenticated using ((select auth.uid()) = user_id);
 
 create table if not exists public.organizations (
   id uuid primary key default gen_random_uuid(),
@@ -450,6 +523,106 @@ create table if not exists public.wallet_transactions (
   requires_pin boolean not null default false,
   metadata jsonb not null default '{}'::jsonb
 );
+
+-- Stripe webhooks call this idempotent function after a hosted Checkout Session is paid.
+-- The function is intentionally unavailable to browser roles; only the server service role may execute it.
+create or replace function public.complete_trip_wallet_contribution(
+  p_contribution_id uuid,
+  p_trip_id uuid,
+  p_amount_cents bigint,
+  p_provider_ref text
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  contribution_record public.trip_wallet_contributions%rowtype;
+  wallet_record public.trip_virtual_wallets%rowtype;
+begin
+  select *
+    into contribution_record
+    from public.trip_wallet_contributions
+   where id = p_contribution_id
+   for update;
+
+  if contribution_record.id is null then
+    raise exception 'Wallet contribution was not found';
+  end if;
+
+  if contribution_record.trip_id <> p_trip_id
+     or contribution_record.amount_cents <> p_amount_cents then
+    raise exception 'Wallet contribution metadata does not match';
+  end if;
+
+  if contribution_record.status = 'completed' then
+    return;
+  end if;
+
+  if contribution_record.status not in ('pending', 'processing') then
+    raise exception 'Wallet contribution is not payable';
+  end if;
+
+  select *
+    into wallet_record
+    from public.trip_virtual_wallets
+   where id = contribution_record.trip_wallet_id
+     and trip_id = contribution_record.trip_id
+   for update;
+
+  if wallet_record.id is null or wallet_record.status <> 'active' then
+    raise exception 'Trip wallet is not active';
+  end if;
+
+  update public.trip_wallet_contributions
+     set status = 'completed',
+         refundable_cents = contribution_record.amount_cents,
+         metadata = coalesce(metadata, '{}'::jsonb) || jsonb_build_object(
+           'provider', 'stripe_checkout',
+           'provider_ref', p_provider_ref,
+           'completed_at', now()
+         )
+   where id = contribution_record.id;
+
+  update public.trip_virtual_wallets
+     set available_cents = available_cents + contribution_record.amount_cents,
+         total_contributions_cents = total_contributions_cents + contribution_record.amount_cents
+   where id = wallet_record.id;
+
+  insert into public.wallet_transactions (
+    trip_id,
+    wallet_id,
+    group_bank_id,
+    user_id,
+    transaction_type,
+    amount_cents,
+    refundable_cents,
+    status,
+    provider,
+    provider_ref,
+    requires_pin,
+    metadata
+  ) values (
+    contribution_record.trip_id,
+    null,
+    wallet_record.group_bank_id,
+    contribution_record.user_id,
+    'deposit',
+    contribution_record.amount_cents,
+    contribution_record.amount_cents,
+    'completed',
+    'stripe_checkout',
+    p_provider_ref,
+    true,
+    jsonb_build_object('contribution_id', contribution_record.id, 'source', 'trip_wallet_add_funds')
+  );
+
+end;
+$$;
+
+revoke execute on function public.complete_trip_wallet_contribution(uuid, uuid, bigint, text) from public, anon, authenticated;
+grant execute on function public.complete_trip_wallet_contribution(uuid, uuid, bigint, text) to service_role;
 
 create table if not exists public.receipts (
   id uuid primary key default gen_random_uuid(),
@@ -925,6 +1098,7 @@ create policy "Members read eligible trip wallets" on public.trip_virtual_wallet
     )
   );
 
+
 drop policy if exists "Members read eligible trip wallet cards" on public.trip_wallet_cards;
 create policy "Members read eligible trip wallet cards" on public.trip_wallet_cards
   for select to authenticated using (
@@ -939,6 +1113,7 @@ create policy "Members read eligible trip wallet cards" on public.trip_wallet_ca
     )
   );
 
+
 drop policy if exists "Users read own wallet contributions" on public.trip_wallet_contributions;
 create policy "Users read own wallet contributions" on public.trip_wallet_contributions
   for select to authenticated using (
@@ -951,6 +1126,11 @@ create policy "Members add own wallet contributions" on public.trip_wallet_contr
   for insert to authenticated with check (
     user_id = auth.uid()
     and public.is_trip_member(trip_id)
+    and exists (
+      select 1 from public.trips t
+      where t.id = trip_id
+        and t.trip_type not in ('corporate_retreat','business_event','conference')
+    )
   );
 
 drop policy if exists "Users read own transactions" on public.wallet_transactions;
