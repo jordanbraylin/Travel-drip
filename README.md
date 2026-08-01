@@ -6,6 +6,8 @@ Travel-Drip is a Vercel-ready PWA for travel planning with Supabase auth, realti
 
 The repository includes `render.yaml` for an installable static PWA beta. The Render static deployment supports the browser experience, Supabase Auth, and the protected trusted-contact flow. The existing `/api` functions are Vercel serverless functions; keep Vercel for those server-side notification/admin routes until they are ported to a Render web service.
 
+This is an open beta by default: anyone who can reach the Render URL can create an account while Supabase email/password sign-up is enabled. That is appropriate for private beta testing only when the URL is shared with your testers. If the beta must be invite-only, add an authenticated server-side invite check before launch; do not enforce it with a browser-only flag.
+
 1. In Render, create a Blueprint from the `jordanbraylin/Travel-drip` GitHub repository.
 2. Confirm the service root is the directory containing `render.yaml`, `package.json`, and `index.html` (the committed app root).
 3. Add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and the Stripe test publishable key as `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` to the Render service. The build creates `public-config.js` from these values; do not paste a service-role key or Stripe secret key into Render's public build variables or any browser file.
@@ -14,6 +16,14 @@ The repository includes `render.yaml` for an installable static PWA beta. The Re
 6. After the first deploy, install the beta from the browser and test sign-up, email verification, sign-in, profile save, trusted-contact create/remove, sign-out, and a fresh browser session.
 
 Render's static beta does not run the existing Vercel `/api` functions. Do not label push-admin, payment, guest-access, or other server-only workflows as live on Render until those endpoints are deployed to a compatible server runtime and their secrets are configured there.
+
+### Beta data protection
+
+- Passwords and sessions are handled by Supabase Auth. Travel-Drip does not write passwords to `profiles`, `trusted_contacts`, browser storage, or analytics.
+- Full name and username are submitted as Supabase Auth metadata, then copied into the user's own `profiles` row by a database trigger.
+- Trusted contacts are stored in `public.trusted_contacts`. Row-Level Security, owner checks, and `authenticated` grants limit reads and writes to the signed-in user's own rows.
+- The browser build contains only the Supabase project URL and publishable key. Never add `SUPABASE_SERVICE_ROLE_KEY`, `GUEST_ACCESS_PEPPER`, `VAPID_PRIVATE_KEY`, Stripe secrets, or provider API keys to Render's public build variables.
+- Corporate guest access fails closed unless `GUEST_ACCESS_PEPPER` is a server-only random value at least 32 characters long. It never falls back to a service-role key or a predictable development secret.
 
 Public store-readiness pages are available at `/privacy.html` and `/terms.html`. Review them with the final business/legal contact before using them in App Store or Google Play metadata.
 
@@ -44,6 +54,10 @@ Public store-readiness pages are available at `/privacy.html` and `/terms.html`.
    - `https://YOUR-VERCEL-DOMAIN.vercel.app/register`
 
 For local static preview login, paste only the browser-safe publishable key into `public-config.js`. Do not put service-role or private notification keys in that file.
+
+## Apple and Google store path
+
+The Render deployment is the beta PWA. Use it to validate authentication, data ownership, responsive UI, offline fallback, and install behavior before packaging for stores. For the store phase, keep the same HTTPS production origin and package the PWA with a supported native shell such as Capacitor for iOS/Android or a Trusted Web Activity for Android. Before submission, add native app identifiers, store-specific icons/splash assets, deep-link handling, account deletion, privacy/data-safety disclosures, permission rationale, crash reporting, and a production server runtime for every `/api` workflow. A static Render service alone is not sufficient for server-side payments, push administration, guest access, or private provider integrations.
 
 ## Live outside-source travel search
 

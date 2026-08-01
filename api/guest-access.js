@@ -16,7 +16,11 @@ const genericVerifyError = "We could not verify your access information. Check y
 const weakAccessCodes = new Set(["1234", "PASSWORD", "COMPANY", "TRAVEL", "RETREAT", "WELCOME", "EVENTCODE"]);
 
 function getPepper() {
-  return process.env.GUEST_ACCESS_PEPPER || process.env.SUPABASE_SERVICE_ROLE_KEY || "traveldrip-local-preview";
+  return String(process.env.GUEST_ACCESS_PEPPER || "").trim();
+}
+
+function isGuestAccessConfigured() {
+  return getPepper().length >= 32;
 }
 
 function normalizeSecret(value) {
@@ -808,6 +812,12 @@ export default async function handler(request, response) {
 
   if (!["GET", "POST", "PATCH", "DELETE"].includes(request.method)) {
     methodNotAllowed(response, "GET, POST, PATCH, DELETE");
+    return;
+  }
+
+  // Never hash guest credentials with a predictable fallback or a service-role key.
+  if (!isGuestAccessConfigured()) {
+    response.status(503).json({ error: "Corporate guest access is not configured on this deployment." });
     return;
   }
 

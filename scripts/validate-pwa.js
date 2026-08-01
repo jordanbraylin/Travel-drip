@@ -16,6 +16,7 @@ const render = read("render.yaml");
 const betaMigration = read("supabase-beta.sql");
 const ownershipMigration = read("supabase-ownership-transfer.sql");
 const walletNotificationsMigration = read("supabase-wallet-notifications.sql");
+const guestAccess = read("api/guest-access.js");
 
 if (manifest.name !== "Travel-Drip") fail("manifest name must be Travel-Drip");
 if (manifest.short_name !== "Travel-Drip") fail("manifest short_name must be Travel-Drip");
@@ -38,6 +39,13 @@ for (const [label, pattern] of [
   if (pattern.test(sw) || pattern.test(html) || pattern.test(offline)) {
     fail(`${label} appears to be committed in browser assets`);
   }
+}
+
+if (guestAccess.includes("traveldrip-local-preview") || guestAccess.includes("process.env.SUPABASE_SERVICE_ROLE_KEY")) {
+  fail("guest access must not use a predictable fallback or the service-role key as a hashing pepper");
+}
+if (!guestAccess.includes("getPepper().length >= 32") || !guestAccess.includes("status(503)")) {
+  fail("guest access must fail closed when GUEST_ACCESS_PEPPER is missing or too short");
 }
 
 for (const meta of [
