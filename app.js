@@ -80,7 +80,18 @@ const state = {
     exploreResults: [],
     travelResults: [],
     privateDriverResults: [],
-    aiResearch: null
+    aiResearch: null,
+    flight: null,
+    hotelResults: []
+  },
+  corporateOperations: {
+    loaded: false,
+    policy: null,
+    bookings: [],
+    approvals: [],
+    serviceCases: [],
+    readiness: null,
+    permissions: {}
   }
 };
 
@@ -558,7 +569,7 @@ const transportRecords = [
   }
 ];
 
-const livePlanDestinations = [
+const featuredLivePlanDestinations = [
   {
     id: "dubai-uae",
     location: "United Arab Emirates",
@@ -767,6 +778,153 @@ const livePlanDestinations = [
     adventures: ["Mount Batur sunrise", "Temple visit", "Surf lesson", "Ubud food walk"]
   }
 ].filter((destination) => destination.active && destination.featured)
+  .sort((a, b) => a.displayOrder - b.displayOrder);
+
+const additionalLivePlanDestinations = [
+  {
+    id: "london-england", location: "London, England", city: "London", region: "England", country: "United Kingdom",
+    title: "London culture weekend", description: "Markets, royal landmarks, theater nights, and neighborhood food stops connected by simple transit plans.",
+    photo: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=1600&auto=format&fit=crop", alt: "London skyline and historic architecture",
+    knownFor: "Royal landmarks, West End theater, museums, markets, parks, and distinct historic neighborhoods.",
+    funFact: "London has more than 170 museums, from major national collections to small specialist spaces.",
+    tip: "Group each day by neighborhood and use contactless payment for most public transit.", season: "April to June or September", greeting: "Hello", category: "Culture and city", exploreCategory: "trending",
+    adventures: ["West End show", "Borough Market lunch", "Thames walk", "Notting Hill morning"]
+  },
+  {
+    id: "rome-italy", location: "Rome, Italy", city: "Rome", region: "Lazio", country: "Italy",
+    title: "Rome history and food", description: "Ancient landmarks, piazza walks, pasta reservations, and timed museum entries in one relaxed itinerary.",
+    photo: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1600&auto=format&fit=crop", alt: "Historic Roman architecture at sunset",
+    knownFor: "Ancient ruins, Renaissance art, fountains, neighborhood trattorias, piazzas, and Vatican museums.",
+    funFact: "Rome surrounds Vatican City, the world's smallest independent state by area.",
+    tip: "Reserve major archaeological sites early and leave time for slower neighborhood walks.", season: "April to June or September to October", greeting: "Ciao", category: "History and food", exploreCategory: "food",
+    adventures: ["Colosseum morning", "Trastevere dinner", "Vatican museums", "Piazza gelato walk"]
+  },
+  {
+    id: "barcelona-spain", location: "Barcelona, Spain", city: "Barcelona", region: "Catalonia", country: "Spain",
+    title: "Barcelona art and coast", description: "Gaudi architecture, beach afternoons, tapas nights, and easy group routes through lively districts.",
+    photo: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?q=80&w=1600&auto=format&fit=crop", alt: "Barcelona city and colorful architecture",
+    knownFor: "Modernist architecture, Mediterranean beaches, tapas, football, markets, and energetic plazas.",
+    funFact: "Barcelona's Eixample district is recognized by its distinctive octagonal city blocks.",
+    tip: "Book popular Gaudi sites by time slot and plan dinner later than in many other cities.", season: "May to June or September to October", greeting: "Hola", category: "Art and beach", exploreCategory: "beaches",
+    adventures: ["Sagrada Familia", "Tapas crawl", "Gothic Quarter walk", "Barceloneta sunset"]
+  },
+  {
+    id: "lisbon-portugal", location: "Lisbon, Portugal", city: "Lisbon", region: "Lisbon", country: "Portugal",
+    title: "Lisbon hills and coast", description: "Tile-lined streets, lookout points, seafood dinners, and day-trip plans along the Atlantic coast.",
+    photo: "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?q=80&w=1600&auto=format&fit=crop", alt: "Lisbon rooftops and waterfront",
+    knownFor: "Historic trams, tiled facades, hilltop views, seafood, fado music, and nearby Atlantic beaches.",
+    funFact: "Lisbon is one of Western Europe's oldest capital cities.",
+    tip: "Wear shoes with good grip for the hills and reserve a full day for Sintra.", season: "March to June or September to October", greeting: "Ola", category: "Coastal city", exploreCategory: "hidden",
+    adventures: ["Alfama walk", "Sintra day trip", "Pastel tasting", "Sunset miradouro"]
+  },
+  {
+    id: "amsterdam-netherlands", location: "Amsterdam, Netherlands", city: "Amsterdam", region: "North Holland", country: "Netherlands",
+    title: "Amsterdam canal days", description: "Museum reservations, canal neighborhoods, bike-friendly routes, and cafe stops organized by district.",
+    photo: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?q=80&w=1600&auto=format&fit=crop", alt: "Amsterdam canal and narrow houses",
+    knownFor: "Canals, cycling, art museums, historic houses, flower markets, and compact walkable neighborhoods.",
+    funFact: "Amsterdam has more bicycles than residents.",
+    tip: "Stay out of marked bike lanes while walking and reserve major museums before arrival.", season: "April to May or September", greeting: "Hallo", category: "Canals and art", exploreCategory: "weekend",
+    adventures: ["Canal cruise", "Museum quarter", "Jordaan cafes", "Countryside bike ride"]
+  },
+  {
+    id: "marrakech-morocco", location: "Marrakech, Morocco", city: "Marrakech", region: "Marrakesh-Safi", country: "Morocco",
+    title: "Marrakech market escape", description: "Courtyard stays, market walks, garden mornings, and desert extensions with private-driver coordination.",
+    photo: "https://images.unsplash.com/photo-1597212618440-806262de4f6b?q=80&w=1600&auto=format&fit=crop", alt: "Marrakech courtyard and traditional architecture",
+    knownFor: "Medina markets, riads, gardens, Moroccan cuisine, artisan workshops, and Atlas Mountain day trips.",
+    funFact: "Marrakech is often called the Red City because of its rose-colored walls and buildings.",
+    tip: "Agree on taxi prices before departure and use a guide for the first medina visit.", season: "March to May or September to November", greeting: "Salam", category: "Markets and design", exploreCategory: "shopping",
+    adventures: ["Medina guide walk", "Riad cooking class", "Majorelle Garden", "Atlas day trip"]
+  },
+  {
+    id: "cape-town-south-africa", location: "Cape Town, South Africa", city: "Cape Town", region: "Western Cape", country: "South Africa",
+    title: "Cape Town coast and peaks", description: "Mountain views, coastal drives, food markets, and wine-country plans with weather-aware timing.",
+    photo: "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?q=80&w=1600&auto=format&fit=crop", alt: "Cape Town coastline below Table Mountain",
+    knownFor: "Table Mountain, dramatic coastline, vineyards, diverse food, wildlife, and scenic road trips.",
+    funFact: "Table Mountain supports one of the world's richest concentrations of plant species.",
+    tip: "Keep outdoor plans flexible because mountain wind and cloud can change quickly.", season: "November to March", greeting: "Howzit", category: "Mountains and coast", exploreCategory: "outdoor",
+    adventures: ["Table Mountain", "Cape Peninsula drive", "Winelands lunch", "Boulders Beach"]
+  },
+  {
+    id: "bangkok-thailand", location: "Bangkok, Thailand", city: "Bangkok", region: "Bangkok", country: "Thailand",
+    title: "Bangkok flavor tour", description: "Temple mornings, river rides, night markets, and quick food discoveries built around transit-friendly routes.",
+    photo: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=1600&auto=format&fit=crop", alt: "Bangkok skyline and temple roofs",
+    knownFor: "Street food, temples, river transport, night markets, rooftop views, and lively shopping districts.",
+    funFact: "Bangkok's ceremonial name is one of the longest place names in the world.",
+    tip: "Use rail and river boats during busy traffic periods and carry a light temple cover-up.", season: "November to February", greeting: "Sawasdee", category: "Food and energy", exploreCategory: "food",
+    adventures: ["Temple morning", "Night market dinner", "Canal boat ride", "Rooftop sunset"]
+  },
+  {
+    id: "singapore", location: "Singapore", city: "Singapore", region: "Central Region", country: "Singapore",
+    title: "Singapore food and gardens", description: "Hawker centers, waterfront architecture, garden nights, and seamless transit for a polished city break.",
+    photo: "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?q=80&w=1600&auto=format&fit=crop", alt: "Singapore skyline and waterfront",
+    knownFor: "Hawker food, modern architecture, tropical gardens, efficient transit, shopping, and multicultural districts.",
+    funFact: "Singapore is one of only a few modern city-states in the world.",
+    tip: "Use the MRT for most trips and visit outdoor gardens after the afternoon heat.", season: "February to April", greeting: "Hello", category: "Modern city", exploreCategory: "trending",
+    adventures: ["Hawker center crawl", "Gardens by the Bay", "Marina walk", "Sentosa afternoon"]
+  },
+  {
+    id: "seoul-south-korea", location: "Seoul, South Korea", city: "Seoul", region: "Seoul", country: "South Korea",
+    title: "Seoul style and food", description: "Palace mornings, design districts, barbecue dinners, and late-night neighborhoods connected by metro.",
+    photo: "https://images.unsplash.com/photo-1517154421773-0529f29ea451?q=80&w=1600&auto=format&fit=crop", alt: "Seoul skyline and traditional palace",
+    knownFor: "Palaces, Korean food, beauty and fashion, mountain trails, pop culture, and late-night neighborhoods.",
+    funFact: "Seoul is surrounded by mountains that are reachable from the city transit system.",
+    tip: "Save destinations in Korean for easier taxi directions and restaurant searches.", season: "April to May or September to October", greeting: "Annyeonghaseyo", category: "Style and culture", exploreCategory: "shopping",
+    adventures: ["Palace visit", "Korean barbecue", "Han River picnic", "Design district night"]
+  },
+  {
+    id: "sydney-australia", location: "Sydney, Australia", city: "Sydney", region: "New South Wales", country: "Australia",
+    title: "Sydney harbor week", description: "Harbor walks, beach mornings, neighborhood dining, and coastal day trips with weather previews.",
+    photo: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?q=80&w=1600&auto=format&fit=crop", alt: "Sydney Opera House and harbor",
+    knownFor: "Harbor landmarks, surf beaches, coastal walks, multicultural dining, and nearby national parks.",
+    funFact: "Sydney Harbour contains hundreds of kilometers of shoreline.",
+    tip: "Use ferries as both transportation and an easy way to see the harbor.", season: "September to November or March to May", greeting: "G'day", category: "Harbor and beach", exploreCategory: "beaches",
+    adventures: ["Harbor ferry", "Bondi coastal walk", "Opera House tour", "Blue Mountains day"]
+  },
+  {
+    id: "honolulu-hawaii", location: "Honolulu, Hawaii", city: "Honolulu", region: "Hawaii", country: "United States",
+    title: "Honolulu island days", description: "Beach mornings, scenic drives, local food stops, and respectful cultural experiences across Oahu.",
+    photo: "https://images.unsplash.com/photo-1507876466758-bc54f384809c?q=80&w=1600&auto=format&fit=crop", alt: "Honolulu beach and volcanic coastline",
+    knownFor: "Waikiki, volcanic landscapes, surf culture, local food, historic sites, and warm Pacific water.",
+    funFact: "Diamond Head is the remnant of a volcanic crater formed hundreds of thousands of years ago.",
+    tip: "Reserve popular hikes and cultural sites, and avoid leaving valuables in parked cars.", season: "April to June or September to December", greeting: "Aloha", category: "Island adventure", exploreCategory: "beaches",
+    adventures: ["Waikiki sunrise", "Diamond Head", "North Shore drive", "Local plate lunch"]
+  },
+  {
+    id: "cancun-mexico", location: "Cancun, Mexico", city: "Cancun", region: "Quintana Roo", country: "Mexico",
+    title: "Cancun coast getaway", description: "Caribbean water, cenote outings, resort days, and archaeological trips with clear transfer plans.",
+    photo: "https://images.unsplash.com/photo-1510097467424-192d713fd8b2?q=80&w=1600&auto=format&fit=crop", alt: "Cancun turquoise shoreline",
+    knownFor: "Caribbean beaches, resorts, cenotes, Mayan heritage, snorkeling, and regional Yucatan cuisine.",
+    funFact: "The Cancun coastline borders the Mesoamerican Barrier Reef system.",
+    tip: "Confirm pickup zones for excursions and keep reef-safe sunscreen in your day bag.", season: "December to April", greeting: "Bienvenidos", category: "Caribbean escape", exploreCategory: "beaches",
+    adventures: ["Cenote swim", "Reef snorkel", "Mayan ruins", "Isla Mujeres day"]
+  },
+  {
+    id: "new-orleans-louisiana", location: "New Orleans, Louisiana", city: "New Orleans", region: "Louisiana", country: "United States",
+    title: "New Orleans music weekend", description: "Live music, Creole food, neighborhood walks, and festival-ready group planning.",
+    photo: "https://images.unsplash.com/photo-1515963665762-77ef90e624fa?q=80&w=1600&auto=format&fit=crop", alt: "Historic New Orleans street and balconies",
+    knownFor: "Jazz, Creole and Cajun food, festivals, historic neighborhoods, streetcars, and distinctive architecture.",
+    funFact: "New Orleans is widely recognized as a birthplace of jazz.",
+    tip: "Check festival calendars early and use marked ride-share pickup points after busy events.", season: "February to May or October to November", greeting: "Welcome, y'all", category: "Music and food", exploreCategory: "nightlife",
+    adventures: ["Frenchmen Street", "Creole dinner", "Garden District", "Steamboat evening"]
+  },
+  {
+    id: "nashville-tennessee", location: "Nashville, Tennessee", city: "Nashville", region: "Tennessee", country: "United States",
+    title: "Nashville music escape", description: "Songwriter rooms, Southern food, neighborhood stops, and shared rides for a lively group weekend.",
+    photo: "https://images.unsplash.com/photo-1545419913-775e6e82e14a?q=80&w=1600&auto=format&fit=crop", alt: "Nashville skyline and music district",
+    knownFor: "Live music, songwriter venues, hot chicken, country music history, murals, and energetic nightlife.",
+    funFact: "Nashville is home to one of the world's longest-running live radio broadcasts.",
+    tip: "Reserve major music venues and keep neighborhood transfers together for groups.", season: "April to May or September to October", greeting: "Hey y'all", category: "Music city", exploreCategory: "nightlife",
+    adventures: ["Songwriter show", "Hot chicken lunch", "Music museum", "East Nashville murals"]
+  }
+].map((destination, index) => ({
+  ...destination,
+  active: true,
+  featured: false,
+  displayOrder: featuredLivePlanDestinations.length + index + 1,
+  reviewed: "August 2026"
+}));
+
+const livePlanDestinations = [...featuredLivePlanDestinations, ...additionalLivePlanDestinations]
   .sort((a, b) => a.displayOrder - b.displayOrder);
 
 const tripTypeConfigs = {
@@ -1333,8 +1491,9 @@ function startLivePlanRotation() {
 
   const chooser = $("#destinationChooser");
   if (chooser) {
+    chooser.setAttribute("aria-label", `Choose from all ${livePlanDestinations.length} Travel-Drip destinations`);
     chooser.innerHTML = livePlanDestinations.map((destination, index) => `
-      <button type="button" data-destination-index="${index}" aria-pressed="false">${escapeHtml(destination.city)}</button>
+      <button type="button" data-destination-index="${index}" aria-pressed="false" title="${escapeHtml(destination.location)}">${escapeHtml(destination.city)}</button>
     `).join("");
   }
   if (dots) {
@@ -1451,6 +1610,7 @@ function getGlobalDestinationContext(target = getTargetFromRoute()) {
     groupBank: { label: "Shared-trip inspiration", action: "Add to Trip", actionType: "activities" },
     splitBill: { label: "Food destination", action: "View Restaurants", actionType: "restaurants" },
     rideShareHub: { label: "Easy transportation city", action: "View Transport", actionType: "activities" },
+  transportationPanel: { label: "Transportation overview", action: "View Transport", actionType: "activities" },
     cruisePanel: { label: "Cruise port idea", action: "View Cruise Ideas", actionType: "destinations" },
     itineraryAlerts: { label: "Itinerary inspiration", action: "View Activities", actionType: "activities" },
     importantInfo: { label: "Travel-ready destination", action: "View Details", actionType: "destinations" },
@@ -1629,6 +1789,8 @@ function getEventSpecificDetails() {
   return Object.fromEntries($$("[data-event-specific-key]").map((input) => [input.dataset.eventSpecificKey, input.value.trim()]));
 }
 
+const transportationTravelSections = new Set(["flights", "trains", "buses", "cruises", "ferries", "rideShare", "transfers", "publicTransit", "routeComparison", "boarding", "tickets", "smartRoute"]);
+
 const travelTileDestinations = {
   overview: {
     title: "Travel Home",
@@ -1743,9 +1905,7 @@ const travelTileDestinations = {
 };
 
 const travelSearchTargets = [
-  ["boarding", ["boarding", "pass", "ticket", "qr", "barcode", "seat", "gate", "dl 241"]],
-  ["rideShare", ["uber", "lyft", "careem", "grab", "didi", "ola", "ride", "taxi", "driver"]],
-  ["flights", ["flight", "airline", "delta", "airport", "confirmation", "mia", "hnd"]],
+  ["transportationPanel", ["boarding", "pass", "ticket", "qr", "barcode", "seat", "gate", "dl 241", "flight", "airline", "delta", "airport", "train", "rail", "platform", "bus", "shuttle", "cruise", "ship", "cabin", "port", "uber", "lyft", "careem", "grab", "didi", "ola", "ride", "taxi", "driver", "transfer", "transport", "route", "fare"]],
   ["hotels", ["hotel", "stay", "reservation", "room", "check-in", "tokyo station"]],
   ["weather", ["weather", "rain", "forecast", "temperature", "uv", "wind"]],
   ["documents", ["document", "passport", "insurance", "visa", "receipt"]],
@@ -1753,20 +1913,17 @@ const travelSearchTargets = [
   ["itinerary", ["itinerary", "schedule", "reservation", "daily"]],
   ["smartRoute", ["smart route", "traffic", "leave", "route"]],
   ["yourTrips", ["trip", "archive", "current trip"]],
-  ["trains", ["train", "rail", "platform", "station"]],
-  ["buses", ["bus", "shuttle"]],
-  ["cruises", ["cruise", "ship", "cabin", "port"]],
   ["missing", ["missing", "needed", "todo"]],
   ["alerts", ["alert", "notification", "reminder"]]
 ];
 
 const travelSmartSearchRecords = [
-  { group: "Flights", section: "flights", icon: "✈️", title: "DL 241 Miami to Tokyo", meta: "MIA to HND • Jul 18 • 8:45 AM", status: "Confirmed" },
-  { group: "Flights", section: "boarding", icon: "🎫", title: "Boarding pass for Jordan Smith", meta: "Gate B18 • Seat 14A • Boarding 7:55 AM", status: "Checked In" },
+  { group: "Transportation", section: "transportationPanel", icon: "✈️", title: "DL 241 Miami to Tokyo", meta: "MIA to HND • Jul 18 • 8:45 AM", status: "Confirmed" },
+  { group: "Transportation", section: "transportationPanel", icon: "🎫", title: "Boarding pass for Jordan Smith", meta: "Gate B18 • Seat 14A • Boarding 7:55 AM", status: "Checked In" },
   { group: "Hotels", section: "hotels", icon: "🏨", title: "Tokyo Station Hotel", meta: "Aug 8 - Aug 13 • Queen Room", status: "Saved" },
   { group: "Trips", section: "overview", icon: "🌍", title: "Miami to Tokyo Adventure", meta: "Tokyo, Japan • 4 travelers • 84% ready", status: "Active" },
-  { group: "Boarding Passes", section: "boarding", icon: "▦", title: "Travel-Drip digital boarding pass", meta: "QR code, barcode, gate, seat, group, and status", status: "Ready" },
-  { group: "Ride Share", section: "rideShare", icon: "🚘", title: "Airport pickup to Tokyo Station Hotel", meta: "Driver assigned • 42 minute estimate", status: "Scheduled" },
+  { group: "Transportation", section: "transportationPanel", icon: "▦", title: "Travel-Drip digital boarding pass", meta: "QR code, barcode, gate, seat, group, and status", status: "Ready" },
+  { group: "Transportation", section: "transportationPanel", icon: "🚘", title: "Airport pickup to Tokyo Station Hotel", meta: "Driver assigned • 42 minute estimate", status: "Scheduled" },
   { group: "Restaurants", section: "itinerary", icon: "🍽️", title: "Ocean Rooftop Sushi", meta: "Reservation • Smart bill split available", status: "Confirmed" },
   { group: "Activities", section: "itinerary", icon: "🎟️", title: "Catamaran cruise and winery tour", meta: "Marina Dock B • smart route ready", status: "Booked" },
   { group: "Travel Documents", section: "documents", icon: "📄", title: "Passport, insurance, and confirmations", meta: "12 saved files • 1 missing item", status: "Action needed" },
@@ -1790,7 +1947,20 @@ function getTravelSmartSearchMatches(query = "") {
 function renderTravelSmartSearchResults(query = "") {
   const results = $("#travelSmartResults");
   if (!results) return;
-  const groups = getTravelSmartSearchMatches(query);
+  const normalizedQuery = query.trim();
+  if (!normalizedQuery) {
+    results.innerHTML = `
+      <div class="travel-search-start" role="status">
+        <span class="travel-search-start__icon" aria-hidden="true">✦</span>
+        <div>
+          <strong>Search one travel need at a time</strong>
+          <span>Find a restaurant, activity, hotel, document, map, or transportation detail for the selected trip.</span>
+        </div>
+      </div>
+    `;
+    return;
+  }
+  const groups = getTravelSmartSearchMatches(normalizedQuery);
   const entries = Object.entries(groups);
   if (!entries.length) {
     results.innerHTML = `
@@ -1847,6 +2017,14 @@ function renderTravelFocusRideProviders() {
 }
 
 function setTravelFocus(section = "overview", options = {}) {
+  if (transportationTravelSections.has(section)) {
+    navigateSafely("transportationPanel", { updateHistory: options.updateHistory !== false });
+    return {
+      title: "Transportation",
+      route: "/transportation",
+      summary: "Flights, rail, buses, cruises, boarding passes, transfers, routes, ride share, and fare tools live in one focused workspace."
+    };
+  }
   const target = travelTileDestinations[section] ? section : "overview";
   $$(".travel-focus-panel").forEach((panel) => {
     panel.classList.toggle("active", panel.dataset.travelPanel === target);
@@ -1951,6 +2129,216 @@ function validateStandaloneDateInputs() {
   if (flightDate) flightDate.setCustomValidity("");
 }
 
+const eventInviteTypeLabels = {
+  birthday: "Birthday",
+  wedding: "Wedding",
+  anniversary: "Anniversary",
+  family_reunion: "Family Reunion",
+  bachelor_bachelorette: "Bachelor or Bachelorette",
+  corporate_retreat: "Corporate Retreat",
+  conference: "Conference",
+  graduation_trip: "Graduation Trip",
+  church_retreat: "Church Retreat",
+  special_event: "Special Event"
+};
+
+const eventInviteToneCopy = {
+  warm: "warm and welcoming",
+  playful: "playful and energetic",
+  elegant: "polished and elegant",
+  professional: "clear and professional",
+  casual: "friendly and casual"
+};
+
+function getEventInviteContext() {
+  const eventType = $("#eventInviteEventType")?.value || $("#eventTypeInput")?.value || "special_event";
+  const startsOn = [$("#eventDateInput")?.value, $("#eventStartTimeInput")?.value].filter(Boolean).join("T");
+  const endsOn = [$("#eventDateInput")?.value, $("#eventEndTimeInput")?.value].filter(Boolean).join("T");
+  return {
+    eventType,
+    eventTypeLabel: eventInviteTypeLabels[eventType] || "Special Event",
+    title: $("#eventNameInput")?.value.trim() || `${eventInviteTypeLabels[eventType] || "Special Event"} celebration`,
+    destination: $("#eventAddressInput")?.value.trim() || "Destination details coming soon",
+    startsOn,
+    endsOn,
+    venue: $("#eventVenueInput")?.value.trim() || "Venue details coming soon",
+    address: $("#eventAddressInput")?.value.trim() || "",
+    audience: $("#eventInviteAudience")?.value.trim() || "friends and family",
+    tone: $("#eventInviteTone")?.value || "warm",
+    details: [$("#eventDescriptionInput")?.value.trim(), $("#eventInviteDetails")?.value.trim()].filter(Boolean).join(" ")
+  };
+}
+
+function formatEventInviteDate(value) {
+  if (!value) return "Date and time coming soon";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value.replace("T", " • ");
+  return date.toLocaleString([], { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+function createLocalInviteTemplate(context) {
+  const tone = eventInviteToneCopy[context.tone] || eventInviteToneCopy.warm;
+  const dateText = formatEventInviteDate(context.startsOn);
+  const location = [context.venue, context.address].filter(Boolean).join(" • ");
+  const detailText = context.details || `Bring your best energy and get ready for a ${tone} event.`;
+  const audienceText = context.audience || "your guests";
+  return {
+    subject: `${context.eventTypeLabel}: ${context.title}`,
+    headline: context.title,
+    body: `You're invited to a ${tone} ${context.eventTypeLabel.toLowerCase()} with ${audienceText}. ${detailText}`,
+    meta: [dateText, location].filter(Boolean).join(" • "),
+    rsvpLabel: "RSVP to join the celebration"
+  };
+}
+
+function renderEventInviteTemplate(template, sourceLabel = "Local event template preview") {
+  const source = $("#eventInviteSource");
+  const subject = $("#eventInviteSubject");
+  const headline = $("#eventInviteHeadline");
+  const body = $("#eventInviteBody");
+  const meta = $("#eventInviteMeta");
+  const rsvpLabel = $("#eventInviteRsvpLabel");
+  if (!template || !headline) return;
+  if (source) source.textContent = sourceLabel;
+  if (subject) subject.textContent = template.subject || "Event invitation";
+  headline.textContent = template.headline || "You're invited";
+  if (body) body.textContent = template.body || "Event details will be shared with your guests.";
+  if (meta) meta.textContent = template.meta || "Event details coming soon";
+  if (rsvpLabel) rsvpLabel.textContent = template.rsvpLabel || "RSVP to join the event";
+}
+
+function getEventInviteTemplateText() {
+  return [
+    $("#eventInviteSubject")?.textContent,
+    $("#eventInviteHeadline")?.textContent,
+    $("#eventInviteBody")?.textContent,
+    $("#eventInviteMeta")?.textContent,
+    $("#eventInviteRsvpLabel")?.textContent
+  ].filter(Boolean).join("\n\n");
+}
+
+function openEventInviteStudio() {
+  if ($("#eventsPanel")?.hidden) renderRoute("eventsPanel", { updateHistory: true });
+  const studio = $("#eventInviteStudio");
+  if (!studio) return;
+  $$('[data-event-dashboard-tab]').forEach((tab) => {
+    const active = tab.dataset.eventDashboardTab === "Invitations";
+    tab.classList.toggle("active", active);
+    tab.setAttribute("aria-selected", String(active));
+  });
+  studio.classList.add("is-focused");
+  window.requestAnimationFrame(() => studio.scrollIntoView({ behavior: "smooth", block: "start" }));
+  window.setTimeout(() => studio.classList.remove("is-focused"), 1200);
+}
+
+function setInviteEventTypeFromLabel(label) {
+  const value = String(label || "").toLowerCase();
+  const mapping = value.includes("wedding")
+    ? "wedding"
+    : value.includes("birthday")
+      ? "birthday"
+      : value.includes("anniversary")
+        ? "anniversary"
+        : value.includes("family")
+          ? "family_reunion"
+          : value.includes("corporate")
+            ? "corporate_retreat"
+            : value.includes("conference")
+              ? "conference"
+              : value.includes("graduation")
+                ? "graduation_trip"
+                : value.includes("church")
+                  ? "church_retreat"
+                  : value.includes("bachelor") || value.includes("bachelorette")
+                    ? "bachelor_bachelorette"
+                    : "special_event";
+  const selector = $("#eventInviteEventType");
+  if (selector) selector.value = value in eventInviteTypeLabels ? value : value.includes("corporate") ? "corporate_retreat" : value;
+  if (selector && !eventInviteTypeLabels[selector.value]) selector.value = mapping;
+}
+
+function syncEventInviteFromCard(button) {
+  setInviteEventTypeFromLabel(button?.dataset.eventCard || "Special Event");
+  const fields = {
+    eventNameInput: button?.dataset.eventName,
+    eventDateInput: button?.dataset.eventDate,
+    eventStartTimeInput: button?.dataset.eventStart,
+    eventVenueInput: button?.dataset.eventVenue,
+    eventInviteAudience: button?.dataset.eventAudience
+  };
+  Object.entries(fields).forEach(([id, value]) => {
+    const field = document.getElementById(id);
+    if (field && value) field.value = value;
+  });
+}
+
+async function generateEventInviteTemplate() {
+  const button = $("#eventInviteGenerateButton");
+  const status = $("#eventInviteStatus");
+  const context = getEventInviteContext();
+  if (button) button.disabled = true;
+  if (status) status.textContent = "Creating an event-specific invitation...";
+  const localTemplate = createLocalInviteTemplate(context);
+  try {
+    const response = await apiRequest("/api/ai-invitation", {
+      method: "POST",
+      body: JSON.stringify(context)
+    });
+    if (response.skipped) throw new Error("Live AI invitation writing requires a signed-in deployed app.");
+    renderEventInviteTemplate(response.template, response.sourceLabel || "AI invitation assistant");
+    if (status) status.textContent = "AI invitation ready. Review the wording before sharing with guests.";
+    addAuditEntry("AI event invitation generated", `${context.eventTypeLabel} template created for ${context.title}.`);
+    await saveSyncedEvent("event_invite_template_generated", { eventType: context.eventType, source: "openai", title: context.title });
+  } catch (_error) {
+    renderEventInviteTemplate(localTemplate);
+    if (status) status.textContent = "AI provider unavailable; local event template preview generated. Add OPENAI_API_KEY in Vercel for live AI writing.";
+    addAuditEntry("Local event invitation generated", `${context.eventTypeLabel} template preview created without claiming live AI.`);
+    await saveSyncedEvent("event_invite_template_generated", { eventType: context.eventType, source: "local", title: context.title });
+  } finally {
+    if (button) button.disabled = false;
+  }
+}
+
+async function copyEventInviteTemplate() {
+  const text = getEventInviteTemplateText();
+  const status = $("#eventInviteStatus");
+  try {
+    if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text);
+    else {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+    }
+    if (status) status.textContent = "Invite text copied. Paste it into your guest link, email, or connected sharing workflow.";
+    await saveSyncedEvent("event_invite_template_copied", { title: $("#eventInviteHeadline")?.textContent || "Event invitation" });
+  } catch (_error) {
+    if (status) status.textContent = "Copy is unavailable in this browser. Select the preview text and copy it manually.";
+  }
+}
+
+async function saveEventInviteDraft() {
+  const context = getEventInviteContext();
+  const draft = { context, template: {
+    subject: $("#eventInviteSubject")?.textContent || "",
+    headline: $("#eventInviteHeadline")?.textContent || "",
+    body: $("#eventInviteBody")?.textContent || "",
+    meta: $("#eventInviteMeta")?.textContent || "",
+    rsvpLabel: $("#eventInviteRsvpLabel")?.textContent || ""
+  }, savedAt: new Date().toISOString() };
+  state.eventInviteDraft = draft;
+  try { localStorage.setItem("traveldripEventInviteDraft", JSON.stringify(draft)); } catch (_error) { /* Storage may be unavailable in private browsing. */ }
+  const status = $("#eventInviteStatus");
+  if (status) status.textContent = "Invitation draft saved. It is ready to review before you send guest invitations.";
+  addAuditEntry("Event invitation draft saved", `${context.eventTypeLabel} invitation draft saved for ${context.title}.`);
+  await saveSyncedEvent("event_invite_draft_saved", { eventType: context.eventType, title: context.title, localDraft: true });
+}
+
 async function apiRequest(path, options = {}) {
   if (!state.session?.access_token || isFilePreview) return { skipped: true, reason: "No deployed authenticated API session" };
   const response = await fetch(path, {
@@ -1969,6 +2357,493 @@ async function apiRequest(path, options = {}) {
   }
   if (!response.ok) throw new Error(data.error || `Request failed with ${response.status}`);
   return data;
+}
+
+function getCorporateOperationsTripId() {
+  const verifiedEventId = state.corporateAccess.eventId || "";
+  return verifiedEventId && verifiedEventId !== "leadership-summit-preview"
+    ? verifiedEventId
+    : state.activeTripId || "";
+}
+
+function getCorporatePreviewOperations() {
+  return {
+    role: "employee",
+    permissions: { canManageBookings: false, canApprove: false, canManageService: false, canManagePolicy: false },
+    policy: {
+      name: "Global business travel",
+      status: "active",
+      currency: "USD",
+      flight_cap_cents: 150000,
+      hotel_nightly_cap_cents: 32500,
+      ground_transport_cap_cents: 18000,
+      receipt_threshold_cents: 5000
+    },
+    bookings: [
+      { id: "preview-flight", title: "Delta DL 241", traveler_name: "Jordan Smith", booking_type: "flight", starts_at: "2026-07-24T22:45:00Z", policy_status: "compliant", status: "confirmed", provider_reference: "TD9K42" },
+      { id: "preview-hotel", title: "Marina Grand Hotel", traveler_name: "Sarah Lee", booking_type: "hotel", starts_at: "2026-07-24T15:00:00Z", policy_status: "exception", status: "requested", provider_reference: null }
+    ],
+    approvals: [
+      { id: "preview-approval", booking_id: "preview-hotel", status: "pending", reason: "Nightly hotel rate exceeds policy", metadata: { travelerName: "Sarah Lee" } }
+    ],
+    serviceCases: [
+      { id: "preview-service", case_type: "change", priority: "normal", status: "open", subject: "Airport pickup time", sla_due_at: new Date(Date.now() + 20 * 60 * 60 * 1000).toISOString() }
+    ],
+    readiness: { totalTravelers: 4, coveredTravelers: 4, documentsComplete: 3, emergencyContactsVerified: 4, activeDisruptions: 0 }
+  };
+}
+
+function corporateMoney(cents, currency = "USD") {
+  return new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency: String(currency || "USD").toUpperCase(),
+    maximumFractionDigits: 0
+  }).format(Number(cents || 0) / 100);
+}
+
+function corporateBookingDate(value) {
+  if (!value) return "Date pending";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Date pending";
+  return date.toLocaleDateString([], { month: "short", day: "numeric" });
+}
+
+function makeCorporateBookingRow(booking) {
+  const row = document.createElement("div");
+  row.className = "corporate-booking-row";
+  row.dataset.bookingId = booking.id;
+
+  const summary = document.createElement("div");
+  const title = document.createElement("strong");
+  title.textContent = booking.title || `${booking.booking_type || "Travel"} booking`;
+  const meta = document.createElement("span");
+  meta.textContent = `${booking.traveler_name || "Assigned traveler"} · ${String(booking.booking_type || "booking").replaceAll("_", " ")} · ${corporateBookingDate(booking.starts_at)}`;
+  summary.append(title, meta);
+
+  const status = document.createElement("div");
+  const policy = document.createElement("span");
+  policy.className = `corporate-policy-result ${booking.policy_status === "compliant" ? "is-compliant" : "is-review"}`;
+  policy.textContent = booking.policy_status === "compliant" ? "In policy" : booking.policy_status || "Review";
+  const bookingStatus = document.createElement("strong");
+  bookingStatus.textContent = String(booking.status || "requested").replaceAll("_", " ");
+  status.append(policy, bookingStatus);
+
+  const actions = document.createElement("div");
+  actions.className = "corporate-booking-row__actions";
+  const reference = document.createElement("input");
+  reference.type = "text";
+  reference.value = booking.provider_reference || "";
+  reference.placeholder = "Provider reference";
+  reference.setAttribute("aria-label", `Provider reference for ${title.textContent}`);
+  reference.dataset.corporateProviderReference = "";
+  const actionSelect = document.createElement("select");
+  actionSelect.setAttribute("aria-label", `Update ${title.textContent}`);
+  actionSelect.dataset.corporateBookingStatus = "";
+  [
+    ["view", "View details"],
+    ["confirm", "Confirm"],
+    ["ticket", "Mark ticketed"],
+    ["start", "Mark in progress"],
+    ["complete", "Complete"],
+    ["cancel", "Cancel"],
+    ["refund", "Mark refunded"]
+  ].forEach(([value, label]) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = label;
+    actionSelect.append(option);
+  });
+  const action = document.createElement("button");
+  action.type = "button";
+  action.dataset.corporateBookingAction = "apply";
+  action.textContent = "Apply";
+  actions.append(reference, actionSelect, action);
+  row.append(summary, status, actions);
+  return row;
+}
+
+function makeCorporateApprovalRow(approval, booking) {
+  const row = document.createElement("div");
+  row.className = "corporate-approval-row";
+  row.dataset.approvalBookingId = approval.booking_id;
+  const summary = document.createElement("div");
+  const title = document.createElement("strong");
+  title.textContent = booking?.title || "Policy exception";
+  const meta = document.createElement("span");
+  meta.textContent = `${approval.reason || "Finance review required"}${booking?.traveler_name ? ` · ${booking.traveler_name}` : ""}`;
+  summary.append(title, meta);
+  const actions = document.createElement("div");
+  actions.className = "corporate-approval-actions";
+  ["reject", "approve"].forEach((decision) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.corporateApproval = decision;
+    button.textContent = decision === "approve" ? "Approve" : "Reject";
+    if (decision === "approve") button.className = "primary-button";
+    actions.append(button);
+  });
+  row.append(summary, actions);
+  return row;
+}
+
+function updateCorporateOperationsPermissions() {
+  const role = $("#rolePreview")?.value || state.corporateAccess.role || "employee";
+  const previewPermissions = {
+    canManageBookings: ["owner", "executive", "travel", "organizer"].includes(role),
+    canApprove: ["owner", "executive", "finance"].includes(role),
+    canManageService: ["owner", "executive", "travel", "organizer", "manager"].includes(role),
+    canManagePolicy: ["owner", "executive", "finance"].includes(role)
+  };
+  const permissions = isFilePreview ? previewPermissions : (state.corporateOperations.permissions || previewPermissions);
+  const canManage = Boolean(permissions.canManageBookings);
+  const canApprove = Boolean(permissions.canApprove);
+  const canManageService = Boolean(permissions.canManageService);
+  $$('[data-corporate-manager-only]').forEach((item) => item.toggleAttribute("hidden", !canManage));
+  $$('[data-corporate-policy-admin-only]').forEach((item) => item.toggleAttribute("hidden", !permissions.canManagePolicy));
+  $$("[data-corporate-booking-status], [data-corporate-provider-reference], [data-corporate-booking-action]").forEach((control) => {
+    control.disabled = !canManage;
+  });
+  $$("[data-corporate-approval]").forEach((button) => {
+    button.disabled = !canApprove;
+    button.title = canApprove ? "Record approval decision" : "Finance or executive approval required";
+  });
+  $$("[data-corporate-service-action]").forEach((button) => {
+    button.disabled = !canManageService;
+    button.title = canManageService ? "Resolve traveler-care case" : "Travel desk access required";
+  });
+}
+
+function renderCorporateOperations(data = state.corporateOperations) {
+  if (!$("#corporateBookingList")) return;
+  state.corporateOperations = { ...state.corporateOperations, ...data, loaded: true };
+  const policy = state.corporateOperations.policy;
+  const bookings = state.corporateOperations.bookings || [];
+  const approvals = (state.corporateOperations.approvals || []).filter((approval) => approval.status === "pending");
+  const serviceCases = (state.corporateOperations.serviceCases || []).filter((serviceCase) => !["resolved", "closed"].includes(serviceCase.status));
+  const readiness = state.corporateOperations.readiness || {};
+  const currency = policy?.currency || "USD";
+
+  if ($("#corporateOperationsConnection")) {
+    $("#corporateOperationsConnection").textContent = isFilePreview ? "Secure preview" : "Supabase connected";
+  }
+  if ($("#corporateTravelerCount")) $("#corporateTravelerCount").textContent = String(readiness.totalTravelers ?? 0);
+  if ($("#corporateBookingCount")) $("#corporateBookingCount").textContent = String(bookings.filter((booking) => booking.provider_reference).length);
+  if ($("#corporateApprovalCount")) $("#corporateApprovalCount").textContent = String(approvals.length);
+  if ($("#corporateServiceCount")) $("#corporateServiceCount").textContent = String(serviceCases.length);
+  if ($("#corporateReadinessCoverage")) $("#corporateReadinessCoverage").textContent = readiness.totalTravelers == null ? "Not reported" : `${readiness.coveredTravelers || 0} / ${readiness.totalTravelers} covered`;
+  if ($("#corporateReadinessDocuments")) $("#corporateReadinessDocuments").textContent = readiness.totalTravelers == null ? "Not reported" : `${readiness.documentsComplete || 0} / ${readiness.totalTravelers} complete`;
+  if ($("#corporateReadinessEmergency")) $("#corporateReadinessEmergency").textContent = readiness.totalTravelers == null ? "Not reported" : `${readiness.emergencyContactsVerified || 0} / ${readiness.totalTravelers} verified`;
+  if ($("#corporateReadinessDisruptions")) $("#corporateReadinessDisruptions").textContent = `${readiness.activeDisruptions || 0} active`;
+  if ($("#corporateBookingQueueStatus")) $("#corporateBookingQueueStatus").textContent = `${bookings.length} active`;
+  if ($("#corporatePolicyName")) $("#corporatePolicyName").textContent = policy?.name || "Policy assignment required";
+  if ($("#corporatePolicyStatus")) $("#corporatePolicyStatus").textContent = policy?.status === "active" ? "Active" : "Review";
+  if ($("#corporatePolicyFlightCap")) $("#corporatePolicyFlightCap").textContent = corporateMoney(policy?.flight_cap_cents, currency);
+  if ($("#corporatePolicyHotelCap")) $("#corporatePolicyHotelCap").textContent = corporateMoney(policy?.hotel_nightly_cap_cents, currency);
+  if ($("#corporatePolicyTransportCap")) $("#corporatePolicyTransportCap").textContent = corporateMoney(policy?.ground_transport_cap_cents, currency);
+  if ($("#corporatePolicyReceiptThreshold")) $("#corporatePolicyReceiptThreshold").textContent = `Over ${corporateMoney(policy?.receipt_threshold_cents, currency)}`;
+  if ($("#corporatePolicyCabinNote")) $("#corporatePolicyCabinNote").textContent = `${String(policy?.flight_cabin || "economy").replaceAll("_", " ")} cabin maximum`;
+  if ($("#corporatePolicySupplierNote")) $("#corporatePolicySupplierNote").textContent = policy?.allowed_airlines?.length ? `${policy.allowed_airlines.length} preferred airline${policy.allowed_airlines.length === 1 ? "" : "s"}` : "No supplier restriction";
+  if ($("#corporatePolicyExceptionNote")) $("#corporatePolicyExceptionNote").textContent = policy?.rules?.blockUnapprovedProviders ? "Non-preferred suppliers blocked" : "Exceptions require finance approval";
+  if (policy) {
+    if ($("#corporatePolicyNameInput")) $("#corporatePolicyNameInput").value = policy.name || "Corporate travel policy";
+    if ($("#corporatePolicyCabinInput")) $("#corporatePolicyCabinInput").value = policy.flight_cabin || "economy";
+    if ($("#corporatePolicyFlightInput")) $("#corporatePolicyFlightInput").value = Number(policy.flight_cap_cents || 0) / 100;
+    if ($("#corporatePolicyHotelInput")) $("#corporatePolicyHotelInput").value = Number(policy.hotel_nightly_cap_cents || 0) / 100;
+    if ($("#corporatePolicyTransportInput")) $("#corporatePolicyTransportInput").value = Number(policy.ground_transport_cap_cents || 0) / 100;
+    if ($("#corporatePolicyReceiptInput")) $("#corporatePolicyReceiptInput").value = Number(policy.receipt_threshold_cents || 0) / 100;
+    if ($("#corporatePolicyAirlinesInput")) $("#corporatePolicyAirlinesInput").value = (policy.allowed_airlines || []).join(", ");
+    if ($("#corporatePolicyBlockProvidersInput")) $("#corporatePolicyBlockProvidersInput").checked = Boolean(policy.rules?.blockUnapprovedProviders);
+  }
+
+  const bookingList = $("#corporateBookingList");
+  bookingList.replaceChildren();
+  if (bookings.length) bookings.slice(0, 8).forEach((booking) => bookingList.append(makeCorporateBookingRow(booking)));
+  else {
+    const empty = document.createElement("p");
+    empty.className = "small";
+    empty.textContent = "No corporate bookings yet. A travel administrator can create the first request.";
+    bookingList.append(empty);
+  }
+
+  const approvalList = $("#corporateApprovalList");
+  approvalList.replaceChildren();
+  if (approvals.length) approvals.slice(0, 6).forEach((approval) => approvalList.append(makeCorporateApprovalRow(approval, bookings.find((booking) => booking.id === approval.booking_id))));
+  else {
+    const empty = document.createElement("p");
+    empty.className = "small";
+    empty.textContent = "No policy exceptions are waiting for approval.";
+    approvalList.append(empty);
+  }
+
+  const serviceList = $("#corporateServiceList");
+  serviceList.replaceChildren();
+  if (serviceCases.length) {
+    serviceCases.slice(0, 4).forEach((serviceCase) => {
+      const row = document.createElement("div");
+      row.className = "corporate-service-row";
+      row.dataset.corporateServiceCaseId = serviceCase.id;
+      const summary = document.createElement("div");
+      const title = document.createElement("strong");
+      title.textContent = serviceCase.subject || "Traveler-care case";
+      const meta = document.createElement("span");
+      meta.textContent = `${serviceCase.priority || "normal"} · ${String(serviceCase.status || "open").replaceAll("_", " ")} · SLA ${new Date(serviceCase.sla_due_at).toLocaleString()}`;
+      summary.append(title, meta);
+      const resolve = document.createElement("button");
+      resolve.type = "button";
+      resolve.dataset.corporateServiceAction = "resolve";
+      resolve.textContent = "Resolve";
+      row.append(summary, resolve);
+      serviceList.append(row);
+    });
+  } else {
+    const empty = document.createElement("p");
+    empty.className = "small";
+    empty.textContent = "No traveler-care cases are open.";
+    serviceList.append(empty);
+  }
+  updateCorporateOperationsPermissions();
+}
+
+async function loadCorporateBookingOperations({ announce = false } = {}) {
+  if (!$("#corporateBookingList")) return;
+  const tripId = getCorporateOperationsTripId();
+  if (isFilePreview || !state.session?.access_token || !tripId) {
+    renderCorporateOperations(state.corporateOperations.loaded ? state.corporateOperations : getCorporatePreviewOperations());
+    if (announce && $("#corporateBookingMessage")) $("#corporateBookingMessage").textContent = "Preview refreshed. Sign in to a deployed corporate event to load protected booking records.";
+    return;
+  }
+  if ($("#corporateOperationsConnection")) $("#corporateOperationsConnection").textContent = "Loading securely";
+  try {
+    const data = await apiRequest(`/api/corporate-bookings?tripId=${encodeURIComponent(tripId)}`);
+    renderCorporateOperations(data);
+    if (announce && $("#corporateBookingMessage")) $("#corporateBookingMessage").textContent = "Corporate booking operations refreshed from Supabase.";
+  } catch (error) {
+    if ($("#corporateOperationsConnection")) $("#corporateOperationsConnection").textContent = "Connection needs attention";
+    if ($("#corporateBookingMessage")) $("#corporateBookingMessage").textContent = error.message;
+  }
+}
+
+function getCorporateBookingFormPayload() {
+  return {
+    resource: "booking",
+    tripId: getCorporateOperationsTripId(),
+    bookingType: $("#corporateBookingType")?.value,
+    travelerName: $("#corporateBookingTraveler")?.value.trim(),
+    travelerEmail: $("#corporateBookingTravelerEmail")?.value.trim(),
+    providerName: $("#corporateBookingProvider")?.value.trim(),
+    title: $("#corporateBookingTitle")?.value.trim(),
+    startsAt: $("#corporateBookingStartsAt")?.value || null,
+    totalCents: Math.round(Number($("#corporateBookingAmount")?.value || 0) * 100),
+    currency: "USD",
+    providerReference: $("#corporateBookingReference")?.value.trim(),
+    providerConfirmed: Boolean($("#corporateBookingProviderConfirmed")?.checked),
+    source: "organizer",
+    idempotencyKey: globalThis.crypto?.randomUUID?.() || `booking-${Date.now()}`,
+    details: {}
+  };
+}
+
+async function submitCorporateBooking(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const payload = getCorporateBookingFormPayload();
+  const message = $("#corporateBookingMessage");
+  if (!payload.travelerName || !payload.providerName || !payload.title || !payload.startsAt || payload.totalCents < 0) {
+    message.textContent = "Add the traveler, provider, trip details, date, and a valid amount.";
+    return;
+  }
+  if (payload.providerConfirmed && !payload.providerReference) {
+    message.textContent = "Add the provider confirmation reference before marking this reservation confirmed.";
+    return;
+  }
+  message.textContent = "Checking policy and saving the booking request...";
+  try {
+    if (isFilePreview || !state.session?.access_token || !payload.tripId) {
+      const policyStatus = payload.totalCents > 150000 ? "exception" : "compliant";
+      const booking = {
+        id: `preview-${Date.now()}`,
+        title: payload.title,
+        traveler_name: payload.travelerName,
+        traveler_email: payload.travelerEmail,
+        booking_type: payload.bookingType,
+        starts_at: payload.startsAt,
+        total_cents: payload.totalCents,
+        provider_name: payload.providerName,
+        provider_reference: payload.providerReference || null,
+        policy_status: policyStatus,
+        approval_status: policyStatus === "compliant" ? "not_required" : "pending",
+        status: payload.providerConfirmed && payload.providerReference && policyStatus === "compliant" ? "confirmed" : "requested"
+      };
+      state.corporateOperations.bookings.unshift(booking);
+      if (policyStatus !== "compliant") state.corporateOperations.approvals.unshift({ id: `preview-approval-${Date.now()}`, booking_id: booking.id, status: "pending", reason: "Flight exceeds the approved fare cap" });
+      renderCorporateOperations(state.corporateOperations);
+      message.textContent = `${booking.title} saved as ${booking.status}. ${policyStatus === "compliant" ? "The request is within policy." : "Finance approval is required."}`;
+    } else {
+      const result = await apiRequest("/api/corporate-bookings", { method: "POST", body: JSON.stringify(payload) });
+      state.corporateOperations.bookings.unshift(result.booking);
+      if (result.approval) state.corporateOperations.approvals.unshift(result.approval);
+      renderCorporateOperations(state.corporateOperations);
+      message.textContent = `${result.booking.title} saved. Policy result: ${result.policyDecision.status}.`;
+    }
+    form.reset();
+    addAuditEntry("Corporate booking request created", `${payload.bookingType}: ${payload.title} for ${payload.travelerName}.`);
+  } catch (error) {
+    message.textContent = error.message;
+  }
+}
+
+async function decideCorporateApproval(button) {
+  const row = button.closest("[data-approval-booking-id]");
+  const bookingId = row?.dataset.approvalBookingId;
+  const action = button.dataset.corporateApproval;
+  if (!bookingId || !action) return;
+  const message = $("#corporateApprovalMessage");
+  message.textContent = `Recording ${action} decision...`;
+  try {
+    if (!isFilePreview && state.session?.access_token && getCorporateOperationsTripId()) {
+      await apiRequest("/api/corporate-bookings", { method: "PATCH", body: JSON.stringify({ resource: "booking", tripId: getCorporateOperationsTripId(), bookingId, action, note: "Decision recorded from Corporate Booking Operations" }) });
+    }
+    const approval = state.corporateOperations.approvals.find((item) => item.booking_id === bookingId);
+    if (approval) approval.status = action === "approve" ? "approved" : "rejected";
+    const booking = state.corporateOperations.bookings.find((item) => item.id === bookingId);
+    if (booking) {
+      booking.approval_status = action === "approve" ? "approved" : "rejected";
+      booking.status = action === "approve" ? (booking.provider_reference ? "confirmed" : "approved") : "cancelled";
+    }
+    renderCorporateOperations(state.corporateOperations);
+    message.textContent = `${action === "approve" ? "Approval" : "Rejection"} recorded with an audit timestamp.`;
+    addAuditEntry("Corporate booking approval", `${action}: ${booking?.title || bookingId}.`);
+  } catch (error) {
+    message.textContent = error.message;
+  }
+}
+
+async function updateCorporateBookingLifecycle(button) {
+  const row = button.closest("[data-booking-id]");
+  const bookingId = row?.dataset.bookingId;
+  const action = row?.querySelector("[data-corporate-booking-status]")?.value || "view";
+  const providerReference = row?.querySelector("[data-corporate-provider-reference]")?.value.trim() || "";
+  const booking = state.corporateOperations.bookings.find((item) => item.id === bookingId);
+  const message = $("#corporateBookingMessage");
+  if (!booking) return;
+  if (action === "view") {
+    message.textContent = `${booking.title}: ${booking.status}. ${booking.provider_reference ? `Provider reference ${booking.provider_reference}.` : "Provider confirmation is still required."}`;
+    return;
+  }
+  if (["confirm", "ticket"].includes(action) && !providerReference) {
+    message.textContent = "Enter the provider reference before confirming or ticketing this booking.";
+    return;
+  }
+  if (["confirm", "ticket"].includes(action) && !["not_required", "approved"].includes(booking.approval_status || "not_required")) {
+    message.textContent = "Finance approval is required before this booking can be confirmed or ticketed.";
+    return;
+  }
+  message.textContent = `Updating ${booking.title}...`;
+  try {
+    let updated = null;
+    if (!isFilePreview && state.session?.access_token && getCorporateOperationsTripId()) {
+      const result = await apiRequest("/api/corporate-bookings", { method: "PATCH", body: JSON.stringify({ resource: "booking", tripId: getCorporateOperationsTripId(), bookingId, action, providerReference }) });
+      updated = result.booking;
+    }
+    const statusMap = { confirm: "confirmed", ticket: "ticketed", start: "in_progress", complete: "completed", cancel: "cancelled", refund: "refunded" };
+    Object.assign(booking, updated || { status: statusMap[action], provider_reference: providerReference || booking.provider_reference });
+    renderCorporateOperations(state.corporateOperations);
+    message.textContent = `${booking.title} is now ${String(booking.status).replaceAll("_", " ")}. The change is audit-ready.`;
+    addAuditEntry("Corporate booking status updated", `${booking.title}: ${booking.status}.`);
+  } catch (error) {
+    message.textContent = error.message;
+  }
+}
+
+async function submitCorporatePolicy(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const payload = {
+    resource: "policy",
+    tripId: getCorporateOperationsTripId(),
+    name: $("#corporatePolicyNameInput")?.value.trim(),
+    currency: "USD",
+    flightCabin: $("#corporatePolicyCabinInput")?.value,
+    flightCapCents: Math.round(Number($("#corporatePolicyFlightInput")?.value || 0) * 100),
+    hotelNightlyCapCents: Math.round(Number($("#corporatePolicyHotelInput")?.value || 0) * 100),
+    groundTransportCapCents: Math.round(Number($("#corporatePolicyTransportInput")?.value || 0) * 100),
+    receiptThresholdCents: Math.round(Number($("#corporatePolicyReceiptInput")?.value || 0) * 100),
+    allowedAirlines: ($("#corporatePolicyAirlinesInput")?.value || "").split(",").map((value) => value.trim()).filter(Boolean),
+    rules: { blockUnapprovedProviders: Boolean($("#corporatePolicyBlockProvidersInput")?.checked) }
+  };
+  const message = $("#corporatePolicyMessage");
+  message.textContent = "Activating the new policy version...";
+  try {
+    let policy;
+    if (isFilePreview || !state.session?.access_token || !payload.tripId) {
+      policy = { name: payload.name, status: "active", currency: "USD", flight_cap_cents: payload.flightCapCents, hotel_nightly_cap_cents: payload.hotelNightlyCapCents, ground_transport_cap_cents: payload.groundTransportCapCents, receipt_threshold_cents: payload.receiptThresholdCents, allowed_airlines: payload.allowedAirlines, rules: payload.rules };
+    } else {
+      const result = await apiRequest("/api/corporate-bookings", { method: "POST", body: JSON.stringify(payload) });
+      policy = result.policy;
+    }
+    state.corporateOperations.policy = policy;
+    renderCorporateOperations(state.corporateOperations);
+    form.closest("details")?.removeAttribute("open");
+    message.textContent = `${policy.name} is active. The previous policy version remains in the audit history.`;
+    addAuditEntry("Corporate travel policy activated", policy.name);
+  } catch (error) {
+    message.textContent = error.message;
+  }
+}
+
+async function resolveCorporateServiceCase(button) {
+  const row = button.closest("[data-corporate-service-case-id]");
+  const caseId = row?.dataset.corporateServiceCaseId;
+  const serviceCase = state.corporateOperations.serviceCases.find((item) => item.id === caseId);
+  if (!serviceCase) return;
+  const message = $("#corporateServiceMessage");
+  try {
+    if (!isFilePreview && state.session?.access_token && getCorporateOperationsTripId()) {
+      await apiRequest("/api/corporate-bookings", { method: "PATCH", body: JSON.stringify({ resource: "service_case", tripId: getCorporateOperationsTripId(), caseId, status: "resolved", resolution: "Resolved from Corporate Booking Operations" }) });
+    }
+    serviceCase.status = "resolved";
+    renderCorporateOperations(state.corporateOperations);
+    message.textContent = `${serviceCase.subject} resolved with an audit timestamp.`;
+    addAuditEntry("Corporate service case resolved", serviceCase.subject);
+  } catch (error) {
+    message.textContent = error.message;
+  }
+}
+
+async function submitCorporateServiceCase(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const payload = {
+    resource: "service_case",
+    tripId: getCorporateOperationsTripId(),
+    caseType: $("#corporateServiceCaseType")?.value,
+    priority: $("#corporateServicePriority")?.value,
+    subject: $("#corporateServiceSubject")?.value.trim(),
+    description: $("#corporateServiceDescription")?.value.trim()
+  };
+  const message = $("#corporateServiceMessage");
+  if (!payload.subject || !payload.description) {
+    message.textContent = "Add a subject and the details the travel desk needs.";
+    return;
+  }
+  message.textContent = "Opening a protected traveler-care case...";
+  try {
+    let serviceCase;
+    if (isFilePreview || !state.session?.access_token || !payload.tripId) {
+      const hours = payload.priority === "critical" ? 1 : payload.priority === "urgent" ? 4 : payload.priority === "high" ? 12 : 24;
+      serviceCase = { id: `preview-case-${Date.now()}`, ...payload, case_type: payload.caseType, status: "open", sla_due_at: new Date(Date.now() + hours * 60 * 60 * 1000).toISOString() };
+    } else {
+      const result = await apiRequest("/api/corporate-bookings", { method: "POST", body: JSON.stringify(payload) });
+      serviceCase = result.serviceCase;
+    }
+    state.corporateOperations.serviceCases.unshift(serviceCase);
+    renderCorporateOperations(state.corporateOperations);
+    message.textContent = `${payload.priority} priority case opened. The SLA deadline is ${new Date(serviceCase.sla_due_at).toLocaleString()}.`;
+    form.reset();
+    addAuditEntry("Corporate service case opened", `${payload.priority}: ${payload.subject}.`);
+  } catch (error) {
+    message.textContent = error.message;
+  }
 }
 
 function formatWalletMoney(cents, currency = "USD") {
@@ -2384,6 +3259,144 @@ async function searchLiveTravelPlaces({ category, query = "", destination = "", 
   }
 }
 
+function formatFlightDateTime(value) {
+  if (!value) return "Unavailable";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Unavailable";
+  return new Intl.DateTimeFormat(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  }).format(date);
+}
+
+function flightTrackingMessage(message, tone = "") {
+  const status = $("#flightTrackingStatus");
+  if (!status) return;
+  status.textContent = message;
+  status.dataset.tone = tone;
+}
+
+function renderFlightTrackingResult(flight, sourceLabel = "Live flight status") {
+  const container = $("#flightTrackingResult");
+  if (!container) return;
+  if (!flight) {
+    container.hidden = true;
+    container.innerHTML = "";
+    return;
+  }
+  const progress = flight.progressPercent == null ? "Not available" : `${flight.progressPercent}%`;
+  const gates = [flight.terminalOrigin && `Terminal ${flight.terminalOrigin}`, flight.gateOrigin && `Gate ${flight.gateOrigin}`].filter(Boolean).join(" • ") || "Gate information unavailable";
+  const destinationGates = [flight.terminalDestination && `Terminal ${flight.terminalDestination}`, flight.gateDestination && `Gate ${flight.gateDestination}`].filter(Boolean).join(" • ") || "Arrival gate unavailable";
+  container.hidden = false;
+  container.innerHTML = `
+    <div class="flight-tracking-result__header">
+      <div>
+        <span class="eyebrow">${escapeHtml(sourceLabel)}</span>
+        <h3>${escapeHtml(flight.operator)} ${escapeHtml(flight.ident)}</h3>
+        <p>${escapeHtml(flight.origin)} → ${escapeHtml(flight.destination)}</p>
+      </div>
+      <span class="status-pill">${escapeHtml(flight.status)}</span>
+    </div>
+    <div class="flight-tracking-result__grid">
+      <div><span>Departure</span><strong>${escapeHtml(formatFlightDateTime(flight.estimatedOut || flight.scheduledOut))}</strong><small>${escapeHtml(gates)}</small></div>
+      <div><span>Arrival</span><strong>${escapeHtml(formatFlightDateTime(flight.estimatedIn || flight.scheduledIn))}</strong><small>${escapeHtml(destinationGates)}</small></div>
+      <div><span>Progress</span><strong>${escapeHtml(progress)}</strong><small>${flight.actualOut && !flight.actualIn ? "Currently airborne or en route" : "Provider progress estimate"}</small></div>
+      <div><span>Aircraft</span><strong>${escapeHtml(flight.aircraftType || "Unavailable")}</strong><small>Updated from the live provider</small></div>
+    </div>
+    <div class="flight-tracking-result__actions">
+      ${flight.trackingUrl ? `<a class="ghost-button" href="${escapeHtml(flight.trackingUrl)}" target="_blank" rel="noopener noreferrer">Open live map</a>` : ""}
+      <button type="button" data-flight-track-refresh="${escapeHtml(flight.ident)}">Refresh status</button>
+    </div>
+  `;
+}
+
+async function trackFlightStatus({ ident, date = "", origin = "" } = {}) {
+  const normalizedIdent = String(ident || "").trim();
+  if (!normalizedIdent) {
+    flightTrackingMessage("Enter a flight number such as DL241.", "error");
+    return;
+  }
+  flightTrackingMessage("Checking the live flight provider...", "loading");
+  renderFlightTrackingResult(null);
+  try {
+    const result = await apiRequest("/api/flight-tracking", {
+      method: "POST",
+      body: JSON.stringify({ ident: normalizedIdent, date, origin })
+    });
+    if (result.skipped) throw new Error("Live flight tracking requires a signed-in deployed app.");
+    state.liveSearch.flight = result.flight || null;
+    renderFlightTrackingResult(result.flight, result.sourceLabel);
+    flightTrackingMessage(
+      result.flight ? `${result.sourceLabel || "Live flight status"} updated for ${result.flight.ident}.` : "No live flight status was returned.",
+      result.flight ? "success" : "empty"
+    );
+    addAuditEntry("Live flight status checked", `${normalizedIdent} searched through the configured flight provider.`);
+    await saveSyncedEvent("flight_status_checked", { ident: normalizedIdent, date, origin });
+  } catch (error) {
+    state.liveSearch.flight = null;
+    flightTrackingMessage(`${error.message} Saved confirmation details remain available below.`, "error");
+    renderFlightTrackingResult(null);
+  }
+}
+
+function hotelAvailabilityMessage(message, tone = "") {
+  const status = $("#hotelLiveStatus");
+  if (!status) return;
+  status.textContent = message;
+  status.dataset.tone = tone;
+}
+
+function renderLiveHotelResults(results = [], sourceLabel = "Live hotel availability") {
+  const container = $("#hotelLiveResults");
+  if (!container) return;
+  container.hidden = !results.length;
+  container.innerHTML = results.map((hotel) => `
+    <article class="hotel-live-result-card">
+      <div>
+        <span class="eyebrow">${escapeHtml(sourceLabel)}</span>
+        <h4>${escapeHtml(hotel.title)}</h4>
+        <small>${escapeHtml(hotel.location || hotel.cityCode || "Destination details available")}</small>
+      </div>
+      <div class="hotel-live-result-card__details">
+        <span>${escapeHtml(hotel.checkInDate)} → ${escapeHtml(hotel.checkOutDate)}</span>
+        <strong>${escapeHtml(hotel.price)} ${escapeHtml(hotel.currency)}</strong>
+        <small>${escapeHtml(hotel.room)} • ${escapeHtml(hotel.board)}</small>
+        <small>${escapeHtml(hotel.cancellation)}</small>
+      </div>
+      <span class="status-pill">Availability found</span>
+    </article>
+  `).join("");
+}
+
+async function searchLiveHotelAvailability({ cityCode, checkInDate, checkOutDate, adults, hotelId = "" } = {}) {
+  hotelAvailabilityMessage("Checking current hotel availability...", "loading");
+  renderLiveHotelResults([]);
+  try {
+    const result = await apiRequest("/api/hotel-availability", {
+      method: "POST",
+      body: JSON.stringify({ cityCode, checkInDate, checkOutDate, adults, hotelId })
+    });
+    if (result.skipped) throw new Error("Live hotel availability requires a signed-in deployed app.");
+    const results = result.results || [];
+    state.liveSearch.hotelResults = results;
+    renderLiveHotelResults(results, result.sourceLabel);
+    hotelAvailabilityMessage(
+      results.length
+        ? `${results.length} live availability result${results.length === 1 ? "" : "s"}. Availability and pricing can change until booking is confirmed.`
+        : "No live rooms were returned for those dates. Try another city, property, or date range.",
+      results.length ? "success" : "empty"
+    );
+    addAuditEntry("Live hotel availability checked", `${cityCode} searched for ${checkInDate} through ${checkOutDate}.`);
+    await saveSyncedEvent("hotel_availability_checked", { cityCode, checkInDate, checkOutDate, adults, hotelId });
+  } catch (error) {
+    state.liveSearch.hotelResults = [];
+    hotelAvailabilityMessage(`${error.message} Saved hotel confirmations remain available.`, "error");
+    renderLiveHotelResults([]);
+  }
+}
+
 function renderLiveExploreResults(results = []) {
   const grid = $("#exploreLiveResultsGrid");
   if (!grid) return;
@@ -2536,8 +3549,10 @@ function updateDashboardWidgets() {
     item.hidden = !item.dataset.requiresTripType.split(" ").includes(isCorporateMode ? "corporate" : tripType);
   });
 
-  $$("[data-admin-only]").forEach((item) => {
-    item.hidden = !isAdminRole;
+  const isAdminSurface = adminSurfaceTargets.has(document.body.dataset.activeRoute || "");
+  $$('[data-admin-only]').forEach((item) => {
+    item.hidden = !isAdminSurface || !isAdminRole;
+    item.setAttribute("aria-hidden", String(item.hidden));
   });
 
   const isHomeVisible = $(".content-grid")?.hidden !== false;
@@ -3389,6 +4404,112 @@ function getActiveTransportType() {
   return $(".transport-tabs button.active")?.dataset.transportType || "flights";
 }
 
+function setTransportationWorkspaceView(view = "confirmations", focusSelected = false) {
+  const mount = $("#transportationWorkspaceMount");
+  const details = $("#transportationAdvancedDetails");
+  if (!mount || !details) return;
+  const selectedView = view === "rides" ? "rides" : "confirmations";
+
+  Array.from(mount.children).forEach((section) => {
+    const sectionView = section.classList.contains("ride-hub-redesign") ? "rides" : "confirmations";
+    section.dataset.transportationWorkspaceView = sectionView;
+    section.hidden = sectionView !== selectedView;
+  });
+
+  details.querySelectorAll("[data-transportation-workspace-tab]").forEach((button) => {
+    const selected = button.dataset.transportationWorkspaceTab === selectedView;
+    button.classList.toggle("active", selected);
+    button.setAttribute("aria-selected", String(selected));
+    button.tabIndex = selected ? 0 : -1;
+    if (selected && focusSelected) button.focus();
+  });
+}
+
+function moveTransportationWorkspace() {
+  const source = $("#rideShareHub");
+  const mount = $("#transportationWorkspaceMount");
+  if (!source || !mount) return;
+  const selectors = [
+    '[data-transportation-workspace]',
+    '[data-travel-panel="flights"]',
+    '[data-travel-panel="trains"]',
+    '[data-travel-panel="buses"]',
+    '[data-travel-panel="cruises"]',
+    '[data-travel-panel="boarding"]',
+    '[data-travel-panel="transfers"]',
+    '[data-travel-panel="publicTransit"]',
+    '[data-travel-panel="routeComparison"]',
+    '[data-travel-panel="smartRoute"]'
+  ].join(", ");
+  // Only move dedicated transportation workspaces that are direct Travel children.
+  // Nested Travel focus panels must remain with Travel so route isolation can hide
+  // the whole Travel screen without leaking its content into Transportation.
+  Array.from(source.children)
+    .filter((section) => section.matches(selectors))
+    .forEach((section) => {
+      mount.appendChild(section);
+    });
+
+  const tabs = Array.from(document.querySelectorAll("[data-transportation-workspace-tab]"));
+  tabs.forEach((button, index) => {
+    if (button.dataset.workspaceTabWired === "true") return;
+    button.dataset.workspaceTabWired = "true";
+    button.addEventListener("click", () => {
+      setTransportationWorkspaceView(button.dataset.transportationWorkspaceTab);
+    });
+    button.addEventListener("keydown", (event) => {
+      if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+      event.preventDefault();
+      const direction = event.key === "ArrowRight" ? 1 : -1;
+      const nextIndex = (index + direction + tabs.length) % tabs.length;
+      setTransportationWorkspaceView(tabs[nextIndex].dataset.transportationWorkspaceTab, true);
+    });
+  });
+  setTransportationWorkspaceView("confirmations");
+}
+
+function renderTransportationTable() {
+  const body = $("#transportationTableBody");
+  if (!body) return;
+  const query = $("#transportationTableSearchInput")?.value.trim().toLowerCase() || "";
+  const type = $("#transportationTableTypeFilter")?.value || "all";
+  const records = transportRecords.filter((record) => {
+    if (type !== "all" && record.type !== type) return false;
+    const searchable = `${transportTypeLabels[record.type]} ${record.provider} ${record.title} ${record.route} ${record.passenger} ${record.assignedTo.join(" ")} ${record.status}`.toLowerCase();
+    return !query || searchable.includes(query);
+  });
+  const count = $("#transportationTableCount");
+  if (count) count.textContent = String(records.length);
+  body.innerHTML = records.length ? records.map((record) => {
+    const assigned = record.assignedTo.slice(0, 2).join(", ") + (record.assignedTo.length > 2 ? ` +${record.assignedTo.length - 2}` : "");
+    const statusClass = record.status.toLowerCase().replace(/[^a-z]+/g, "-");
+    return `
+      <tr class="transportation-record-row">
+        <td colspan="5">
+          <details class="transportation-record-dropdown">
+            <summary>
+              <span class="transportation-record-type">${escapeHtml(transportTypeLabels[record.type])}</span>
+              <strong>${escapeHtml(record.route)}</strong>
+              <small>${escapeHtml(record.provider)} • ${escapeHtml(record.title)}</small>
+              <span class="transportation-status transportation-status--${escapeHtml(statusClass)}">${escapeHtml(record.status)}</span>
+            </summary>
+            <div class="transportation-record-details">
+              <div><span>When</span><strong>${escapeHtml(record.departureTime)}</strong></div>
+              <div><span>Traveler</span><strong>${escapeHtml(assigned)}</strong></div>
+              <div><span>Confirmation</span><strong>${escapeHtml(record.confirmation || "Saved record")}</strong></div>
+              <button class="ghost-button" type="button" data-transportation-record="${escapeHtml(record.id)}">View full details</button>
+            </div>
+          </details>
+        </td>
+      </tr>
+    `;
+  }).join("") : `
+    <tr><td colspan="5"><div class="transportation-empty-state"><strong>No transportation records match</strong><span>Try another search or choose all transportation types.</span></div></td></tr>
+  `;
+  const message = $("#transportationTableMessage");
+  if (message) message.textContent = `${records.length} ${records.length === 1 ? "movement" : "movements"} shown. Select View for full confirmation details.`;
+}
+
 function getFilteredTransportRecords(type = getActiveTransportType()) {
   const query = $("#transportSearchInput")?.value.trim().toLowerCase() || "";
   const traveler = $("#transportTravelerFilter")?.value || "all";
@@ -4209,9 +5330,11 @@ async function signOut() {
 
 const mainNavigation = Object.freeze([
   { id: "dashboard", label: "Dashboard", target: "dashboardHome", path: "/dashboard" },
+  { id: "profile", label: "My Profile", target: "myProfile", path: "/profile/my-profile" },
   { id: "planning", label: "Planning", target: "aiTravelPlanner", path: "/planning" },
   { id: "itinerary", label: "Itinerary", target: "itineraryAlerts", path: "/itinerary" },
   { id: "events", label: "Events", target: "eventsPanel", path: "/events" },
+  { id: "transportation", label: "Transportation", target: "transportationPanel", path: "/transportation" },
   { id: "travel", label: "Travel", target: "rideShareHub", path: "/travel", travelSection: "overview" },
   { id: "wallet", label: "Wallet", target: "walletPanel", path: "/wallet" },
   { id: "chat", label: "Chat", target: "socialHub", path: "/chat" },
@@ -4222,6 +5345,7 @@ const mainNavigation = Object.freeze([
 
 const mainNavigationById = Object.fromEntries(mainNavigation.map((item) => [item.id, item]));
 const mainNavigationByTarget = Object.fromEntries(mainNavigation.map((item) => [item.target, item]));
+const adminSurfaceTargets = new Set(["adminPanel", "enterpriseRbac"]);
 
 const smartDashboardGridSelectors = Object.freeze([
   "#dashboardWidgets .widget-grid",
@@ -4324,6 +5448,7 @@ const routeDefinitions = {
   groupBank: { path: "/trips/dubai-weekend/group-bank", label: "Group Bank" },
   walletPanel: { path: mainNavigationByTarget.walletPanel.path, label: "Wallet" },
   rideShareHub: { path: mainNavigationByTarget.rideShareHub.path, label: "Travel" },
+  transportationPanel: { path: "/transportation", label: "Transportation" },
   splitBill: { path: "/trips/dubai-weekend/split-bill", label: "Restaurant Bill Split" },
   itineraryAlerts: { path: mainNavigationByTarget.itineraryAlerts.path, label: "Itinerary & Alerts" },
   importantInfo: { path: mainNavigationByTarget.importantInfo.path, label: "Important Information" },
@@ -4341,6 +5466,8 @@ const routeAliases = {
   "/index.html": "dashboardHome",
   "/home": "dashboardHome",
   "/dashboard": "dashboardHome",
+  "/profile": "myProfile",
+  "/profile/my-profile": "myProfile",
   "/lets-plan": "letsPlan",
   "/planning": "aiTravelPlanner",
   "/itinerary": "itineraryAlerts",
@@ -4354,6 +5481,7 @@ const routeAliases = {
   "/planner": "aiTravelPlanner",
   "/explore": "exploreDrops",
   "/travel": "rideShareHub",
+  "/transportation": "transportationPanel",
   "/wallet": "walletPanel",
   "/chat": "socialHub",
   "/important-info": "importantInfo",
@@ -4364,32 +5492,32 @@ const routeAliases = {
   "/trips/dubai-weekend/flights": "itineraryAlerts",
   "/trips/dubai-weekend/hotels": "importantInfo",
   "/trips/dubai-weekend/travel": "rideShareHub",
-  "/trips/dubai-weekend/transportation": "rideShareHub",
-  "/trips/dubai-weekend/transportation/alerts": "rideShareHub",
-  "/trips/dubai-weekend/transportation/missing-items": "rideShareHub",
-  "/trips/dubai-weekend/transportation/flights": "rideShareHub",
-  "/trips/dubai-weekend/transportation/hotels": "rideShareHub",
-  "/trips/dubai-weekend/transportation/trains": "rideShareHub",
-  "/trips/dubai-weekend/transportation/buses": "rideShareHub",
-  "/trips/dubai-weekend/transportation/ferries": "rideShareHub",
-  "/trips/dubai-weekend/transportation/cruises": "rideShareHub",
-  "/trips/dubai-weekend/transportation/shuttles": "rideShareHub",
-  "/trips/dubai-weekend/transportation/ride-share": "rideShareHub",
-  "/trips/dubai-weekend/transportation/transfers": "rideShareHub",
-  "/trips/dubai-weekend/transportation/public-transit": "rideShareHub",
-  "/trips/dubai-weekend/transportation/routes": "rideShareHub",
-  "/trips/dubai-weekend/transportation/tickets": "rideShareHub",
-  "/trips/dubai-weekend/transportation/boarding": "rideShareHub",
-  "/trips/dubai-weekend/transportation/weather": "rideShareHub",
-  "/trips/dubai-weekend/transportation/maps": "rideShareHub",
-  "/trips/dubai-weekend/transportation/documents": "rideShareHub",
-  "/trips/dubai-weekend/transportation/itinerary": "rideShareHub",
-  "/trips/dubai-weekend/transportation/smart-route": "rideShareHub",
-  "/trips/dubai-weekend/transportation/your-trips": "rideShareHub",
-  "/trips/dubai-weekend/transportation/travelers": "rideShareHub",
-  "/trips/dubai-weekend/transportation/rental-cars": "rideShareHub",
-  "/trips/dubai-weekend/transportation/private-transfers": "rideShareHub",
-  "/trips/dubai-weekend/ride-share": "rideShareHub",
+  "/trips/dubai-weekend/transportation": "transportationPanel",
+  "/trips/dubai-weekend/transportation/alerts": "transportationPanel",
+  "/trips/dubai-weekend/transportation/missing-items": "transportationPanel",
+  "/trips/dubai-weekend/transportation/flights": "transportationPanel",
+  "/trips/dubai-weekend/transportation/hotels": "transportationPanel",
+  "/trips/dubai-weekend/transportation/trains": "transportationPanel",
+  "/trips/dubai-weekend/transportation/buses": "transportationPanel",
+  "/trips/dubai-weekend/transportation/ferries": "transportationPanel",
+  "/trips/dubai-weekend/transportation/cruises": "transportationPanel",
+  "/trips/dubai-weekend/transportation/shuttles": "transportationPanel",
+  "/trips/dubai-weekend/transportation/ride-share": "transportationPanel",
+  "/trips/dubai-weekend/transportation/transfers": "transportationPanel",
+  "/trips/dubai-weekend/transportation/public-transit": "transportationPanel",
+  "/trips/dubai-weekend/transportation/routes": "transportationPanel",
+  "/trips/dubai-weekend/transportation/tickets": "transportationPanel",
+  "/trips/dubai-weekend/transportation/boarding": "transportationPanel",
+  "/trips/dubai-weekend/transportation/weather": "transportationPanel",
+  "/trips/dubai-weekend/transportation/maps": "transportationPanel",
+  "/trips/dubai-weekend/transportation/documents": "transportationPanel",
+  "/trips/dubai-weekend/transportation/itinerary": "transportationPanel",
+  "/trips/dubai-weekend/transportation/smart-route": "transportationPanel",
+  "/trips/dubai-weekend/transportation/your-trips": "transportationPanel",
+  "/trips/dubai-weekend/transportation/travelers": "transportationPanel",
+  "/trips/dubai-weekend/transportation/rental-cars": "transportationPanel",
+  "/trips/dubai-weekend/transportation/private-transfers": "transportationPanel",
+  "/trips/dubai-weekend/ride-share": "transportationPanel",
   "/trips/dubai-weekend/wallet": "walletPanel",
   "/trips/dubai-weekend/my-wallet": "walletPanel",
   "/trips/dubai-weekend/group-bank": "groupBank",
@@ -4397,7 +5525,7 @@ const routeAliases = {
   "/trips/dubai-weekend/refunds": "walletPanel",
   "/trips/dubai-weekend/virtual-card": "walletPanel",
   "/trips/dubai-weekend/split-bill": "splitBill",
-  "/trips/dubai-weekend/ride-share-split": "rideShareHub",
+  "/trips/dubai-weekend/ride-share-split": "transportationPanel",
   "/trips/dubai-weekend/group-chat": "socialHub",
   "/trips/dubai-weekend/private-messages": "socialHub",
   "/trips/dubai-weekend/documents": "importantInfo",
@@ -4415,7 +5543,7 @@ const routeAliases = {
   "/corporate": "enterpriseRbac",
   "/corporate/my-flight": "enterpriseRbac",
   "/corporate/my-hotel": "enterpriseRbac",
-  "/corporate/my-transportation": "rideShareHub",
+  "/corporate/my-transportation": "transportationPanel",
   "/corporate/my-event-schedule": "enterpriseRbac",
   "/corporate/my-activities": "enterpriseRbac",
   "/corporate/announcements": "importantInfo",
@@ -4431,7 +5559,7 @@ const routeAliases = {
   "/profile/privacy": "adminPanel",
   "/profile/notifications": "adminPanel",
   "/profile/connected-accounts": "socialHub",
-  "/profile/ride-share-connections": "rideShareHub",
+  "/profile/ride-share-connections": "transportationPanel",
   "/profile/social-media-connections": "socialHub",
   "/profile/wallet-settings": "walletPanel",
   "/profile/security": "adminPanel",
@@ -4524,11 +5652,34 @@ function mountRouteComponents(target) {
   routeMountRegistry.roots.forEach(({ element }) => element.remove());
   routeMountRegistry.roots
     .filter(({ element }) => routeOwnsComponent(element, target))
-    .sort((a, b) => a.stackName.localeCompare(b.stackName) || a.index - b.index)
+    .sort((a, b) => {
+      const stackOrder = a.stackName.localeCompare(b.stackName);
+      if (stackOrder) return stackOrder;
+      if (target === "walletPanel") {
+        const walletPriority = ({ element }) => {
+          if (element.id === "virtualCard") return 0;
+          if (element.id === "walletPanel") return 1;
+          if (element.classList.contains("audit-panel")) return 2;
+          return 3;
+        };
+        const priorityOrder = walletPriority(a) - walletPriority(b);
+        if (priorityOrder) return priorityOrder;
+      }
+      return a.index - b.index;
+    })
     .forEach(({ element, parent, anchor }) => {
       if (anchor && parent) parent.insertBefore(element, anchor);
       else parent?.appendChild(element);
     });
+}
+
+function setVisibilityWithoutCssLeaks(element, visible) {
+  if (!element) return;
+  element.hidden = !visible;
+  element.setAttribute("aria-hidden", String(!visible));
+  element.inert = !visible;
+  if (visible) element.style.removeProperty("display");
+  else element.style.setProperty("display", "none", "important");
 }
 
 function applyMainNavigationConfig() {
@@ -4586,6 +5737,8 @@ function normalizeAppPath(pathname = location.pathname) {
 function getTargetFromRoute(pathname = location.pathname) {
   const hashTarget = location.hash.startsWith("#") ? decodeURIComponent(location.hash.slice(1)) : "";
   const hashRouteTarget = hashTarget.split("/")[0];
+  const hashSection = hashTarget.startsWith("rideShareHub/") ? hashTarget.slice("rideShareHub/".length) : "";
+  if (hashRouteTarget === "rideShareHub" && transportationTravelSections.has(hashSection)) return "transportationPanel";
   if (hashRouteTarget && routeDefinitions[hashRouteTarget]) return hashRouteTarget;
   if (normalizeAppPath(pathname).startsWith("/explore/")) return "exploreDrops";
   return routeAliases[normalizeAppPath(pathname)] || "dashboardHome";
@@ -4762,17 +5915,17 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   document.body.dataset.activeRoute = resolvedTarget;
   document.body.classList.toggle("app-routed", !document.body.classList.contains("auth-screen"));
   const isHome = resolvedTarget === "dashboardHome";
+  const isAdminSurface = adminSurfaceTargets.has(resolvedTarget);
+  $$('[data-admin-only]').forEach((item) => {
+    setVisibilityWithoutCssLeaks(item, isAdminSurface);
+  });
   $$('[data-dashboard-only]').forEach((section) => {
-    section.hidden = !isHome;
-    section.setAttribute("aria-hidden", String(!isHome));
-    section.inert = !isHome;
+    setVisibilityWithoutCssLeaks(section, isHome);
   });
 
   const contentGrid = $(".content-grid");
   if (contentGrid) {
-    contentGrid.hidden = isHome;
-    contentGrid.setAttribute("aria-hidden", String(isHome));
-    contentGrid.inert = isHome;
+    setVisibilityWithoutCssLeaks(contentGrid, !isHome);
   }
 
   sectionRouteIds.forEach((sectionId) => {
@@ -4780,21 +5933,15 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
     if (!section) return;
     section.classList.add("route-screen");
     const visible = sectionId === resolvedTarget;
-    section.hidden = !visible;
-    section.setAttribute("aria-hidden", String(!visible));
-    section.inert = !visible;
+    setVisibilityWithoutCssLeaks(section, visible);
   });
   $$("[data-route-support]").forEach((section) => {
     const supportedRoutes = section.dataset.routeSupport.split(/\s+/);
     const visible = !isHome && supportedRoutes.includes(resolvedTarget);
-    section.hidden = !visible;
-    section.setAttribute("aria-hidden", String(!visible));
-    section.inert = !visible;
+    setVisibilityWithoutCssLeaks(section, visible);
   });
   $$(".content-grid section.panel:not([id]):not([data-route-support])").forEach((section) => {
-    section.hidden = true;
-    section.setAttribute("aria-hidden", "true");
-    section.inert = true;
+    setVisibilityWithoutCssLeaks(section, false);
   });
 
   const route = resolvedTarget === "rideShareHub"
@@ -4826,6 +5973,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
     showTravelTileDestination(activeTravelSection, { updateHistory: false });
   }
   if (resolvedTarget === "aiTravelPlanner") renderAiPlanner();
+  if (resolvedTarget === "enterpriseRbac") loadCorporateBookingOperations();
 
   updateDashboardWidgets();
   if ($("#currentPageTitle")) $("#currentPageTitle").textContent = routeDefinitions[resolvedTarget].label;
@@ -4860,6 +6008,7 @@ function openPlanningWorkflow(type = "group") {
 }
 
 function wireLocalInteractions() {
+  moveTransportationWorkspace();
   applyMainNavigationConfig();
   applySmartDashboardLayout();
   ["#eventDateInput", "#eventRsvpInput", "#flightDepartureDateInput"].forEach((selector) => {
@@ -4870,6 +6019,7 @@ function wireLocalInteractions() {
   renderPlan(0);
   renderBillSplit();
   renderTransportHub("flights");
+  renderTransportationTable();
   renderRideSplit();
   renderRideHubSections();
   setTravelFocus(localStorage.getItem("traveldripTravelFocus") || "overview", { updateHistory: false });
@@ -5373,6 +6523,56 @@ function wireLocalInteractions() {
     $("#transportMessage").textContent = `${transportTypeLabels[button.dataset.transportType]} opened. Each transportation type has its own confirmation list, detail view, tickets, access-pass area, and secure sharing controls.`;
   });
 
+  $("#flightTrackingForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const submit = form.querySelector("button[type='submit']");
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = "Checking...";
+    }
+    await trackFlightStatus({
+      ident: $("#flightTrackingIdent")?.value,
+      date: $("#flightTrackingDate")?.value,
+      origin: $("#flightTrackingOrigin")?.value
+    });
+    if (submit) {
+      submit.disabled = false;
+      submit.textContent = "Track flight";
+    }
+  });
+
+  $("#flightTrackingResult")?.addEventListener("click", (event) => {
+    const refresh = event.target.closest("[data-flight-track-refresh]");
+    if (!refresh) return;
+    trackFlightStatus({
+      ident: refresh.dataset.flightTrackRefresh,
+      date: $("#flightTrackingDate")?.value,
+      origin: $("#flightTrackingOrigin")?.value
+    });
+  });
+
+  $("#hotelLiveSearchForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const submit = form.querySelector("button[type='submit']");
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = "Checking...";
+    }
+    await searchLiveHotelAvailability({
+      cityCode: $("#hotelLiveCityCode")?.value,
+      checkInDate: $("#hotelLiveCheckIn")?.value,
+      checkOutDate: $("#hotelLiveCheckOut")?.value,
+      adults: $("#hotelLiveAdults")?.value,
+      hotelId: $("#hotelLiveHotelId")?.value
+    });
+    if (submit) {
+      submit.disabled = false;
+      submit.textContent = "Check availability";
+    }
+  });
+
   $$(".travel-section-nav [data-travel-section], .travel-overview-card [data-travel-section], .travel-workspace [data-travel-section], .travel-support-card [data-travel-section]").forEach((button) => {
     button.addEventListener("click", async () => {
       const section = button.dataset.travelSection;
@@ -5416,7 +6616,9 @@ function wireLocalInteractions() {
     event.preventDefault();
     const query = event.target.value.trim();
     const section = resolveTravelSearchTarget(query);
-    const destination = setTravelFocus(section);
+    const destination = section === "transportationPanel"
+      ? (navigateSafely("transportationPanel", { updateHistory: true }), { title: "Transportation" })
+      : setTravelFocus(section);
     if ($("#travelSettingsMessage")) {
       $("#travelSettingsMessage").textContent = query
         ? `Search for "${query}" opened ${destination.title}.`
@@ -5434,8 +6636,17 @@ function wireLocalInteractions() {
 
   $("#travelLiveSearchButton")?.addEventListener("click", () => {
     const query = $("#travelSmartSearchInput")?.value.trim() || "";
+    if (/flight|airline|boarding|train|rail|bus|shuttle|cruise|ship|ride|driver|transfer|transport|route|fare/i.test(query)) {
+      navigateSafely("transportationPanel", { updateHistory: true });
+      if ($("#transportationTableMessage")) $("#transportationTableMessage").textContent = "Transportation search opened. Filter movement records or open Full tools for tickets, passes, routes, and fare options.";
+      return;
+    }
     searchLiveTravelPlaces({
-      category: /hotel|stay|lodging/i.test(query) ? "hotels" : /driver|ride|transfer|transport|airport/i.test(query) ? "transport" : /restaurant|food|dinner|cafe/i.test(query) ? "food" : "activities",
+      category: /hotel|stay|lodging/i.test(query)
+        ? "hotels"
+        : /restaurant|food|dining|dinner|cafe/i.test(query)
+          ? "food"
+          : "activities",
       query,
       destination: $("#travelCurrentDestination")?.textContent.trim() || "Tokyo",
       target: "travel"
@@ -5455,12 +6666,12 @@ function wireLocalInteractions() {
   $("#voiceTravelSearchButton")?.addEventListener("click", () => {
     const input = $("#travelSmartSearchInput");
     if (input) {
-      input.value = "boarding pass";
+      input.value = "transportation";
       input.focus();
     }
-    renderTravelSmartSearchResults("boarding pass");
+    renderTravelSmartSearchResults("transportation");
     if ($("#travelSettingsMessage")) {
-      $("#travelSettingsMessage").textContent = "Voice search is provider-ready. Showing boarding pass results as a local preview.";
+      $("#travelSettingsMessage").textContent = "Voice search is provider-ready. Transportation results open in the dedicated Transportation tab.";
     }
   });
 
@@ -5477,6 +6688,11 @@ function wireLocalInteractions() {
     const button = event.target.closest("[data-travel-search-open]");
     if (!button) return;
     const section = button.dataset.travelSearchOpen;
+    if (section === "transportationPanel") {
+      navigateSafely("transportationPanel", { updateHistory: true });
+      if ($("#transportationTableMessage")) $("#transportationTableMessage").textContent = "Transportation search result opened. Select View for its full confirmation details.";
+      return;
+    }
     const destination = setTravelFocus(section);
     if ($("#travelSettingsMessage")) {
       $("#travelSettingsMessage").textContent = `${destination.title} opened from Smart Travel Search with trip context preserved.`;
@@ -5585,6 +6801,39 @@ function wireLocalInteractions() {
     $("#transportMessage").textContent = `${action} opened. Transportation keeps confirmation records, assigned travelers, reminders, wallet passes, and secure documents connected to the current trip.`;
     addAuditEntry("Transportation summary opened", action);
     await saveSyncedEvent("transport_summary_opened", { action });
+  });
+
+  ["#transportationTableSearchInput", "#transportationTableTypeFilter"].forEach((selector) => {
+    $(selector)?.addEventListener("input", renderTransportationTable);
+    $(selector)?.addEventListener("change", renderTransportationTable);
+  });
+
+  $("#transportationTableBody")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-transportation-record]");
+    if (!button) return;
+    const record = transportRecords.find((entry) => entry.id === button.dataset.transportationRecord);
+    if (!record) return;
+    const details = $("#transportationAdvancedDetails");
+    if (details) details.open = true;
+    setTransportationWorkspaceView("confirmations");
+    renderTransportHub(record.type, record.id);
+    const message = $("#transportationTableMessage");
+    if (message) message.textContent = `${record.title} opened. Full confirmation details are available below.`;
+  });
+
+  $$('[data-transportation-action]').forEach((button) => {
+    button.addEventListener("click", () => {
+      const details = $("#transportationAdvancedDetails");
+      if (details) details.open = true;
+      setTransportationWorkspaceView("confirmations");
+      if (button.dataset.transportationAction === "add") {
+        const uploadButton = $("#uploadTransportTicketButton");
+        uploadButton?.focus();
+        $("#transportationTableMessage").textContent = "Upload or scan a confirmation in the full workspace below, then review the extracted fields before saving.";
+      } else {
+        $("#transportationTableMessage").textContent = "Full transportation tools opened below. Use the confirmation list for tickets, passes, reminders, and secure access controls.";
+      }
+    });
   });
 
   ["#transportSearchInput", "#transportTravelerFilter", "#transportStatusFilter"].forEach((selector) => {
@@ -6449,6 +7698,26 @@ function wireLocalInteractions() {
     addAuditEntry("Corporate activity vote", selected);
     await saveSyncedEvent("corporate_activity_vote", { selected, approvedOnly: true });
   });
+  $("#refreshCorporateOperationsButton")?.addEventListener("click", () => loadCorporateBookingOperations({ announce: true }));
+  $("#corporatePolicyForm")?.addEventListener("submit", submitCorporatePolicy);
+  $("#corporateBookingForm")?.addEventListener("submit", submitCorporateBooking);
+  $("#corporateServiceCaseForm")?.addEventListener("submit", submitCorporateServiceCase);
+  $("#corporateBookingList")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-corporate-booking-action]");
+    if (button) updateCorporateBookingLifecycle(button);
+  });
+  $("#corporateApprovalList")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-corporate-approval]");
+    if (button) decideCorporateApproval(button);
+  });
+  $("#corporateServiceList")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-corporate-service-action]");
+    if (button) resolveCorporateServiceCase(button);
+  });
+  $("#openCorporateTravelerManifestButton")?.addEventListener("click", () => {
+    $("#corporateServiceMessage").textContent = "Traveler manifest opened with assignment, document, emergency-contact, accessibility, and disruption readiness. Employee financial data remains restricted.";
+    addAuditEntry("Corporate traveler manifest opened", "Duty-of-care readiness reviewed.");
+  });
   $$(".corporate-card-actions [data-corporate-card-action]").forEach((button) => {
     button.addEventListener("click", async () => {
       const action = button.dataset.corporateCardAction;
@@ -6940,7 +8209,10 @@ function wireLocalInteractions() {
   });
 
   $("#walletHeaderVirtualCardButton")?.addEventListener("click", () => {
-    $("#walletPreviewCardButton")?.click();
+    $("#virtualCard")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if ($("#cardMessage")) {
+      $("#cardMessage").textContent = "Virtual Card opened. Wallet PIN is still required for sensitive card actions.";
+    }
   });
 
   $("#walletSectionRefundButton")?.addEventListener("click", () => {
@@ -6951,13 +8223,38 @@ function wireLocalInteractions() {
     $("#requestRefundButton")?.click();
   });
 
-  $$("[data-wallet-section]").forEach((button) => {
-    button.addEventListener("click", async () => {
-      $$("[data-wallet-section]").forEach((sectionButton) => sectionButton.classList.toggle("active", sectionButton === button));
-      $("#walletMessage").textContent = `${button.textContent} opened in Wallet. Existing balances, ledgers, refunds, and security controls remain preserved below.`;
-      await saveSyncedEvent("wallet_section_opened", { section: button.dataset.walletSection });
-    });
-  });
+ $$("[data-wallet-section]").forEach((button) => {
+   button.addEventListener("click", async () => {
+      const section = button.dataset.walletSection;
+      const walletSectionTargets = {
+        overview: ".wallet-home-grid",
+        myWallet: ".wallet-operations-panel",
+        tripWallets: ".wallet-section-widget--trip-wallets",
+        virtualCard: "#virtualCard",
+        splitBills: "#splitBill",
+        requests: ".wallet-section-widget--requests",
+        transactions: ".wallet-section-widget--transactions",
+        refunds: ".wallet-section-widget--refunds",
+        paymentMethods: ".wallet-section-widget--payment-methods",
+        security: "#adminPanel"
+      };
+      if (section === "security") {
+        navigateSafely("adminPanel", { updateHistory: true, settingsFocus: "security" });
+      } else if (!["splitBills", "virtualCard"].includes(section) && $("#walletPanel")?.hidden) {
+        navigateSafely("walletPanel", { updateHistory: true });
+      }
+      $$("[data-wallet-section]").forEach((sectionButton) => sectionButton.classList.toggle("active", sectionButton.dataset.walletSection === section));
+      const target = $(walletSectionTargets[section]);
+      if (target) {
+        document.querySelectorAll(".wallet-focus").forEach((element) => element.classList.remove("wallet-focus"));
+        target.classList.add("wallet-focus");
+        window.setTimeout(() => target.classList.remove("wallet-focus"), 900);
+        window.requestAnimationFrame(() => target.scrollIntoView({ behavior: "smooth", block: "start" }));
+      }
+      $("#walletMessage").textContent = `${button.textContent.trim()} opened. The selected Wallet workspace is focused, and balances, ledgers, refunds, and security controls remain preserved.`;
+      await saveSyncedEvent("wallet_section_opened", { section });
+   });
+ });
 
   $("#authForm")?.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -7101,6 +8398,8 @@ function wireLocalInteractions() {
       const label = button.dataset.eventCard;
       if (button.closest("#eventsPanel")) {
         renderRoute("eventsPanel", { updateHistory: true });
+        syncEventInviteFromCard(button);
+        renderEventInviteTemplate(createLocalInviteTemplate(getEventInviteContext()));
         if ($("#eventsDashboardMessage")) {
           $("#eventsDashboardMessage").textContent = `${label} opened. Event overview, schedule, guests, invitations, RSVPs, messages, polls, tasks, budget, split bills, memories, files, updates, and check-in stay in Events.`;
         }
@@ -7135,10 +8434,29 @@ function wireLocalInteractions() {
       if ($("#eventsDashboardMessage")) {
         $("#eventsDashboardMessage").textContent = `${label} opened in Events. No flight, hotel, boarding pass, weather, or travel document tools are shown in this event workspace.`;
       }
+      if (/invitation/i.test(label)) {
+        openEventInviteStudio();
+        if ($("#eventInviteStatus")) $("#eventInviteStatus").textContent = "Invitation Studio opened. Choose a tone and generate a template based on this event.";
+      }
       addAuditEntry("Events dashboard action", `${label} selected.`);
       await saveSyncedEvent("events_dashboard_action", { label });
     });
   });
+
+  $("#eventInviteGenerateButton")?.addEventListener("click", generateEventInviteTemplate);
+  $("#eventInviteCopyButton")?.addEventListener("click", copyEventInviteTemplate);
+  $("#eventInviteSaveButton")?.addEventListener("click", saveEventInviteDraft);
+  ["#eventNameInput", "#eventTypeInput", "#eventDateInput", "#eventStartTimeInput", "#eventEndTimeInput", "#eventVenueInput", "#eventAddressInput", "#eventDescriptionInput", "#eventInviteAudience", "#eventInviteTone", "#eventInviteDetails"].forEach((selector) => {
+    $(selector)?.addEventListener("input", () => {
+      if ($("#eventInviteStatus")) $("#eventInviteStatus").textContent = "Event details changed. Generate a fresh invitation preview when ready.";
+    });
+  });
+  $("#eventTypeInput")?.addEventListener("change", (event) => {
+    const selector = $("#eventInviteEventType");
+    if (selector && event.target.value in eventInviteTypeLabels) selector.value = event.target.value;
+    renderEventInviteTemplate(createLocalInviteTemplate(getEventInviteContext()));
+  });
+  renderEventInviteTemplate(createLocalInviteTemplate(getEventInviteContext()));
 
   $$("[data-wallet-action]").forEach((button) => {
     button.addEventListener("click", async () => {
@@ -7286,6 +8604,7 @@ function updateEnterpriseRole() {
   if (!canSeeFinancials) {
     addAuditEntry("Financial access blocked", `${selectedRole} role preview restricted corporate budget visibility.`);
   }
+  updateCorporateOperationsPermissions();
   updateDashboardWidgets();
 }
 
@@ -7606,17 +8925,103 @@ function getGoLiveAudit() {
   };
 }
 
-function renderGoLiveAudit() {
+function setGoLiveHealthCheck(key, status, detail) {
+  const item = $(`[data-go-live-check="${key}"]`);
+  if (!item) return;
+  item.dataset.goLiveStatus = status;
+  if (detail) {
+    const description = item.querySelector("span");
+    if (description) description.textContent = detail;
+  }
+}
+
+function applyGoLiveHealth(health) {
+  const required = health.requiredChecks || health;
+  const optional = health.optionalChecks || health;
+  const publicReady = Boolean(
+    required.supabasePublicUrlConfigured
+      && required.supabasePublishableKeyConfigured
+  );
+  const serverReady = Boolean(
+    required.supabaseServerUrlConfigured
+      && required.supabaseServiceRoleConfigured
+      && required.adminEmailsConfigured
+      && required.guestAccessPepperConfigured
+  );
+  const pushReady = Boolean(
+    required.vapidSubjectConfigured
+      && required.vapidPublicKeyConfigured
+      && required.vapidPrivateKeyConfigured
+      && required.cronSecretConfigured
+  );
+  const paymentReady = Boolean(
+    required.stripeSecretConfigured
+      && required.stripeWebhookConfigured
+      && required.appBaseUrlConfigured
+  );
+  const missingExternal = [
+    ["Google Places", optional.googlePlacesConfigured],
+    ["FlightAware", optional.flightAwareConfigured],
+    ["Amadeus", optional.amadeusHotelsConfigured],
+    ["OpenAI", optional.openAiConfigured && optional.openAiModelConfigured]
+  ].filter(([, configured]) => !configured).map(([name]) => name);
+  setGoLiveHealthCheck("public-supabase", publicReady ? "pass" : "blocked", publicReady
+    ? "Public Supabase URL and publishable key are configured."
+    : "NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY are required.");
+  setGoLiveHealthCheck("server-supabase", serverReady ? "pass" : "blocked", serverReady
+    ? "Server Supabase URL, service role, admin allowlist, and guest pepper are configured."
+    : `Missing server controls: ${health.missingRequiredEnv?.join(", ") || "review Supabase server variables"}.`);
+  setGoLiveHealthCheck("push", pushReady ? "pass" : "blocked", pushReady
+    ? "VAPID keys, subject, and scheduled reminder secret are configured."
+    : "VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, and CRON_SECRET are required.");
+  setGoLiveHealthCheck("payments", paymentReady ? "review" : "blocked", paymentReady
+    ? "Stripe funding and webhook variables are configured; issuer and PCI tap-to-pay testing remains required."
+    : "Stripe live funding requires STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, and APP_BASE_URL.");
+  setGoLiveHealthCheck("external", missingExternal.length ? "blocked" : "review", missingExternal.length
+    ? `Missing provider configuration: ${missingExternal.join(", ")}. Email, SMS, maps, storage, and monitoring still require manual verification.`
+    : "Core search and AI providers are configured; email, SMS, maps, storage, monitoring, and backups still require manual verification.");
+  $("#goLiveDeploymentStatus").textContent = "Live health checked";
+  $("#goLiveEnvironmentStatus").textContent = health.ready ? "Ready" : "Blocked";
+  $("#goLiveLocalStatus").textContent = "Validated";
+}
+
+function renderGoLiveAuditSummary() {
   if (!$("#goLiveStatusMessage")) return;
   const audit = getGoLiveAudit();
-  $("#goLiveDeploymentStatus").textContent = "Live";
-  $("#goLiveEnvironmentStatus").textContent = audit.blocked ? "Blocked" : "Ready";
-  $("#goLiveLocalStatus").textContent = "Validated";
-  $("#goLiveDecisionStatus").textContent = audit.blocked ? "Not public-ready" : "Ready for production";
+  $("#goLiveDecisionStatus").textContent = audit.blocked ? "Beta-ready; production blocked" : audit.review ? "Manual review required" : "Ready for production";
   $("#goLiveStatusMessage").textContent = audit.blocked
-    ? `Go-live blocked: ${audit.blocked} critical production item(s) still require provider credentials, live integrations, or real user journey verification. ${audit.passed} checks passed and ${audit.review} need manual review.`
-    : `Go-live checklist passed ${audit.passed}/${audit.checks.length} checks. Confirm monitoring and backups before public launch.`;
-  addAuditEntry("Go-live audit completed", audit.blocked ? `${audit.blocked} blocking production check(s) remain.` : "Production acceptance checklist passed.");
+    ? `Public production blocked: ${audit.blocked} critical item(s) still require provider credentials, live integrations, or real user journey verification. ${audit.passed} checks passed; ${audit.review} checks need manual review.`
+    : audit.review
+      ? `Provider configuration is present, but ${audit.review} manual review item(s) remain before public launch.`
+      : `Go-live checklist passed ${audit.passed}/${audit.checks.length} checks. Confirm monitoring and backups before public launch.`;
+  addAuditEntry("Go-live audit completed", audit.blocked ? `${audit.blocked} blocking production check(s) remain.` : "Production acceptance checklist completed.");
+}
+
+async function renderGoLiveAudit() {
+  if (!$("#goLiveStatusMessage")) return;
+  if (isFilePreview) {
+    $("#goLiveDeploymentStatus").textContent = "Local preview";
+    $("#goLiveEnvironmentStatus").textContent = "Not checked";
+    $("#goLiveLocalStatus").textContent = "Validated";
+    renderGoLiveAuditSummary();
+    return;
+  }
+  $("#goLiveEnvironmentStatus").textContent = "Checking";
+  $("#goLiveStatusMessage").textContent = "Checking the deployed /api/health endpoint without exposing secret values...";
+  try {
+    const response = await fetch("/api/health", { cache: "no-store", headers: { Accept: "application/json" } });
+    const health = await response.json().catch(() => ({}));
+    if (!response.ok || !health.app) throw new Error("Production health endpoint is unavailable.");
+    applyGoLiveHealth(health);
+    renderGoLiveAuditSummary();
+  } catch (error) {
+    $("#goLiveDeploymentStatus").textContent = "Health unavailable";
+    $("#goLiveEnvironmentStatus").textContent = "Unknown";
+    $("#goLiveLocalStatus").textContent = "Validated locally";
+    $("#goLiveDecisionStatus").textContent = "Production blocked";
+    $("#goLiveStatusMessage").textContent = `${error.message} Production must not be announced until /api/health responds successfully.`;
+    addAuditEntry("Go-live health unavailable", error.message);
+  }
 }
 
 function wireNavigationFallbacks() {
@@ -7733,7 +9138,13 @@ function subscribeToLiveData() {
 async function registerServiceWorker() {
   if (isFilePreview) return;
   if (!("serviceWorker" in navigator)) return;
-  const registration = await navigator.serviceWorker.register("/sw.js");
+  let registration;
+  try {
+    registration = await navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" });
+  } catch (error) {
+    console.warn("Travel-Drip service worker registration failed; continuing without offline mode.", error);
+    return;
+  }
   registration.addEventListener("updatefound", () => {
     const worker = registration.installing;
     if (!worker) return;
@@ -7744,14 +9155,16 @@ async function registerServiceWorker() {
     });
   });
   $("#reloadUpdateButton")?.addEventListener("click", () => {
-    if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
+    registration.waiting?.postMessage({ type: "SKIP_WAITING" });
+  });
+  let refreshingForUpdate = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (refreshingForUpdate) return;
+    refreshingForUpdate = true;
     window.location.reload();
   });
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-    if (!sessionStorage.getItem("traveldripReloadedForUpdate")) {
-      sessionStorage.setItem("traveldripReloadedForUpdate", "true");
-      window.location.reload();
-    }
+  registration.update().catch((error) => {
+    console.warn("Travel-Drip could not check for a PWA update; the cached app remains available.", error);
   });
 }
 

@@ -96,11 +96,18 @@ The deployed website and installable PWA use the authenticated `/api/travel-sear
 
 ```env
 GOOGLE_PLACES_API_KEY=PASTE_YOUR_GOOGLE_PLACES_SERVER_KEY
+FLIGHTAWARE_API_KEY=PASTE_YOUR_FLIGHTAWARE_AEROAPI_KEY
+AMADEUS_CLIENT_ID=PASTE_YOUR_AMADEUS_CLIENT_ID
+AMADEUS_CLIENT_SECRET=PASTE_YOUR_AMADEUS_CLIENT_SECRET
 OPENAI_API_KEY=PASTE_YOUR_OPENAI_SERVER_KEY
 OPENAI_MODEL=gpt-5
 ```
 
-`GOOGLE_PLACES_API_KEY` enables Google Places Text Search for Explore, Smart Travel Search, and private-driver company search. Restrict the Google key to Places API server requests and set billing/quotas in Google Cloud. `OPENAI_API_KEY` enables the AI planner's live web research route. The browser receives normalized results and source links only; it never receives either secret.
+`GOOGLE_PLACES_API_KEY` enables Google Places Text Search for Explore, Smart Travel Search, and private-driver company search. Restrict the Google key to Places API server requests and set billing/quotas in Google Cloud. `OPENAI_API_KEY` enables the AI planner's live web research route and the Events invitation studio's event-specific template writing. The browser receives normalized results, source links, and invitation copy only; it never receives either secret.
+
+`FLIGHTAWARE_API_KEY` enables the authenticated `POST /api/flight-tracking` route used by Transportation. The route calls FlightAware AeroAPI server-side and returns the matching flight's current status, estimated times, gates, terminals, progress, and provider tracking link. Keep this key server-only. The lookup accepts a flight number, optional departure date, and optional origin airport; it does not replace a booking confirmation or guarantee a provider update when the airline has not published one.
+
+`AMADEUS_CLIENT_ID` and `AMADEUS_CLIENT_SECRET` enable the authenticated `POST /api/hotel-availability` route used in Travel > Hotels. The route requests current hotel availability, prices, room details, and cancellation policy for a three-letter IATA city code and date range. Keep both credentials server-only. A live offer is not a confirmed reservation until a supported booking provider confirms the booking and returns a confirmation number.
 
 If either provider is missing, the UI stays usable and labels local catalog content as estimates or reports that live search needs configuration. Render's static service does not run the `/api` functions, so deploy the server-backed search on Vercel or port these routes to a Render web service before calling it live.
 

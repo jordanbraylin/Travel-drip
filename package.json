@@ -3,12 +3,20 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "vercel dev",
     "serve": "python3 -m http.server 4173",
     "build:render": "node scripts/generate-public-config.js && npm run validate:pwa",
     "validate:pwa": "node scripts/validate-pwa.js",
     "verify:qa": "node scripts/verify-links-search-booking.js",
+    "check:production-env": "node scripts/check-production-env.js",
+    "check:production-env:strict": "node scripts/check-production-env.js --strict",
+    "check:production": "npm run check:production-env -- --strict && npm run validate:pwa && npm run verify:qa",
+    "smoke": "node scripts/smoke-test.js",
+    "test:corporate-booking": "node scripts/test-corporate-booking.js",
     "audit:files": "grep -R \"SUPABASE_SERVICE_ROLE_KEY\\|VAPID_PRIVATE_KEY\\|sk-\\|password\" -n --exclude-dir=node_modules . || true"
   },
   "dependencies": {

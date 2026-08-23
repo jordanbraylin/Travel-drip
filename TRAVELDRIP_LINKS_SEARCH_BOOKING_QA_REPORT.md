@@ -1,6 +1,6 @@
 # Travel-Drip Links, Search, Date Picker, Booking, and Real-Time Updates Verification
 
-Generated: 2026-08-01T14:28:17.669Z
+Generated: 2026-08-22T23:11:04.336Z
 
 ## Final Status
 
@@ -10,16 +10,16 @@ This local verification checks static routes, link targets, search/date field wi
 
 ## Summary
 
-- Total buttons inspected: 773
+- Total buttons inspected: 757
 - Total links inspected: 15
-- Data-target controls inspected: 100
-- Working local data-target routes: 17/17
-- Shared main-navigation controls inspected: 32
-- Shared main-navigation items configured: 10/10
-- Route definitions found: 19
-- Date fields found: 8
-- Search fields found: 11
-- API route files found: 22
+- Data-target controls inspected: 96
+- Working local data-target routes: 18/18
+- Shared main-navigation controls inspected: 38
+- Shared main-navigation items configured: 12/12
+- Route definitions found: 20
+- Date fields found: 12
+- Search fields found: 12
+- API route files found: 27
 - Critical local issues: 0
 
 ## Link and Redirect Verification
@@ -36,7 +36,7 @@ No missing aria-controls targets were detected.
 
 No placeholder or insecure href values were detected.
 
-Shared navigation config covers dashboard, planning, itinerary, events, travel, wallet, chat, important-info, memories, settings and is stamped onto 32 header, sidebar, dashboard, and mobile controls.
+Shared navigation config covers dashboard, profile, planning, itinerary, events, transportation, travel, wallet, chat, important-info, memories, settings and is stamped onto 38 header, sidebar, dashboard, and mobile controls.
 
 ## Route Isolation Verification
 
@@ -59,9 +59,11 @@ Today in Travel-Drip is defined once inside the Dashboard widget section, and th
 | Toolbar item | Expected route | Shared config | Sidebar control | Status |
 | --- | --- | --- | --- |
 | dashboard | /dashboard | yes | yes | pass |
+| profile | /profile/my-profile | yes | yes | pass |
 | planning | /planning | yes | yes | pass |
 | itinerary | /itinerary | yes | yes | pass |
 | events | /events | yes | yes | pass |
+| transportation | /transportation | yes | yes | pass |
 | travel | /travel | yes | yes | pass |
 | wallet | /wallet | yes | yes | pass |
 | chat | /chat | yes | yes | pass |
@@ -69,7 +71,7 @@ Today in Travel-Drip is defined once inside the Dashboard widget section, and th
 | memories | /memories | yes | yes | pass |
 | settings | /settings | yes | yes | pass |
 
-All ten main sidebar routes use the shared navigation configuration; Cruise remains nested under Travel.
+All twelve main sidebar routes use the shared navigation configuration; Cruise remains nested under Travel.
 
 ## Full-Width Widget Verification
 
@@ -100,12 +102,18 @@ Route roots and visible inner shells are transparent; individual widgets retain 
 - Itinerary layout: PASS
 - Memories layout: PASS
 - Event controls and cards: PASS
+- Evite-inspired event invitation studio: PASS
+- Event-specific invitation context: PASS
+- AI event invitation templates: PASS
 - Wallet formatting: PASS
 - Smart Travel Search icon: PASS
 - Chat layout: PASS
 - Chat vibe shortcuts: PASS
 - Widget headers stay on top: PASS
 - Wallet and boarding pass visuals: PASS
+- Wallet card starts top-left: PASS
+- Destination insight cards stay side by side: PASS
+- All destination choices are available: PASS
 - Travel-Drip Pass workspace: PASS
 - AI item recognition layout: PASS
 - Readable app widget text: PASS
@@ -126,6 +134,16 @@ Route roots and visible inner shells are transparent; individual widgets retain 
 - AI recognition widget stays horizontal: PASS
 - Overview Memories collage stays contained: PASS
 - Travel Home summary cards stay readable: PASS
+- Transportation has a dedicated concise table: PASS
+- Transportation records use expandable dropdowns: PASS
+- Transportation removes oversized parent widgets: PASS
+- Transportation uses travel-first layout: PASS
+- Travel uses social discovery layout: PASS
+- Chat uses social conversation layout: PASS
+- Home dashboard uses travel-first layout: PASS
+- Live flight tracking wiring: PASS
+- Live hotel availability wiring: PASS
+- Live restaurant and activity search wiring: PASS
 - My Profile widgets stay readable: PASS
 - Travel selected page panel removed: PASS
 - Travel Home avoids duplicate summaries: PASS
@@ -144,8 +162,14 @@ Focused route grids, compact event controls, horizontal widget text, wallet summ
 - Policy and conditions: PASS
 - Role and finance restrictions: PASS
 - Corporate entry styling: PASS
+- Corporate booking operations UI: PASS
+- Corporate booking API: PASS
+- Corporate booking database and RLS: PASS
+- Provider confirmation enforcement: PASS
+- Corporate booking notifications: PASS
+- Corporate policy tests: PASS
 
-Corporate navigation is reachable, secure access verification remains required, and the existing policy, role, financial privacy, audit, and acceptance conditions remain present.
+Corporate navigation, secure access, booking operations, policy evaluation, finance approvals, traveler-care cases, provider confirmation safeguards, role restrictions, and RLS migrations are present.
 
 ## Text Containment Verification
 
@@ -169,8 +193,12 @@ Status: Native browser date/datetime-local controls present locally; full custom
 - tripEndInput: type=date, app reference=yes, default value=yes
 - eventRsvpDeadlineInput: type=date, app reference=yes, default value=yes
 - inviteDeadlineInput: type=date, app reference=yes, default value=yes
+- corporateBookingStartsAt: type=datetime-local, app reference=yes, default value=no
 - paymentRequestDueAt: type=datetime-local, app reference=yes, default value=no
+- flightTrackingDate: type=date, app reference=yes, default value=yes
 - flightDepartureDateInput: type=date, app reference=yes, default value=yes
+- hotelLiveCheckIn: type=date, app reference=yes, default value=yes
+- hotelLiveCheckOut: type=date, app reference=yes, default value=yes
 
 ### Date Range Review
 
@@ -187,6 +215,7 @@ Status: Local UI search fields are present; provider-backed travel search requir
 - exploreSearchInput: app reference=yes, placeholder/label=yes
 - messageSearchInput: app reference=yes, placeholder/label=yes
 - infoSearch: app reference=yes, placeholder/label=yes
+- transportationTableSearchInput: app reference=yes, placeholder/label=yes
 - travelSmartSearchInput: app reference=yes, placeholder/label=yes
 - travelSettingsSearchInput: app reference=yes, placeholder/label=yes
 - transportSearchInput: app reference=yes, placeholder/label=yes
@@ -206,17 +235,22 @@ Status: Not production-complete without live provider credentials and deployed c
 
 ## API Surface
 
+- api/_corporate-policy.js
 - api/_push-notifications.js
 - api/_security.js
 - api/admin-status.js
+- api/ai-invitation.js
 - api/ai-planner.js
 - api/audit.js
 - api/config.js
+- api/corporate-bookings.js
 - api/events.js
 - api/explore.js
+- api/flight-tracking.js
 - api/ghl-sync.js
 - api/guest-access.js
 - api/health.js
+- api/hotel-availability.js
 - api/invitations.js
 - api/notify.js
 - api/ownership-transfer.js

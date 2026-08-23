@@ -9,6 +9,8 @@ const fail = (message) => {
 const manifest = JSON.parse(read("manifest.webmanifest"));
 const sw = read("sw.js");
 const html = read("index.html");
+const adminHtml = read("admin.html");
+const app = read("app.js");
 const offline = read("offline.html");
 const envExample = read(".env.example");
 const vercel = JSON.parse(read("vercel.json"));
@@ -29,6 +31,31 @@ if (!manifest.icons?.some((icon) => icon.purpose?.includes("maskable"))) fail("m
 
 for (const required of ["/offline.html", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png"]) {
   if (!sw.includes(required)) fail(`service worker missing ${required}`);
+}
+
+const assetReference = (source, pattern, label) => {
+  const match = source.match(pattern);
+  if (!match) fail(`${label} is missing a versioned asset reference`);
+  return `/${match[1]}`;
+};
+
+const webAssets = {
+  styles: assetReference(html, /href="(styles\.css\?v=\d+)"/, "index styles"),
+  navigation: assetReference(html, /href="(navigation\.css\?v=\d+)"/, "index navigation"),
+  app: assetReference(html, /src="(app\.js\?v=\d+)"/, "index app"),
+  config: assetReference(html, /src="(public-config\.js\?v=\d+)"/, "index public config")
+};
+
+for (const asset of Object.values(webAssets)) {
+  if (!sw.includes(`"${asset}"`)) fail(`service worker cache is out of sync with ${asset}`);
+}
+
+const adminStyles = assetReference(adminHtml, /href="(styles\.css\?v=\d+)"/, "admin styles");
+const adminApp = assetReference(adminHtml, /src="(app\.js\?v=\d+)"/, "admin app");
+if (adminStyles !== webAssets.styles) fail("admin and web styles versions do not match");
+if (adminApp !== webAssets.app) fail("admin and web app versions do not match");
+if (!app.includes('register("/sw.js", { updateViaCache: "none" })')) {
+  fail("service worker registration must bypass the HTTP cache when checking for updates");
 }
 
 for (const [label, pattern] of [

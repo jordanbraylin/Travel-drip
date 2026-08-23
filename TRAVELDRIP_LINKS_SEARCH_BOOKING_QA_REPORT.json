@@ -1,25 +1,25 @@
 {
-  "generatedAt": "2026-08-01T14:28:17.669Z",
+  "generatedAt": "2026-08-22T23:11:04.336Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
   },
   "totals": {
-    "screenIds": 611,
-    "buttons": 773,
+    "screenIds": 706,
+    "buttons": 757,
     "hrefLinks": 15,
-    "dataTargets": 100,
-    "uniqueDataTargets": 17,
-    "mainNavigationControls": 32,
-    "mainNavigationItems": 10,
-    "routeDefinitions": 19,
-    "dateInputs": 8,
-    "searchInputs": 11,
-    "actionAttributeTypes": 83,
-    "apiRoutes": 22
+    "dataTargets": 96,
+    "uniqueDataTargets": 18,
+    "mainNavigationControls": 38,
+    "mainNavigationItems": 12,
+    "routeDefinitions": 20,
+    "dateInputs": 12,
+    "searchInputs": 12,
+    "actionAttributeTypes": 96,
+    "apiRoutes": 27
   },
   "linkAndRouteVerification": {
-    "workingLocalTargets": 17,
+    "workingLocalTargets": 18,
     "targetIssues": [],
     "ariaIssues": [],
     "linkIssues": [],
@@ -33,9 +33,11 @@
   "mainNavigationVerification": {
     "requiredItems": [
       "dashboard",
+      "profile",
       "planning",
       "itinerary",
       "events",
+      "transportation",
       "travel",
       "wallet",
       "chat",
@@ -51,7 +53,9 @@
       "itinerary",
       "memories",
       "planning",
+      "profile",
       "settings",
+      "transportation",
       "travel",
       "wallet"
     ],
@@ -63,11 +67,13 @@
       "/itinerary",
       "/memories",
       "/planning",
+      "/profile/my-profile",
       "/settings",
+      "/transportation",
       "/travel",
       "/wallet"
     ],
-    "renderedControlCount": 32,
+    "renderedControlCount": 38,
     "issues": []
   },
   "routeIsolationVerification": {
@@ -108,9 +114,11 @@
   "toolbarNavigationVerification": {
     "requiredRoutes": {
       "dashboard": "/dashboard",
+      "profile": "/profile/my-profile",
       "planning": "/planning",
       "itinerary": "/itinerary",
       "events": "/events",
+      "transportation": "/transportation",
       "travel": "/travel",
       "wallet": "/wallet",
       "chat": "/chat",
@@ -126,7 +134,9 @@
       "itinerary",
       "memories",
       "planning",
+      "profile",
       "settings",
+      "transportation",
       "travel",
       "wallet"
     ],
@@ -180,6 +190,18 @@
         "status": "PASS"
       },
       {
+        "label": "Evite-inspired event invitation studio",
+        "status": "PASS"
+      },
+      {
+        "label": "Event-specific invitation context",
+        "status": "PASS"
+      },
+      {
+        "label": "AI event invitation templates",
+        "status": "PASS"
+      },
+      {
         "label": "Wallet formatting",
         "status": "PASS"
       },
@@ -201,6 +223,18 @@
       },
       {
         "label": "Wallet and boarding pass visuals",
+        "status": "PASS"
+      },
+      {
+        "label": "Wallet card starts top-left",
+        "status": "PASS"
+      },
+      {
+        "label": "Destination insight cards stay side by side",
+        "status": "PASS"
+      },
+      {
+        "label": "All destination choices are available",
         "status": "PASS"
       },
       {
@@ -284,6 +318,46 @@
         "status": "PASS"
       },
       {
+        "label": "Transportation has a dedicated concise table",
+        "status": "PASS"
+      },
+      {
+        "label": "Transportation records use expandable dropdowns",
+        "status": "PASS"
+      },
+      {
+        "label": "Transportation removes oversized parent widgets",
+        "status": "PASS"
+      },
+      {
+        "label": "Transportation uses travel-first layout",
+        "status": "PASS"
+      },
+      {
+        "label": "Travel uses social discovery layout",
+        "status": "PASS"
+      },
+      {
+        "label": "Chat uses social conversation layout",
+        "status": "PASS"
+      },
+      {
+        "label": "Home dashboard uses travel-first layout",
+        "status": "PASS"
+      },
+      {
+        "label": "Live flight tracking wiring",
+        "status": "PASS"
+      },
+      {
+        "label": "Live hotel availability wiring",
+        "status": "PASS"
+      },
+      {
+        "label": "Live restaurant and activity search wiring",
+        "status": "PASS"
+      },
+      {
         "label": "My Profile widgets stay readable",
         "status": "PASS"
       },
@@ -331,6 +405,30 @@
       },
       {
         "label": "Corporate entry styling",
+        "status": "PASS"
+      },
+      {
+        "label": "Corporate booking operations UI",
+        "status": "PASS"
+      },
+      {
+        "label": "Corporate booking API",
+        "status": "PASS"
+      },
+      {
+        "label": "Corporate booking database and RLS",
+        "status": "PASS"
+      },
+      {
+        "label": "Provider confirmation enforcement",
+        "status": "PASS"
+      },
+      {
+        "label": "Corporate booking notifications",
+        "status": "PASS"
+      },
+      {
+        "label": "Corporate policy tests",
         "status": "PASS"
       }
     ],
@@ -403,13 +501,37 @@
         "hasDefaultValue": true
       },
       {
+        "id": "corporateBookingStartsAt",
+        "type": "datetime-local",
+        "referencedInApp": true,
+        "hasDefaultValue": false
+      },
+      {
         "id": "paymentRequestDueAt",
         "type": "datetime-local",
         "referencedInApp": true,
         "hasDefaultValue": false
       },
       {
+        "id": "flightTrackingDate",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      },
+      {
         "id": "flightDepartureDateInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      },
+      {
+        "id": "hotelLiveCheckIn",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": true
+      },
+      {
+        "id": "hotelLiveCheckOut",
         "type": "date",
         "referencedInApp": true,
         "hasDefaultValue": true
@@ -464,6 +586,11 @@
       },
       {
         "id": "infoSearch",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
+        "id": "transportationTableSearchInput",
         "referencedInApp": true,
         "hasLabelOrPlaceholder": true
       },
@@ -525,17 +652,22 @@
       }
     ],
     "apiRoutes": [
+      "_corporate-policy.js",
       "_push-notifications.js",
       "_security.js",
       "admin-status.js",
+      "ai-invitation.js",
       "ai-planner.js",
       "audit.js",
       "config.js",
+      "corporate-bookings.js",
       "events.js",
       "explore.js",
+      "flight-tracking.js",
       "ghl-sync.js",
       "guest-access.js",
       "health.js",
+      "hotel-availability.js",
       "invitations.js",
       "notify.js",
       "ownership-transfer.js",

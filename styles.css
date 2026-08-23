@@ -25,6 +25,426 @@
   --tropical-gradient: linear-gradient(135deg, var(--aqua), var(--palm));
 }
 
+/* Corporate booking operations */
+.corporate-operations-section {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.corporate-operations-heading {
+  align-items: end;
+  padding: 4px 2px 0;
+}
+
+.corporate-operations-heading h3,
+.corporate-operation-card h4 {
+  width: 100%;
+  margin: 0;
+  color: #102737;
+  writing-mode: horizontal-tb;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+.corporate-operations-heading h3 {
+  font-size: clamp(1.35rem, 2vw, 1.85rem);
+  line-height: 1.2;
+}
+
+.corporate-operations-heading p:last-child {
+  max-width: 760px;
+  margin: 6px 0 0;
+  color: #5d7180;
+}
+
+.corporate-ops-heading-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.corporate-ops-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  min-width: 0;
+}
+
+.corporate-ops-metrics article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 17px 18px;
+  background: #fff;
+  border: 1px solid #d8e8ec;
+  border-radius: 8px;
+  box-shadow: 0 8px 22px rgba(16, 39, 55, 0.06);
+}
+
+.corporate-ops-metrics span,
+.corporate-ops-metrics small {
+  color: #617583;
+}
+
+.corporate-ops-metrics strong {
+  color: #102737;
+  font-size: 1.55rem;
+  line-height: 1.05;
+}
+
+.corporate-operations-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+  min-width: 0;
+}
+
+.corporate-operation-card {
+  grid-column: span 6;
+  display: grid;
+  gap: 15px;
+  min-width: 0;
+  height: auto;
+  padding: 20px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #d8e8ec;
+  border-radius: 8px;
+  box-shadow: 0 10px 26px rgba(16, 39, 55, 0.07);
+}
+
+.corporate-booking-queue-card,
+.corporate-service-card {
+  grid-column: span 7;
+}
+
+.corporate-approval-card,
+.corporate-duty-card {
+  grid-column: span 5;
+}
+
+.corporate-operation-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+}
+
+.corporate-operation-card__header > div {
+  min-width: 0;
+}
+
+.corporate-operation-card h4 {
+  font-size: 1.15rem;
+  line-height: 1.25;
+}
+
+.corporate-operation-kicker {
+  display: block;
+  margin-bottom: 4px;
+  color: #078bab;
+  font-size: 0.73rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.corporate-booking-form,
+.corporate-service-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  min-width: 0;
+}
+
+.corporate-booking-form label,
+.corporate-service-form label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  color: #334f5e;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.corporate-booking-form input,
+.corporate-booking-form select,
+.corporate-service-form input,
+.corporate-service-form select,
+.corporate-service-form textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 9px 11px;
+  color: #102737;
+  background: #f9fcfc;
+  border: 1px solid #cadde2;
+  border-radius: 7px;
+  box-sizing: border-box;
+  font: inherit;
+}
+
+.corporate-booking-form textarea,
+.corporate-service-form textarea {
+  resize: vertical;
+}
+
+.corporate-booking-confirmation,
+.corporate-service-subject,
+.corporate-service-description,
+.corporate-booking-form .primary-button,
+.corporate-service-form .primary-button {
+  grid-column: 1 / -1;
+}
+
+.corporate-booking-confirmation {
+  grid-template-columns: auto minmax(0, 1fr) !important;
+  align-items: center;
+}
+
+.corporate-booking-confirmation input {
+  width: 18px;
+  min-height: 18px;
+}
+
+.corporate-operation-message {
+  margin: 0;
+  padding: 10px 12px;
+  color: #3f5e6b;
+  background: #eef9fa;
+  border-left: 3px solid #18a8bb;
+}
+
+.corporate-policy-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.corporate-policy-facts div,
+.corporate-readiness-list div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 12px;
+  background: #f7fafb;
+  border: 1px solid #e0eaed;
+  border-radius: 7px;
+}
+
+.corporate-policy-facts dt,
+.corporate-readiness-list span {
+  color: #627783;
+  font-size: 0.8rem;
+}
+
+.corporate-policy-facts dd,
+.corporate-readiness-list strong {
+  margin: 0;
+  color: #173847;
+  font-weight: 800;
+}
+
+.corporate-policy-notes {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.corporate-policy-notes span {
+  padding: 7px 9px;
+  color: #2d5865;
+  background: #edf6f5;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.corporate-policy-editor {
+  min-width: 0;
+  border-top: 1px solid #e0eaed;
+  padding-top: 12px;
+}
+
+.corporate-policy-editor summary {
+  cursor: pointer;
+  color: #185064;
+  font-weight: 800;
+}
+
+.corporate-policy-editor[open] summary {
+  margin-bottom: 12px;
+}
+
+.corporate-booking-list,
+.corporate-approval-list,
+.corporate-service-list {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+}
+
+.corporate-booking-row,
+.corporate-approval-row,
+.corporate-service-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px;
+  background: #f9fbfc;
+  border: 1px solid #dfebee;
+  border-radius: 7px;
+}
+
+.corporate-booking-row > div,
+.corporate-approval-row > div,
+.corporate-service-row > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.corporate-booking-row strong,
+.corporate-approval-row strong {
+  color: #102737;
+  overflow-wrap: break-word;
+}
+
+.corporate-booking-row span,
+.corporate-approval-row span,
+.corporate-service-row span {
+  color: #617583;
+  font-size: 0.82rem;
+  overflow-wrap: break-word;
+}
+
+.corporate-booking-row__actions {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) auto auto;
+  gap: 7px;
+  min-width: 340px;
+}
+
+.corporate-booking-row__actions input,
+.corporate-booking-row__actions select {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 9px;
+  color: #173847;
+  background: #fff;
+  border: 1px solid #cadde2;
+  border-radius: 7px;
+}
+
+.corporate-service-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.corporate-policy-result {
+  display: inline-flex;
+  width: fit-content;
+  padding: 4px 7px;
+  border-radius: 5px;
+  font-size: 0.7rem !important;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.corporate-policy-result.is-compliant {
+  color: #14673e;
+  background: #ddf5e8;
+}
+
+.corporate-policy-result.is-review,
+.document-status.is-warning {
+  color: #825a00;
+  background: #fff1c8;
+}
+
+.document-status.is-success {
+  color: #14673e;
+  background: #ddf5e8;
+}
+
+.corporate-approval-actions {
+  grid-auto-flow: column;
+  align-items: center;
+  gap: 7px !important;
+}
+
+.corporate-readiness-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.corporate-operation-card button {
+  min-height: 40px;
+}
+
+@media (max-width: 1100px) {
+  .corporate-ops-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .corporate-operation-card,
+  .corporate-booking-queue-card,
+  .corporate-service-card,
+  .corporate-approval-card,
+  .corporate-duty-card {
+    grid-column: span 12;
+  }
+}
+
+@media (max-width: 640px) {
+  .corporate-operations-heading,
+  .corporate-operation-card__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .corporate-ops-heading-actions {
+    justify-content: flex-start;
+  }
+
+  .corporate-ops-metrics,
+  .corporate-booking-form,
+  .corporate-service-form,
+  .corporate-policy-facts,
+  .corporate-readiness-list {
+    grid-template-columns: 1fr;
+  }
+
+  .corporate-booking-row,
+  .corporate-approval-row,
+  .corporate-service-row {
+    grid-template-columns: 1fr;
+  }
+
+  .corporate-booking-row__actions {
+    grid-template-columns: 1fr;
+    min-width: 0;
+  }
+
+  .corporate-approval-actions {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -4638,6 +5058,28 @@ body.app-routed main :where(.trip-tab-bar button, .tabs .tab, .message-tabs butt
   body.app-routed main > section.panel:not([hidden]) :where(.travel-dashboard-sections, .travel-booking-summary, .travel-transport-summary, .travel-focus-grid, .travel-provider-cards, .wallet-dashboard-header, .wallet-home-grid, .wallet-trip-card-grid, .wallet-dashboard-sections, .wallet-section-card-grid, .wallet-action-grid, .info-status-grid, .important-info-grid, .security-status-grid, .security-control-grid, .backend-summary-grid, .backend-readiness-grid, .audit-grid, .memory-gallery-grid, .memory-album-grid, .platform-grid, .messages-layout, .message-support-grid) {
     grid-template-columns: 1fr !important;
   }
+}
+
+/* Keep the operations desk as a full-width set of independent widgets. */
+body.app-routed #enterpriseRbac > .corporate-operations-section {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+body.app-routed #enterpriseRbac > .corporate-operations-section {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+body.app-routed #enterpriseRbac .corporate-operations-grid,
+body.app-routed #enterpriseRbac .corporate-ops-metrics {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .wallet-access-banner {

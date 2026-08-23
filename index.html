@@ -13,8 +13,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Travel-Drip">
-    <link rel="stylesheet" href="styles.css?v=115">
-    <link rel="stylesheet" href="navigation.css?v=49">
+    <link rel="stylesheet" href="styles.css?v=117">
+    <link rel="stylesheet" href="navigation.css?v=81">
   <title>Travel-Drip</title>
 </head>
 <body>
@@ -40,6 +40,7 @@
         <details class="nav-group" data-consumer-nav open>
           <summary>Dashboard</summary>
           <button class="active" type="button" data-main-nav-id="dashboard">Overview</button>
+          <button type="button" data-main-nav-id="profile">My Profile</button>
           <button type="button" data-target="exploreDrops">Explore</button>
           <button type="button" data-main-nav-id="itinerary">Itinerary</button>
           <button type="button" data-main-nav-id="important-info">Important Info</button>
@@ -50,8 +51,8 @@
           <button type="button" data-main-nav-id="travel" data-travel-section="overview">Travel Home</button>
           <button type="button" data-target="rideShareHub" data-travel-section="flights">Flights</button>
           <button type="button" data-target="rideShareHub" data-travel-section="hotels">Hotels</button>
-          <button type="button" data-target="rideShareHub" data-travel-section="transportation">Transportation</button>
-          <button type="button" data-target="rideShareHub" data-travel-section="rideShare">Ride Share</button>
+          <button type="button" data-main-nav-id="transportation">Transportation</button>
+          <button type="button" data-target="transportationPanel">Ride Share</button>
           <button type="button" data-target="rideShareHub" data-travel-section="trains">Trains</button>
           <button type="button" data-target="rideShareHub" data-travel-section="buses">Buses</button>
           <button type="button" data-target="rideShareHub" data-travel-section="ferries">Cruises</button>
@@ -113,11 +114,10 @@
         </details>
         <details class="nav-group">
           <summary>Account</summary>
-          <button type="button" data-target="myProfile">My Profile</button>
           <button type="button" data-main-nav-id="settings">Settings</button>
           <button type="button" data-target="adminPanel" data-settings-section="security">Security</button>
           <button type="button" data-target="copyrightPolicy">Help & Support</button>
-          <a href="admin.html">Admin</a>
+          <a href="admin.html" data-admin-only>Admin</a>
         </details>
       </nav>
       <div class="install-card">
@@ -335,10 +335,12 @@
 
       <nav class="trip-tab-bar" aria-label="Selected trip sections">
         <button class="active" type="button" data-main-nav-id="dashboard">Overview</button>
+        <button type="button" data-main-nav-id="profile">My Profile</button>
         <button type="button" data-main-nav-id="travel">Travel</button>
         <button type="button" data-main-nav-id="planning">Planning</button>
         <button type="button" data-main-nav-id="itinerary" data-travel-section="itinerary">Itinerary</button>
         <button type="button" data-main-nav-id="events">Events</button>
+        <button type="button" data-main-nav-id="transportation">Transportation</button>
         <button type="button" data-main-nav-id="wallet">Wallet</button>
         <button type="button" data-main-nav-id="memories">Memories</button>
         <button type="button" data-main-nav-id="chat">Chat</button>
@@ -371,7 +373,7 @@
         <p class="small" id="corporateModeMessage">Corporate Mode is active. Personal leisure trips, public invites, vacation deals, and consumer wallet prompts are hidden from this workspace.</p>
       </section>
 
-      <section class="panel destination-insights" data-dashboard-only aria-label="Destination highlights">
+      <section class="panel destination-insights" data-dashboard-only hidden aria-label="Destination highlights">
         <div class="section-heading compact">
           <div>
             <p class="eyebrow">Choose a location</p>
@@ -566,13 +568,13 @@
               </div>
             </div>
             <section class="event-experience-grid" aria-label="Interactive event planning cards">
-              <button class="event-experience-card" type="button" data-event-card="Birthday" style="--event-image:url('https://images.unsplash.com/photo-1464349153735-7db50ed83c84?q=80&w=900&auto=format&fit=crop')">
+              <button class="event-experience-card" type="button" data-event-card="Birthday" data-event-name="Maya's rooftop birthday" data-event-date="2026-08-12" data-event-start="19:30" data-event-venue="Skyline Rooftop" data-event-audience="friends and family" style="--event-image:url('https://images.unsplash.com/photo-1464349153735-7db50ed83c84?q=80&w=900&auto=format&fit=crop')">
                 <span>Birthday</span>
                 <strong>Miami birthday weekend</strong>
                 <small>18 guests • 72% RSVP • $2,900 budget</small>
                 <i>3 days left</i>
               </button>
-              <button class="event-experience-card" type="button" data-event-card="Wedding" style="--event-image:url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=900&auto=format&fit=crop')">
+              <button class="event-experience-card" type="button" data-event-card="Wedding" data-event-name="Santorini ceremony" data-event-date="2026-09-09" data-event-start="17:00" data-event-venue="Cliffside venue" data-event-audience="family and friends" style="--event-image:url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=900&auto=format&fit=crop')">
                 <span>Wedding</span>
                 <strong>Santorini ceremony</strong>
                 <small>86 guests • ceremony tasks ready • RSVP open</small>
@@ -681,13 +683,13 @@
                 <small>Sep 9 • 5:00 PM • Cliffside venue</small>
                 <i>86 guests • seating in progress</i>
               </button>
-              <button class="event-experience-card" type="button" data-event-card="Corporate Event" style="--event-image:url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=900&auto=format&fit=crop')">
+              <button class="event-experience-card" type="button" data-event-card="Corporate Event" data-event-name="Leadership awards dinner" data-event-date="2026-10-03" data-event-start="18:00" data-event-venue="Grand ballroom" data-event-audience="coworkers and invited attendees" style="--event-image:url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=900&auto=format&fit=crop')">
                 <span>Corporate Event</span>
                 <strong>Leadership awards dinner</strong>
                 <small>Oct 3 • 6:00 PM • Grand ballroom</small>
                 <i>44 attendees • 5 tasks open</i>
               </button>
-              <button class="event-experience-card" type="button" data-event-card="Family Reunion" style="--event-image:url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=900&auto=format&fit=crop')">
+              <button class="event-experience-card" type="button" data-event-card="Family Reunion" data-event-name="Johnson family picnic" data-event-date="2026-07-27" data-event-start="13:00" data-event-venue="Lake pavilion" data-event-audience="family and relatives" style="--event-image:url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=900&auto=format&fit=crop')">
                 <span>Family Reunion</span>
                 <strong>Johnson family picnic</strong>
                 <small>Jul 27 • 1:00 PM • Lake pavilion</small>
@@ -711,18 +713,55 @@
                 <button class="ghost-button" type="button" data-event-dashboard-action="Save Draft">Save Draft</button>
               </div>
               <div class="event-create-grid">
-                <label>Event name<input type="text" value="Maya's rooftop birthday"></label>
-                <label>Event type<select><option>Birthday</option><option>Wedding</option><option>Baby Shower</option><option>Graduation</option><option>Conference</option><option>Custom Event</option></select></label>
+                <label>Event name<input id="eventNameInput" type="text" value="Maya's rooftop birthday"></label>
+                <label>Event type<select id="eventTypeInput"><option value="birthday">Birthday</option><option value="wedding">Wedding</option><option value="anniversary">Anniversary</option><option value="family_reunion">Family Reunion</option><option value="bachelor_bachelorette">Bachelor or Bachelorette</option><option value="corporate_retreat">Corporate Retreat</option><option value="conference">Conference</option><option value="graduation_trip">Graduation Trip</option><option value="church_retreat">Church Retreat</option><option value="special_event">Special Event</option></select></label>
                 <label>Date<input id="eventDateInput" type="date" value="2026-08-12"></label>
-                <label>Start time<input type="time" value="19:30"></label>
-                <label>End time<input type="time" value="23:00"></label>
-                <label>Venue<input type="text" value="Skyline Rooftop"></label>
-                <label class="wide">Address<input type="text" value="Miami, FL"></label>
+                <label>Start time<input id="eventStartTimeInput" type="time" value="19:30"></label>
+                <label>End time<input id="eventEndTimeInput" type="time" value="23:00"></label>
+                <label>Venue<input id="eventVenueInput" type="text" value="Skyline Rooftop"></label>
+                <label class="wide">Address<input id="eventAddressInput" type="text" value="Miami, FL"></label>
                 <label>RSVP deadline<input id="eventRsvpInput" type="date" value="2026-08-01"></label>
                 <label>Privacy<select><option>Invite only</option><option>Approval required</option><option>Public invitation link</option><option>Private</option></select></label>
-                <label class="wide">Description<textarea>Celebrate with dinner, music, photos, memories, RSVP tracking, guest updates, and shared event expenses.</textarea></label>
+                <label class="wide">Description<textarea id="eventDescriptionInput">Celebrate with dinner, music, photos, memories, RSVP tracking, guest updates, and shared event expenses.</textarea></label>
               </div>
             </form>
+            <section class="event-invite-studio" id="eventInviteStudio" data-event-invite-studio aria-labelledby="eventInviteStudioTitle">
+              <div class="event-invite-studio__controls">
+                <div class="section-heading compact">
+                  <div>
+                    <p class="eyebrow">Invitation Studio</p>
+                    <h3 id="eventInviteStudioTitle">Create an invitation guests will want to open</h3>
+                    <p>Build an Evite-inspired event invite with a beautiful preview, clear details, RSVP access, and a share-ready guest link.</p>
+                  </div>
+                </div>
+                <div class="event-invite-form-grid">
+                  <label>Event type<select id="eventInviteEventType"><option value="birthday">Birthday</option><option value="wedding">Wedding</option><option value="anniversary">Anniversary</option><option value="family_reunion">Family Reunion</option><option value="bachelor_bachelorette">Bachelor or Bachelorette</option><option value="corporate_retreat">Corporate Retreat</option><option value="conference">Conference</option><option value="graduation_trip">Graduation Trip</option><option value="church_retreat">Church Retreat</option><option value="special_event">Special Event</option></select></label>
+                  <label>Tone<select id="eventInviteTone"><option value="warm">Warm</option><option value="playful">Playful</option><option value="elegant">Elegant</option><option value="professional">Professional</option><option value="casual">Casual</option></select></label>
+                  <label class="wide">Audience<input id="eventInviteAudience" type="text" value="friends and family" placeholder="friends, family, coworkers"></label>
+                  <label class="wide">Extra details<textarea id="eventInviteDetails" rows="3" placeholder="Dress code, meal notes, parking, or a personal message"></textarea></label>
+                </div>
+                <div class="event-invite-actions">
+                  <button class="primary-button" id="eventInviteGenerateButton" type="button">Generate invite with AI</button>
+                  <span class="small" id="eventInviteStatus" role="status" aria-live="polite">Preview updates from the event details above.</span>
+                </div>
+              </div>
+              <div class="event-invite-studio__preview" data-event-invite-template>
+                <div class="event-invite-preview-card" id="eventInvitePreview">
+                  <div class="event-invite-preview-card__topline"><span id="eventInviteSource">Local event template preview</span><span>Travel-Drip Events</span></div>
+                  <p class="eyebrow">You're invited</p>
+                  <h4 id="eventInviteHeadline">Maya's rooftop birthday</h4>
+                  <p id="eventInviteSubject">An evening to celebrate together</p>
+                  <p id="eventInviteBody">Join us for dinner, music, photos, and shared memories. RSVP so the host can keep the guest list and event details up to date.</p>
+                  <div class="event-invite-preview-meta" id="eventInviteMeta">Aug 12, 2026 • 7:30 PM • Skyline Rooftop • Miami, FL</div>
+                  <div class="event-invite-preview-card__footer"><strong id="eventInviteRsvpLabel">RSVP to join the celebration</strong><span>Invite-only guest link</span></div>
+                </div>
+                <div class="event-invite-preview-actions">
+                  <button class="ghost-button" id="eventInviteCopyButton" type="button">Copy invite text</button>
+                  <button class="ghost-button" id="eventInviteSaveButton" type="button">Save draft</button>
+                  <button class="ghost-button" type="button" data-event-dashboard-action="RSVP Requests">Open RSVP settings</button>
+                </div>
+              </div>
+            </section>
             <p class="small" id="eventsDashboardMessage">Events are strictly event-focused. Travel tools stay in the Travel tab.</p>
           </section>
 
@@ -1304,9 +1343,9 @@
           <section class="panel social-hub" id="socialHub">
             <div class="section-heading compact">
               <div>
-                <p class="eyebrow">Messages</p>
-                <h2>Chat, plan, laugh, repeat</h2>
-                <p>Turn trip updates into the fun part: vote on what is next, drop a memory, and keep the whole crew moving together.</p>
+                <p class="eyebrow">Your trip feed</p>
+                <h2>Chat, share, and make the next plan</h2>
+                <p>Keep the trip feeling alive with quick updates, photo drops, polls, pins, and little moments the whole crew can jump into.</p>
               </div>
               <button class="primary-button" type="button" id="newConversationButton">New message</button>
             </div>
@@ -1941,6 +1980,211 @@
               </div>
             </section>
 
+            <section class="corporate-operations-section" aria-labelledby="corporateOperationsTitle">
+              <div class="section-heading compact corporate-operations-heading">
+                <div>
+                  <p class="eyebrow">Corporate Booking Operations</p>
+                  <h3 id="corporateOperationsTitle">Travel desk, policy approvals, and traveler care</h3>
+                  <p>Manage verified reservations from request through approval, provider confirmation, travel, and service resolution.</p>
+                </div>
+                <div class="corporate-ops-heading-actions">
+                  <span class="compliance-badge" id="corporateOperationsConnection">Secure preview</span>
+                  <button type="button" id="refreshCorporateOperationsButton">Refresh</button>
+                </div>
+              </div>
+
+              <div class="corporate-ops-metrics" aria-label="Corporate booking metrics">
+                <article><span>Active travelers</span><strong id="corporateTravelerCount">0</strong><small>Assigned to this event</small></article>
+                <article><span>Verified bookings</span><strong id="corporateBookingCount">0</strong><small>Provider references stored</small></article>
+                <article><span>Approval queue</span><strong id="corporateApprovalCount">0</strong><small>Finance decision required</small></article>
+                <article><span>Open service cases</span><strong id="corporateServiceCount">0</strong><small>Response SLA tracked</small></article>
+              </div>
+
+              <div class="corporate-operations-grid">
+                <article class="corporate-operation-card corporate-booking-create" data-corporate-manager-only>
+                  <div class="corporate-operation-card__header">
+                    <div>
+                      <span class="corporate-operation-kicker">Travel desk</span>
+                      <h4>Create a booking request</h4>
+                    </div>
+                    <span class="document-status">Policy checked</span>
+                  </div>
+                  <form id="corporateBookingForm" class="corporate-booking-form">
+                    <label>Booking type
+                      <select id="corporateBookingType" required>
+                        <option value="flight">Flight</option>
+                        <option value="hotel">Hotel</option>
+                        <option value="rail">Rail</option>
+                        <option value="transportation">Ground transportation</option>
+                        <option value="restaurant">Business meal</option>
+                        <option value="activity">Team activity</option>
+                        <option value="conference">Conference registration</option>
+                      </select>
+                    </label>
+                    <label>Traveler
+                      <input id="corporateBookingTraveler" type="text" value="Jordan Smith" autocomplete="name" required>
+                    </label>
+                    <label>Traveler email
+                      <input id="corporateBookingTravelerEmail" type="email" value="jordan@company.com" autocomplete="email">
+                    </label>
+                    <label>Provider
+                      <input id="corporateBookingProvider" type="text" placeholder="Airline, hotel, rail, or venue" required>
+                    </label>
+                    <label>Trip details
+                      <input id="corporateBookingTitle" type="text" placeholder="JFK to DXB or Marina Grand Hotel" required>
+                    </label>
+                    <label>Starts
+                      <input id="corporateBookingStartsAt" type="datetime-local" required>
+                    </label>
+                    <label>Amount
+                      <input id="corporateBookingAmount" type="number" min="0" step="0.01" placeholder="0.00" required>
+                    </label>
+                    <label>Provider reference
+                      <input id="corporateBookingReference" type="text" placeholder="Add after provider confirms">
+                    </label>
+                    <label class="corporate-booking-confirmation"><input id="corporateBookingProviderConfirmed" type="checkbox"> Provider has confirmed this reservation</label>
+                    <button class="primary-button" type="submit">Save booking request</button>
+                  </form>
+                  <p class="small corporate-operation-message" id="corporateBookingMessage">Requests are checked against the active policy. Travel-Drip never labels an item confirmed without a provider reference.</p>
+                </article>
+
+                <article class="corporate-operation-card corporate-policy-summary">
+                  <div class="corporate-operation-card__header">
+                    <div>
+                      <span class="corporate-operation-kicker">Active policy</span>
+                      <h4 id="corporatePolicyName">Global business travel</h4>
+                    </div>
+                    <span class="document-status" id="corporatePolicyStatus">Active</span>
+                  </div>
+                  <dl class="corporate-policy-facts">
+                    <div><dt>Flight cap</dt><dd id="corporatePolicyFlightCap">$1,500</dd></div>
+                    <div><dt>Hotel nightly cap</dt><dd id="corporatePolicyHotelCap">$325</dd></div>
+                    <div><dt>Ground transport</dt><dd id="corporatePolicyTransportCap">$180</dd></div>
+                    <div><dt>Receipt required</dt><dd id="corporatePolicyReceiptThreshold">Over $50</dd></div>
+                  </dl>
+                  <div class="corporate-policy-notes">
+                    <span id="corporatePolicyCabinNote">Economy cabin maximum</span>
+                    <span id="corporatePolicySupplierNote">No supplier restriction</span>
+                    <span id="corporatePolicyExceptionNote">Exceptions require finance approval</span>
+                    <span>Cancellation terms retained</span>
+                  </div>
+                  <details class="corporate-policy-editor" data-corporate-policy-admin-only>
+                    <summary>Update policy limits</summary>
+                    <form id="corporatePolicyForm" class="corporate-booking-form">
+                      <label>Policy name<input id="corporatePolicyNameInput" type="text" value="Global business travel" required></label>
+                      <label>Flight cabin<select id="corporatePolicyCabinInput"><option value="economy">Economy</option><option value="premium_economy">Premium economy</option><option value="business">Business</option><option value="first">First</option></select></label>
+                      <label>Flight cap<input id="corporatePolicyFlightInput" type="number" min="0" step="1" value="1500" required></label>
+                      <label>Hotel nightly cap<input id="corporatePolicyHotelInput" type="number" min="0" step="1" value="325" required></label>
+                      <label>Ground transport cap<input id="corporatePolicyTransportInput" type="number" min="0" step="1" value="180" required></label>
+                      <label>Receipt threshold<input id="corporatePolicyReceiptInput" type="number" min="0" step="1" value="50" required></label>
+                      <label class="corporate-service-subject">Preferred airlines<input id="corporatePolicyAirlinesInput" type="text" placeholder="Delta, United, Emirates"></label>
+                      <label class="corporate-booking-confirmation"><input id="corporatePolicyBlockProvidersInput" type="checkbox"> Block non-preferred suppliers instead of routing for exception approval</label>
+                      <button class="primary-button" type="submit">Activate policy</button>
+                    </form>
+                    <p class="small" id="corporatePolicyMessage">Activating a policy retires the previous version while preserving its audit history.</p>
+                  </details>
+                </article>
+
+                <article class="corporate-operation-card corporate-booking-queue-card">
+                  <div class="corporate-operation-card__header">
+                    <div>
+                      <span class="corporate-operation-kicker">Booking queue</span>
+                      <h4>Traveler reservations</h4>
+                    </div>
+                    <span class="document-status" id="corporateBookingQueueStatus">12 active</span>
+                  </div>
+                  <div class="corporate-booking-list" id="corporateBookingList" aria-live="polite">
+                    <div class="corporate-booking-row" data-booking-id="preview-flight">
+                      <div><strong>Delta DL 241</strong><span>Jordan Smith · Flight · Jul 24</span></div>
+                      <div><span class="corporate-policy-result is-compliant">In policy</span><strong>Confirmed</strong></div>
+                      <button type="button" data-corporate-booking-action="view">View</button>
+                    </div>
+                    <div class="corporate-booking-row" data-booking-id="preview-hotel">
+                      <div><strong>Marina Grand Hotel</strong><span>Sarah Lee · Hotel · Jul 24</span></div>
+                      <div><span class="corporate-policy-result is-review">Approval</span><strong>Requested</strong></div>
+                      <button type="button" data-corporate-booking-action="view">View</button>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="corporate-operation-card corporate-approval-card" data-visible-roles="owner executive finance">
+                  <div class="corporate-operation-card__header">
+                    <div>
+                      <span class="corporate-operation-kicker">Approval queue</span>
+                      <h4>Policy exceptions</h4>
+                    </div>
+                    <span class="document-status is-warning">2 pending</span>
+                  </div>
+                  <div class="corporate-approval-list" id="corporateApprovalList" aria-live="polite">
+                    <div class="corporate-approval-row" data-approval-booking-id="preview-hotel">
+                      <div><strong>Hotel rate exception</strong><span>$42 over nightly cap · Sarah Lee</span></div>
+                      <div class="corporate-approval-actions">
+                        <button type="button" data-corporate-approval="reject">Reject</button>
+                        <button class="primary-button" type="button" data-corporate-approval="approve">Approve</button>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="small" id="corporateApprovalMessage">Decisions record the approver, timestamp, policy reason, and note.</p>
+                </article>
+
+                <article class="corporate-operation-card corporate-service-card">
+                  <div class="corporate-operation-card__header">
+                    <div>
+                      <span class="corporate-operation-kicker">Traveler care</span>
+                      <h4>Open a service case</h4>
+                    </div>
+                    <span class="document-status">24-hour desk</span>
+                  </div>
+                  <form id="corporateServiceCaseForm" class="corporate-service-form">
+                    <label>Help needed
+                      <select id="corporateServiceCaseType">
+                        <option value="change">Change a reservation</option>
+                        <option value="cancellation">Cancel a reservation</option>
+                        <option value="disruption">Travel disruption</option>
+                        <option value="emergency">Emergency assistance</option>
+                        <option value="accessibility">Accessibility support</option>
+                        <option value="billing">Billing question</option>
+                      </select>
+                    </label>
+                    <label>Priority
+                      <select id="corporateServicePriority">
+                        <option value="normal">Normal · response within 24 hours</option>
+                        <option value="high">High · response within 12 hours</option>
+                        <option value="urgent">Urgent · response within 4 hours</option>
+                        <option value="critical">Critical · response within 1 hour</option>
+                      </select>
+                    </label>
+                    <label class="corporate-service-subject">Subject
+                      <input id="corporateServiceSubject" type="text" placeholder="What needs attention?" required>
+                    </label>
+                    <label class="corporate-service-description">Details
+                      <textarea id="corporateServiceDescription" rows="3" placeholder="Share the booking and support details" required></textarea>
+                    </label>
+                    <button class="primary-button" type="submit">Open service case</button>
+                  </form>
+                  <div class="corporate-service-list" id="corporateServiceList" aria-live="polite"></div>
+                  <p class="small" id="corporateServiceMessage">Critical cases receive the shortest SLA and remain visible until resolved.</p>
+                </article>
+
+                <article class="corporate-operation-card corporate-duty-card">
+                  <div class="corporate-operation-card__header">
+                    <div>
+                      <span class="corporate-operation-kicker">Duty of care</span>
+                      <h4>Traveler readiness</h4>
+                    </div>
+                    <span class="document-status is-success">Monitored</span>
+                  </div>
+                  <div class="corporate-readiness-list">
+                    <div><span>Traveler coverage</span><strong id="corporateReadinessCoverage">Loading</strong></div>
+                    <div><span>Travel documents</span><strong id="corporateReadinessDocuments">Loading</strong></div>
+                    <div><span>Emergency contacts</span><strong id="corporateReadinessEmergency">Loading</strong></div>
+                    <div><span>Active disruptions</span><strong id="corporateReadinessDisruptions">Loading</strong></div>
+                  </div>
+                  <button type="button" id="openCorporateTravelerManifestButton">Open traveler manifest</button>
+                </article>
+              </div>
+            </section>
+
             <div class="employee-dashboard">
               <section class="social-card">
                 <h3>Attendee dashboard</h3>
@@ -2352,38 +2596,6 @@
               </div>
               <span class="card-status active">Active</span>
             </div>
-            <section class="wallet-dashboard-header" aria-label="Wallet dashboard summary">
-              <article>
-                <span>Total available</span>
-                <strong>$3,880</strong>
-                <small>Ready after holds, reservations, and pending refunds.</small>
-              </article>
-              <article>
-                <span>Personal balance</span>
-                <strong>$1,050</strong>
-                <small>Jordan's available personal Travel-Drip balance.</small>
-              </article>
-              <article>
-                <span>Trip balance</span>
-                <strong>$6,400</strong>
-                <small>Collected for Miami 2027 across 8 contributors.</small>
-              </article>
-              <article>
-                <span>Pending requests</span>
-                <strong>$380</strong>
-                <small>3 open requests with reminders ready.</small>
-              </article>
-              <article>
-                <span>Refundable funds</span>
-                <strong>$380</strong>
-                <small>Unused and unallocated funds eligible for refund.</small>
-              </article>
-              <article>
-                <span>Wallet status</span>
-                <strong>PIN-gated</strong>
-                <small>Funding, refunds, transfers, and card details require Wallet PIN.</small>
-              </article>
-            </section>
             <section class="wallet-smart-actions" aria-label="Wallet quick actions">
               <button type="button" data-wallet-action="Add Funds">Add Funds</button>
               <button type="button" data-target="splitBill">Split Bill</button>
@@ -2405,131 +2617,67 @@
               <div class="wallet-home-grid">
                 <article class="wallet-balance-hero">
                   <span>Total Available Balance</span>
-                  <strong>$3,880</strong>
+                  <strong id="tripAvailableBalance">$3,880</strong>
                   <small>Shared wallet funds available after reservations, holds, and pending refunds.</small>
                   <div class="wallet-progress"><i style="--w:61%"></i></div>
                 </article>
                 <article class="wallet-summary-card"><span>Personal Wallet</span><strong>$1,050</strong><small>Deposited by Jordan</small></article>
-                <article class="wallet-summary-card"><span>Shared Trip Wallet</span><strong>$6,400</strong><small>Total contributed</small></article>
-                <article class="wallet-summary-card"><span>Pending Payments</span><strong>$380</strong><small>3 requests need review</small></article>
-                <article class="wallet-summary-card"><span>Refundable Funds</span><strong>$380</strong><small>Eligible unused balance</small></article>
-              </div>
-              <div class="wallet-trip-card-grid">
-                <article class="wallet-trip-tile">
-                  <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=700&auto=format&fit=crop" alt="Miami beach wallet">
-                  <div>
-                    <span>Trip Wallet</span>
-                    <strong>Miami 2027</strong>
-                    <small>Miami, Florida • 8 contributors • $3,880 available • $6,400 contributed • $2,520 spent • $380 refundable</small>
-                  </div>
-                  <button type="button" data-wallet-section="tripWallets">View Wallet</button>
-                </article>
-                <article class="wallet-virtual-preview">
-                  <span>Virtual Card</span>
-                  <strong>•••• 4829</strong>
-                  <small>Miami 2027 • Locked • Exp 08/29 • $380 spendable • PIN required for sensitive actions</small>
-                  <div class="wallet-mini-actions">
-                    <button type="button" id="walletPreviewCardButton">View Card</button>
-                    <button type="button" id="walletPreviewCardFreezeButton">Freeze</button>
-                    <button type="button" data-wallet-action="Recent Transactions">Transactions</button>
-                  </div>
-                </article>
+                <article class="wallet-summary-card"><span>Shared Trip Wallet</span><strong id="walletTotal">$6,400</strong><small>Total contributed</small></article>
               </div>
               <section class="wallet-dashboard-sections" aria-label="Wallet dashboard sections">
-                <article>
-                  <p class="eyebrow">Balance Overview</p>
+                <article class="wallet-section-widget wallet-section-widget--overview" data-wallet-pane="overview">
+                  <p class="eyebrow">Spending activity</p>
                   <div class="wallet-metric-list">
-                    <div><span>Available Balance</span><strong>$3,880</strong><small>Current spendable shared balance.</small></div>
-                    <div><span>Total Deposited</span><strong>$6,400</strong><small>All completed contributions.</small></div>
                     <div><span>Total Spent</span><strong>$2,520</strong><small>Flights, stay, food, events, and ride costs.</small></div>
-                    <div><span>Pending Amount</span><strong>$380</strong><small>Requests and holds awaiting action.</small></div>
-                    <div><span>Amount Owed</span><strong>$920</strong><small>Outstanding member contributions.</small></div>
                     <div><span>Due to User</span><strong>$120</strong><small>Approved reimbursements pending payout.</small></div>
                   </div>
                 </article>
-                <article>
+                <article class="wallet-section-widget wallet-section-widget--trip-wallets" data-wallet-pane="tripWallets">
                   <p class="eyebrow">Contributions</p>
-                  <strong>$6,400 collected of $7,320 goal</strong>
-                  <small>8 contributors • 84% funded • $920 remaining • 3 outstanding contributions.</small>
+                  <strong>84% funded</strong>
+                  <small>$920 remaining across 3 outstanding member contributions.</small>
                   <div class="wallet-progress"><i style="--w:84%"></i></div>
                   <button type="button" data-target="groupBank">Open Contributions</button>
                 </article>
-                <article>
+                <article class="wallet-section-widget wallet-section-widget--split-bills" data-wallet-pane="splitBills">
                   <p class="eyebrow">Split Bills</p>
                   <strong>2 active bills</strong>
                   <small>1 pending restaurant receipt, 1 paid ride split, $146 outstanding across 3 participants.</small>
                   <button type="button" data-target="splitBill">Split Bill</button>
                 </article>
-                <article>
+                <article class="wallet-section-widget wallet-section-widget--requests" data-wallet-pane="requests">
                   <p class="eyebrow">Payment Requests</p>
                   <strong>3 pending requests</strong>
                   <small>2 sent, 1 received, 4 paid, 0 declined, $380 total outstanding.</small>
                   <button type="button" data-wallet-section="requests">View Requests</button>
                 </article>
-                <article>
+                <article class="wallet-section-widget wallet-section-widget--refunds" data-wallet-pane="refunds">
                   <p class="eyebrow">Refunds</p>
                   <strong>$380 refundable</strong>
                   <small>1 pending refund, 2 completed refunds, eligibility based on unused/unallocated funds.</small>
                   <button type="button" id="walletDashboardRefundButton">Request Refund</button>
                 </article>
-                <article>
+                <article class="wallet-section-widget wallet-section-widget--transactions" data-wallet-pane="transactions">
                   <p class="eyebrow">Recent Transactions</p>
                   <strong>12 wallet records</strong>
                   <small>Trip, category, date, method, amount, and status remain audit-ready.</small>
                   <button type="button" data-wallet-section="transactions">View Feed</button>
                 </article>
-                <article>
+                <article class="wallet-section-widget wallet-section-widget--payment-methods" data-wallet-pane="paymentMethods">
                   <p class="eyebrow">Payment Methods</p>
                   <strong>2 linked methods</strong>
-                  <small>Visa debit, Apple Pay, and Travel-Drip Wallet are ready for PIN-gated checkout.</small>
+                  <small>Visa debit and Apple Pay are linked; Travel-Drip Wallet remains available for PIN-gated checkout.</small>
                   <button type="button" data-wallet-action="Add Payment Method">Manage Methods</button>
                 </article>
               </section>
-              <div class="wallet-quick-actions-redesign" aria-label="Wallet quick actions">
-                <button type="button" data-wallet-action="Add Funds">Add Funds</button>
-                <button type="button" data-wallet-action="Request Payment">Request Payment</button>
-                <button type="button" data-target="splitBill">Split a Bill</button>
-                <button type="button" data-wallet-action="Transfer to Trip">Transfer to Trip</button>
-                <button type="button" id="walletPreviewRefundButton">Request Refund</button>
-                <button type="button" data-wallet-action="Add Payment Method">Add Payment Method</button>
-              </div>
-              <section class="wallet-section-card-grid" aria-label="Trip wallet sections">
-                <article><span>Wallet Overview</span><strong>$3,880 available</strong><small>$6,400 deposited • $2,520 spent • $3,880 remaining</small><button type="button" data-wallet-section="overview">Open Overview</button></article>
-                <article><span>Virtual Card</span><strong>Locked • $380 spendable</strong><small>Freeze, unfreeze, add to wallet, and card controls require Wallet PIN.</small><button type="button" id="walletSectionCardButton">Open Card</button></article>
-                <article><span>Contributions</span><strong>8 members • 84% funded</strong><small>$920 outstanding across 3 travelers.</small><button type="button" data-target="groupBank">View Contributions</button></article>
-                <article><span>Split Bills</span><strong>2 active bills</strong><small>1 pending restaurant receipt • 1 paid ride split.</small><button type="button" data-target="splitBill">Create Bill</button></article>
-                <article><span>Payment Requests</span><strong>3 outstanding</strong><small>2 sent • 1 received • reminders ready.</small><button type="button" data-wallet-section="requests">View Requests</button></article>
-                <article><span>Refunds</span><strong>$380 available</strong><small>1 pending review • 2 completed refunds.</small><button type="button" id="walletSectionRefundButton">Request Refund</button></article>
-                <article><span>Recent Transactions</span><strong>12 records</strong><small>Chronological wallet feed with method, category, amount, and status.</small><button type="button" data-wallet-section="transactions">View Feed</button></article>
-              </section>
             </section>
             <section class="wallet-operations-panel" aria-label="Wallet operations">
-            <div class="trip-wallet-card">
-              <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=900&auto=format&fit=crop" alt="Miami beach trip wallet cover">
+            <div class="wallet-operations-heading">
               <div>
-                <span>Wallet ID</span>
-                <strong id="tripWalletId">TDW-MIA-4829</strong>
-                <small>Linked exclusively to this trip</small>
+                <p class="eyebrow">Manage funds</p>
+                <h3>Funding, reminders, and wallet activity</h3>
+                <p>Add funds securely, create payment reminders, and review the personal ledger for this trip.</p>
               </div>
-              <div>
-                <span>Trip Wallet Card</span>
-                <strong>•••• 4829</strong>
-                <small>Masked credentials only</small>
-              </div>
-            </div>
-            <div class="wallet-total"><strong id="walletTotal">$6,400</strong><span>Confirmed shared balance</span></div>
-            <p class="security-note">One shared Trip Virtual Wallet is created for each eligible trip. Contributions combine into the trip balance while each member's personal contribution ledger remains separate, refundable, and auditable.</p>
-            <div class="wallet-breakdown">
-              <div><span>Total contributions</span><strong id="tripTotalContributions">$6,400</strong></div>
-              <div><span>Total spent</span><strong id="tripTotalSpent">$2,520</strong></div>
-              <div><span>Available balance</span><strong id="tripAvailableBalance">$3,880</strong></div>
-              <div><span>Pending transactions</span><strong id="tripPendingTransactions">$380</strong></div>
-            </div>
-            <div class="wallet-action-grid" aria-label="Wallet and split bill actions">
-              <button type="button" data-target="splitBill"><span>Food & Bill Splitter</span><strong>Start split</strong><small>Restaurant receipts, itemized totals, taxes, and tips.</small></button>
-              <button type="button" data-wallet-action="Payment Requests"><span>Payment Requests</span><strong>3 pending</strong><small>Upcoming group payments and approvals.</small></button>
-              <button type="button" data-wallet-action="Trip Contributions"><span>Trip Contributions</span><strong>$6,400</strong><small>Member deposits and refundable balances.</small></button>
-              <button type="button" data-wallet-action="Recent Transactions"><span>Recent Transactions</span><strong>12 records</strong><small>Completed, pending, and audit-logged payments.</small></button>
             </div>
             <label class="range-wrap" for="deposit">Planning target per person: <strong id="depositValue">$800</strong><input id="deposit" type="range" min="500" max="1200" step="50" value="800"><small>This estimate does not move wallet funds. Members add funds through secure checkout below.</small></label>
             <form class="funds-form" id="fundsForm">
@@ -2572,6 +2720,17 @@
           </section>
 
           <section class="panel virtual-card-panel" id="virtualCard" data-route-support="walletPanel">
+            <div class="virtual-card">
+              <div class="card-top"><span>Miami 2027</span><strong>Trip Wallet Card</strong></div>
+              <div class="card-chip-row" aria-hidden="true"><span class="card-chip"></span><span class="card-contactless">)))</span></div>
+              <div class="card-number" id="cardNumber">•••• •••• •••• 4829</div>
+              <div class="card-meta">
+                <span><small>Wallet</small><strong>TDW-MIA-4829</strong></span>
+                <span><small>Exp</small><strong id="cardExp">08/29</strong></span>
+                <span><small>CVV</small><strong id="cardCvv">•••</strong></span>
+              </div>
+              <div class="card-holder-row"><span><small>Cardholder</small><strong>Jordan Smith</strong></span><strong class="card-mark">TD</strong></div>
+            </div>
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Virtual wallet card</p>
@@ -2586,17 +2745,6 @@
                 <span id="walletAccessMessage">Sign in to load your trip role and shared-card permissions.</span>
               </div>
               <span class="access-badge" id="walletAccessBadge">Role checked on server</span>
-            </div>
-            <div class="virtual-card">
-              <div class="card-top"><span>Miami 2027</span><strong>Trip Wallet Card</strong></div>
-              <div class="card-chip-row" aria-hidden="true"><span class="card-chip"></span><span class="card-contactless">)))</span></div>
-              <div class="card-number" id="cardNumber">•••• •••• •••• 4829</div>
-              <div class="card-meta">
-                <span><small>Wallet</small><strong>TDW-MIA-4829</strong></span>
-                <span><small>Exp</small><strong id="cardExp">08/29</strong></span>
-                <span><small>CVV</small><strong id="cardCvv">•••</strong></span>
-              </div>
-              <div class="card-holder-row"><span><small>Cardholder</small><strong>Jordan Smith</strong></span><strong class="card-mark">TD</strong></div>
             </div>
             <div class="card-balance-grid">
               <div><span>Spendable balance</span><strong id="cardSpendable">$380</strong></div>
@@ -2770,12 +2918,109 @@
             </div>
           </section>
 
+          <section class="panel transportation-panel" id="transportationPanel" hidden>
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Getting around</p>
+                <h2>Everything moving the trip</h2>
+                <p>Keep flights, transfers, passes, and group rides together so everyone knows what is next and how they are getting there.</p>
+              </div>
+              <div class="transportation-header-actions">
+                <button class="primary-button" type="button" data-transportation-action="add">Add confirmation</button>
+                <button class="ghost-button" type="button" data-transportation-action="workspace">Full tools</button>
+              </div>
+            </div>
+            <div class="transportation-summary-grid" aria-label="Transportation overview">
+              <article><span>Saved rides</span><strong id="transportationTableCount">0</strong><small>Flights, rides, and passes</small></article>
+              <article><span>Travel crew</span><strong>4</strong><small>Travelers on the move</small></article>
+              <article><span>Next up</span><strong>DL 241</strong><small>MIA → HND • 8:45 AM</small></article>
+            </div>
+            <section class="flight-tracking-card" aria-labelledby="flightTrackingTitle">
+              <div class="flight-tracking-card__header">
+                <div>
+                  <p class="eyebrow">Live flight tracking</p>
+                  <h3 id="flightTrackingTitle">Check a flight’s current status</h3>
+                  <p>Search the configured flight provider for departure, arrival, gate, delay, and progress updates. Saved confirmations remain available if live data is unavailable.</p>
+                </div>
+                <span class="provider-badge">Provider-backed</span>
+              </div>
+              <form class="flight-tracking-form" id="flightTrackingForm">
+                <label>Flight number
+                  <input id="flightTrackingIdent" name="ident" type="text" value="DL241" placeholder="DL241" autocomplete="off" required>
+                </label>
+                <label>Departure date
+                  <input id="flightTrackingDate" name="date" type="date" value="2026-07-18">
+                </label>
+                <label>Origin airport
+                  <input id="flightTrackingOrigin" name="origin" type="text" value="MIA" placeholder="MIA" autocomplete="off">
+                </label>
+                <button class="primary-button" type="submit">Track flight</button>
+              </form>
+              <p class="small provider-status" id="flightTrackingStatus" role="status">Enter a flight number to request a live status update.</p>
+              <article class="flight-tracking-result" id="flightTrackingResult" aria-live="polite" hidden></article>
+            </section>
+            <section class="transportation-table-section" aria-label="Transportation table">
+              <div class="transportation-table-toolbar">
+                <label>Search movement
+                  <input id="transportationTableSearchInput" type="search" placeholder="Route, provider, traveler, status" autocomplete="off">
+                </label>
+                <label>Type
+                  <select id="transportationTableTypeFilter">
+                    <option value="all">All types</option>
+                    <option value="flights">Flights</option>
+                    <option value="trains">Trains</option>
+                    <option value="buses">Buses</option>
+                    <option value="ferries">Ferries</option>
+                    <option value="cruises">Cruises</option>
+                    <option value="shuttles">Shuttles</option>
+                    <option value="rideShare">Ride share</option>
+                    <option value="rentalCars">Rental cars</option>
+                    <option value="privateTransfers">Private transfers</option>
+                  </select>
+                </label>
+              </div>
+              <div class="transportation-table-wrap">
+                <table class="transportation-table">
+                  <caption class="sr-only">Expandable saved transportation records for the selected trip</caption>
+                  <thead>
+                    <tr><th scope="col">Type and route</th><th scope="col">When</th><th scope="col">Traveler</th><th scope="col">Status</th><th scope="col"><span class="sr-only">Action</span></th></tr>
+                  </thead>
+                  <tbody id="transportationTableBody"></tbody>
+                </table>
+              </div>
+              <p class="small" id="transportationTableMessage" role="status">Select a row to open its full confirmation details.</p>
+            </section>
+            <details class="transportation-advanced-details" id="transportationAdvancedDetails">
+              <summary>
+                <span class="transportation-more-summary-copy">
+                  <strong>More ways to get around</strong>
+                  <small>Open tickets, compare rides, find a private driver, or coordinate the group.</small>
+                </span>
+                <span class="transportation-more-summary-meta">2 travel toolkits</span>
+              </summary>
+              <div class="transportation-more-shell">
+                <div class="transportation-more-tabs" role="tablist" aria-label="More transportation tools">
+                  <button class="active" type="button" role="tab" aria-selected="true" data-transportation-workspace-tab="confirmations">
+                    <span class="transportation-more-tab-kicker">Saved travel</span>
+                    <strong>Tickets &amp; confirmations</strong>
+                    <small>Passes, reminders, assigned travelers, and secure documents</small>
+                  </button>
+                  <button type="button" role="tab" aria-selected="false" data-transportation-workspace-tab="rides">
+                    <span class="transportation-more-tab-kicker">Local movement</span>
+                    <strong>Rides &amp; private drivers</strong>
+                    <small>Ride share, chauffeur search, group pickup, routes, and fare splits</small>
+                  </button>
+                </div>
+                <div id="transportationWorkspaceMount"></div>
+              </div>
+            </details>
+          </section>
           <section class="panel ride-share-panel" id="rideShareHub">
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Travel</p>
                 <h2>Travel hub</h2>
-                <p>Choose one Travel section at a time. Search, switch trips, and open the right booking, pass, document, weather, or ride-share tool without clutter.</p>
+                <p>Choose one Travel section at a time. Search, switch trips, and open the right booking, pass, document, weather, or map tool without clutter.</p>
               </div>
               <span class="compliance-badge">Trip-ready</span>
             </div>
@@ -2783,26 +3028,27 @@
               <div class="travel-smart-search-head">
                 <div>
                   <p class="eyebrow">Smart Travel Search</p>
-                  <h3>Find flights, stays, passes, rides, and documents</h3>
+                  <h3>Find restaurants, activities, stays, and local places</h3>
                 </div>
                 <span>Grouped results</span>
               </div>
               <div class="travel-smart-search-row">
                 <span class="travel-search-icon" aria-hidden="true"></span>
-                <input id="travelSmartSearchInput" type="search" placeholder="Search flights, hotels, destinations, reservations, or documents..." autocomplete="off" aria-label="Search flights, hotels, destinations, reservations, or documents">
+                <input id="travelSmartSearchInput" type="search" placeholder="Search restaurants, activities, hotels, destinations, or documents..." autocomplete="off" aria-label="Search restaurants, activities, hotels, destinations, or documents">
                 <button type="button" id="voiceTravelSearchButton" aria-label="Start voice search">Voice</button>
                 <button type="button" id="clearTravelSearchButton">Clear</button>
                 <button class="primary-button" type="button" id="travelLiveSearchButton">Search live</button>
               </div>
               <div class="travel-search-suggestions" aria-label="Travel search suggestions">
-                <button type="button" data-travel-search-suggestion="boarding pass">Boarding pass</button>
                 <button type="button" data-travel-search-suggestion="Tokyo hotel">Tokyo hotel</button>
-                <button type="button" data-travel-search-suggestion="airport transfer">Airport transfer</button>
+                <button type="button" data-travel-search-suggestion="restaurants">Restaurants</button>
+                <button type="button" data-travel-search-suggestion="activities">Activities</button>
                 <button type="button" data-travel-search-suggestion="weather alerts">Weather alerts</button>
                 <button type="button" data-travel-search-suggestion="travel documents">Travel documents</button>
+                <button type="button" data-travel-search-suggestion="transportation">Transportation</button>
               </div>
               <div class="travel-smart-results" id="travelSmartResults" aria-live="polite"></div>
-              <p class="small provider-status" id="travelLiveSearchStatus">Search live sources to find current activities, stays, restaurants, and transportation near the selected destination.</p>
+              <p class="small provider-status" id="travelLiveSearchStatus">Search live sources to find current restaurants, activities, stays, and travel details near the selected destination.</p>
               <div class="travel-live-results" id="travelLiveResults" aria-live="polite" hidden></div>
             </section>
             <section class="travel-command-header" aria-label="Travel dashboard header">
@@ -2846,33 +3092,22 @@
                   </details>
                   <details>
                     <summary>Bookings</summary>
-                    <button type="button" data-travel-focus="flights">Flights</button>
                     <button type="button" data-travel-focus="hotels">Hotels</button>
-                    <button type="button" data-travel-focus="trains">Trains</button>
-                    <button type="button" data-travel-focus="buses">Buses</button>
-                    <button type="button" data-travel-focus="cruises">Cruises</button>
-                  </details>
-                  <details>
-                    <summary>Transportation</summary>
-                    <button type="button" data-travel-focus="rideShare">Ride Share</button>
-                    <button type="button" data-travel-focus="transfers">Airport Transfers</button>
-                    <button type="button" data-travel-focus="publicTransit">Public Transit</button>
-                    <button type="button" data-travel-focus="routeComparison">Route Comparison</button>
+                    <button type="button" data-travel-focus="documents">Reservations &amp; documents</button>
                   </details>
                   <details>
                     <summary>Trip Management</summary>
                     <button type="button" data-travel-focus="itinerary">Itinerary</button>
-                    <button type="button" data-travel-focus="smartRoute">Smart Route</button>
                     <button type="button" data-travel-focus="yourTrips">Your Trips</button>
                     <button type="button" data-travel-focus="travelers">Travelers</button>
                   </details>
                   <details>
                     <summary>Travel Essentials</summary>
-                    <button type="button" data-travel-focus="boarding">Tickets &amp; Boarding</button>
                     <button type="button" data-travel-focus="weather">Weather</button>
                     <button type="button" data-travel-focus="maps">Maps</button>
                     <button type="button" data-travel-focus="documents">Travel Documents</button>
                   </details>
+                  <button class="travel-transport-link" type="button" data-target="transportationPanel">Open Transportation</button>
                 </nav>
               </aside>
               <div class="travel-settings-main">
@@ -2886,30 +3121,20 @@
                     </div>
                     <button class="primary-button" type="button" data-travel-focus-action="Add Flight">Add Flight</button>
                   </div>
-                  <section class="travel-booking-summary" aria-label="Booking summary">
-                    <article><span>Flights</span><strong>1 booked</strong><small>Delta DL 241 • Confirmed</small><button type="button" data-travel-focus="flights">Open</button></article>
-                    <article><span>Hotels</span><strong>2 stays</strong><small>Tokyo Station Hotel • Saved</small><button type="button" data-travel-focus="hotels">Open</button></article>
-                    <article><span>Trains</span><strong>2 tickets</strong><small>Tokyo to Kyoto • Upcoming</small><button type="button" data-travel-focus="trains">Open</button></article>
-                    <article><span>Buses</span><strong>0 tickets</strong><small>Add shuttle or upload confirmation</small><button type="button" data-travel-focus="buses">Open</button></article>
-                    <article><span>Cruises</span><strong>1 pass</strong><small>Oceanic Vista • Luggage tags</small><button type="button" data-travel-focus="cruises">Open</button></article>
-                    <article><span>Activities</span><strong>4 saved</strong><small>Cruise, winery, dinner, tour</small><button type="button" data-travel-focus="itinerary">Open</button></article>
-                    <article><span>Reservations</span><strong>3 confirmed</strong><small>Dining, hotel, transfer</small><button type="button" data-travel-focus="documents">Open</button></article>
-                  </section>
-                  <section class="travel-transport-summary" aria-label="Transportation summary">
-                    <article><span>Ride Share</span><strong>Careem + Uber</strong><small>Country-based providers for United Arab Emirates and Japan remain visible.</small><button type="button" data-travel-focus="rideShare">Compare</button></article>
-                    <article><span>Airport Transfer</span><strong>HND pickup</strong><small>Driver assigned • 42 minute estimate.</small><button type="button" data-travel-focus="transfers">Open</button></article>
-                    <article><span>Rental Car</span><strong>Optional</strong><small>No active rental; add if plans change.</small><button type="button" data-travel-focus-action="Add Rental Car">Add</button></article>
-                    <article><span>Shuttle</span><strong>Group ready</strong><small>Passenger coordination and fare split available.</small><button type="button" data-travel-focus="rideShare">Open</button></article>
-                    <article><span>Public Transit</span><strong>$8.50 route</strong><small>Accessible train plus walking route.</small><button type="button" data-travel-focus="publicTransit">View</button></article>
-                    <article><span>Route Comparison</span><strong>3 options</strong><small>Fastest, cheapest, and group-friendly.</small><button type="button" data-travel-focus="routeComparison">Compare</button></article>
+                  <section class="travel-booking-summary travel-discovery-feed" aria-label="Travel discovery feed">
+                    <article class="travel-feed-card travel-feed-card--hotel"><img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=700&auto=format&fit=crop" alt="Tokyo Station Hotel lobby"><div class="travel-feed-card__body"><span>Hotels</span><strong>2 stays</strong><small>Tokyo Station Hotel • Saved</small><button type="button" data-travel-focus="hotels">Open</button></div></article>
+                    <article class="travel-feed-card travel-feed-card--activity"><img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=700&auto=format&fit=crop" alt="Catamaran on blue water"><div class="travel-feed-card__body"><span>Activities</span><strong>4 saved</strong><small>Cruise, winery, dinner, tour</small><button type="button" data-travel-focus="itinerary">Open</button></div></article>
+                    <article class="travel-feed-card travel-feed-card--reservation"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=700&auto=format&fit=crop" alt="Restaurant table ready for dinner"><div class="travel-feed-card__body"><span>Reservations</span><strong>3 confirmed</strong><small>Dining, hotel, activity</small><button type="button" data-travel-focus="documents">Open</button></div></article>
+                    <article class="travel-feed-card travel-feed-card--documents"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=700&auto=format&fit=crop" alt="Airplane wing above the clouds"><div class="travel-feed-card__body"><span>Documents</span><strong>11 saved</strong><small>Passport, insurance, hotel, and receipts</small><button type="button" data-travel-focus="documents">Open</button></div></article>
+                    <article class="travel-feed-card travel-feed-card--weather"><img src="https://images.unsplash.com/photo-1500534623283-312aade485b7?q=80&w=700&auto=format&fit=crop" alt="Rainy city street with warm lights"><div class="travel-feed-card__body"><span>Weather</span><strong>82°F</strong><small>Light rain on arrival • packing tip ready</small><button type="button" data-travel-focus="weather">Open</button></div></article>
+                    <article class="travel-feed-card travel-feed-card--maps"><img src="https://images.unsplash.com/photo-1524666041070-9c876c8b5e0c?q=80&w=700&auto=format&fit=crop" alt="Map and travel planning notes"><div class="travel-feed-card__body"><span>Maps</span><strong>5 saved places</strong><small>Hotel, dinner, activities, and local stops</small><button type="button" data-travel-focus="maps">Open</button></div></article>
                   </section>
                   <div class="travel-quick-actions compact">
-                    <button type="button" data-travel-focus="flights">Add Flight</button>
                     <button type="button" data-travel-focus="hotels">Add Hotel</button>
-                    <button type="button" data-travel-focus="rideShare">Compare Transportation</button>
                     <button type="button" data-travel-focus="itinerary">View Itinerary</button>
-                    <button type="button" data-travel-focus="boarding">View Boarding Pass</button>
                     <button type="button" data-travel-focus="documents">Upload Document</button>
+                    <button type="button" data-travel-focus="weather">View Weather</button>
+                    <button type="button" data-target="transportationPanel">Open Transportation</button>
                   </div>
                 </section>
                 <section class="travel-focus-panel" data-travel-panel="flights">
@@ -2920,8 +3145,38 @@
                 <section class="travel-focus-panel" data-travel-panel="hotels">
                   <div class="travel-focus-header"><span class="travel-focus-icon">🏨</span><div><p class="eyebrow">Hotels</p><h3>Hotel search and confirmed stays</h3><p>Saved hotels, check-in reminders, room details, and reservation cards for the selected trip.</p></div><button class="primary-button" type="button" data-travel-focus-action="Add Hotel">Add Hotel</button></div>
                   <div class="travel-focus-grid"><article><img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=700&auto=format&fit=crop" alt="Hotel lobby"><span>Confirmed stay</span><strong>Tokyo Station Hotel</strong><small>Aug 8 - Aug 13 • Queen Room • TSH-2088</small><button type="button" data-travel-focus-action="View Reservation">View Reservation</button></article><article><span>Check-in reminder</span><strong>3:00 PM arrival</strong><small>Reservation card appears in Travel Essentials.</small><button type="button" data-travel-focus="boarding">View Cards</button></article></div>
+                  <section class="hotel-live-check" aria-labelledby="hotelLiveTitle">
+                    <div class="hotel-live-check__header">
+                      <div>
+                        <p class="eyebrow">Live hotel availability</p>
+                        <h3 id="hotelLiveTitle">Check current rooms and prices</h3>
+                        <p>Search the configured hotel provider for current room availability, dates, pricing, and cancellation policy. A result is not a reservation until a booking provider confirms it.</p>
+                      </div>
+                      <span class="provider-badge">Provider-backed</span>
+                    </div>
+                    <form class="hotel-live-form" id="hotelLiveSearchForm">
+                      <label>City code
+                        <input id="hotelLiveCityCode" type="text" value="TYO" placeholder="TYO" maxlength="3" autocomplete="off" required>
+                      </label>
+                      <label>Check-in
+                        <input id="hotelLiveCheckIn" type="date" value="2026-08-08" required>
+                      </label>
+                      <label>Check-out
+                        <input id="hotelLiveCheckOut" type="date" value="2026-08-13" required>
+                      </label>
+                      <label>Adults
+                        <input id="hotelLiveAdults" type="number" value="2" min="1" max="9" required>
+                      </label>
+                      <label>Hotel ID (optional)
+                        <input id="hotelLiveHotelId" type="text" placeholder="Search city" maxlength="24" autocomplete="off">
+                      </label>
+                      <button class="primary-button" type="submit">Check availability</button>
+                    </form>
+                    <p class="small provider-status" id="hotelLiveStatus" role="status">Enter dates and a three-letter city code to request live hotel availability.</p>
+                    <div class="hotel-live-results" id="hotelLiveResults" aria-live="polite" hidden></div>
+                  </section>
                 </section>
-                <section class="travel-focus-panel" data-travel-panel="rideShare">
+                <section class="travel-focus-panel" data-travel-panel="rideShare" hidden data-transportation-workspace>
                   <div class="travel-focus-header"><span class="travel-focus-icon">🚘</span><div><p class="eyebrow">Ride Share</p><h3>Country-aware ride providers</h3><p>Select a country to show supported providers, availability, estimates, pickup time, vehicle type, and booking method.</p></div><button class="primary-button" type="button" data-travel-focus-action="Compare Providers">Compare Providers</button></div>
                   <label class="travel-country-select">Destination country<select id="travelFocusCountry"><option>United Arab Emirates</option><option>United States</option><option>Canada</option><option>United Kingdom</option><option>Mexico</option><option>Brazil</option><option>Japan</option><option>Singapore</option><option>India</option></select></label>
                   <div class="travel-provider-cards" id="travelFocusRideProviders" aria-label="Country-based ride-share providers"></div>
@@ -2940,7 +3195,7 @@
                   <div class="travel-focus-grid"><article><span>Identification</span><strong>Passport</strong><small>Jordan Smith • Verified • Expires 2031</small><button type="button" data-travel-focus-action="View Passport">View</button></article><article><span>Insurance</span><strong>Travel insurance needed</strong><small>Missing before departure</small><button type="button" data-travel-focus-action="Upload Insurance">Upload</button></article><article><span>Hotel confirmation</span><strong>Tokyo Station Hotel</strong><small>Uploaded Jul 20 • TSH-2088</small><button type="button" data-travel-focus-action="Download Hotel Confirmation">Download</button></article></div>
                 </section>
                 <section class="travel-focus-panel" data-travel-panel="itinerary">
-                  <div class="travel-focus-header"><span class="travel-focus-icon">🗓️</span><div><p class="eyebrow">Itinerary inside Travel</p><h3>Miami to Tokyo trip dashboard</h3><p>Trip overview, today’s schedule, timeline, smart route, reservations, transportation, alerts, weather, documents, and quick actions are separated into clean Travel sections.</p></div><button class="primary-button" type="button" data-travel-focus-action="Add Activity">Add Activity</button></div>
+                  <div class="travel-focus-header"><span class="travel-focus-icon">🗓️</span><div><p class="eyebrow">Itinerary preview</p><h3>Miami to Tokyo trip dashboard</h3><p>Today’s schedule, activities, reservations, alerts, weather, documents, and quick actions stay easy to scan. Full itinerary planning lives in the Itinerary tab.</p></div><button class="primary-button" type="button" data-travel-focus-action="Add Activity">Add Activity</button></div>
                   <section class="travel-itinerary-dashboard" aria-label="Travel itinerary dashboard">
                     <article class="travel-itinerary-section trip-overview">
                       <span>Trip Overview</span>
@@ -2959,13 +3214,6 @@
                       <p>Current activity: Catamaran Cruise, 11:00 AM - 2:45 PM. Next activity starts 3:30 PM at Pyrgos Winery.</p>
                       <button type="button" data-itinerary-dashboard-action="View Today Details">View Details</button>
                     </article>
-                    <article class="travel-itinerary-section smart-route-card">
-                      <span>Smart Route</span>
-                      <h3>Hotel → Marina → Winery</h3>
-                      <div class="route-preview-line" aria-hidden="true"><i></i><i></i><i></i></div>
-                      <p>Current stop: Marina Dock B. Next stop: Pyrgos Winery. Estimated travel time: 48 minutes. Optimized for traffic and light rain.</p>
-                      <button type="button" data-travel-focus="maps">Open Map</button>
-                    </article>
                     <article class="travel-itinerary-section weather-snapshot-card">
                       <span>Weather Preview</span>
                       <div class="weather-orb" aria-hidden="true"></div>
@@ -2979,23 +3227,21 @@
                     <div class="travel-itinerary-rows">
                       <details open><summary><time>8:30 AM</time><strong>Breakfast at Blue Cafe</strong><span>Dining • Confirmed</span><em>Complete</em></summary><p>Oia terrace table. Notes: receipt attached to Smart Bill Split.</p></details>
                       <details open><summary><time>11:00 AM</time><strong>Catamaran Cruise</strong><span>Activity • Confirmed</span><em>In progress</em></summary><p>Location: Marina Dock B. Check-in closes 30 minutes before departure.</p></details>
-                      <details><summary><time>3:30 PM</time><strong>Winery Tour</strong><span>Activity • Confirmed</span><em>Upcoming</em></summary><p>Location: Pyrgos Winery. Transportation confirmed. Wear comfortable shoes.</p></details>
-                      <details><summary><time>7:45 PM</time><strong>Sunset Dinner</strong><span>Restaurant • Reserved</span><em>Reminder on</em></summary><p>Location: Ocean Rooftop Grill. Time-to-leave alert will calculate from traffic and weather.</p></details>
+                      <details><summary><time>3:30 PM</time><strong>Winery Tour</strong><span>Activity • Confirmed</span><em>Upcoming</em></summary><p>Location: Pyrgos Winery. Check-in is at 3:30 PM. Wear comfortable shoes.</p></details>
+                      <details><summary><time>7:45 PM</time><strong>Sunset Dinner</strong><span>Restaurant • Reserved</span><em>Reminder on</em></summary><p>Location: Ocean Rooftop Grill. Reservation details and menu notes are saved.</p></details>
                     </div>
                   </section>
                   <section class="travel-reservation-sections" aria-label="Upcoming reservations">
-                    <article><span>Flight</span><strong>Delta DL 241</strong><small>MIA → HND • Gate B18 • Seat 14A</small><button type="button" data-travel-focus="boarding">Boarding Pass</button></article>
                     <article><span>Hotel</span><strong>Tokyo Station Hotel</strong><small>Check-in 3:00 PM • confirmation saved</small><button type="button" data-travel-focus="hotels">View Hotel</button></article>
                     <article><span>Restaurant</span><strong>Ocean Rooftop Grill</strong><small>7:30 PM • leave by 6:55 PM</small><button type="button" data-itinerary-dashboard-action="View Reservation">View Reservation</button></article>
                     <article><span>Activity</span><strong>Catamaran Sunset Cruise</strong><small>5:00 PM • check-in closes 4:30 PM</small><button type="button" data-itinerary-dashboard-action="View Activity">View Activity</button></article>
-                    <article><span>Transportation</span><strong>HND airport transfer</strong><small>Driver assigned • ride-share backup ready</small><button type="button" data-travel-focus="rideShare">Book Transportation</button></article>
-                    <article><span>Travel Documents</span><strong>Boarding pass, ID, insurance</strong><small>Insurance still missing before departure</small><button type="button" data-travel-focus="documents">View Documents</button></article>
+                    <article><span>Travel Documents</span><strong>Passport, hotel, insurance</strong><small>Insurance still missing before departure</small><button type="button" data-travel-focus="documents">View Documents</button></article>
                     <article><span>Travel Alerts</span><strong>3 active alerts</strong><small>Gate reminder, rain advisory, reservation reminder</small><button type="button" data-travel-focus="alerts">View Alerts</button></article>
                     <article><span>Quick Actions</span><strong>Add, upload, book, or open</strong><small>Actions preserve trip and traveler context.</small><button type="button" data-itinerary-dashboard-action="Upload Confirmation">Upload Confirmation</button></article>
                   </section>
                 </section>
                 <section class="travel-focus-panel" data-travel-panel="maps">
-                  <div class="travel-focus-header"><span class="travel-focus-icon">🗺️</span><div><p class="eyebrow">Maps</p><h3>Places, routes, pickup points, and stops</h3><p>Airports, hotels, stations, ports, event venues, restaurants, and transportation routes for the selected trip.</p></div><button class="primary-button" type="button" data-travel-focus-action="Open Directions">Open Directions</button></div>
+                  <div class="travel-focus-header"><span class="travel-focus-icon">🗺️</span><div><p class="eyebrow">Maps</p><h3>Places, directions, and saved stops</h3><p>Airports, hotels, event venues, restaurants, and local places for the selected trip.</p></div><button class="primary-button" type="button" data-travel-focus-action="Open Directions">Open Directions</button></div>
                   <div class="travel-map-dashboard"><div><p class="eyebrow">Route context</p><h3>Airport to hotel</h3><p>MIA departure, HND arrival, hotel location, pickup point, dinner stop, and saved places.</p></div><div class="route-chip-list"><button type="button">Airport</button><button type="button">Hotel</button><button type="button">Pickup</button><button type="button">Dinner</button></div></div>
                 </section>
                 <section class="travel-focus-panel" data-travel-panel="alerts"><div class="travel-focus-header"><span class="travel-focus-icon">🚨</span><div><p class="eyebrow">Travel Alerts</p><h3>Current trip alerts</h3><p>Flight check-in, weather, document, and reservation alerts for the selected trip.</p></div><button class="primary-button" type="button" data-travel-focus-action="Manage Alerts">Manage Alerts</button></div><div class="travel-focus-grid"><article><span>Check-in</span><strong>DL 241 opens soon</strong><small>Reminder queued.</small></article><article><span>Weather</span><strong>Light rain on arrival</strong><small>Pack a jacket.</small></article></div></section>
@@ -3191,7 +3437,7 @@
               </div>
               <p class="small" id="travelWorkspaceMessage">Boarding passes, weather, and maps are managed inside the Travel tab.</p>
             </section>
-            <section class="transport-confirmation-hub" aria-label="Multi-transport confirmation hub">
+            <section class="transport-confirmation-hub" aria-label="Multi-transport confirmation hub" hidden data-transportation-workspace>
               <div class="transport-hub-header">
                 <div>
                   <p class="transport-route-chip">Trips &gt; Travel</p>
@@ -3325,7 +3571,7 @@
               </div>
               <p class="small" id="transportMessage">Choose a transportation tab to review confirmations, tickets, boarding passes, QR codes, and assigned traveler access.</p>
             </section>
-            <section class="ride-hub-redesign" aria-label="Smart ride share hub workspace">
+            <section class="ride-hub-redesign" aria-label="Smart ride share hub workspace" hidden data-transportation-workspace>
               <div class="ride-toolbar" aria-label="Ride share search and filters">
                 <label>Search transportation
                   <input id="rideHubSearchInput" type="search" placeholder="Search rides, drivers, routes, receipts">
@@ -3684,7 +3930,22 @@
               <article><span>Activity</span><strong>Catamaran Sunset Cruise</strong><small>5:00 PM • check-in closes 4:30 PM</small><button type="button" data-reservation-action="View Excursion Details">View Details</button></article>
             </section>
             <p class="security-note">Travel-Drip keeps every traveler informed across friends, family, and corporate retreat trips with push, email, SMS where available, and in-app alerts.</p>
-            <div class="alert-category-grid">
+            <section class="itinerary-preferences-widget" aria-label="Itinerary notification preferences">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Notification controls</p>
+                  <h3>Choose what follows your day</h3>
+                  <p>Keep the alerts that matter visible without mixing them into the schedule.</p>
+                </div>
+                <span class="compliance-badge">Emergency always on</span>
+              </div>
+              <div class="itinerary-settings-columns">
+                <div class="itinerary-settings-column">
+                  <div class="itinerary-settings-heading">
+                    <p class="eyebrow">Trip updates</p>
+                    <h4>What should we watch?</h4>
+                  </div>
+                  <div class="alert-category-grid">
               <label><input type="checkbox" data-alert-category="Flights" checked> Flight delays, cancellations, gate changes, check-in reminders</label>
               <label><input type="checkbox" data-alert-category="Hotels" checked> Hotel check-in/out reminders and reservation updates</label>
               <label><input type="checkbox" data-alert-category="Transportation" checked> Transportation schedule changes and pickup notifications</label>
@@ -3694,24 +3955,41 @@
               <label><input type="checkbox" data-alert-category="Meeting points" checked> Meeting point reminders and event start times</label>
               <label><input type="checkbox" data-alert-category="Weather" checked> Destination weather alerts that may impact plans</label>
               <label><input type="checkbox" data-alert-category="Emergency" checked> Emergency announcements and important travel updates</label>
-            </div>
-            <div class="delivery-preferences">
+                  </div>
+                </div>
+                <div class="itinerary-settings-column itinerary-settings-column--channels">
+                  <div class="itinerary-settings-heading">
+                    <p class="eyebrow">Delivery channels</p>
+                    <h4>Where should alerts arrive?</h4>
+                  </div>
+                  <div class="delivery-preferences">
               <label><input type="checkbox" data-alert-channel="Push" checked> Push</label>
               <label><input type="checkbox" data-alert-channel="Email" checked> Email</label>
               <label><input type="checkbox" data-alert-channel="SMS"> SMS</label>
               <label><input type="checkbox" data-alert-channel="In-app" checked> In-app</label>
-            </div>
-            <div class="alert-preview-list" id="alertPreviewList">
+                  </div>
+                </div>
+              </div>
+              <div class="itinerary-alert-previews">
+                <div class="itinerary-settings-heading">
+                  <p class="eyebrow">Recent previews</p>
+                  <h4>What travelers will see</h4>
+                </div>
+                <div class="alert-preview-list" id="alertPreviewList">
               <div><strong>Flight update</strong><span>DXB gate changed to B18. Check-in reminder sent 24 hours before departure.</span></div>
               <div><strong>Hotel reminder</strong><span>Check-in opens at 3:00 PM. Reservation note updated by organizer.</span></div>
               <div><strong>Weather impact</strong><span>High wind advisory may affect tomorrow's marina activity.</span></div>
               <div><strong>Emergency announcement</strong><span>Organizer marked this update as critical for all travelers.</span></div>
-            </div>
-            <div class="button-row">
+                </div>
+              </div>
+              <div class="itinerary-settings-actions">
+                <div class="button-row">
               <button class="primary-button" type="button" id="saveAlertPrefsButton">Save alert preferences</button>
               <button class="ghost-button" type="button" id="simulateAlertButton">Simulate itinerary update</button>
-            </div>
-            <p class="small" id="alertMessage">All critical emergency announcements stay enabled for traveler safety.</p>
+                </div>
+                <p class="small" id="alertMessage">All critical emergency announcements stay enabled for traveler safety.</p>
+              </div>
+            </section>
             <div class="reservation-reminder-panel">
               <div class="section-heading compact">
                 <div>
@@ -4372,19 +4650,19 @@
             </div>
             <div class="go-live-summary-grid">
               <article><span>Production deployment</span><strong id="goLiveDeploymentStatus">Live</strong><small>Vercel deployment is reachable over HTTPS.</small></article>
-              <article><span>Environment</span><strong id="goLiveEnvironmentStatus">Partial</strong><small>Public Supabase keys are configured; server secrets still required.</small></article>
+              <article><span>Environment</span><strong id="goLiveEnvironmentStatus">Checking</strong><small>Reading the deployed production health endpoint.</small></article>
               <article><span>Local QA</span><strong id="goLiveLocalStatus">Ready for staging</strong><small>Static markup, routing, assets, and syntax checks pass locally.</small></article>
-              <article><span>Release decision</span><strong id="goLiveDecisionStatus">Not public-ready</strong><small>Provider-backed production tests remain blocking.</small></article>
+              <article><span>Release decision</span><strong id="goLiveDecisionStatus">Checking</strong><small>Production status will update after the health and provider checks finish.</small></article>
             </div>
             <div class="go-live-checklist" id="goLiveChecklist" aria-label="Production go-live acceptance checklist">
-              <div data-go-live-status="pass"><strong>Live domain and HTTPS</strong><span>Production URL loads at traveldrip-app.vercel.app with HTTPS.</span></div>
-              <div data-go-live-status="pass"><strong>Public Supabase config</strong><span><code>NEXT_PUBLIC_SUPABASE_URL</code> and publishable key are present in production health output.</span></div>
-              <div data-go-live-status="blocked"><strong>Server Supabase/admin environment</strong><span><code>SUPABASE_SERVICE_ROLE_KEY</code> and <code>SUPABASE_ADMIN_EMAILS</code> are missing from production health output.</span></div>
-              <div data-go-live-status="blocked"><strong>Push notifications</strong><span><code>VAPID_PUBLIC_KEY</code> and <code>VAPID_PRIVATE_KEY</code> are missing from production health output.</span></div>
-              <div data-go-live-status="blocked"><strong>Payments and wallet providers</strong><span>Deposits, refunds, Apple Pay, Google Wallet, virtual card, and tap-to-pay need real PCI-compliant provider testing.</span></div>
-              <div data-go-live-status="blocked"><strong>External integrations</strong><span>Email, SMS, OAuth, ride-share, flight, hotel, cruise, restaurant, maps, calendar, social posting, storage, malware scanning, monitoring, and backups need provider-level verification.</span></div>
-              <div data-go-live-status="review"><strong>User journeys</strong><span>Solo, group, corporate, cruise, and event journeys are represented in the UI and still need production user/account tests.</span></div>
-              <div data-go-live-status="review"><strong>Accessibility and performance</strong><span>Responsive UI and reduced-motion support are present; full device/browser testing still needs completion.</span></div>
+              <div data-go-live-status="pass" data-go-live-check="deployment"><strong>Live domain and HTTPS</strong><span>Production URL loads at traveldrip-app.vercel.app with HTTPS.</span></div>
+              <div data-go-live-status="pass" data-go-live-check="public-supabase"><strong>Public Supabase config</strong><span><code>NEXT_PUBLIC_SUPABASE_URL</code> and publishable key are present in production health output.</span></div>
+              <div data-go-live-status="blocked" data-go-live-check="server-supabase"><strong>Server Supabase/admin environment</strong><span><code>SUPABASE_SERVICE_ROLE_KEY</code> and <code>SUPABASE_ADMIN_EMAILS</code> must be configured in production.</span></div>
+              <div data-go-live-status="blocked" data-go-live-check="push"><strong>Push notifications</strong><span><code>VAPID_PUBLIC_KEY</code>, <code>VAPID_PRIVATE_KEY</code>, and <code>CRON_SECRET</code> must be configured in production.</span></div>
+              <div data-go-live-status="blocked" data-go-live-check="payments"><strong>Payments and wallet providers</strong><span>Deposits and refunds need configured Stripe webhooks; Apple Pay, Google Wallet, virtual card, and tap-to-pay need real PCI-compliant issuer testing.</span></div>
+              <div data-go-live-status="blocked" data-go-live-check="external"><strong>External integrations</strong><span>Search, flight, hotel, AI, email, SMS, maps, storage, malware scanning, monitoring, and backups need provider-level verification.</span></div>
+              <div data-go-live-status="review" data-go-live-check="journeys"><strong>User journeys</strong><span>Solo, group, corporate, cruise, and event journeys are represented in the UI and still need production user/account tests.</span></div>
+              <div data-go-live-status="review" data-go-live-check="accessibility"><strong>Accessibility and performance</strong><span>Responsive UI and reduced-motion support are present; full device/browser testing still needs completion.</span></div>
             </div>
             <div class="go-live-actions">
               <button class="primary-button" type="button" data-target="adminPanel" data-settings-section="security">Review security</button>
@@ -4392,7 +4670,7 @@
               <button class="ghost-button" type="button" data-target="itineraryAlerts">Review notifications</button>
               <button class="ghost-button" type="button" data-target="socialHub">Review messaging</button>
             </div>
-            <p class="small" id="goLiveStatusMessage">Do not mark Travel-Drip Ready for Production until all critical production checks pass with real provider credentials and user journey tests.</p>
+            <p class="small" id="goLiveStatusMessage">Public production remains blocked until all critical checks pass with real provider credentials and user journey tests. Invite-only beta testing may proceed only for the validated paths.</p>
           </section>
 
           <section class="panel audit-panel" data-route-support="groupBank walletPanel">
@@ -4416,9 +4694,11 @@
 
   <nav class="mobile-nav" aria-label="Mobile navigation">
     <button class="active" type="button" data-main-nav-id="dashboard">Dashboard</button>
+    <button type="button" data-main-nav-id="profile">My Profile</button>
     <button type="button" data-main-nav-id="planning">Planning</button>
     <button type="button" data-main-nav-id="itinerary">Itinerary</button>
     <button type="button" data-main-nav-id="events">Events</button>
+    <button type="button" data-main-nav-id="transportation">Transportation</button>
     <button type="button" data-main-nav-id="travel">Travel</button>
     <button type="button" data-main-nav-id="wallet">Wallet</button>
     <button type="button" data-main-nav-id="chat">Chat</button>
@@ -4502,6 +4782,6 @@
 
   <script src="https://link.msgsndr.com/js/external-tracking.js" data-tracking-id="tk_684cd074f7154fbebd60d6f62b2d331b"></script>
   <script src="public-config.js?v=2"></script>
-  <script defer src="app.js?v=61"></script>
+  <script defer src="app.js?v=66"></script>
 </body>
 </html>

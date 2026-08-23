@@ -9,6 +9,7 @@ const app = read("app.js");
 const navigationCss = read("navigation.css");
 const pkg = JSON.parse(read("package.json"));
 const travelHomeMarkup = html.match(/<section class="travel-focus-panel active" data-travel-panel="overview">([\s\S]*?)<\/section>\s*<section class="travel-focus-panel" data-travel-panel="flights">/)?.[1] || "";
+const travelSettingsNavMarkup = html.match(/<nav class="travel-settings-nav"[\s\S]*?<\/nav>/)?.[0] || "";
 
 function matchAll(text, regex, group = 1) {
   return [...text.matchAll(regex)].map((match) => match[group]);
@@ -33,12 +34,14 @@ const mainNavigationBlock = app.match(/const mainNavigation = Object\.freeze\(\[
 const mainNavigationIds = unique(matchAll(mainNavigationBlock, /id:\s*["']([^"']+)["']/g));
 const mainNavigationPaths = unique(matchAll(mainNavigationBlock, /path:\s*["']([^"']+)["']/g));
 const mainNavigationControls = matchAll(html, /\bdata-main-nav-id=["']([^"']+)["']/g);
-const requiredMainNavigationIds = ["dashboard", "planning", "itinerary", "events", "travel", "wallet", "chat", "important-info", "memories", "settings"];
+const requiredMainNavigationIds = ["dashboard", "profile", "planning", "itinerary", "events", "transportation", "travel", "wallet", "chat", "important-info", "memories", "settings"];
 const requiredToolbarRoutes = {
   dashboard: "/dashboard",
+  profile: "/profile/my-profile",
   planning: "/planning",
   itinerary: "/itinerary",
   events: "/events",
+  transportation: "/transportation",
   travel: "/travel",
   wallet: "/wallet",
   chat: "/chat",
@@ -124,7 +127,7 @@ const dashboardOnlyIssues = dashboardOnlyRequiredIds
   .filter((id) => !dashboardOnlyIds.includes(id))
   .map((id) => `Dashboard-only section is not marked: ${id}`);
 if (todayHeadingCount !== 1) dashboardOnlyIssues.push(`Expected one Today in Travel-Drip heading, found ${todayHeadingCount}`);
-if (!app.includes("[data-dashboard-only]") || !app.includes("section.hidden = !isHome")) {
+if (!app.includes("[data-dashboard-only]") || (!app.includes("section.hidden = !isHome") && !app.includes("setVisibilityWithoutCssLeaks(section, isHome)"))) {
   dashboardOnlyIssues.push("Route renderer does not explicitly toggle dashboard-only sections");
 }
 
@@ -172,12 +175,18 @@ const focusedLayoutChecks = [
   ["Itinerary layout", html.includes('id="itineraryAlerts"') && html.includes("itinerary-card--today") && html.includes("itinerary-timeline-list") && navigationCss.includes("#itineraryAlerts > .itinerary-dashboard") && navigationCss.includes("grid-template-columns: repeat(12, minmax(0, 1fr))") && navigationCss.includes("#itineraryAlerts .itinerary-timeline-list details summary") && navigationCss.includes("#itineraryAlerts .reservation-preferences-grid")],
   ["Memories layout", html.includes('id="memoriesPanel"') && navigationCss.includes("#memoriesPanel .memory-gallery-grid") && navigationCss.includes("#memoriesPanel .memory-media-card")],
   ["Event controls and cards", html.includes('id="eventsPanel"') && navigationCss.includes("#eventsPanel .event-dashboard-tabs") && navigationCss.includes("#eventsPanel .event-experience-card")],
-  ["Wallet formatting", html.includes('id="walletPanel"') && html.includes('class="wallet-operations-panel"') && navigationCss.includes("#walletPanel > .wallet-dashboard-header") && navigationCss.includes("#walletPanel > .wallet-redesign-shell") && navigationCss.includes("#walletPanel > .wallet-operations-panel") && navigationCss.includes("Wallet text visibility") && navigationCss.includes("grid-template-columns: repeat(3, minmax(0, 1fr))")],
+  ["Evite-inspired event invitation studio", html.includes('data-event-invite-studio') && html.includes('id="eventInviteGenerateButton"') && html.includes('id="eventInvitePreview"') && navigationCss.includes("#eventsPanel .event-invite-studio")],
+  ["Event-specific invitation context", html.includes('data-event-name=') && app.includes("syncEventInviteFromCard") && app.includes("getEventInviteContext")],
+  ["AI event invitation templates", app.includes('/api/ai-invitation') && app.includes("generateEventInviteTemplate") && fs.existsSync(path.join(root, "api", "ai-invitation.js"))],
+  ["Wallet formatting", html.includes('id="walletPanel"') && html.includes('class="wallet-operations-panel"') && html.includes('class="wallet-home-grid"') && html.includes('class="wallet-dashboard-sections"') && navigationCss.includes("#walletPanel > .wallet-redesign-shell") && navigationCss.includes("#walletPanel > .wallet-operations-panel") && navigationCss.includes("Wallet text visibility") && navigationCss.includes("grid-template-columns: repeat(3, minmax(0, 1fr))")],
   ["Smart Travel Search icon", html.includes('<span class="travel-search-icon" aria-hidden="true"></span>') && navigationCss.includes("#rideShareHub .travel-search-icon::after") && navigationCss.includes("#rideShareHub .travel-smart-search-row")],
   ["Chat layout", html.includes('id="socialHub"') && navigationCss.includes("#socialHub .messages-layout") && navigationCss.includes("#socialHub .chat-workspace") && navigationCss.includes("#socialHub .conversation-details-panel")],
   ["Chat vibe shortcuts", html.includes("chat-vibe-strip") && html.includes("Vote on dinner") && html.includes("Drop a memory") && navigationCss.includes("Chat vibe refresh") && navigationCss.includes("#socialHub .chat-vibe-actions")],
   ["Widget headers stay on top", html.includes('class="widget-toolbar"') && navigationCss.includes("body.app-routed :where(.smart-widget, .travel-widget, [data-widget]) > .widget-toolbar") && navigationCss.includes("grid-column: 1 / -1 !important")],
   ["Wallet and boarding pass visuals", html.includes('class="card-chip"') && html.includes("digital-boarding-pass") && navigationCss.includes("#virtualCard .virtual-card") && navigationCss.includes("#rideShareHub .digital-boarding-pass")],
+  ["Wallet card starts top-left", html.indexOf('<div class="virtual-card">', html.indexOf('id="virtualCard"')) < html.indexOf('<div class="section-heading compact">', html.indexOf('id="virtualCard"')) && app.includes('if (element.id === "virtualCard") return 0') && navigationCss.includes('Wallet route placement: wallet components are mounted in right-stack') && navigationCss.includes('.content-grid > .right-stack') && navigationCss.includes('.right-stack > #virtualCard:not([hidden])') && navigationCss.includes('grid-column: 1 !important')],
+  ["Destination insight cards stay side by side", html.includes('class="destination-fact-grid"') && app.includes('".destination-fact-grid"') && navigationCss.includes('.destination-fact-grid.smart-dashboard-grid') && navigationCss.includes('grid-template-columns: repeat(3, minmax(0, 1fr)) !important') && navigationCss.includes('grid-auto-rows: max-content !important') && navigationCss.includes('grid-column: span 1 !important')],
+  ["All destination choices are available", app.includes("const additionalLivePlanDestinations") && app.includes("const livePlanDestinations = [...featuredLivePlanDestinations, ...additionalLivePlanDestinations]") && app.includes("Choose from all ${livePlanDestinations.length} Travel-Drip destinations") && navigationCss.includes(".destination-insights .destination-chooser") && navigationCss.includes("overflow-x: auto !important") && navigationCss.includes("flex-wrap: nowrap !important")],
   ["Travel-Drip Pass workspace", html.includes('id="travelBoardingPasses"') && navigationCss.includes("#rideShareHub .travel-pass-workspace") && navigationCss.includes("single-focus-pass")],
   ["AI item recognition layout", html.includes('class="receipt-items-panel"') && html.includes('class="receipt-item-list"') && navigationCss.includes("#splitBill .receipt-workspace") && navigationCss.includes("#splitBill .receipt-item-list > article") && navigationCss.includes("#splitBill .receipt-claim-grid")],
   ["Readable app widget text", navigationCss.includes("App content color pass") && navigationCss.includes("color: var(--ink) !important") && navigationCss.includes("color: var(--muted) !important")],
@@ -198,10 +207,20 @@ const focusedLayoutChecks = [
   ["AI recognition widget stays horizontal", html.includes('id="aiBillReviewButton"') && navigationCss.includes("AI recognition widget repair") && navigationCss.includes("#splitBill .receipt-workspace") && navigationCss.includes("#splitBill .receipt-items-panel > .section-heading") && navigationCss.includes("grid-template-columns: minmax(0, 1fr) !important")],
   ["Overview Memories collage stays contained", html.includes("memories-widget") && html.includes('class="mini-collage"') && navigationCss.includes("Overview Memories widget repair") && navigationCss.includes("#dashboardWidgets .memories-widget .mini-collage") && navigationCss.includes("overflow: hidden !important") && navigationCss.includes("#dashboardWidgets .memories-widget > .ghost-button")],
   ["Travel Home summary cards stay readable", html.includes('data-travel-panel="overview"') && navigationCss.includes("Travel Home summary card repair") && navigationCss.includes('#rideShareHub [data-travel-panel="overview"] .travel-booking-summary') && navigationCss.includes("grid-template-columns: minmax(0, 1fr) auto !important") && navigationCss.includes("grid-template-areas:")],
+  ["Transportation has a dedicated concise table", html.includes('id="transportationPanel"') && html.includes('class="transportation-table"') && html.includes('id="transportationTableBody"') && app.includes("function renderTransportationTable") && navigationCss.includes("#transportationPanel .transportation-table")],
+  ["Transportation records use expandable dropdowns", app.includes("class=\"transportation-record-dropdown\"") && app.includes("transportation-record-details") && navigationCss.includes("Final transportation dropdown cascade") && navigationCss.includes("transportation-record-dropdown > summary")],
+  ["Transportation removes oversized parent widgets", html.includes('id="transportationPanel"') && navigationCss.includes("Transportation route: keep useful controls as independent widgets") && navigationCss.includes("#transportationPanel > .section-heading") && navigationCss.includes("#transportationPanel > .flight-tracking-card") && navigationCss.includes("#transportationPanel > .transportation-table-section") && navigationCss.includes("background: transparent !important") && navigationCss.includes("Route isolation hard stop") && app.includes("Array.from(source.children)") && app.includes("setVisibilityWithoutCssLeaks")],
+  ["Transportation uses travel-first layout", html.includes('id="transportationPanel"') && navigationCss.includes("Transportation refresh: a friendly trip hub") && navigationCss.includes('[data-active-route="transportation"] #transportationPanel > .flight-tracking-card') && navigationCss.includes('grid-template-areas:') && navigationCss.includes("border-spacing: 0 8px")],
+  ["Travel uses social discovery layout", html.includes("travel-discovery-feed") && html.includes('class="travel-feed-card') && navigationCss.includes("Social Travel + Chat refresh") && navigationCss.includes("#rideShareHub .travel-discovery-feed") && navigationCss.includes("#rideShareHub .travel-feed-card img")],
+  ["Chat uses social conversation layout", html.includes('id="socialHub"') && html.includes('class="conversation-card active"') && navigationCss.includes("#socialHub .modern-messages .msg") && navigationCss.includes("#socialHub .conversation-card img") && navigationCss.includes("#socialHub .chat-vibe-strip")],
+  ["Home dashboard uses travel-first layout", html.includes('id="dashboardHome"') && html.includes('id="dashboardWidgets"') && navigationCss.includes("Home dashboard refresh: make the first screen travel-first") && navigationCss.includes('[data-active-route="dashboardHome"] .destination-fact-grid') && navigationCss.includes('[data-active-route="dashboardHome"] main > .dashboard-widgets .widget-grid') && navigationCss.includes("linear-gradient(135deg, #9ef1dc, #ffd39a)")],
+  ["Live flight tracking wiring", html.includes('id="flightTrackingForm"') && html.includes('id="flightTrackingResult"') && app.includes("/api/flight-tracking") && app.includes("function trackFlightStatus") && fs.existsSync(path.join(root, "api", "flight-tracking.js"))],
+  ["Live hotel availability wiring", html.includes('id="hotelLiveSearchForm"') && html.includes('id="hotelLiveResults"') && app.includes("/api/hotel-availability") && app.includes("function searchLiveHotelAvailability") && fs.existsSync(path.join(root, "api", "hotel-availability.js"))],
+  ["Live restaurant and activity search wiring", html.includes('data-travel-search-suggestion="restaurants"') && app.includes("searchLiveTravelPlaces") && app.includes('? "food"') && app.includes(': "activities"') && fs.existsSync(path.join(root, "api", "travel-search.js"))],
   ["My Profile widgets stay readable", html.includes('id="myProfile"') && html.includes('class="profile-stats-grid"') && html.includes('class="profile-adventure-grid"') && navigationCss.includes("My Profile widget repair") && navigationCss.includes("#myProfile .profile-stats-grid") && navigationCss.includes("#myProfile .profile-adventure-grid") && navigationCss.includes("grid-template-areas:")],
   ["Travel selected page panel removed", !html.includes('id="travelSelectedTile"') && !html.includes('class="travel-selected-tile"')],
-  ["Travel Home avoids duplicate summaries", travelHomeMarkup.includes('class="travel-booking-summary"') && travelHomeMarkup.includes('class="travel-transport-summary"') && !travelHomeMarkup.includes('class="travel-dashboard-sections"') && !travelHomeMarkup.includes('class="travel-focus-grid"')],
-  ["Travel uses one canonical navigation", countMatches(html, /class="travel-settings-nav"/g) === 1 && !html.includes('class="travel-section-nav"') && html.includes('data-travel-focus="boarding">Tickets &amp; Boarding</button>')],
+  ["Travel Home avoids duplicate summaries", travelHomeMarkup.includes("travel-booking-summary") && !travelHomeMarkup.includes('class="travel-transport-summary"') && !travelHomeMarkup.includes('class="travel-dashboard-sections"') && !travelHomeMarkup.includes('class="travel-focus-grid"')],
+  ["Travel uses one canonical navigation", countMatches(html, /class="travel-settings-nav"/g) === 1 && !html.includes('class="travel-section-nav"') && html.includes('data-target="transportationPanel">Open Transportation</button>') && !travelSettingsNavMarkup.match(/data-travel-focus="(?:flights|trains|buses|cruises|boarding|rideShare|transfers|publicTransit|routeComparison|smartRoute)"/)],
   ["Travel duplicate widgets are consolidated", html.includes('class="travel-overview-card" hidden') && html.includes('class="travel-workspace" hidden') && html.includes('class="travel-support-grid" hidden')]
 ];
 const focusedLayoutIssues = focusedLayoutChecks
@@ -214,7 +233,13 @@ const corporateExperienceChecks = [
   ["Secure corporate access gate", html.includes('id="corporateAccessDialog"') && app.includes("showCorporateAccessGate") && app.includes("hasValidCorporateAccess")],
   ["Policy and conditions", html.includes("Travel policy engine") && html.includes("Corporate acceptance checklist") && html.includes("Financial privacy enforced")],
   ["Role and finance restrictions", html.includes("data-visible-roles") && html.includes("data-financial-panel") && app.includes("isFinancialRole")],
-  ["Corporate entry styling", navigationCss.includes(".corporate-entry-nav") && navigationCss.includes(".corporate-tab")]
+  ["Corporate entry styling", navigationCss.includes(".corporate-entry-nav") && navigationCss.includes(".corporate-tab")],
+  ["Corporate booking operations UI", html.includes('id="corporateBookingForm"') && html.includes('id="corporateApprovalList"') && html.includes('id="corporateServiceCaseForm"') && app.includes("loadCorporateBookingOperations")],
+  ["Corporate booking API", fs.existsSync(path.join(root, "api", "corporate-bookings.js")) && fs.existsSync(path.join(root, "api", "_corporate-policy.js"))],
+  ["Corporate booking database and RLS", fs.existsSync(path.join(root, "supabase-corporate-booking.sql")) && fs.readFileSync(path.join(root, "supabase-corporate-booking.sql"), "utf8").includes("corporate_booking_approvals enable row level security")],
+  ["Provider confirmation enforcement", fs.readFileSync(path.join(root, "api", "corporate-bookings.js"), "utf8").includes("Provider reference is required before a booking can be confirmed or ticketed")],
+  ["Corporate booking notifications", fs.readFileSync(path.join(root, "api", "corporate-bookings.js"), "utf8").includes("corporate_booking_approval_required") && fs.readFileSync(path.join(root, "api", "corporate-bookings.js"), "utf8").includes("corporate_booking_status_changed")],
+  ["Corporate policy tests", fs.existsSync(path.join(root, "scripts", "test-corporate-booking.js"))]
 ];
 const corporateExperienceIssues = corporateExperienceChecks
   .filter(([, passed]) => !passed)
@@ -480,7 +505,7 @@ ${dashboardOnlyIssues.length ? `### Dashboard-Only Issues\n${dashboardOnlyIssues
 | --- | --- | --- | --- |
 ${Object.entries(requiredToolbarRoutes).map(([id, path]) => `| ${id} | ${path} | ${mainNavigationBlock.includes(`id: "${id}"`) && mainNavigationBlock.includes(`path: "${path}"`) ? "yes" : "no"} | ${sidebarMainNavigationIds.includes(id) ? "yes" : "no"} | ${toolbarNavigationIssues.some((issue) => issue.includes(id)) ? "review" : "pass"} |`).join("\n")}
 
-${toolbarNavigationIssues.length ? `### Toolbar Navigation Issues\n${toolbarNavigationIssues.map((issue) => `- ${issue}`).join("\n")}` : "All ten main sidebar routes use the shared navigation configuration; Cruise remains nested under Travel."}
+${toolbarNavigationIssues.length ? `### Toolbar Navigation Issues\n${toolbarNavigationIssues.map((issue) => `- ${issue}`).join("\n")}` : "All twelve main sidebar routes use the shared navigation configuration; Cruise remains nested under Travel."}
 
 ## Full-Width Widget Verification
 
@@ -518,7 +543,7 @@ ${focusedLayoutIssues.length ? `### Focused Layout Issues\n${focusedLayoutIssues
 
 ${corporateExperienceChecks.map(([label, passed]) => `- ${label}: ${ok(passed)}`).join("\n")}
 
-${corporateExperienceIssues.length ? `### Corporate Experience Issues\n${corporateExperienceIssues.map((issue) => `- ${issue}`).join("\n")}` : "Corporate navigation is reachable, secure access verification remains required, and the existing policy, role, financial privacy, audit, and acceptance conditions remain present."}
+${corporateExperienceIssues.length ? `### Corporate Experience Issues\n${corporateExperienceIssues.map((issue) => `- ${issue}`).join("\n")}` : "Corporate navigation, secure access, booking operations, policy evaluation, finance approvals, traveler-care cases, provider confirmation safeguards, role restrictions, and RLS migrations are present."}
 
 ## Text Containment Verification
 

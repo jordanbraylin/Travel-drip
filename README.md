@@ -11,7 +11,7 @@ This is an open beta by default: anyone who can reach the Render URL can create 
 1. In Render, create a Blueprint from the `jordanbraylin/Travel-drip` GitHub repository.
 2. Confirm the service root is the directory containing `render.yaml`, `package.json`, and `index.html` (the committed app root).
 3. Add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and the Stripe test publishable key as `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` to the Render service. The build creates `public-config.js` from these values; do not paste a service-role key or Stripe secret key into Render's public build variables or any browser file.
-4. Run `supabase.sql`, `supabase-backend.sql`, and `supabase-event-planning.sql` in the Supabase SQL editor. Then run `supabase-beta.sql` and `supabase-ownership-transfer.sql` to create the profile metadata trigger, protected trusted-contact table, and atomic owner-transfer function.
+4. Run `supabase.sql`, `supabase-backend.sql`, and `supabase-event-planning.sql` in the Supabase SQL editor. Then run `supabase-corporate-booking.sql`, `supabase-beta.sql`, and `supabase-ownership-transfer.sql` to create corporate booking operations, the profile metadata trigger, protected trusted-contact table, and atomic owner-transfer function.
 5. In Supabase Auth URL Configuration, add the Render URL, `/login`, and `/register` as allowed redirect URLs.
 6. After the first deploy, install the beta from the browser and test sign-up, email verification, sign-in, profile save, trusted-contact create/remove, sign-out, and a fresh browser session.
 
@@ -36,6 +36,8 @@ Public store-readiness pages are available at `/privacy.html` and `/terms.html`.
 5. Run `npx vercel --prod` after the variables are set.
 6. Open `/api/health` on the deployed domain and confirm the required values return `true`.
 
+Use [PRODUCTION_GO_LIVE_CHECKLIST.md](PRODUCTION_GO_LIVE_CHECKLIST.md) as the release gate. The Vercel build runs the PWA and route checks, while `/api/health` reports whether the server environment is ready for production.
+
 ## Supabase setup
 
 1. Create a free Supabase project.
@@ -53,6 +55,10 @@ Public store-readiness pages are available at `/privacy.html` and `/terms.html`.
    - `https://YOUR-VERCEL-DOMAIN.vercel.app/login`
    - `https://YOUR-VERCEL-DOMAIN.vercel.app/register`
 
+## Evite-inspired event invitations
+
+The Events tab includes a focused invitation studio with event cards, event dashboard tabs, RSVP settings, guest-link copy, local draft saving, and a share-ready invitation preview. Choose an event type and tone, add an audience and details, then use **Generate invite with AI** to create a template based on that event's name, date, venue, destination, and RSVP context. The live endpoint is `/api/ai-invitation`; it requires the server-only `OPENAI_API_KEY` in Vercel. If the provider is unavailable, the UI labels and displays a local event template preview without claiming that AI generated it. Corporate invitation prompts explicitly exclude confidential budgets and employee data.
+
 For local static preview login, paste only the browser-safe publishable key into `public-config.js`. Do not put service-role or private notification keys in that file.
 
 ## Apple and Google store path
@@ -66,6 +72,10 @@ Explore and the Travel hub now have explicit **Search live sources** actions. In
 The AI Travel Planner has **Search live sources** as well. `/api/ai-planner` calls the OpenAI Responses API with the web-search tool, returns a source-backed summary, and displays citations. The AI prompt is limited to travel research and instructs the model to distinguish estimates from provider facts, avoid confidential corporate data, and remind travelers to verify before booking. `store: false` is used for this request.
 
 Configure `GOOGLE_PLACES_API_KEY`, `OPENAI_API_KEY`, and `OPENAI_MODEL` in Vercel as server-only variables. Do not put either secret in `public-config.js`, HTML, or browser JavaScript. Search is rate-limited at the API boundary and upstream failures/timeouts are reported without replacing local results. Live provider search is not available from the `file:` preview or the static Render service because those environments do not run the protected `/api` routes.
+
+Transportation also includes live flight lookup through the authenticated `/api/flight-tracking` route. Set the server-only `FLIGHTAWARE_API_KEY` in Vercel to query FlightAware AeroAPI for current status, estimated departure/arrival, terminals, gates, progress, and a provider tracking link. Saved flight confirmations remain the fallback when the provider is unavailable; live status is never presented as a booking confirmation.
+
+Travel > Hotels also includes live availability checks through the authenticated `/api/hotel-availability` route. Set the server-only `AMADEUS_CLIENT_ID` and `AMADEUS_CLIENT_SECRET` in Vercel to query current rooms, prices, dates, and cancellation policies. Availability is not treated as a reservation until a booking provider confirms it.
 
 The sign-up flow sends `full_name` and `username` as Auth metadata. The `supabase-beta.sql` trigger materializes those values into `profiles`; profile edits and trusted contacts are then written through the authenticated Supabase client and protected by RLS.
 
@@ -84,6 +94,10 @@ For Supabase/Vercel production use:
 5. Corporate routes, dashboard mode switching, invitations, event schedules, documents, attendee records, announcements, and approved media remain hidden until a short-lived corporate access session is verified.
 6. Guest sessions are temporary, audited, rate-limited, and expose only approved personal travel, schedule, information, and media records.
 7. Corporate admins can generate, replace, extend, revoke, and audit event codes without exposing stored code values.
+
+## Corporate booking operations
+
+The Corporate workspace includes a policy-aware travel desk backed by `/api/corporate-bookings`. Apply `supabase-corporate-booking.sql` after `supabase-backend.sql` to create corporate policies, bookings, approvals, and traveler-care cases with role-scoped RLS. Travel administrators can create manual or provider-sourced reservation records, finance administrators can approve policy exceptions, employees see only their own linked records, and every status change writes to the shared audit log. Booking and traveler-care updates use the protected notification queue, provider-blocking rules are enforced server-side, and lifecycle transitions prevent invalid jumps between requested, approved, confirmed, ticketed, active, completed, cancelled, and refunded states. Duty-of-care counts are calculated from linked attendees, bookings, document readiness, emergency-contact metadata, and open disruption cases rather than static UI samples. A booking cannot become confirmed or ticketed without both approval when required and a provider reference. Live inventory, ticket issuance, negotiated rates, refunds, and wallet provisioning still require the relevant production provider and callback credentials.
 
 Do not store raw access codes or employee IDs in browser storage, logs, analytics, or public files.
 
