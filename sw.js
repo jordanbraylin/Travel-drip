@@ -1,4 +1,4 @@
-const CACHE_NAME = "traveldrip-v174";
+const CACHE_NAME = "traveldrip-v183";
 const APP_SHELL = [
   "/",
   "/index.html",
@@ -9,8 +9,8 @@ const APP_SHELL = [
   "/admin.html",
   "/offline.html",
   "/styles.css?v=117",
-  "/navigation.css?v=81",
-  "/app.js?v=66",
+  "/navigation.css?v=89",
+  "/app.js?v=72",
   "/public-config.js?v=2",
   "/manifest.webmanifest",
   "/robots.txt",

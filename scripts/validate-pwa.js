@@ -11,6 +11,7 @@ const sw = read("sw.js");
 const html = read("index.html");
 const adminHtml = read("admin.html");
 const app = read("app.js");
+const navigation = read("navigation.css");
 const offline = read("offline.html");
 const envExample = read(".env.example");
 const vercel = JSON.parse(read("vercel.json"));
@@ -73,6 +74,64 @@ if (guestAccess.includes("traveldrip-local-preview") || guestAccess.includes("pr
 }
 if (!guestAccess.includes("getPepper().length >= 32") || !guestAccess.includes("status(503)")) {
   fail("guest access must fail closed when GUEST_ACCESS_PEPPER is missing or too short");
+}
+
+for (const [label, source, required] of [
+  ["corporate employee ID field", html, 'id="corporateInviteEmployeeId"'],
+  ["temporary and reusable employee access selector", html, 'id="corporateInviteAccessMode"'],
+  ["employee event dashboard", html, 'id="employeeEventName"'],
+  ["private employee portal defaults hidden", html, 'id="guestPortalPanel" hidden aria-hidden="true" inert'],
+  ["employee attendance status", html, 'id="employeeAttendanceStatus"'],
+  ["corporate event plan", html, 'id="corporateEmployeePlan"'],
+  ["corporate event dress code", html, 'id="corporateEmployeeDressCode"'],
+  ["corporate event attendee list", html, 'id="corporateEmployeeAttendeeList"'],
+  ["ID-only employee event plan", html, 'id="employeePortalPlan"'],
+  ["ID-only employee attendee list", html, 'id="employeePortalAttendeeList"'],
+  ["employee rideshare-only portal", html, 'id="employeeRideShareList"'],
+  ["employee stipend wallet", html, 'id="employeeStipendBalance"'],
+  ["linked employee corporate card status", html, 'id="linkedEmployeeCardStatus"'],
+  ["employee bill splitter", html, 'id="employeeBillEach"'],
+  ["personal and corporate workspace switch", html, 'id="accountWorkspaceSwitch"'],
+  ["guest personal-dashboard sign-up action", html, 'id="guestPortalCreateAccountButton"'],
+  ["corporate attendee invite action", app, 'action: "upsert-attendee"'],
+  ["individual corporate access-code action", app, 'action: "create-code"'],
+  ["corporate-only account marker", app, 'personalDashboard: false'],
+  ["corporate employee restricted routes", app, "corporateEmployeeBlockedTargets"],
+  ["corporate employee dashboard visibility controller", app, "syncCorporateEmployeeDashboardVisibility(isEmployeeMode)"],
+  ["corporate employee dashboard CSS precedence", navigation, 'html body.app-routed.corporate-employee-mode[data-active-route="dashboardHome"]'],
+  ["employee-scoped corporate travel view", html, 'id="corporateEmployeeTravel"'],
+  ["event-only corporate itinerary view", html, 'id="corporateEmployeeItinerary"'],
+  ["corporate travel data renderer", app, "renderCorporateEmployeeTravel(portal)"],
+  ["corporate itinerary data renderer", app, "renderCorporateEmployeeItinerary(portal)"],
+  ["corporate employee route visibility controller", app, "syncCorporateEmployeeRouteVisibility(isEmployeeMode)"],
+  ["corporate employee travel and itinerary CSS scope", navigation, "Corporate employee route scope: Travel contains only the employee's assigned"],
+  ["private employee portal CSS guard", navigation, 'html body #guestPortalPanel[hidden]'],
+  ["wallet ledger horizontal text guard", navigation, 'Wallet ledger precedence: transaction text keeps useful columns'],
+  ["corporate employee home layout guard", navigation, "Corporate employee home precedence: global panel grids must not split"],
+  ["employee portal opens through controlled visibility", app, 'setVisibilityWithoutCssLeaks($("#guestPortalPanel"), true)'],
+  ["employee bill splitter remains inside wallet", app, '"splitBill"'],
+  ["reusable employee access mode", app, 'accessMode === "persistent"'],
+  ["complete employee access removal action", app, 'action: "remove-attendee-access"'],
+  ["personal dashboard authentication guard", app, '!isFilePreview && !state.session?.user'],
+  ["post-sign-up guest account upgrade", guestAccess, 'action === "upgrade-account"'],
+  ["corporate invite list authorization", guestAccess, 'action === "list-invites"'],
+  ["server employee access revocation", guestAccess, 'action === "remove-attendee-access"'],
+  ["revoked session enforcement", guestAccess, 'Your employer has removed access to this corporate workspace.'],
+  ["organization event history", guestAccess, "eventHistory"],
+  ["privacy-safe event attendee directory", guestAccess, "eventAttendees"],
+  ["reusable access requires organization", guestAccess, "Reusable employee access requires this corporate trip to belong to an organization."],
+  ["linked employee trip membership", guestAccess, 'corporateEmployee: true'],
+  ["linked employee account portal", guestAccess, 'action === "account-portal"']
+]) {
+  if (!source.includes(required)) fail(`${label} is missing`);
+}
+const employeeOverviewGuard = navigation.lastIndexOf("/* Employee overview precedence:");
+const genericDestinationGuard = navigation.lastIndexOf('html body.app-routed[data-active-route="dashboardHome"] main > .destination-insights');
+if (employeeOverviewGuard < genericDestinationGuard) {
+  fail("corporate employee dashboard CSS guard must follow generic dashboard visibility rules");
+}
+if (guestAccess.includes("user_id: body.userId") || guestAccess.includes("user_id: body.user_id")) {
+  fail("employer attendee invitations must not create or attach personal accounts");
 }
 
 for (const meta of [

@@ -21,6 +21,8 @@ const state = {
   },
   authMode: "signin",
   guestSessionToken: sessionStorage.getItem("traveldripGuestSessionToken") || "",
+  corporatePortal: null,
+  employeePortalTab: "dashboard",
   isAdmin: false,
   adminStatusCheckedFor: "",
   hasEnteredApp: sessionStorage.getItem("traveldripEnteredApp") === "true",
@@ -31,6 +33,7 @@ const state = {
     eventId: sessionStorage.getItem("traveldripCorporateEventId") || "",
     role: sessionStorage.getItem("traveldripCorporateRole") || "employee",
     expiresAt: sessionStorage.getItem("traveldripCorporateAccessExpiresAt") || "",
+    accountLinked: sessionStorage.getItem("traveldripCorporateAccountLinked") === "true",
     pendingTarget: ""
   },
   theme: localStorage.getItem("traveldripTheme") || "tropical",
@@ -90,6 +93,7 @@ const state = {
     bookings: [],
     approvals: [],
     serviceCases: [],
+    invitations: [],
     readiness: null,
     permissions: {}
   }
@@ -2366,6 +2370,158 @@ function getCorporateOperationsTripId() {
     : state.activeTripId || "";
 }
 
+function renderCorporateEmployeeInvitations(invitations = state.corporateOperations.invitations || []) {
+  const list = $("#corporateEmployeeInviteList");
+  if (!list) return;
+  if (!invitations.length) {
+    list.innerHTML = '<div class="corporate-employee-invite-empty"><strong>No pending employee invitations</strong><span>Create an invitation above to grant event-scoped access.</span></div>';
+    return;
+  }
+  list.innerHTML = invitations.slice(0, 8).map((invitation) => {
+    const role = String(invitation.role || "employee").replaceAll("_", " ");
+    const status = String(invitation.status || "pending").replaceAll("_", " ");
+    const expiration = invitation.expires_at ? new Date(invitation.expires_at).toLocaleDateString() : "No expiration reported";
+    const accountType = invitation.account_type === "personal_account_linked" ? "Personal account linked" : "Corporate guest only";
+    const accessMode = invitation.access_mode === "persistent" ? "Reusable employee access" : "Temporary event access";
+    const codeSummary = invitation.plain_code
+      ? `<button type="button" data-copy-corporate-access="${escapeHtml(invitation.id)}">Copy access code</button>`
+      : invitation.code_hint
+        ? `<small>Access code ends in ${escapeHtml(invitation.code_hint)}</small>`
+        : "";
+    const removeSummary = String(invitation.status || "").toLowerCase() === "revoked"
+      ? ""
+      : `<button type="button" class="danger-button" data-remove-corporate-access="${escapeHtml(invitation.attendee_id)}">Remove access</button>`;
+    return `<div class="corporate-employee-invite-row">
+      <span><strong>${escapeHtml(invitation.invitee_name || "Employee")}</strong><small>${escapeHtml(invitation.invitee_email || "Work email pending")} · ${escapeHtml(accountType)}</small></span>
+      <span><strong>${escapeHtml(role)}</strong><small>${escapeHtml(accessMode)} · Review by ${escapeHtml(expiration)}</small></span>
+      <span class="corporate-invite-actions"><b>${escapeHtml(status)}</b>${codeSummary}${removeSummary}</span>
+    </div>`;
+  }).join("");
+}
+
+async function loadCorporateEmployeeInvitations() {
+  const tripId = getCorporateOperationsTripId();
+  if (isFilePreview || !state.session?.access_token || !tripId) {
+    renderCorporateEmployeeInvitations();
+    return;
+  }
+  try {
+    const result = await apiRequest(`/api/guest-access?action=list-invites&tripId=${encodeURIComponent(tripId)}`);
+    state.corporateOperations.invitations = result.invitations || [];
+    renderCorporateEmployeeInvitations();
+  } catch (error) {
+    if ($("#corporateEmployeeInviteMessage")) $("#corporateEmployeeInviteMessage").textContent = error.message;
+  }
+}
+
+async function submitCorporateEmployeeInvite(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const message = $("#corporateEmployeeInviteMessage");
+  const tripId = getCorporateOperationsTripId();
+  const expirationDate = $("#corporateInviteExpires")?.value;
+  const accessMode = $("#corporateInviteAccessMode")?.value === "persistent" ? "persistent" : "temporary";
+  const payload = {
+    tripId,
+    fullName: $("#corporateInviteName")?.value.trim(),
+    employeeId: $("#corporateInviteEmployeeId")?.value.trim(),
+    companyEmail: $("#corporateInviteEmail")?.value.trim().toLowerCase(),
+    department: $("#corporateInviteDepartment")?.value.trim() || "",
+    role: $("#corporateInviteRole")?.value || "employee",
+    expiresAt: expirationDate ? new Date(`${expirationDate}T23:59:59`).toISOString() : undefined,
+    accessMode
+  };
+  if (!payload.fullName || !payload.employeeId || !payload.companyEmail) {
+    if (message) message.textContent = "Enter the employee's name, employee ID, and work email.";
+    return;
+  }
+  if (!isFilePreview && !tripId) {
+    if (message) message.textContent = "Select a corporate trip before creating an employee invitation.";
+    return;
+  }
+  if (message) message.textContent = "Creating protected employee invitation...";
+  try {
+    let invitation;
+    if (isFilePreview) {
+      invitation = {
+        id: `preview-corporate-access-${Date.now()}`,
+        attendee_id: `preview-attendee-${Date.now()}`,
+        invitee_name: payload.fullName,
+        invitee_email: payload.companyEmail,
+        employee_id_masked: `••••${payload.employeeId.slice(-4)}`,
+        role: payload.role,
+        status: "active",
+        expires_at: payload.expiresAt,
+        plain_code: `TD${crypto.getRandomValues(new Uint32Array(1))[0].toString(36).toUpperCase().padStart(8, "0").slice(0, 8)}`,
+        access_mode: accessMode,
+        account_type: "corporate_guest_only"
+      };
+    } else {
+      const attendeeResult = await apiRequest("/api/guest-access", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "upsert-attendee",
+          tripId: payload.tripId,
+          employeeId: payload.employeeId,
+          fullName: payload.fullName,
+          companyEmail: payload.companyEmail,
+          department: payload.department,
+          role: payload.role,
+          accessStatus: "active",
+          metadata: { accessScope: "corporate_guest_only", accessMode, personalDashboard: false, attendanceStatus: "attending" }
+        })
+      });
+      const codeResult = await apiRequest("/api/guest-access", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "create-code",
+          tripId: payload.tripId,
+          codeType: "individual",
+          assignedAttendeeId: attendeeResult.attendee.id,
+          assignedRole: payload.role,
+          assignedDepartment: payload.department,
+          expiresAt: payload.expiresAt,
+          usageLimit: accessMode === "persistent" ? 0 : 25,
+          requiresEmployeeId: true,
+          requiresLastName: true,
+          rememberDeviceAllowed: true,
+          metadata: { accessScope: "corporate_guest_only", accessMode, personalDashboard: false }
+        })
+      });
+      invitation = {
+        id: codeResult.accessCode.id,
+        attendee_id: attendeeResult.attendee.id,
+        invitee_name: attendeeResult.attendee.full_name,
+        invitee_email: attendeeResult.attendee.company_email,
+        employee_id_masked: attendeeResult.attendee.employee_id_masked,
+        department: attendeeResult.attendee.department,
+        role: codeResult.accessCode.assigned_role,
+        status: codeResult.accessCode.status,
+        expires_at: codeResult.accessCode.expires_at,
+        code_hint: codeResult.accessCode.code_hint,
+        plain_code: codeResult.plainCode,
+        access_mode: accessMode,
+        account_type: "corporate_guest_only"
+      };
+    }
+    state.corporateOperations.invitations = [invitation, ...(state.corporateOperations.invitations || []).filter((item) => item.id !== invitation.id)];
+    renderCorporateEmployeeInvitations();
+    if (message) {
+      message.textContent = isFilePreview
+        ? `${accessMode === "persistent" ? "Reusable employee" : "Temporary event"} access created. Copy the code to test the employee portal.`
+        : `${accessMode === "persistent" ? "Reusable employee" : "Temporary event"} access created for ${payload.companyEmail}. Copy the code now; it is not stored in readable form.`;
+    }
+    addAuditEntry("Corporate employee access created", `${payload.companyEmail}: ${payload.role}, corporate guest only.`);
+    await saveSyncedEvent("corporate_employee_access_created", { role: payload.role, department: payload.department, personalDashboard: false });
+    form.reset();
+    const defaultExpiration = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+    if ($("#corporateInviteExpires")) $("#corporateInviteExpires").value = defaultExpiration.toISOString().slice(0, 10);
+    if ($("#corporateInviteAccessMode")) $("#corporateInviteAccessMode").value = "temporary";
+  } catch (error) {
+    if (message) message.textContent = error.message;
+  }
+}
+
 function getCorporatePreviewOperations() {
   return {
     role: "employee",
@@ -3517,17 +3673,81 @@ function queueGhlSync(payload = {}) {
   });
 }
 
+const corporateEmployeeRoles = new Set(["employee", "contractor", "speaker", "vendor", "vip", "guest"]);
+const corporateEmployeeBlockedTargets = new Set(["letsPlan", "aiTravelPlanner", "tripsPanel", "eventsPanel", "enterpriseRbac", "groupBank", "splitBill"]);
+
+function isCorporateEmployeeMode() {
+  return hasValidCorporateAccess()
+    && ($("#dashboardTripType")?.value || "group") === "corporate"
+    && corporateEmployeeRoles.has(state.corporateAccess.role || "employee");
+}
+
+function updateWorkspaceSwitcher() {
+  const control = $("#accountWorkspaceControl");
+  const select = $("#accountWorkspaceSwitch");
+  const canSwitch = Boolean(state.session?.user && state.corporateAccess.accountLinked && hasValidCorporateAccess());
+  if (control) setVisibilityWithoutCssLeaks(control, canSwitch);
+  if (select && canSwitch) select.value = isCorporateEmployeeMode() ? "corporate" : "personal";
+}
+
+function setCorporateEmployeeNavigation(employeeMode) {
+  [
+    '[data-main-nav-id="planning"]',
+    '[data-main-nav-id="events"]',
+    ".corporate-tab",
+    "[data-corporate-entry]",
+    "[data-planning-nav]"
+  ].forEach((selector) => {
+    $$(selector).forEach((element) => setVisibilityWithoutCssLeaks(element, !employeeMode));
+  });
+  $$("[data-employee-transport-nav] button").forEach((button) => {
+    const allowed = button.dataset.mainNavId === "transportation";
+    setVisibilityWithoutCssLeaks(button, !employeeMode || allowed);
+  });
+  $$("[data-employee-wallet-nav] button").forEach((button) => {
+    const allowed = button.dataset.mainNavId === "wallet";
+    setVisibilityWithoutCssLeaks(button, !employeeMode || allowed);
+  });
+}
+
+function syncCorporateEmployeeDashboardVisibility(employeeMode) {
+  const dashboardIsActive = document.body.dataset.activeRoute === "dashboardHome";
+  const showEmployeeDashboard = employeeMode && dashboardIsActive;
+  const showPersonalDashboard = !employeeMode && dashboardIsActive;
+
+  ["#dashboardHome", ".pwa-panel", ".destination-insights", ".travel-social-strip", ".metrics", "#dashboardWidgets"].forEach((selector) => {
+    $$(selector).forEach((section) => setVisibilityWithoutCssLeaks(section, showPersonalDashboard));
+  });
+  setVisibilityWithoutCssLeaks($("#corporateHome"), showEmployeeDashboard);
+}
+
+function syncCorporateEmployeeRouteVisibility(employeeMode) {
+  const activeRoute = document.body.dataset.activeRoute || "";
+  const showEmployeeTravel = employeeMode && activeRoute === "rideShareHub";
+  const showEmployeeItinerary = employeeMode && activeRoute === "itineraryAlerts";
+  setVisibilityWithoutCssLeaks($("#corporateEmployeeTravel"), showEmployeeTravel);
+  setVisibilityWithoutCssLeaks($("#corporateEmployeeItinerary"), showEmployeeItinerary);
+
+  if (showEmployeeItinerary) {
+    $$('[data-route-support~="itineraryAlerts"]').forEach((section) => setVisibilityWithoutCssLeaks(section, false));
+  }
+}
+
 function updateDashboardWidgets() {
   const tripType = $("#dashboardTripType")?.value || "group";
-  const role = $("#rolePreview")?.value || "employee";
+  const role = tripType === "corporate" && hasValidCorporateAccess()
+    ? state.corporateAccess.role || "employee"
+    : $("#rolePreview")?.value || "employee";
   if (state.corporateAccess.verified && !hasValidCorporateAccess()) {
     clearCorporateAccess("Corporate event session expired. Re-enter the secure code to continue.");
   }
   const isCorporateMode = tripType === "corporate" && hasValidCorporateAccess();
+  const isEmployeeMode = isCorporateMode && corporateEmployeeRoles.has(role);
   const isFinancialRole = ["owner", "executive", "finance"].includes(role);
   const isAdminRole = ["owner", "executive", "travel", "organizer", "finance"].includes(role);
 
   document.body.classList.toggle("corporate-mode", isCorporateMode);
+  document.body.classList.toggle("corporate-employee-mode", isEmployeeMode);
   if ($("#workspacePreview")) $("#workspacePreview").value = isCorporateMode ? "corporate" : "personal";
   if ($("#dashboardTripType") && tripType === "corporate" && !isCorporateMode) $("#dashboardTripType").value = "group";
 
@@ -3538,11 +3758,11 @@ function updateDashboardWidgets() {
   });
 
   $$("[data-corporate-nav]").forEach((section) => {
-    section.hidden = !isCorporateMode;
+    section.hidden = !isCorporateMode || isEmployeeMode;
   });
 
   $$("[data-consumer-nav]").forEach((section) => {
-    section.hidden = isCorporateMode;
+    section.hidden = isCorporateMode && !isEmployeeMode;
   });
 
   $$("[data-requires-trip-type]").forEach((item) => {
@@ -3555,19 +3775,8 @@ function updateDashboardWidgets() {
     item.setAttribute("aria-hidden", String(item.hidden));
   });
 
-  const isHomeVisible = $(".content-grid")?.hidden !== false;
-  if (isHomeVisible) {
-    ["#dashboardHome", ".destination-insights", ".travel-social-strip"].forEach((selector) => {
-      $$(selector).forEach((section) => {
-        section.hidden = isCorporateMode;
-        section.setAttribute("aria-hidden", String(isCorporateMode));
-      });
-    });
-    if ($("#corporateHome")) {
-      $("#corporateHome").hidden = !isCorporateMode;
-      $("#corporateHome").setAttribute("aria-hidden", String(!isCorporateMode));
-    }
-  }
+  syncCorporateEmployeeDashboardVisibility(isEmployeeMode);
+  syncCorporateEmployeeRouteVisibility(isEmployeeMode);
   if ($("#corporateWorkspaceBadge")) {
     $("#corporateWorkspaceBadge").textContent = isAdminRole ? "Admin workspace" : "Employee workspace";
   }
@@ -3588,6 +3797,9 @@ function updateDashboardWidgets() {
       ? "Corporate Mode is active. Personal leisure trips, public invites, vacation deals, and consumer wallet prompts are hidden from this workspace."
       : "Personal Travel workspace is active. Corporate assignments, budgets, employee records, and policies stay separated.";
   }
+  setCorporateEmployeeNavigation(isEmployeeMode);
+  updateWorkspaceSwitcher();
+  if (isEmployeeMode) renderCorporateEmployeeHome();
 }
 
 function applyTheme(theme = state.theme) {
@@ -4822,9 +5034,17 @@ async function loadConfig() {
     state.supabase = createClient(state.config.supabaseUrl, state.config.supabaseAnonKey);
     const { data } = await state.supabase.auth.getSession();
     state.session = data.session;
+    if (state.session?.access_token) {
+      if (state.guestSessionToken) await linkCorporateAccessToPersonalAccount().catch(() => {});
+      else await loadCorporatePortalFromSession().catch(() => {});
+    }
     loadWalletAccess();
-    state.supabase.auth.onAuthStateChange((event, session) => {
+    state.supabase.auth.onAuthStateChange(async (event, session) => {
       state.session = session;
+      if (session?.access_token) {
+        if (state.guestSessionToken) await linkCorporateAccessToPersonalAccount().catch(() => {});
+        else await loadCorporatePortalFromSession().catch(() => {});
+      }
       updateAuthUi();
       loadWalletAccess();
       subscribeToLiveData();
@@ -5025,6 +5245,7 @@ function setAuthMode(mode, scrollIntoView = false) {
   state.authMode = isGuest ? "guest" : isSignup ? "signup" : "signin";
   state.hasEnteredApp = false;
   sessionStorage.removeItem("traveldripEnteredApp");
+  document.body.classList.remove("employee-portal-active");
   document.body.classList.add("auth-screen");
   setAuthenticatedShellVisible(false);
   if (authPanel) {
@@ -5034,7 +5255,7 @@ function setAuthMode(mode, scrollIntoView = false) {
   if (loginForm) loginForm.hidden = isSignup || isGuest;
   if (signupForm) signupForm.hidden = !isSignup;
   if (guestForm) guestForm.hidden = !isGuest;
-  if ($("#guestPortalPanel")) $("#guestPortalPanel").hidden = true;
+  setVisibilityWithoutCssLeaks($("#guestPortalPanel"), false);
   if ($("#verificationPanel")) $("#verificationPanel").hidden = true;
   if ($("#authOnboardingPanel")) $("#authOnboardingPanel").hidden = true;
 
@@ -5066,6 +5287,7 @@ function setAuthMode(mode, scrollIntoView = false) {
   if (bottomCopy) bottomCopy.textContent = isGuest ? "Need a full Travel-Drip profile?" : isSignup ? "Already have an account?" : "New to Travel-Drip?";
   $("#landingSignupButton").hidden = isSignup;
   $("#landingLoginButton").hidden = !isSignup && !isGuest;
+  if ($("#enterAppButton")) $("#enterAppButton").hidden = !isFilePreview || isGuest;
   if (authMessage) {
     authMessage.textContent = isGuest
       ? "Guest sessions are temporary, audited, and expire automatically."
@@ -5085,6 +5307,15 @@ function setAuthMode(mode, scrollIntoView = false) {
 }
 
 function enterAppPreview({ confirmation = "", forceDashboard = false } = {}) {
+  if (state.authMode === "guest") {
+    if ($("#authMessage")) $("#authMessage").textContent = "Employer access is limited to the Corporate Guest Portal. Choose personal sign-up to create a personal dashboard.";
+    return;
+  }
+  if (!isFilePreview && !state.session?.user) {
+    setAuthMode(state.authMode === "signup" ? "signup" : "signin", true);
+    if ($("#authMessage")) $("#authMessage").textContent = "Sign in or create a personal account to open the personal dashboard. Employer access opens only the Corporate Guest Portal.";
+    return;
+  }
   state.hasEnteredApp = true;
   sessionStorage.setItem("traveldripEnteredApp", "true");
   if (confirmation) setAuthConfirmation(confirmation);
@@ -5126,6 +5357,13 @@ async function signIn(email, password) {
   $("#authMessage").textContent = error ? error.message : "Logged in. Confirming your saved information...";
   if (!error) {
     state.session = data.session || state.session;
+    if (state.guestSessionToken) {
+      await linkCorporateAccessToPersonalAccount().catch((linkError) => {
+        if ($("#authMessage")) $("#authMessage").textContent = linkError.message;
+      });
+    } else {
+      await loadCorporatePortalFromSession().catch(() => {});
+    }
     loadWalletAccess();
     const profileResult = await ensureProfileForSession();
     const confirmation = profileResult.error
@@ -5163,6 +5401,13 @@ async function signUp(fullName, username, email, password) {
 
   if (data.session) {
     state.session = data.session;
+    if (state.guestSessionToken) {
+      await linkCorporateAccessToPersonalAccount().catch((linkError) => {
+        if ($("#authMessage")) $("#authMessage").textContent = linkError.message;
+      });
+    } else {
+      await loadCorporatePortalFromSession().catch(() => {});
+    }
     loadWalletAccess();
     const profileResult = await ensureProfileForSession({ fullName, username });
     const confirmation = profileResult.error
@@ -5215,22 +5460,318 @@ async function signInWithOAuth(provider) {
     : `Redirecting to ${provider === "google" ? "Google" : "Apple"} sign-in...`;
 }
 
+function formatPortalMoney(cents = 0, currency = "USD") {
+  return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(Number(cents || 0) / 100);
+}
+
+function formatPortalDate(value, options = { month: "short", day: "numeric" }) {
+  if (!value) return "Date to be announced";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "Date to be announced" : date.toLocaleDateString([], options);
+}
+
+function formatPortalDateRange(event = {}) {
+  if (!event.starts_on && !event.ends_on) return "Dates to be announced";
+  const start = formatPortalDate(event.starts_on);
+  const end = formatPortalDate(event.ends_on);
+  return event.ends_on && end !== start ? `${start} - ${end}` : start;
+}
+
+function setPortalText(selector, value) {
+  const element = $(selector);
+  if (element) element.textContent = value;
+}
+
+function setEmployeePortalTab(tab = "dashboard") {
+  const selectedTab = ["dashboard", "transportation", "wallet", "history"].includes(tab) ? tab : "dashboard";
+  state.employeePortalTab = selectedTab;
+  $$('[data-employee-portal-tab]').forEach((button) => {
+    const selected = button.dataset.employeePortalTab === selectedTab;
+    button.classList.toggle("active", selected);
+    button.setAttribute("aria-selected", String(selected));
+  });
+  $$('[data-employee-portal-pane]').forEach((pane) => {
+    pane.hidden = pane.dataset.employeePortalPane !== selectedTab;
+  });
+}
+
+function renderEmployeePortalRides(rides = []) {
+  const list = $("#employeeRideShareList");
+  if (!list) return;
+  if (!rides.length) {
+    list.innerHTML = '<div class="employee-empty-state"><strong>No rideshare assigned yet</strong><span>Your pickup and driver details will appear here when the company confirms them.</span></div>';
+    return;
+  }
+  list.innerHTML = rides.map((ride) => {
+    const route = `${ride.pickup_location || "Pickup pending"} to ${ride.dropoff_location || "destination pending"}`;
+    const pickup = ride.pickup_at ? new Date(ride.pickup_at).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "Time pending";
+    return `<article><span>${escapeHtml(ride.provider_name || "Company rideshare")}</span><strong>${escapeHtml(route)}</strong><small>${escapeHtml(pickup)} · ${escapeHtml(ride.status || "planned")}</small></article>`;
+  }).join("");
+}
+
+function renderEmployeeEventHistory(history = []) {
+  const list = $("#employeeEventHistory");
+  if (!list) return;
+  if (!history.length) {
+    list.innerHTML = '<div class="employee-empty-state"><strong>Your event history starts here</strong><span>Past company events will remain available while your employer access is active.</span></div>';
+    return;
+  }
+  list.innerHTML = history.map((event) => `<article>
+    <span>${escapeHtml(String(event.trip_type || "company event").replaceAll("_", " "))}</span>
+    <strong>${escapeHtml(event.title || "Company event")}</strong>
+    <small>${escapeHtml(event.destination || "Location pending")} · ${escapeHtml(formatPortalDateRange(event))} · ${escapeHtml(event.attendanceStatus || "attending")}</small>
+  </article>`).join("");
+}
+
+function getCorporateEventBrief(portal = {}) {
+  const information = portal.importantInformation || [];
+  const dressCode = information.find((item) => /dress|attire/i.test(`${item.section_type || ""} ${item.title || ""}`));
+  const overview = information.find((item) => /overview|welcome|event|arrival/i.test(`${item.section_type || ""} ${item.title || ""}`));
+  const dressTitle = dressCode?.title && !/^(dress code|attire)$/i.test(dressCode.title.trim())
+    ? dressCode.title
+    : String(dressCode?.body || "Company smart casual").split(/[.\n]/)[0];
+  return {
+    dressCode: dressTitle,
+    dressNote: dressCode?.body || "Choose polished, comfortable clothing and review any activity-specific notes.",
+    overview: overview?.body || "Your confirmed schedule, assigned travel, venue details, and company updates are collected here."
+  };
+}
+
+function renderCorporateEventPlan(schedule = [], selector = "#corporateEmployeePlan") {
+  const list = $(selector);
+  if (!list) return;
+  if (!schedule.length) {
+    list.innerHTML = '<div class="corporate-event-plan-empty"><strong>Plan being finalized</strong><small>Your employer will add session times and locations here.</small></div>';
+    return;
+  }
+  list.innerHTML = schedule.slice(0, 4).map((item) => {
+    const time = item.starts_at
+      ? new Date(item.starts_at).toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" })
+      : "Time pending";
+    const place = item.location_name || item.location_address || "Location pending";
+    return `<div><time>${escapeHtml(time)}</time><span><strong>${escapeHtml(item.title || "Company event activity")}</strong><small>${escapeHtml(place)}</small></span></div>`;
+  }).join("");
+}
+
+function renderCorporateEventAttendees(attendees = [], selector = "#corporateEmployeeAttendeeList") {
+  const list = $(selector);
+  if (!list) return;
+  if (!attendees.length) {
+    list.innerHTML = '<div class="corporate-attendee-empty">Your employer has not published the attendee list yet.</div>';
+    return;
+  }
+  list.innerHTML = attendees.slice(0, 8).map((attendee) => {
+    const initials = String(attendee.fullName || "Employee").split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
+    return `<div><b>${escapeHtml(initials)}</b><span><strong>${escapeHtml(attendee.fullName || "Employee")}</strong><small>${escapeHtml(attendee.department || String(attendee.role || "employee").replaceAll("_", " "))}</small></span></div>`;
+  }).join("");
+}
+
+function formatPortalDateTime(value) {
+  if (!value) return "Time pending";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? "Time pending"
+    : date.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+function getPortalDetailText(details) {
+  if (typeof details === "string") return details.trim();
+  if (!details || typeof details !== "object") return "";
+  return String(details.description || details.instructions || details.notes || details.note || "").trim();
+}
+
+function renderCorporateEmployeeTravel(portal = {}) {
+  const event = portal.event || {};
+  const attendee = portal.attendee || {};
+  const travel = portal.myTravel || {};
+  const flights = Array.isArray(travel.flights) ? travel.flights : [];
+  const hotels = Array.isArray(travel.hotels) ? travel.hotels : [];
+  const attendance = attendee.attendanceStatus || "attending";
+
+  setPortalText("#corporateEmployeeTravelTitle", `${attendee.fullName || "My"} company travel`);
+  setPortalText("#corporateEmployeeTravelStatus", flights.length || hotels.length ? "Assigned travel" : "Assignments pending");
+  setPortalText("#corporateTravelEmployeeName", attendee.fullName || "Employee");
+  setPortalText("#corporateTravelEmployeeDepartment", attendee.department || String(attendee.role || "company attendee").replaceAll("_", " "));
+  setPortalText("#corporateTravelEventName", event.title || "Your company event");
+  setPortalText("#corporateTravelAttendance", attendance);
+  setPortalText("#corporateTravelDestination", event.destination || "Location pending");
+  setPortalText("#corporateTravelDates", formatPortalDateRange(event));
+  setPortalText("#corporateTravelFlightCount", `${flights.length} assigned`);
+  setPortalText("#corporateTravelHotelCount", `${hotels.length} assigned`);
+
+  const flightList = $("#corporateEmployeeFlightList");
+  if (flightList) {
+    flightList.innerHTML = flights.length
+      ? flights.map((flight) => {
+        const details = flight.details || {};
+        const carrier = [flight.airline, flight.flight_number].filter(Boolean).join(" ") || "Assigned flight";
+        const route = `${flight.departure_airport || "Origin pending"} to ${flight.arrival_airport || "Destination pending"}`;
+        const gate = details.departureGate || details.gate || "Pending";
+        const seat = details.seat || details.seatNumber || "Pending";
+        return `<article class="corporate-employee-record">
+          <div><span>${escapeHtml(flight.status || "assigned")}</span><strong>${escapeHtml(carrier)}</strong><small>${escapeHtml(route)}</small></div>
+          <dl><div><dt>Departs</dt><dd>${escapeHtml(formatPortalDateTime(flight.departs_at))}</dd></div><div><dt>Arrives</dt><dd>${escapeHtml(formatPortalDateTime(flight.arrives_at))}</dd></div><div><dt>Gate / seat</dt><dd>${escapeHtml(`${gate} / ${seat}`)}</dd></div></dl>
+        </article>`;
+      }).join("")
+      : '<div class="employee-empty-state"><strong>No flight assigned yet</strong><span>Your flight appears here only after the company connects it to your employee record.</span></div>';
+  }
+
+  const hotelList = $("#corporateEmployeeHotelList");
+  if (hotelList) {
+    hotelList.innerHTML = hotels.length
+      ? hotels.map((hotel) => {
+        const detailText = getPortalDetailText(hotel.details);
+        return `<article class="corporate-employee-record">
+          <div><span>Assigned stay</span><strong>${escapeHtml(hotel.hotel_name || "Company hotel")}</strong><small>${escapeHtml(hotel.address || "Address pending")}</small></div>
+          <dl><div><dt>Check-in</dt><dd>${escapeHtml(formatPortalDateTime(hotel.check_in_at))}</dd></div><div><dt>Check-out</dt><dd>${escapeHtml(formatPortalDateTime(hotel.check_out_at))}</dd></div><div><dt>Confirmation</dt><dd>${escapeHtml(hotel.confirmation_number || "Pending")}</dd></div></dl>
+          ${detailText ? `<p>${escapeHtml(detailText)}</p>` : ""}
+        </article>`;
+      }).join("")
+      : '<div class="employee-empty-state"><strong>No hotel assigned yet</strong><span>Your stay appears here only after the company connects it to your employee record.</span></div>';
+  }
+}
+
+function renderCorporateEmployeeItinerary(portal = {}) {
+  const event = portal.event || {};
+  const attendee = portal.attendee || {};
+  const schedule = Array.isArray(portal.myEvent?.schedule) ? portal.myEvent.schedule : [];
+  const eventBrief = getCorporateEventBrief(portal);
+
+  setPortalText("#corporateItineraryEventTitle", event.title || "Your company event");
+  setPortalText("#corporateItineraryEventSummary", eventBrief.overview);
+  setPortalText("#corporateItineraryAttendance", attendee.attendanceStatus || "attending");
+  setPortalText("#corporateItineraryDestination", event.destination || "Location pending");
+  setPortalText("#corporateItineraryDates", formatPortalDateRange(event));
+  setPortalText("#corporateItineraryDressCode", eventBrief.dressCode);
+  setPortalText("#corporateItineraryItemCount", `${schedule.length} item${schedule.length === 1 ? "" : "s"}`);
+
+  const list = $("#corporateEmployeeItineraryList");
+  if (!list) return;
+  if (!schedule.length) {
+    list.innerHTML = '<div class="employee-empty-state"><strong>The event agenda is being finalized</strong><span>Company-published sessions will appear here when they are ready for employees.</span></div>';
+    return;
+  }
+  list.innerHTML = schedule.map((item) => {
+    const detailText = getPortalDetailText(item.details);
+    const location = item.location_name || item.location_address || "Location pending";
+    const endTime = item.ends_at ? ` to ${formatPortalDateTime(item.ends_at)}` : "";
+    return `<article class="corporate-itinerary-item">
+      <time>${escapeHtml(formatPortalDateTime(item.starts_at))}${escapeHtml(endTime)}</time>
+      <div><span>${escapeHtml(String(item.item_type || "event session").replaceAll("_", " "))}</span><strong>${escapeHtml(item.title || "Company event activity")}</strong><small>${escapeHtml(location)}</small>${detailText ? `<p>${escapeHtml(detailText)}</p>` : ""}</div>
+    </article>`;
+  }).join("");
+}
+
+function renderCorporateEmployeeHome(portal = state.corporatePortal || {}) {
+  const event = portal.event || {};
+  const attendee = portal.attendee || {};
+  const travel = portal.myTravel || {};
+  const schedule = portal.myEvent?.schedule || [];
+  const wallet = portal.wallet || {};
+  const flight = travel.flights?.[0] || {};
+  const ride = travel.transportation?.[0] || {};
+  const nextEvent = schedule.find((item) => !item.starts_at || new Date(item.starts_at) >= new Date()) || schedule[0] || {};
+  const eventBrief = getCorporateEventBrief(portal);
+  const eventType = String(event.trip_type || "corporate event").replaceAll("_", " ");
+  const flightLabel = flight.flight_number
+    ? `${flight.airline || "Flight"} ${flight.flight_number} · ${flight.departure_airport || "Origin"} to ${flight.arrival_airport || "Destination"}`
+    : "Flight assignment pending";
+  const rideLabel = ride.pickup_location
+    ? `${ride.pickup_location} to ${ride.dropoff_location || "event"}`
+    : "Rideshare assignment pending";
+  setPortalText("#corporateEmployeeEventTitle", event.title || "Your company event");
+  setPortalText("#corporateEmployeeEventType", eventType);
+  setPortalText("#corporateEmployeeDestination", event.destination || "Location to be announced");
+  setPortalText("#corporateEmployeeDates", formatPortalDateRange(event));
+  setPortalText("#corporateEmployeeAttendance", attendee.attendanceStatus || "attending");
+  setPortalText("#corporateEmployeeFlight", flightLabel);
+  setPortalText("#corporateEmployeeNextEvent", nextEvent.title || "Event schedule pending");
+  setPortalText("#corporateEmployeeLocation", nextEvent.location_name || nextEvent.location_address || event.destination || "Location pending");
+  setPortalText("#corporateEmployeeBrief", eventBrief.overview);
+  setPortalText("#corporateEmployeeDressCode", eventBrief.dressCode);
+  setPortalText("#corporateEmployeeDressNote", eventBrief.dressNote);
+  setPortalText("#corporateEmployeeVenue", nextEvent.location_name || "Main venue pending");
+  setPortalText("#corporateEmployeeVenueAddress", nextEvent.location_address || event.destination || "Address pending");
+  setPortalText("#corporateEmployeeAttendeeCount", `${portal.eventAttendees?.length || 0} confirmed`);
+  setPortalText("#corporateEmployeeStipend", formatPortalMoney(wallet.stipendCents, wallet.currency));
+  setPortalText("#corporateEmployeeRide", rideLabel);
+  setPortalText("#corporateEmployeeHistoryCount", `${portal.eventHistory?.length || 0} company event${portal.eventHistory?.length === 1 ? "" : "s"}`);
+  setPortalText("#corporateEmployeeUpdates", `${portal.importantInformation?.length || 0} item${portal.importantInformation?.length === 1 ? "" : "s"} to review`);
+  setPortalText("#linkedEmployeeStipend", formatPortalMoney(wallet.stipendCents, wallet.currency));
+  setPortalText("#linkedEmployeeFunds", formatPortalMoney(wallet.personalFundsCents, wallet.currency));
+  setPortalText("#linkedEmployeeCardEnding", wallet.card?.maskedLastFour ? `Card ending ${wallet.card.maskedLastFour}` : "Card pending");
+  setPortalText("#linkedEmployeeCardStatus", wallet.card?.status === "active" ? "Active for approved dates and categories." : "Card provider setup required.");
+  setPortalText("#employeeCardTripLabel", event.title || "Company event");
+  setPortalText("#employeeCardholderName", attendee.fullName || "Employee");
+  if (wallet.card?.maskedLastFour) setPortalText("#cardNumber", `•••• •••• •••• ${wallet.card.maskedLastFour}`);
+  renderCorporateEventPlan(schedule);
+  renderCorporateEventAttendees(portal.eventAttendees || []);
+  renderCorporateEmployeeTravel(portal);
+  renderCorporateEmployeeItinerary(portal);
+}
+
 function renderGuestPortal(portal = {}) {
   const event = portal.event || {};
+  const attendee = portal.attendee || {};
   const travel = portal.myTravel || {};
-  const myEvent = portal.myEvent || {};
+  const schedule = portal.myEvent?.schedule || [];
   const info = portal.importantInformation || [];
-  const photos = portal.sharedPhotos || [];
+  const wallet = portal.wallet || {};
+  const flight = travel.flights?.[0] || {};
+  const hotel = travel.hotels?.[0] || {};
+  const nextEvent = schedule.find((item) => !item.starts_at || new Date(item.starts_at) >= new Date()) || schedule[0] || {};
+  const startsAt = event.starts_on ? new Date(event.starts_on) : null;
+  const daysUntil = startsAt && !Number.isNaN(startsAt.getTime()) ? Math.ceil((startsAt - new Date()) / 86400000) : null;
+  const eventType = String(event.trip_type || "corporate event").replaceAll("_", " ");
+
+  state.corporatePortal = portal;
+  if (document.body.classList.contains("auth-screen")) document.body.classList.add("employee-portal-active");
   $("#guestAccessForm").hidden = true;
-  $("#guestPortalPanel").hidden = false;
-  $("#guestPortalTitle").textContent = event.title || "Corporate Guest Portal";
-  $("#guestPortalMeta").textContent = portal.session?.expiresAt
-    ? `Temporary session expires ${new Date(portal.session.expiresAt).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}.`
-    : "Temporary session active. Reverification is required for sensitive actions.";
-  $("#guestTravelSummary").textContent = `${travel.flights?.length || 0} flights, ${travel.hotels?.length || 0} hotels, ${travel.transportation?.length || 0} transportation records visible.`;
-  $("#guestEventSummary").textContent = `${myEvent.schedule?.length || 0} assigned schedule items available.`;
-  $("#guestInfoSummary").textContent = `${info.length} information sections and required acknowledgments available.`;
-  $("#guestPhotoSummary").textContent = `${photos.length} approved shared media items visible.`;
+  setVisibilityWithoutCssLeaks($("#guestPortalPanel"), true);
+  setPortalText("#guestPortalTitle", event.title || "Your company event");
+  setPortalText("#guestPortalMeta", portal.session?.expiresAt
+    ? `Secure employee session expires ${new Date(portal.session.expiresAt).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}. Your event history remains available when you use reusable employee access.`
+    : "Secure corporate employee access is active.");
+  setPortalText("#employeeAttendanceBadge", attendee.attendanceStatus || "attending");
+  setPortalText("#employeeAttendanceStatus", attendee.attendanceStatus || "attending");
+  setPortalText("#employeeEventType", eventType);
+  setPortalText("#employeeEventName", event.title || "Company event");
+  setPortalText("#employeeEventDestination", event.destination || "Location to be announced");
+  setPortalText("#employeeEventDates", formatPortalDateRange(event));
+  setPortalText("#employeeEventLocation", nextEvent.location_name || hotel.hotel_name || "Venue pending");
+  setPortalText("#employeeEventDepartment", attendee.department || "Company guest");
+  setPortalText("#employeeEventCountdown", daysUntil === null ? "Schedule ready" : daysUntil > 0 ? `${daysUntil} days to go` : daysUntil === 0 ? "Today" : "Event history");
+  setPortalText("#guestTravelSummary", flight.flight_number ? `${flight.airline || "Flight"} ${flight.flight_number}` : "Flight pending");
+  setPortalText("#employeeFlightRoute", `${flight.departure_airport || "Origin"} to ${flight.arrival_airport || event.destination || "destination"}`);
+  setPortalText("#guestEventSummary", `${schedule.length} schedule item${schedule.length === 1 ? "" : "s"}`);
+  setPortalText("#employeeNextEvent", nextEvent.title || "Next event pending");
+  setPortalText("#employeeDashboardStipend", formatPortalMoney(wallet.stipendCents, wallet.currency));
+  setPortalText("#employeeHotelName", hotel.hotel_name || "Hotel assignment pending");
+  setPortalText("#employeeHotelDates", hotel.check_in_at ? `Check-in ${formatPortalDate(hotel.check_in_at)}` : "Stay details pending");
+  setPortalText("#employeeMeetingLocation", nextEvent.location_name || "Meeting location pending");
+  setPortalText("#employeeMeetingAddress", nextEvent.location_address || event.destination || "Address pending");
+  setPortalText("#guestInfoSummary", `${info.length} update${info.length === 1 ? "" : "s"}`);
+  const eventBrief = getCorporateEventBrief(portal);
+  setPortalText("#employeeDressCode", eventBrief.dressCode);
+  setPortalText("#employeeAttendeeCount", `${portal.eventAttendees?.length || 0} attendee${portal.eventAttendees?.length === 1 ? "" : "s"}`);
+  setPortalText("#employeePortalBrief", eventBrief.overview);
+  setPortalText("#employeePortalAttendeeCount", `${portal.eventAttendees?.length || 0} confirmed`);
+  setPortalText("#employeeWalletStatus", wallet.status === "active" ? "Active" : "Provider setup");
+  setPortalText("#employeeStipendBalance", formatPortalMoney(wallet.stipendCents, wallet.currency));
+  setPortalText("#employeePersonalFunds", formatPortalMoney(wallet.personalFundsCents, wallet.currency));
+  setPortalText("#employeeCardEnding", wallet.card?.maskedLastFour ? `Card ending ${wallet.card.maskedLastFour}` : "Card pending");
+  setPortalText("#employeeCardStatus", wallet.card?.status === "active" ? "Active for approved event purchases" : "Card provider setup required");
+  setPortalText("#employeeWalletMessage", wallet.canAddFunds
+    ? "Your linked account is ready for secure hosted checkout."
+    : "Link or create a verified personal account before adding funds; an employee ID alone cannot authorize a payment.");
+  const addFundsButton = $("#employeeAddFundsButton");
+  if (addFundsButton) addFundsButton.textContent = wallet.canAddFunds ? "Add personal funds" : "Link account to add funds";
+  renderEmployeePortalRides(travel.transportation || []);
+  renderEmployeeEventHistory(portal.eventHistory || []);
+  renderCorporateEventPlan(schedule, "#employeePortalPlan");
+  renderCorporateEventAttendees(portal.eventAttendees || [], "#employeePortalAttendeeList");
+  renderCorporateEmployeeHome(portal);
+  setEmployeePortalTab(state.employeePortalTab);
 }
 
 async function verifyGuestAccess() {
@@ -5252,14 +5793,43 @@ async function verifyGuestAccess() {
   if (isFilePreview) {
     state.guestSessionToken = "local-preview-guest-session";
     sessionStorage.setItem("traveldripGuestSessionToken", state.guestSessionToken);
-    renderGuestPortal({
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 4).toISOString();
+    const previewPortal = {
       session: { expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 4).toISOString() },
-      event: { title: "2027 Leadership Retreat" },
-      myTravel: { flights: [{}], hotels: [{}], transportation: [{}] },
-      myEvent: { schedule: [{}, {}, {}] },
-      importantInformation: [{}, {}, {}, {}],
-      sharedPhotos: [{}, {}, {}, {}, {}, {}]
-    });
+      attendee: { fullName: "Taylor Employee", department: "Leadership", role: "employee", attendanceStatus: "attending", accountLinked: false },
+      event: { id: "leadership-summit-preview", title: "2027 Leadership Retreat", destination: "Dubai, United Arab Emirates", starts_on: "2027-07-24", ends_on: "2027-07-28", trip_type: "corporate_retreat" },
+      myTravel: {
+        flights: [{ airline: "Delta", flight_number: "DL 241", departure_airport: "MIA", arrival_airport: "DXB", departs_at: "2027-07-23T21:40:00-04:00", arrives_at: "2027-07-24T19:15:00+04:00", status: "confirmed", details: { departureGate: "D18", seat: "14A" } }],
+        hotels: [{ hotel_name: "Marina Grand Hotel", address: "Dubai Marina, Dubai", check_in_at: "2027-07-24T15:00:00+04:00", check_out_at: "2027-07-28T11:00:00+04:00", confirmation_number: "MGH-2088" }],
+        transportation: [{ provider_name: "Careem", pickup_location: "DXB Terminal 3", dropoff_location: "Marina Grand Hotel", pickup_at: "2027-07-24T20:35:00Z", status: "confirmed" }]
+      },
+      myEvent: { schedule: [
+        { title: "Welcome reception", item_type: "reception", starts_at: "2027-07-24T19:30:00+04:00", ends_at: "2027-07-24T21:00:00+04:00", location_name: "Skyline Terrace", location_address: "Dubai Marina", details: "Meet the retreat hosts and company leadership." },
+        { title: "Leadership keynote", item_type: "general_session", starts_at: "2027-07-25T09:00:00+04:00", ends_at: "2027-07-25T10:30:00+04:00", location_name: "Palm Ballroom", location_address: "Skyline Conference Center", details: "Company priorities and the year-ahead strategy." },
+        { title: "Department workshops", item_type: "workshop", starts_at: "2027-07-25T11:00:00+04:00", ends_at: "2027-07-25T13:00:00+04:00", location_name: "Breakout Rooms A-D", location_address: "Skyline Conference Center", details: "Check the room assignment provided by your department lead." },
+        { title: "Hosted marina dinner", item_type: "company_dinner", starts_at: "2027-07-25T19:00:00+04:00", ends_at: "2027-07-25T21:30:00+04:00", location_name: "Marina Promenade", location_address: "Dubai Marina", details: "Business casual attire. Transportation departs the hotel at 6:30 PM." }
+      ] },
+      wallet: { currency: "USD", status: "active", stipendCents: 43000, personalFundsCents: 0, canAddFunds: false, card: { status: "active", maskedLastFour: "4829" } },
+      eventHistory: [{ id: "preview-history", title: "New York Sales Summit", destination: "New York City", starts_on: "2026-04-10", ends_on: "2026-04-12", trip_type: "conference", attendanceStatus: "attended" }],
+      eventAttendees: [
+        { fullName: "Taylor Employee", department: "Leadership", role: "employee", attendanceStatus: "attending" },
+        { fullName: "Jordan Smith", department: "Operations", role: "organizer", attendanceStatus: "attending" },
+        { fullName: "Maya Chen", department: "Product", role: "employee", attendanceStatus: "attending" },
+        { fullName: "Andre Lewis", department: "Sales", role: "employee", attendanceStatus: "attending" }
+      ],
+      importantInformation: [
+        { section_type: "event_overview", title: "Welcome", body: "Meet the leadership team, review the year ahead, and finish the day with a hosted marina dinner." },
+        { section_type: "dress_code", title: "Dress code", body: "Smart resort attire for daytime sessions; business casual for the welcome dinner." }
+      ],
+      sharedPhotos: [{ caption: "Welcome dinner" }]
+    };
+    state.corporateAccess = { verified: true, eventId: previewPortal.event.id, role: "employee", expiresAt, accountLinked: false, pendingTarget: "dashboardHome" };
+    state.corporatePortal = previewPortal;
+    sessionStorage.setItem("traveldripCorporateAccessVerified", "true");
+    sessionStorage.setItem("traveldripCorporateEventId", previewPortal.event.id);
+    sessionStorage.setItem("traveldripCorporateRole", "employee");
+    sessionStorage.setItem("traveldripCorporateAccessExpiresAt", expiresAt);
+    renderGuestPortal(previewPortal);
     $("#authMessage").textContent = "Guest portal preview opened. Production verification hashes the code and employee ID server-side.";
     addAuditEntry("Guest portal preview opened", "Corporate event guest access flow verified locally with secure production API ready.");
     return;
@@ -5278,6 +5848,20 @@ async function verifyGuestAccess() {
     }
     state.guestSessionToken = result.guestSessionToken;
     sessionStorage.setItem("traveldripGuestSessionToken", state.guestSessionToken);
+    const expiresAt = result.portal?.session?.expiresAt || new Date(Date.now() + 1000 * 60 * 60 * 4).toISOString();
+    state.corporateAccess = {
+      verified: true,
+      eventId: result.portal?.event?.id || "verified-corporate-event",
+      role: result.portal?.attendee?.role || "employee",
+      expiresAt,
+      accountLinked: Boolean(result.portal?.attendee?.accountLinked),
+      pendingTarget: "dashboardHome"
+    };
+    sessionStorage.setItem("traveldripCorporateAccessVerified", "true");
+    sessionStorage.setItem("traveldripCorporateEventId", state.corporateAccess.eventId);
+    sessionStorage.setItem("traveldripCorporateRole", state.corporateAccess.role);
+    sessionStorage.setItem("traveldripCorporateAccessExpiresAt", expiresAt);
+    if (state.corporateAccess.accountLinked) sessionStorage.setItem("traveldripCorporateAccountLinked", "true");
     renderGuestPortal(result.portal);
     $("#authMessage").textContent = "Guest access verified. Only approved personal event details are visible.";
   } catch (_error) {
@@ -5288,6 +5872,7 @@ async function verifyGuestAccess() {
 async function endGuestAccess() {
   const token = state.guestSessionToken;
   state.guestSessionToken = "";
+  state.corporatePortal = null;
   sessionStorage.removeItem("traveldripGuestSessionToken");
   if (token && !isFilePreview) {
     await fetch("/api/guest-access", {
@@ -5295,13 +5880,16 @@ async function endGuestAccess() {
       headers: { "Authorization": `Bearer ${token}` }
     }).catch(() => {});
   }
-  $("#guestPortalPanel").hidden = true;
+  setVisibilityWithoutCssLeaks($("#guestPortalPanel"), false);
+  document.body.classList.remove("employee-portal-active");
   $("#guestAccessForm").hidden = false;
   $("#authMessage").textContent = "Guest session ended.";
 }
 
 async function signOut() {
   if (state.supabase) await state.supabase.auth.signOut();
+  if (state.guestSessionToken) await endGuestAccess();
+  if (state.corporateAccess.verified) clearCorporateAccess("Corporate and personal sessions ended.");
   rememberProtectedTarget(getTargetFromRoute());
   state.session = null;
   state.hasEnteredApp = false;
@@ -5782,18 +6370,91 @@ function hasValidCorporateAccess() {
   return new Date(state.corporateAccess.expiresAt) > new Date();
 }
 
+async function loadCorporatePortalFromSession() {
+  if (isFilePreview) return state.corporatePortal;
+  const useAccountPortal = Boolean(state.session?.access_token);
+  const token = useAccountPortal ? state.session.access_token : state.guestSessionToken;
+  if (!token) return state.corporatePortal;
+  const response = await fetch(useAccountPortal ? "/api/guest-access?action=account-portal" : "/api/guest-access", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    if (response.status === 404 && useAccountPortal) {
+      clearCorporateAccess(result.error || "No active corporate employee access is linked to this account.");
+      return null;
+    }
+    if ([401, 403].includes(response.status)) clearCorporateAccess(result.error || "Your corporate access is no longer active.");
+    throw new Error(result.error || "Corporate event details could not be loaded.");
+  }
+  state.corporatePortal = result.portal;
+  const accessExpiresAt = useAccountPortal
+    ? new Date(Number(state.session?.expires_at || Math.floor(Date.now() / 1000) + 3600) * 1000).toISOString()
+    : result.portal?.session?.expiresAt || state.corporateAccess.expiresAt;
+  state.corporateAccess = {
+    ...state.corporateAccess,
+    verified: true,
+    eventId: result.portal?.event?.id || state.corporateAccess.eventId,
+    role: result.portal?.attendee?.role || "employee",
+    expiresAt: accessExpiresAt,
+    accountLinked: Boolean(useAccountPortal || result.portal?.attendee?.accountLinked)
+  };
+  sessionStorage.setItem("traveldripCorporateAccessVerified", "true");
+  sessionStorage.setItem("traveldripCorporateEventId", state.corporateAccess.eventId);
+  sessionStorage.setItem("traveldripCorporateRole", state.corporateAccess.role);
+  sessionStorage.setItem("traveldripCorporateAccessExpiresAt", accessExpiresAt);
+  if (state.corporateAccess.accountLinked) sessionStorage.setItem("traveldripCorporateAccountLinked", "true");
+  renderCorporateEmployeeHome(result.portal);
+  updateWorkspaceSwitcher();
+  return result.portal;
+}
+
+async function linkCorporateAccessToPersonalAccount() {
+  if (!state.session?.access_token || !state.guestSessionToken) return false;
+  if (isFilePreview) {
+    state.corporateAccess.accountLinked = true;
+    sessionStorage.setItem("traveldripCorporateAccountLinked", "true");
+    return true;
+  }
+  const response = await fetch("/api/guest-access", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "upgrade-account",
+      accountAccessToken: state.session.access_token,
+      guestSessionToken: state.guestSessionToken
+    })
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || "Corporate access could not be linked to this personal account.");
+  state.corporateAccess.accountLinked = true;
+  sessionStorage.setItem("traveldripCorporateAccountLinked", "true");
+  if (result.attendee?.trip_id) {
+    state.activeTripId = result.attendee.trip_id;
+    sessionStorage.setItem("traveldripActiveTripId", result.attendee.trip_id);
+  }
+  await loadCorporatePortalFromSession();
+  await loadWalletAccess();
+  updateWorkspaceSwitcher();
+  return true;
+}
+
 function clearCorporateAccess(message = "Corporate session view closed. Personal Travel is active.") {
   state.corporateAccess = {
     verified: false,
     eventId: "",
     role: "employee",
     expiresAt: "",
+    accountLinked: false,
     pendingTarget: ""
   };
+  state.corporatePortal = null;
   sessionStorage.removeItem("traveldripCorporateAccessVerified");
   sessionStorage.removeItem("traveldripCorporateEventId");
   sessionStorage.removeItem("traveldripCorporateRole");
   sessionStorage.removeItem("traveldripCorporateAccessExpiresAt");
+  sessionStorage.removeItem("traveldripCorporateAccountLinked");
+  document.body.classList.remove("corporate-mode", "corporate-employee-mode");
   if ($("#dashboardTripType")) $("#dashboardTripType").value = "group";
   updateDashboardWidgets();
   if ($("#corporateAccessMessage")) $("#corporateAccessMessage").textContent = message;
@@ -5836,15 +6497,46 @@ async function verifyCorporateAccessGate() {
       eventId: "leadership-summit-preview",
       role: "employee",
       expiresAt,
-      pendingTarget: state.corporateAccess.pendingTarget || "enterpriseRbac"
+      accountLinked: Boolean(state.session?.user || state.hasEnteredApp),
+      pendingTarget: "dashboardHome"
     };
     sessionStorage.setItem("traveldripCorporateAccessVerified", "true");
     sessionStorage.setItem("traveldripCorporateEventId", state.corporateAccess.eventId);
     sessionStorage.setItem("traveldripCorporateRole", state.corporateAccess.role);
     sessionStorage.setItem("traveldripCorporateAccessExpiresAt", expiresAt);
+    if (state.corporateAccess.accountLinked) sessionStorage.setItem("traveldripCorporateAccountLinked", "true");
+    state.corporatePortal = {
+      attendee: { fullName: "Taylor Employee", department: "Leadership", role: "employee", attendanceStatus: "attending", accountLinked: state.corporateAccess.accountLinked },
+      event: { id: "leadership-summit-preview", title: "2027 Leadership Retreat", destination: "Dubai, United Arab Emirates", starts_on: "2027-07-24", ends_on: "2027-07-28", trip_type: "corporate_retreat" },
+      myTravel: {
+        flights: [{ airline: "Delta", flight_number: "DL 241", departure_airport: "MIA", arrival_airport: "DXB", departs_at: "2027-07-23T21:40:00-04:00", arrives_at: "2027-07-24T19:15:00+04:00", status: "confirmed", details: { departureGate: "D18", seat: "14A" } }],
+        hotels: [{ hotel_name: "Marina Grand Hotel", address: "Dubai Marina, Dubai", check_in_at: "2027-07-24T15:00:00+04:00", check_out_at: "2027-07-28T11:00:00+04:00", confirmation_number: "MGH-2088" }],
+        transportation: [{ provider_name: "Careem", pickup_location: "DXB Terminal 3", dropoff_location: "Marina Grand Hotel", pickup_at: "2027-07-24T20:35:00Z", status: "confirmed" }]
+      },
+      myEvent: { schedule: [
+        { title: "Welcome reception", item_type: "reception", starts_at: "2027-07-24T19:30:00+04:00", ends_at: "2027-07-24T21:00:00+04:00", location_name: "Skyline Terrace", location_address: "Dubai Marina", details: "Meet the retreat hosts and company leadership." },
+        { title: "Leadership keynote", item_type: "general_session", starts_at: "2027-07-25T09:00:00+04:00", ends_at: "2027-07-25T10:30:00+04:00", location_name: "Palm Ballroom", location_address: "Skyline Conference Center", details: "Company priorities and the year-ahead strategy." },
+        { title: "Department workshops", item_type: "workshop", starts_at: "2027-07-25T11:00:00+04:00", ends_at: "2027-07-25T13:00:00+04:00", location_name: "Breakout Rooms A-D", location_address: "Skyline Conference Center", details: "Check the room assignment provided by your department lead." },
+        { title: "Hosted marina dinner", item_type: "company_dinner", starts_at: "2027-07-25T19:00:00+04:00", ends_at: "2027-07-25T21:30:00+04:00", location_name: "Marina Promenade", location_address: "Dubai Marina", details: "Business casual attire. Transportation departs the hotel at 6:30 PM." }
+      ] },
+      wallet: { currency: "USD", status: "active", stipendCents: 43000, personalFundsCents: 0, canAddFunds: state.corporateAccess.accountLinked, card: { status: "active", maskedLastFour: "4829" } },
+      eventHistory: [{ id: "preview-history", title: "New York Sales Summit", destination: "New York City", starts_on: "2026-04-10", ends_on: "2026-04-12", trip_type: "conference", attendanceStatus: "attended" }],
+      eventAttendees: [
+        { fullName: "Taylor Employee", department: "Leadership", role: "employee", attendanceStatus: "attending" },
+        { fullName: "Jordan Smith", department: "Operations", role: "organizer", attendanceStatus: "attending" },
+        { fullName: "Maya Chen", department: "Product", role: "employee", attendanceStatus: "attending" },
+        { fullName: "Andre Lewis", department: "Sales", role: "employee", attendanceStatus: "attending" }
+      ],
+      importantInformation: [
+        { section_type: "event_overview", title: "Welcome", body: "Meet the leadership team, review the year ahead, and finish the day with a hosted marina dinner." },
+        { section_type: "dress_code", title: "Dress code", body: "Smart resort attire for daytime sessions; business casual for the welcome dinner." }
+      ],
+      sharedPhotos: []
+    };
     $("#corporateAccessDialog")?.close();
     if ($("#dashboardTripType")) $("#dashboardTripType").value = "corporate";
-    renderRoute(state.corporateAccess.pendingTarget || "enterpriseRbac", { updateHistory: true });
+    renderCorporateEmployeeHome(state.corporatePortal);
+    renderRoute("dashboardHome", { updateHistory: true });
     addAuditEntry("Corporate access verified", "Preview session created after code and employee identity check. Production validates hashed code and attendee record server-side.");
     return;
   }
@@ -5874,22 +6566,32 @@ async function verifyCorporateAccessGate() {
       eventId: result.portal?.event?.id || "verified-corporate-event",
       role: result.portal?.attendee?.role || "employee",
       expiresAt,
-      pendingTarget: state.corporateAccess.pendingTarget || "enterpriseRbac"
+      accountLinked: Boolean(result.portal?.attendee?.accountLinked),
+      pendingTarget: "dashboardHome"
     };
+    state.corporatePortal = result.portal;
     sessionStorage.setItem("traveldripCorporateAccessVerified", "true");
     sessionStorage.setItem("traveldripCorporateEventId", state.corporateAccess.eventId);
     sessionStorage.setItem("traveldripCorporateRole", state.corporateAccess.role);
     sessionStorage.setItem("traveldripCorporateAccessExpiresAt", expiresAt);
+    if (state.corporateAccess.accountLinked) sessionStorage.setItem("traveldripCorporateAccountLinked", "true");
+    if (state.session?.access_token && !state.corporateAccess.accountLinked) await linkCorporateAccessToPersonalAccount();
     $("#corporateAccessDialog")?.close();
     if ($("#dashboardTripType")) $("#dashboardTripType").value = "corporate";
-    renderRoute(state.corporateAccess.pendingTarget || "enterpriseRbac", { updateHistory: true });
+    renderCorporateEmployeeHome(state.corporatePortal);
+    renderRoute("dashboardHome", { updateHistory: true });
   } catch (_error) {
     $("#corporateAccessMessage").textContent = "Corporate access is temporarily unavailable. Try again or contact your event administrator.";
   }
 }
 
 function renderRoute(target = getTargetFromRoute(), { updateHistory = false, replace = false, travelSection = "", settingsFocus = "" } = {}) {
-  const resolvedTarget = routeDefinitions[target] ? target : "dashboardHome";
+  let resolvedTarget = routeDefinitions[target] ? target : "dashboardHome";
+  if (isCorporateEmployeeMode() && corporateEmployeeBlockedTargets.has(resolvedTarget)) {
+    resolvedTarget = "dashboardHome";
+    updateHistory = true;
+    replace = true;
+  }
   const activeTravelSection = resolvedTarget === "rideShareHub"
     ? travelTileDestinations[travelSection]
       ? travelSection
@@ -5973,7 +6675,23 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
     showTravelTileDestination(activeTravelSection, { updateHistory: false });
   }
   if (resolvedTarget === "aiTravelPlanner") renderAiPlanner();
-  if (resolvedTarget === "enterpriseRbac") loadCorporateBookingOperations();
+  if (resolvedTarget === "enterpriseRbac") {
+    loadCorporateBookingOperations();
+    loadCorporateEmployeeInvitations();
+  }
+
+  if (resolvedTarget === "transportationPanel" && isCorporateEmployeeMode()) {
+    if ($("#transportationAdvancedDetails")) $("#transportationAdvancedDetails").open = true;
+    setTransportationWorkspaceView("rides");
+  }
+
+  const employeeWalletMode = resolvedTarget === "walletPanel" && isCorporateEmployeeMode();
+  setVisibilityWithoutCssLeaks($("#employeeWalletSummary"), employeeWalletMode);
+  if ($("#walletPanel .section-heading")) setVisibilityWithoutCssLeaks($("#walletPanel .section-heading"), !employeeWalletMode);
+  if ($("#walletPanel .wallet-smart-actions")) setVisibilityWithoutCssLeaks($("#walletPanel .wallet-smart-actions"), !employeeWalletMode);
+  if ($("#walletPanel .wallet-redesign-shell")) setVisibilityWithoutCssLeaks($("#walletPanel .wallet-redesign-shell"), !employeeWalletMode);
+  if ($("#walletPanel .wallet-operations-panel")) setVisibilityWithoutCssLeaks($("#walletPanel .wallet-operations-panel"), !employeeWalletMode);
+  if (employeeWalletMode) renderCorporateEmployeeHome();
 
   updateDashboardWidgets();
   if ($("#currentPageTitle")) $("#currentPageTitle").textContent = routeDefinitions[resolvedTarget].label;
@@ -7415,6 +8133,13 @@ function wireLocalInteractions() {
         travelSection: target === "rideShareHub" ? "overview" : "",
         settingsFocus: target === "adminPanel" ? button.dataset.settingsFocus || "" : ""
       });
+      if (target === "enterpriseRbac" && button.dataset.corporateFocus) {
+        window.requestAnimationFrame(() => {
+          const section = document.getElementById(button.dataset.corporateFocus);
+          section?.scrollIntoView({ behavior: "smooth", block: "start" });
+          section?.focus({ preventScroll: true });
+        });
+      }
     });
   });
   $$("[data-route-link]").forEach((link) => {
@@ -7660,6 +8385,13 @@ function wireLocalInteractions() {
     }
     updateDashboardWidgets();
   });
+  $("#accountWorkspaceSwitch")?.addEventListener("change", (event) => {
+    const corporate = event.target.value === "corporate";
+    if ($("#dashboardTripType")) $("#dashboardTripType").value = corporate ? "corporate" : "group";
+    updateDashboardWidgets();
+    renderRoute("dashboardHome", { updateHistory: true });
+    addAuditEntry("Workspace switched", corporate ? "Employee corporate workspace opened." : "Personal Travel workspace opened.");
+  });
   $("#workspacePreview")?.addEventListener("change", (event) => {
     if (event.target.value === "corporate" && !hasValidCorporateAccess()) {
       event.target.value = "personal";
@@ -7702,6 +8434,22 @@ function wireLocalInteractions() {
   $("#corporatePolicyForm")?.addEventListener("submit", submitCorporatePolicy);
   $("#corporateBookingForm")?.addEventListener("submit", submitCorporateBooking);
   $("#corporateServiceCaseForm")?.addEventListener("submit", submitCorporateServiceCase);
+  $("#corporateEmployeeInviteForm")?.addEventListener("submit", submitCorporateEmployeeInvite);
+  $("#corporateInviteAccessMode")?.addEventListener("change", (event) => {
+    const days = event.target.value === "persistent" ? 365 * 5 : 14;
+    const expiration = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+    if ($("#corporateInviteExpires")) $("#corporateInviteExpires").value = expiration.toISOString().slice(0, 10);
+    if ($("#corporateEmployeeInviteMessage")) {
+      $("#corporateEmployeeInviteMessage").textContent = event.target.value === "persistent"
+        ? "Reusable access lets this employee sign back in and view company event history until an employer removes access."
+        : "Temporary access is limited to this event and expires on the selected date.";
+    }
+  });
+  if ($("#corporateInviteExpires") && !$("#corporateInviteExpires").value) {
+    const defaultExpiration = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+    $("#corporateInviteExpires").value = defaultExpiration.toISOString().slice(0, 10);
+  }
+  renderCorporateEmployeeInvitations();
   $("#corporateBookingList")?.addEventListener("click", (event) => {
     const button = event.target.closest("[data-corporate-booking-action]");
     if (button) updateCorporateBookingLifecycle(button);
@@ -8313,12 +9061,49 @@ function wireLocalInteractions() {
   $("#landingSignupButton")?.addEventListener("click", () => setAuthMode("signup"));
   $("#guestReturnLoginButton")?.addEventListener("click", () => setAuthMode("signin"));
   $("#guestCreateAccountButton")?.addEventListener("click", () => setAuthMode("signup"));
+  $("#guestPortalCreateAccountButton")?.addEventListener("click", () => setAuthMode("signup"));
+  $$("[data-employee-portal-tab]").forEach((button) => {
+    button.addEventListener("click", () => setEmployeePortalTab(button.dataset.employeePortalTab));
+  });
+  const updateEmployeeBillSplit = (totalSelector, peopleSelector, resultSelector) => {
+    const total = Math.max(0, Number($(totalSelector)?.value || 0));
+    const people = Math.max(1, Math.floor(Number($(peopleSelector)?.value || 1)));
+    setPortalText(resultSelector, `${formatPortalMoney(Math.round((total / people) * 100))} each`);
+  };
+  ["#employeeBillTotal", "#employeeBillPeople"].forEach((selector) => {
+    $(selector)?.addEventListener("input", () => updateEmployeeBillSplit("#employeeBillTotal", "#employeeBillPeople", "#employeeBillEach"));
+  });
+  ["#linkedEmployeeBillTotal", "#linkedEmployeeBillPeople"].forEach((selector) => {
+    $(selector)?.addEventListener("input", () => updateEmployeeBillSplit("#linkedEmployeeBillTotal", "#linkedEmployeeBillPeople", "#linkedEmployeeBillEach"));
+  });
+  $("#employeeAddFundsButton")?.addEventListener("click", async () => {
+    if (!state.session?.access_token || !state.corporateAccess.accountLinked) {
+      setPortalText("#employeeWalletMessage", "Create or sign in to a personal account to securely authorize card funding. Your company event access will be linked after sign-in.");
+      $("#guestPortalCreateAccountButton")?.focus();
+      return;
+    }
+    const amount = $("#employeeFundAmount")?.value || "100";
+    if ($("#fundAmount")) $("#fundAmount").value = amount;
+    document.body.classList.remove("employee-portal-active", "auth-screen");
+    if ($("#dashboardTripType")) $("#dashboardTripType").value = "corporate";
+    enterAppPreview({ forceDashboard: true });
+    renderRoute("walletPanel", { updateHistory: true });
+    $("#fundsForm")?.requestSubmit();
+  });
+  $("#linkedEmployeeAddFundsButton")?.addEventListener("click", () => {
+    if (!state.walletAccess.canContribute) {
+      showWorkflowMessage("Employee wallet", "This event wallet is not accepting contributions yet. Ask the event administrator to activate its PCI-compliant payment provider.");
+      return;
+    }
+    if ($("#fundAmount")) $("#fundAmount").value = $("#linkedEmployeeFundAmount")?.value || "100";
+    $("#fundsForm")?.requestSubmit();
+  });
   $("#guestHelpButton")?.addEventListener("click", () => {
     $("#authMessage").textContent = "Help request opens organizer support without revealing whether the code or employee record exists.";
     showWorkflowMessage("Guest access help", "Organizer support request prepared with safe, non-sensitive context.");
   });
   $("#guestReverifyButton")?.addEventListener("click", () => {
-    $("#guestPortalPanel").hidden = true;
+    setVisibilityWithoutCssLeaks($("#guestPortalPanel"), false);
     $("#guestAccessForm").hidden = false;
     $("#authMessage").textContent = "Re-enter your company event code and attendee ID to reverify.";
   });
@@ -8327,6 +9112,56 @@ function wireLocalInteractions() {
     $("#authMessage").textContent = "Unauthorized access report prepared for the company event organizer.";
     showWorkflowMessage("Report unauthorized access", "Guest session risk report logged without exposing employee ID values.");
   });
+  $("#corporateEmployeeInviteList")?.addEventListener("click", async (event) => {
+    const copyButton = event.target.closest("[data-copy-corporate-access]");
+    if (copyButton) {
+      const invitation = (state.corporateOperations.invitations || []).find((item) => item.id === copyButton.dataset.copyCorporateAccess);
+      if (!invitation?.plain_code) return;
+      const accessLabel = invitation.access_mode === "persistent" ? "Reusable employee" : "Temporary event";
+      try {
+        await navigator.clipboard.writeText(invitation.plain_code);
+        if ($("#corporateEmployeeInviteMessage")) $("#corporateEmployeeInviteMessage").textContent = `${accessLabel} code copied. Send it through an approved company channel.`;
+      } catch (_error) {
+        if ($("#corporateEmployeeInviteMessage")) $("#corporateEmployeeInviteMessage").textContent = `${accessLabel} code: ${invitation.plain_code}`;
+      }
+      return;
+    }
+
+    const removeButton = event.target.closest("[data-remove-corporate-access]");
+    if (!removeButton) return;
+    if (removeButton.dataset.confirmRemove !== "true") {
+      removeButton.dataset.confirmRemove = "true";
+      removeButton.textContent = "Confirm complete removal";
+      if ($("#corporateEmployeeInviteMessage")) $("#corporateEmployeeInviteMessage").textContent = "Confirming removes this employee from all company events, revokes reusable codes, and ends active corporate sessions. Their independent personal account is not deleted.";
+      return;
+    }
+
+    const attendeeId = removeButton.dataset.removeCorporateAccess;
+    const invitation = (state.corporateOperations.invitations || []).find((item) => item.attendee_id === attendeeId);
+    removeButton.disabled = true;
+    removeButton.textContent = "Removing...";
+    try {
+      if (!isFilePreview) {
+        await apiRequest("/api/guest-access", {
+          method: "POST",
+          body: JSON.stringify({ action: "remove-attendee-access", tripId: getCorporateOperationsTripId(), attendeeId, scope: "organization" })
+        });
+      }
+      if (invitation) {
+        invitation.status = "revoked";
+        invitation.plain_code = "";
+      }
+      renderCorporateEmployeeInvitations();
+      if ($("#corporateEmployeeInviteMessage")) $("#corporateEmployeeInviteMessage").textContent = "Corporate access removed. Codes and active sessions are revoked, and the employee can no longer enter company events.";
+      addAuditEntry("Corporate employee access removed", `${invitation?.invitee_email || "Employee"}: organization access revoked.`);
+    } catch (error) {
+      removeButton.disabled = false;
+      removeButton.dataset.confirmRemove = "false";
+      removeButton.textContent = "Remove access";
+      if ($("#corporateEmployeeInviteMessage")) $("#corporateEmployeeInviteMessage").textContent = error.message;
+    }
+  });
+  if ($("#enterAppButton")) $("#enterAppButton").hidden = !isFilePreview;
   $("#enterAppButton")?.addEventListener("click", enterAppPreview);
   $("#globalSearchInput")?.addEventListener("keydown", (event) => {
     if (event.key !== "Enter") return;

@@ -14,7 +14,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Travel-Drip">
     <link rel="stylesheet" href="styles.css?v=117">
-    <link rel="stylesheet" href="navigation.css?v=81">
+  <link rel="stylesheet" href="navigation.css?v=89">
   <title>Travel-Drip</title>
 </head>
 <body>
@@ -46,7 +46,7 @@
           <button type="button" data-main-nav-id="important-info">Important Info</button>
           <button type="button" data-target="tripsPanel">My Trips</button>
         </details>
-        <details class="nav-group" data-consumer-nav open>
+        <details class="nav-group" data-consumer-nav data-employee-transport-nav open>
           <summary>Travel</summary>
           <button type="button" data-main-nav-id="travel" data-travel-section="overview">Travel Home</button>
           <button type="button" data-target="rideShareHub" data-travel-section="flights">Flights</button>
@@ -61,7 +61,7 @@
           <button type="button" data-target="rideShareHub" data-travel-section="weather">Weather</button>
           <button type="button" data-target="rideShareHub" data-travel-section="maps">Maps</button>
         </details>
-        <details class="nav-group" data-consumer-nav open>
+        <details class="nav-group" data-consumer-nav data-planning-nav open>
           <summary>Planning</summary>
           <button type="button" data-main-nav-id="planning">Let's Plan</button>
           <button type="button" data-main-nav-id="itinerary">Itinerary</button>
@@ -70,7 +70,7 @@
           <button type="button" data-target="socialHub">Polls</button>
           <button type="button" data-target="walletPanel">Budgets</button>
         </details>
-        <details class="nav-group" data-consumer-nav open>
+        <details class="nav-group" data-consumer-nav data-employee-wallet-nav open>
           <summary>Wallet</summary>
           <button type="button" data-main-nav-id="wallet">Trip Virtual Wallet</button>
           <button type="button" data-target="walletPanel">Virtual Card</button>
@@ -93,6 +93,8 @@
         <details class="nav-group corporate-entry-nav" data-corporate-entry open>
           <summary>Corporate</summary>
           <button type="button" data-target="enterpriseRbac">Corporate Dashboard</button>
+          <button type="button" data-target="enterpriseRbac" data-corporate-focus="corporateEmployeeInvites">Invite Employees</button>
+          <button type="button" data-target="enterpriseRbac" data-corporate-focus="corporateTravelerCare">Traveler Care</button>
           <button type="button" data-target="enterpriseRbac">Travel Policies</button>
           <button type="button" data-target="enterpriseRbac">Employee Travel</button>
           <button type="button" data-target="enterpriseRbac">Budget &amp; Approvals</button>
@@ -137,6 +139,12 @@
         <label class="search">
           <span aria-hidden="true">Search</span>
           <input id="globalSearchInput" type="search" placeholder="Destinations, trips, flights, hotels, messages">
+        </label>
+        <label class="account-workspace-control" id="accountWorkspaceControl" hidden>Workspace
+          <select id="accountWorkspaceSwitch" aria-label="Switch between personal and corporate workspaces">
+            <option value="personal">Personal</option>
+            <option value="corporate">Company event</option>
+          </select>
         </label>
         <button class="lets-plan-button" type="button" id="letsPlanButton" data-main-nav-id="planning" aria-label="Open Planning"><span aria-hidden="true">✨</span><strong>Let's Plan</strong></button>
         <div class="top-actions">
@@ -243,22 +251,91 @@
                 <button type="button" id="guestCreateAccountButton">Create a Full Account</button>
               </div>
             </form>
-            <section class="guest-portal-panel" id="guestPortalPanel" hidden>
-              <div>
-                <span>Verified guest session</span>
-                <strong id="guestPortalTitle">Leadership Retreat</strong>
-                <small id="guestPortalMeta">Session expires automatically after inactivity.</small>
-              </div>
-              <div class="guest-portal-grid">
-                <article><span>My Travel</span><strong id="guestTravelSummary">Flight, hotel, and transportation details unlocked.</strong></article>
-                <article><span>My Event</span><strong id="guestEventSummary">Personal schedule, sessions, meals, and meeting points.</strong></article>
-                <article><span>Important Information</span><strong id="guestInfoSummary">Rules, policies, emergency contacts, and acknowledgments.</strong></article>
-                <article><span>Shared Photos</span><strong id="guestPhotoSummary">Only approved event media is visible.</strong></article>
-              </div>
+            <section class="guest-portal-panel" id="guestPortalPanel" hidden aria-hidden="true" inert>
+              <header class="employee-portal-header">
+                <div>
+                  <span>My company event</span>
+                  <strong id="guestPortalTitle">Your company event</strong>
+                  <small id="guestPortalMeta">This corporate session does not create a personal Travel-Drip account.</small>
+                </div>
+                <b class="employee-attendance-badge" id="employeeAttendanceBadge">Attending</b>
+              </header>
+              <nav class="employee-portal-tabs" aria-label="Employee event sections">
+                <button class="active" type="button" data-employee-portal-tab="dashboard">Dashboard</button>
+                <button type="button" data-employee-portal-tab="transportation">Rideshare</button>
+                <button type="button" data-employee-portal-tab="wallet">Wallet</button>
+                <button type="button" data-employee-portal-tab="history">Event history</button>
+              </nav>
+              <section class="employee-portal-pane employee-dashboard-pane" data-employee-portal-pane="dashboard">
+                <div class="employee-event-hero">
+                  <div>
+                    <span id="employeeEventType">Corporate event</span>
+                    <h2 id="employeeEventName">Your company event</h2>
+                    <p id="employeeEventDestination">Dubai, United Arab Emirates</p>
+                    <div class="employee-event-tags">
+                      <b id="employeeEventDates">Jul 24 - Jul 28</b>
+                      <b id="employeeEventLocation">Marina Grand Hotel</b>
+                      <b id="employeeEventDepartment">Leadership team</b>
+                    </div>
+                  </div>
+                  <strong id="employeeEventCountdown">18 days to go</strong>
+                </div>
+                <div class="employee-dashboard-metrics">
+                  <article><span>Attendance</span><strong id="employeeAttendanceStatus">Attending</strong><small>Your company has you confirmed.</small></article>
+                  <article><span>Flight</span><strong id="guestTravelSummary">DL 241</strong><small id="employeeFlightRoute">MIA to DXB</small></article>
+                  <article><span>Event schedule</span><strong id="guestEventSummary">3 items</strong><small id="employeeNextEvent">Welcome dinner at 7:00 PM</small></article>
+                  <article><span>Stipend</span><strong id="employeeDashboardStipend">$430</strong><small>Available for this company event.</small></article>
+                </div>
+                <div class="employee-detail-grid">
+                  <article><span>Stay</span><strong id="employeeHotelName">Marina Grand Hotel</strong><small id="employeeHotelDates">Check-in Jul 24</small></article>
+                  <article><span>Meeting location</span><strong id="employeeMeetingLocation">Skyline Conference Center</strong><small id="employeeMeetingAddress">Dubai Marina</small></article>
+                  <article><span>Important information</span><strong id="guestInfoSummary">4 updates</strong><small>Policies, emergency contacts, and arrival notes.</small></article>
+                  <article><span>Dress code</span><strong id="employeeDressCode">Smart resort</strong><small>Review the company event attire before arrival.</small></article>
+                  <article><span>Who's attending</span><strong id="employeeAttendeeCount">8 attendees</strong><small>Names and teams confirmed for this event.</small></article>
+                </div>
+                <div class="employee-event-context">
+                  <section class="corporate-event-plan" aria-labelledby="employeePortalPlanTitle">
+                    <div><span>What's happening</span><h3 id="employeePortalPlanTitle">Your event plan</h3><p id="employeePortalBrief">Meet the team, get settled, and join the welcome program.</p></div>
+                    <div class="corporate-event-plan-list" id="employeePortalPlan"></div>
+                  </section>
+                  <aside class="corporate-event-attendees" aria-labelledby="employeePortalAttendeesTitle">
+                    <div><span>Who's attending</span><h3 id="employeePortalAttendeesTitle">Your company group</h3><b id="employeePortalAttendeeCount">8 confirmed</b></div>
+                    <div id="employeePortalAttendeeList" class="corporate-attendee-list"></div>
+                  </aside>
+                </div>
+              </section>
+              <section class="employee-portal-pane" data-employee-portal-pane="transportation" hidden>
+                <div class="employee-pane-heading"><div><span>Rideshare only</span><h2>Your event rides</h2></div><b>Assigned to you</b></div>
+                <div class="employee-rideshare-list" id="employeeRideShareList"></div>
+              </section>
+              <section class="employee-portal-pane" data-employee-portal-pane="wallet" hidden>
+                <div class="employee-pane-heading"><div><span>Employee wallet</span><h2>Stipend and personal funds</h2></div><b id="employeeWalletStatus">Active</b></div>
+                <div class="employee-wallet-grid">
+                  <article class="employee-stipend-card"><span>Company stipend remaining</span><strong id="employeeStipendBalance">$430.00</strong><small id="employeeStipendNote">Meals, local rides, and approved event expenses.</small></article>
+                  <article class="employee-mini-card"><span>Travel-Drip corporate card</span><strong id="employeeCardEnding">•••• 4829</strong><small id="employeeCardStatus">Active for event dates</small></article>
+                  <article><span>Personal funds added</span><strong id="employeePersonalFunds">$0.00</strong><small>Only your contributions are visible to you.</small></article>
+                </div>
+                <div class="employee-wallet-actions">
+                  <label>Add amount<input id="employeeFundAmount" type="number" min="10" max="5000" step="10" value="100" inputmode="decimal"></label>
+                  <button class="primary-button" type="button" id="employeeAddFundsButton">Add personal funds</button>
+                </div>
+                <section class="employee-bill-splitter" aria-labelledby="employeeBillSplitTitle">
+                  <div><span>Bill splitter</span><h3 id="employeeBillSplitTitle">Split a meal or rideshare</h3></div>
+                  <label>Total<input id="employeeBillTotal" type="number" min="0" step="0.01" value="120"></label>
+                  <label>People<input id="employeeBillPeople" type="number" min="1" max="50" step="1" value="4"></label>
+                  <strong id="employeeBillEach">$30.00 each</strong>
+                </section>
+                <p class="small" id="employeeWalletMessage">Financial checkout requires a verified, linked account and the configured PCI-compliant payment provider.</p>
+              </section>
+              <section class="employee-portal-pane" data-employee-portal-pane="history" hidden>
+                <div class="employee-pane-heading"><div><span>Company memories</span><h2>Events you attended</h2></div><b>Private history</b></div>
+                <div class="employee-event-history" id="employeeEventHistory"></div>
+              </section>
               <div class="guest-access-actions">
                 <button type="button" id="guestReverifyButton">Reverify Identity</button>
                 <button type="button" id="guestLogoutButton">Log Out</button>
                 <button type="button" id="guestReportButton">Report Unauthorized Access</button>
+                <button type="button" id="guestPortalCreateAccountButton">Sign Up for a Personal Dashboard</button>
               </div>
             </section>
             <section class="verification-panel" id="verificationPanel" hidden>
@@ -350,25 +427,44 @@
       </nav>
 
       <section class="panel corporate-mode-home" id="corporateHome" data-dashboard-only hidden aria-label="Corporate travel home">
-        <div class="section-heading compact">
+        <div class="section-heading compact corporate-employee-home-heading">
           <div>
-            <p class="eyebrow">Corporate Travel Workspace</p>
-            <h2>Acme Leadership Summit</h2>
-            <p>Business travel, assignments, voting, per diem, card controls, receipts, and approvals are governed by company policy.</p>
+            <p class="eyebrow">Your company event</p>
+            <h2 id="corporateEmployeeEventTitle">Acme Leadership Summit</h2>
+            <p id="corporateEmployeeWelcome">Everything assigned to you for the event, in one bright and simple dashboard.</p>
           </div>
           <span class="compliance-badge" id="corporateWorkspaceBadge">Employee view</span>
         </div>
-        <div class="corporate-home-grid">
-          <article><span>My Business Trip</span><strong>JFK to Dubai</strong><small>Flight, hotel, shuttle, and event agenda assigned by Travel Admin.</small></article>
-          <article><span>Per Diem</span><strong>$86 available today</strong><small>Meals and approved incidentals only. Unused funds return to company account.</small></article>
-          <article><span>Corporate Card</span><strong>Active Jul 24-28</strong><small>Merchant, region, category, and spending controls enforced.</small></article>
-          <article><span>Policy Status</span><strong>2 acknowledgments due</strong><small>Expense rules and emergency contact policy require confirmation.</small></article>
+        <div class="corporate-event-spotlight">
+          <div><span id="corporateEmployeeEventType">Leadership retreat</span><strong id="corporateEmployeeDestination">Dubai, United Arab Emirates</strong><small id="corporateEmployeeDates">Jul 24 - Jul 28</small></div>
+          <b id="corporateEmployeeAttendance">Attending</b>
+        </div>
+        <div class="corporate-event-overview-grid">
+          <section class="corporate-event-plan" aria-labelledby="corporateEventPlanTitle">
+            <div><span>What's happening</span><h3 id="corporateEventPlanTitle">Your event plan</h3><p id="corporateEmployeeBrief">Meet the team, get settled, and join the welcome program.</p></div>
+            <div class="corporate-event-plan-list" id="corporateEmployeePlan"></div>
+          </section>
+          <section class="corporate-event-essentials" aria-label="Event essentials">
+            <div><span>Dress code</span><strong id="corporateEmployeeDressCode">Smart resort</strong><small id="corporateEmployeeDressNote">Polished, comfortable clothing for meetings and dinner.</small></div>
+            <div><span>Main venue</span><strong id="corporateEmployeeVenue">Skyline Conference Center</strong><small id="corporateEmployeeVenueAddress">Dubai Marina</small></div>
+            <div><span>My flight</span><strong id="corporateEmployeeFlight">DL 241 · MIA to DXB</strong><small>Only the assignment connected to you is shown.</small></div>
+          </section>
+          <aside class="corporate-event-attendees" aria-labelledby="corporateAttendeesTitle">
+            <div><span>Who's attending</span><h3 id="corporateAttendeesTitle">Your company group</h3><b id="corporateEmployeeAttendeeCount">8 confirmed</b></div>
+            <div id="corporateEmployeeAttendeeList" class="corporate-attendee-list"></div>
+          </aside>
+        </div>
+        <div class="corporate-home-grid corporate-employee-detail-grid">
+          <article><span>Company stipend</span><strong id="corporateEmployeeStipend">$430 remaining</strong><small>Meals, rideshare, and approved event expenses.</small></article>
+          <article><span>Your rideshare</span><strong id="corporateEmployeeRide">Hotel lobby to welcome dinner</strong><small>Pickup, driver, ETA, and fare details only.</small></article>
+          <article><span>Event history</span><strong id="corporateEmployeeHistoryCount">3 attended events</strong><small>Past events remain available while company access is active.</small></article>
+          <article><span>Important updates</span><strong id="corporateEmployeeUpdates">2 items to review</strong><small>Policies, emergency contacts, and arrival notes.</small></article>
         </div>
         <div class="corporate-home-actions">
-          <button class="primary-button" type="button" data-target="enterpriseRbac">Open Corporate Dashboard</button>
-          <button class="ghost-button" type="button" data-target="importantInfo">View Policies</button>
-          <button class="ghost-button" type="button" data-target="walletPanel">Open Virtual Card</button>
-          <button class="ghost-button" type="button" data-target="socialHub">Company Messages</button>
+          <button class="primary-button" type="button" data-target="transportationPanel">View rideshare</button>
+          <button class="ghost-button" type="button" data-target="walletPanel">Open stipend &amp; card</button>
+          <button class="ghost-button" type="button" data-target="importantInfo">Important information</button>
+          <button class="ghost-button" type="button" data-target="socialHub">Company messages</button>
         </div>
         <p class="small" id="corporateModeMessage">Corporate Mode is active. Personal leisure trips, public invites, vacation deals, and consumer wallet prompts are hidden from this workspace.</p>
       </section>
@@ -2127,7 +2223,7 @@
                   <p class="small" id="corporateApprovalMessage">Decisions record the approver, timestamp, policy reason, and note.</p>
                 </article>
 
-                <article class="corporate-operation-card corporate-service-card">
+                <article class="corporate-operation-card corporate-service-card" id="corporateTravelerCare" tabindex="-1">
                   <div class="corporate-operation-card__header">
                     <div>
                       <span class="corporate-operation-kicker">Traveler care</span>
@@ -2303,8 +2399,43 @@
                 </div>
               </section>
 
-              <section class="social-card corporate-access-management" data-visible-roles="owner executive travel organizer">
-                <h3>Access-code management</h3>
+              <section class="social-card corporate-access-management" id="corporateEmployeeInvites" data-visible-roles="owner executive travel organizer" tabindex="-1">
+                <div class="section-heading compact">
+                  <div>
+                    <p class="eyebrow">Employee access</p>
+                    <h3>Invite employees</h3>
+                    <p>Choose temporary event access or a reusable employee ID that keeps company event history available until an employer removes access.</p>
+                  </div>
+                  <span class="document-status">Admin managed</span>
+                </div>
+                <form class="corporate-booking-form corporate-employee-invite-form" id="corporateEmployeeInviteForm">
+                  <label>Employee name<input id="corporateInviteName" type="text" autocomplete="name" placeholder="Employee name" required></label>
+                  <label>Employee ID<input id="corporateInviteEmployeeId" type="text" autocomplete="off" placeholder="Company employee ID" required></label>
+                  <label>Work email<input id="corporateInviteEmail" type="email" autocomplete="email" placeholder="name@company.com" required></label>
+                  <label>Department<input id="corporateInviteDepartment" type="text" placeholder="Sales, operations, leadership"></label>
+                  <label>Access role
+                    <select id="corporateInviteRole">
+                      <option value="employee">Employee</option>
+                      <option value="contractor">Contractor</option>
+                      <option value="speaker">Speaker</option>
+                      <option value="vip">VIP</option>
+                      <option value="guest">Guest</option>
+                      <option value="vendor">Vendor</option>
+                    </select>
+                  </label>
+                  <label>Access type
+                    <select id="corporateInviteAccessMode">
+                      <option value="temporary">Temporary event access</option>
+                      <option value="persistent">Reusable employee access</option>
+                    </select>
+                  </label>
+                  <label>Invitation expires<input id="corporateInviteExpires" type="date" required></label>
+                  <button class="primary-button" type="submit">Create employee invitation</button>
+                </form>
+                <div class="corporate-employee-invite-list" id="corporateEmployeeInviteList" aria-live="polite"></div>
+                <p class="small" id="corporateEmployeeInviteMessage">Employer access opens only the Corporate Guest Portal. A personal dashboard is available only after the employee completes a separate Travel-Drip sign-up.</p>
+
+                <h3 class="corporate-access-management-title">Access-code management</h3>
                 <div class="corporate-access-admin-grid">
                   <div><span>Active code</span><strong>•••• 7A2F</strong><small>Original code hidden after hashing</small></div>
                   <div><span>Status</span><strong>Active</strong><small>Activation Jul 20, expires Aug 4</small></div>
@@ -2602,6 +2733,23 @@
               <button type="button" data-wallet-action="Request Payment">Request Payment</button>
               <button type="button" id="walletHeaderVirtualCardButton">View Virtual Card</button>
             </section>
+            <section class="employee-wallet-summary" id="employeeWalletSummary" hidden aria-label="Employee stipend and wallet">
+              <div class="employee-wallet-grid">
+                <article class="employee-stipend-card"><span>Company stipend remaining</span><strong id="linkedEmployeeStipend">$430.00</strong><small>Available for meals, rideshare, and approved event costs.</small></article>
+                <article class="employee-mini-card"><span>Corporate card</span><strong id="linkedEmployeeCardEnding">Card ending 4829</strong><small id="linkedEmployeeCardStatus">Active only for approved dates and categories.</small></article>
+                <article><span>Personal funds</span><strong id="linkedEmployeeFunds">$0.00</strong><small>You can add and view only your own money.</small></article>
+              </div>
+              <div class="employee-wallet-actions">
+                <label>Add amount<input id="linkedEmployeeFundAmount" type="number" min="10" max="5000" step="10" value="100" inputmode="decimal"></label>
+                <button class="primary-button" type="button" id="linkedEmployeeAddFundsButton">Add personal funds</button>
+              </div>
+              <section class="employee-bill-splitter" aria-label="Quick employee bill splitter">
+                <div><span>Quick split</span><h3>Split a meal or rideshare</h3></div>
+                <label>Total<input id="linkedEmployeeBillTotal" type="number" min="0" step="0.01" value="120"></label>
+                <label>People<input id="linkedEmployeeBillPeople" type="number" min="1" max="50" step="1" value="4"></label>
+                <strong id="linkedEmployeeBillEach">$30.00 each</strong>
+              </section>
+            </section>
             <section class="wallet-redesign-shell" aria-label="Wallet home">
               <aside class="wallet-section-nav" aria-label="Wallet sections">
                 <button class="active" type="button" data-wallet-section="overview">Overview</button>
@@ -2721,7 +2869,7 @@
 
           <section class="panel virtual-card-panel" id="virtualCard" data-route-support="walletPanel">
             <div class="virtual-card">
-              <div class="card-top"><span>Miami 2027</span><strong>Trip Wallet Card</strong></div>
+              <div class="card-top"><span id="employeeCardTripLabel">Miami 2027</span><strong>Trip Wallet Card</strong></div>
               <div class="card-chip-row" aria-hidden="true"><span class="card-chip"></span><span class="card-contactless">)))</span></div>
               <div class="card-number" id="cardNumber">•••• •••• •••• 4829</div>
               <div class="card-meta">
@@ -2729,7 +2877,7 @@
                 <span><small>Exp</small><strong id="cardExp">08/29</strong></span>
                 <span><small>CVV</small><strong id="cardCvv">•••</strong></span>
               </div>
-              <div class="card-holder-row"><span><small>Cardholder</small><strong>Jordan Smith</strong></span><strong class="card-mark">TD</strong></div>
+              <div class="card-holder-row"><span><small>Cardholder</small><strong id="employeeCardholderName">Jordan Smith</strong></span><strong class="card-mark">TD</strong></div>
             </div>
             <div class="section-heading compact">
               <div>
@@ -3016,6 +3164,41 @@
             </details>
           </section>
           <section class="panel ride-share-panel" id="rideShareHub">
+            <section class="corporate-employee-travel-view" id="corporateEmployeeTravel" hidden aria-label="My assigned company travel">
+              <div class="section-heading compact corporate-employee-route-heading">
+                <div>
+                  <p class="eyebrow">Assigned employee travel</p>
+                  <h2 id="corporateEmployeeTravelTitle">My company travel</h2>
+                  <p>Only travel records assigned to your employee profile for this company event are shown.</p>
+                </div>
+                <span class="compliance-badge" id="corporateEmployeeTravelStatus">Confirmed assignment</span>
+              </div>
+              <div class="corporate-employee-travel-summary" aria-label="Employee travel summary">
+                <article><span>Traveler</span><strong id="corporateTravelEmployeeName">Employee</strong><small id="corporateTravelEmployeeDepartment">Company attendee</small></article>
+                <article><span>Company event</span><strong id="corporateTravelEventName">Your company event</strong><small id="corporateTravelAttendance">Attending</small></article>
+                <article><span>Destination</span><strong id="corporateTravelDestination">Location pending</strong><small id="corporateTravelDates">Dates pending</small></article>
+              </div>
+              <div class="corporate-employee-assignment-grid">
+                <section class="corporate-employee-assignment" aria-labelledby="corporateTravelFlightsTitle">
+                  <div class="corporate-employee-assignment-heading">
+                    <div><span>My flights</span><h3 id="corporateTravelFlightsTitle">Assigned flight details</h3></div>
+                    <b id="corporateTravelFlightCount">0 assigned</b>
+                  </div>
+                  <div class="corporate-employee-record-list" id="corporateEmployeeFlightList"></div>
+                </section>
+                <section class="corporate-employee-assignment" aria-labelledby="corporateTravelHotelsTitle">
+                  <div class="corporate-employee-assignment-heading">
+                    <div><span>My stay</span><h3 id="corporateTravelHotelsTitle">Assigned hotel details</h3></div>
+                    <b id="corporateTravelHotelCount">0 assigned</b>
+                  </div>
+                  <div class="corporate-employee-record-list" id="corporateEmployeeHotelList"></div>
+                </section>
+              </div>
+              <div class="corporate-employee-route-note">
+                <div><strong>Private employee view</strong><span>Other employees' bookings, company pricing, budgets, and unassigned travel records are not available here.</span></div>
+                <button class="ghost-button" type="button" data-target="transportationPanel">View my rideshare</button>
+              </div>
+            </section>
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Travel</p>
@@ -3127,7 +3310,7 @@
                     <article class="travel-feed-card travel-feed-card--reservation"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=700&auto=format&fit=crop" alt="Restaurant table ready for dinner"><div class="travel-feed-card__body"><span>Reservations</span><strong>3 confirmed</strong><small>Dining, hotel, activity</small><button type="button" data-travel-focus="documents">Open</button></div></article>
                     <article class="travel-feed-card travel-feed-card--documents"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=700&auto=format&fit=crop" alt="Airplane wing above the clouds"><div class="travel-feed-card__body"><span>Documents</span><strong>11 saved</strong><small>Passport, insurance, hotel, and receipts</small><button type="button" data-travel-focus="documents">Open</button></div></article>
                     <article class="travel-feed-card travel-feed-card--weather"><img src="https://images.unsplash.com/photo-1500534623283-312aade485b7?q=80&w=700&auto=format&fit=crop" alt="Rainy city street with warm lights"><div class="travel-feed-card__body"><span>Weather</span><strong>82°F</strong><small>Light rain on arrival • packing tip ready</small><button type="button" data-travel-focus="weather">Open</button></div></article>
-                    <article class="travel-feed-card travel-feed-card--maps"><img src="https://images.unsplash.com/photo-1524666041070-9c876c8b5e0c?q=80&w=700&auto=format&fit=crop" alt="Map and travel planning notes"><div class="travel-feed-card__body"><span>Maps</span><strong>5 saved places</strong><small>Hotel, dinner, activities, and local stops</small><button type="button" data-travel-focus="maps">Open</button></div></article>
+                    <article class="travel-feed-card travel-feed-card--maps"><img src="https://images.unsplash.com/photo-1524850011238-e3d235c7d4c9?q=80&w=700&auto=format&fit=crop" alt="Travel map with planning essentials" loading="lazy"><div class="travel-feed-card__body"><span>Maps</span><strong>5 saved places</strong><small>Hotel, dinner, activities, and local stops</small><button type="button" data-travel-focus="maps">Open</button></div></article>
                   </section>
                   <div class="travel-quick-actions compact">
                     <button type="button" data-travel-focus="hotels">Add Hotel</button>
@@ -3840,6 +4023,32 @@
           </section>
 
           <section class="panel itinerary-alerts-panel" id="itineraryAlerts">
+            <section class="corporate-employee-itinerary-view" id="corporateEmployeeItinerary" hidden aria-label="My company event itinerary">
+              <div class="section-heading compact corporate-employee-route-heading">
+                <div>
+                  <p class="eyebrow">Company event itinerary</p>
+                  <h2 id="corporateItineraryEventTitle">Your company event</h2>
+                  <p id="corporateItineraryEventSummary">Your approved event schedule and attendance details are shown below.</p>
+                </div>
+                <span class="compliance-badge" id="corporateItineraryAttendance">Attending</span>
+              </div>
+              <div class="corporate-itinerary-event-meta" aria-label="Event details">
+                <article><span>Destination</span><strong id="corporateItineraryDestination">Location pending</strong></article>
+                <article><span>Event dates</span><strong id="corporateItineraryDates">Dates pending</strong></article>
+                <article><span>Dress code</span><strong id="corporateItineraryDressCode">Company guidance pending</strong></article>
+              </div>
+              <section class="corporate-itinerary-agenda" aria-labelledby="corporateItineraryAgendaTitle">
+                <div class="corporate-employee-assignment-heading">
+                  <div><span>Event agenda</span><h3 id="corporateItineraryAgendaTitle">What is planned</h3></div>
+                  <b id="corporateItineraryItemCount">0 items</b>
+                </div>
+                <div class="corporate-itinerary-list" id="corporateEmployeeItineraryList"></div>
+              </section>
+              <aside class="corporate-itinerary-note">
+                <strong>Event details only</strong>
+                <span>This itinerary includes company-published event sessions. Personal planning tools, unrelated trips, and other employees' private travel records are not shown.</span>
+              </aside>
+            </section>
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Itinerary Dashboard</p>
@@ -4782,6 +4991,6 @@
 
   <script src="https://link.msgsndr.com/js/external-tracking.js" data-tracking-id="tk_684cd074f7154fbebd60d6f62b2d331b"></script>
   <script src="public-config.js?v=2"></script>
-  <script defer src="app.js?v=66"></script>
+  <script defer src="app.js?v=72"></script>
 </body>
 </html>

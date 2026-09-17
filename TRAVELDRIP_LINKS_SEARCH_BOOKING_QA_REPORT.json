@@ -1,21 +1,21 @@
 {
-  "generatedAt": "2026-08-22T23:11:04.336Z",
+  "generatedAt": "2026-09-17T21:10:07.072Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
   },
   "totals": {
-    "screenIds": 706,
-    "buttons": 757,
+    "screenIds": 817,
+    "buttons": 768,
     "hrefLinks": 15,
-    "dataTargets": 96,
+    "dataTargets": 99,
     "uniqueDataTargets": 18,
     "mainNavigationControls": 38,
     "mainNavigationItems": 12,
     "routeDefinitions": 20,
-    "dateInputs": 12,
+    "dateInputs": 13,
     "searchInputs": 12,
-    "actionAttributeTypes": 96,
+    "actionAttributeTypes": 99,
     "apiRoutes": 27
   },
   "linkAndRouteVerification": {
@@ -503,6 +503,12 @@
       {
         "id": "corporateBookingStartsAt",
         "type": "datetime-local",
+        "referencedInApp": true,
+        "hasDefaultValue": false
+      },
+      {
+        "id": "corporateInviteExpires",
+        "type": "date",
         "referencedInApp": true,
         "hasDefaultValue": false
       },

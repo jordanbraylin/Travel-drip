@@ -804,9 +804,13 @@ main {
 }
 
 .search span {
+  flex: 0 0 auto;
+  min-width: max-content;
   color: var(--muted);
   font-size: 12px;
   font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .search input {

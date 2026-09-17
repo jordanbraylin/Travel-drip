@@ -13,6 +13,8 @@ function createInviteToken() {
   return crypto.randomBytes(32).toString("base64url");
 }
 
+const allowedInvitationRoles = new Set(["traveler", "employee", "team_lead", "guest", "vendor"]);
+
 export default async function handler(request, response) {
   applySecurityHeaders(response);
 
@@ -69,6 +71,8 @@ export default async function handler(request, response) {
     }
 
     const token = createInviteToken();
+    const requestedRole = sanitizeText(body.role, "traveler", 40);
+    const role = allowedInvitationRoles.has(requestedRole) ? requestedRole : "traveler";
     const expiresAt = body.expiresAt || body.expires_at || new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString();
     const { data, error } = await supabase
       .from("invitations")
@@ -77,7 +81,7 @@ export default async function handler(request, response) {
         inviter_user_id: user.id,
         invitee_email: inviteeEmail,
         invitee_name: sanitizeText(body.inviteeName || body.invitee_name, "", 140),
-        role: sanitizeText(body.role, "traveler", 40),
+        role,
         delivery_methods: Array.isArray(body.deliveryMethods || body.delivery_methods)
           ? body.deliveryMethods || body.delivery_methods
           : ["email"],

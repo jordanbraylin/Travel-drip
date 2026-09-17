@@ -1,6 +1,6 @@
 # Travel-Drip Links, Search, Date Picker, Booking, and Real-Time Updates Verification
 
-Generated: 2026-08-22T23:11:04.336Z
+Generated: 2026-09-17T21:10:07.072Z
 
 ## Final Status
 
@@ -10,14 +10,14 @@ This local verification checks static routes, link targets, search/date field wi
 
 ## Summary
 
-- Total buttons inspected: 757
+- Total buttons inspected: 768
 - Total links inspected: 15
-- Data-target controls inspected: 96
+- Data-target controls inspected: 99
 - Working local data-target routes: 18/18
 - Shared main-navigation controls inspected: 38
 - Shared main-navigation items configured: 12/12
 - Route definitions found: 20
-- Date fields found: 12
+- Date fields found: 13
 - Search fields found: 12
 - API route files found: 27
 - Critical local issues: 0
@@ -194,6 +194,7 @@ Status: Native browser date/datetime-local controls present locally; full custom
 - eventRsvpDeadlineInput: type=date, app reference=yes, default value=yes
 - inviteDeadlineInput: type=date, app reference=yes, default value=yes
 - corporateBookingStartsAt: type=datetime-local, app reference=yes, default value=no
+- corporateInviteExpires: type=date, app reference=yes, default value=no
 - paymentRequestDueAt: type=datetime-local, app reference=yes, default value=no
 - flightTrackingDate: type=date, app reference=yes, default value=yes
 - flightDepartureDateInput: type=date, app reference=yes, default value=yes
