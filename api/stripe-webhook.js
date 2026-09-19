@@ -1,6 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { applySecurityHeaders, createSupabaseAdminClient } from "./_security.js";
-import { dispatchQueuedNotifications } from "./_push-notifications.js";
+import { applySecurityHeaders, createSupabaseAdminClient } from "../server/api/_security.js";
+import { dispatchQueuedNotifications } from "../server/api/_push-notifications.js";
 
 export const config = { api: { bodyParser: false } };
 

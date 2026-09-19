@@ -177,7 +177,7 @@ const focusedLayoutChecks = [
   ["Event controls and cards", html.includes('id="eventsPanel"') && navigationCss.includes("#eventsPanel .event-dashboard-tabs") && navigationCss.includes("#eventsPanel .event-experience-card")],
   ["Evite-inspired event invitation studio", html.includes('data-event-invite-studio') && html.includes('id="eventInviteGenerateButton"') && html.includes('id="eventInvitePreview"') && navigationCss.includes("#eventsPanel .event-invite-studio")],
   ["Event-specific invitation context", html.includes('data-event-name=') && app.includes("syncEventInviteFromCard") && app.includes("getEventInviteContext")],
-  ["AI event invitation templates", app.includes('/api/ai-invitation') && app.includes("generateEventInviteTemplate") && fs.existsSync(path.join(root, "api", "ai-invitation.js"))],
+  ["AI event invitation templates", app.includes('/api/ai-invitation') && app.includes("generateEventInviteTemplate") && fs.existsSync(path.join(root, "server", "api", "ai-invitation.js"))],
   ["Wallet formatting", html.includes('id="walletPanel"') && html.includes('class="wallet-operations-panel"') && html.includes('class="wallet-home-grid"') && html.includes('class="wallet-dashboard-sections"') && navigationCss.includes("#walletPanel > .wallet-redesign-shell") && navigationCss.includes("#walletPanel > .wallet-operations-panel") && navigationCss.includes("Wallet text visibility") && navigationCss.includes("grid-template-columns: repeat(3, minmax(0, 1fr))")],
   ["Smart Travel Search icon", html.includes('<span class="travel-search-icon" aria-hidden="true"></span>') && navigationCss.includes("#rideShareHub .travel-search-icon::after") && navigationCss.includes("#rideShareHub .travel-smart-search-row")],
   ["Chat layout", html.includes('id="socialHub"') && navigationCss.includes("#socialHub .messages-layout") && navigationCss.includes("#socialHub .chat-workspace") && navigationCss.includes("#socialHub .conversation-details-panel")],
@@ -214,9 +214,9 @@ const focusedLayoutChecks = [
   ["Travel uses social discovery layout", html.includes("travel-discovery-feed") && html.includes('class="travel-feed-card') && navigationCss.includes("Social Travel + Chat refresh") && navigationCss.includes("#rideShareHub .travel-discovery-feed") && navigationCss.includes("#rideShareHub .travel-feed-card img")],
   ["Chat uses social conversation layout", html.includes('id="socialHub"') && html.includes('class="conversation-card active"') && navigationCss.includes("#socialHub .modern-messages .msg") && navigationCss.includes("#socialHub .conversation-card img") && navigationCss.includes("#socialHub .chat-vibe-strip")],
   ["Home dashboard uses travel-first layout", html.includes('id="dashboardHome"') && html.includes('id="dashboardWidgets"') && navigationCss.includes("Home dashboard refresh: make the first screen travel-first") && navigationCss.includes('[data-active-route="dashboardHome"] .destination-fact-grid') && navigationCss.includes('[data-active-route="dashboardHome"] main > .dashboard-widgets .widget-grid') && navigationCss.includes("linear-gradient(135deg, #9ef1dc, #ffd39a)")],
-  ["Live flight tracking wiring", html.includes('id="flightTrackingForm"') && html.includes('id="flightTrackingResult"') && app.includes("/api/flight-tracking") && app.includes("function trackFlightStatus") && fs.existsSync(path.join(root, "api", "flight-tracking.js"))],
-  ["Live hotel availability wiring", html.includes('id="hotelLiveSearchForm"') && html.includes('id="hotelLiveResults"') && app.includes("/api/hotel-availability") && app.includes("function searchLiveHotelAvailability") && fs.existsSync(path.join(root, "api", "hotel-availability.js"))],
-  ["Live restaurant and activity search wiring", html.includes('data-travel-search-suggestion="restaurants"') && app.includes("searchLiveTravelPlaces") && app.includes('? "food"') && app.includes(': "activities"') && fs.existsSync(path.join(root, "api", "travel-search.js"))],
+  ["Live flight tracking wiring", html.includes('id="flightTrackingForm"') && html.includes('id="flightTrackingResult"') && app.includes("/api/flight-tracking") && app.includes("function trackFlightStatus") && fs.existsSync(path.join(root, "server", "api", "flight-tracking.js"))],
+  ["Live hotel availability wiring", html.includes('id="hotelLiveSearchForm"') && html.includes('id="hotelLiveResults"') && app.includes("/api/hotel-availability") && app.includes("function searchLiveHotelAvailability") && fs.existsSync(path.join(root, "server", "api", "hotel-availability.js"))],
+  ["Live restaurant and activity search wiring", html.includes('data-travel-search-suggestion="restaurants"') && app.includes("searchLiveTravelPlaces") && app.includes('? "food"') && app.includes(': "activities"') && fs.existsSync(path.join(root, "server", "api", "travel-search.js"))],
   ["My Profile widgets stay readable", html.includes('id="myProfile"') && html.includes('class="profile-stats-grid"') && html.includes('class="profile-adventure-grid"') && navigationCss.includes("My Profile widget repair") && navigationCss.includes("#myProfile .profile-stats-grid") && navigationCss.includes("#myProfile .profile-adventure-grid") && navigationCss.includes("grid-template-areas:")],
   ["Travel selected page panel removed", !html.includes('id="travelSelectedTile"') && !html.includes('class="travel-selected-tile"')],
   ["Travel Home avoids duplicate summaries", travelHomeMarkup.includes("travel-booking-summary") && !travelHomeMarkup.includes('class="travel-transport-summary"') && !travelHomeMarkup.includes('class="travel-dashboard-sections"') && !travelHomeMarkup.includes('class="travel-focus-grid"')],
@@ -235,10 +235,10 @@ const corporateExperienceChecks = [
   ["Role and finance restrictions", html.includes("data-visible-roles") && html.includes("data-financial-panel") && app.includes("isFinancialRole")],
   ["Corporate entry styling", navigationCss.includes(".corporate-entry-nav") && navigationCss.includes(".corporate-tab")],
   ["Corporate booking operations UI", html.includes('id="corporateBookingForm"') && html.includes('id="corporateApprovalList"') && html.includes('id="corporateServiceCaseForm"') && app.includes("loadCorporateBookingOperations")],
-  ["Corporate booking API", fs.existsSync(path.join(root, "api", "corporate-bookings.js")) && fs.existsSync(path.join(root, "api", "_corporate-policy.js"))],
+  ["Corporate booking API", fs.existsSync(path.join(root, "server", "api", "corporate-bookings.js")) && fs.existsSync(path.join(root, "server", "api", "_corporate-policy.js"))],
   ["Corporate booking database and RLS", fs.existsSync(path.join(root, "supabase-corporate-booking.sql")) && fs.readFileSync(path.join(root, "supabase-corporate-booking.sql"), "utf8").includes("corporate_booking_approvals enable row level security")],
-  ["Provider confirmation enforcement", fs.readFileSync(path.join(root, "api", "corporate-bookings.js"), "utf8").includes("Provider reference is required before a booking can be confirmed or ticketed")],
-  ["Corporate booking notifications", fs.readFileSync(path.join(root, "api", "corporate-bookings.js"), "utf8").includes("corporate_booking_approval_required") && fs.readFileSync(path.join(root, "api", "corporate-bookings.js"), "utf8").includes("corporate_booking_status_changed")],
+  ["Provider confirmation enforcement", fs.readFileSync(path.join(root, "server", "api", "corporate-bookings.js"), "utf8").includes("Provider reference is required before a booking can be confirmed or ticketed")],
+  ["Corporate booking notifications", fs.readFileSync(path.join(root, "server", "api", "corporate-bookings.js"), "utf8").includes("corporate_booking_approval_required") && fs.readFileSync(path.join(root, "server", "api", "corporate-bookings.js"), "utf8").includes("corporate_booking_status_changed")],
   ["Corporate policy tests", fs.existsSync(path.join(root, "scripts", "test-corporate-booking.js"))]
 ];
 const corporateExperienceIssues = corporateExperienceChecks
@@ -308,8 +308,8 @@ const providerSignals = [
   ["Realtime limitations stated", /Do not label flight information as real time|live provider|provider integrations before they can be production-live/i]
 ].map(([label, regex]) => ({ label, present: regex.test(html) || regex.test(app) || regex.test(read("README.md")) }));
 
-const apiFiles = fs.existsSync(path.join(root, "api"))
-  ? fs.readdirSync(path.join(root, "api")).filter((file) => file.endsWith(".js")).sort()
+const apiFiles = fs.existsSync(path.join(root, "server", "api"))
+  ? fs.readdirSync(path.join(root, "server", "api")).filter((file) => !file.startsWith("_") && file.endsWith(".js")).sort()
   : [];
 
 const results = {

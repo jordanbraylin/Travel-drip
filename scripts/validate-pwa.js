@@ -19,7 +19,7 @@ const render = read("render.yaml");
 const betaMigration = read("supabase-beta.sql");
 const ownershipMigration = read("supabase-ownership-transfer.sql");
 const walletNotificationsMigration = read("supabase-wallet-notifications.sql");
-const guestAccess = read("api/guest-access.js");
+const guestAccess = read("server/api/guest-access.js");
 
 if (manifest.name !== "Travel-Drip") fail("manifest name must be Travel-Drip");
 if (manifest.short_name !== "Travel-Drip") fail("manifest short_name must be Travel-Drip");

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T01:40:13.448Z",
+  "generatedAt": "2026-09-19T01:44:19.366Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
@@ -16,7 +16,7 @@
     "dateInputs": 13,
     "searchInputs": 12,
     "actionAttributeTypes": 99,
-    "apiRoutes": 27
+    "apiRoutes": 23
   },
   "linkAndRouteVerification": {
     "workingLocalTargets": 18,
@@ -658,9 +658,6 @@
       }
     ],
     "apiRoutes": [
-      "_corporate-policy.js",
-      "_push-notifications.js",
-      "_security.js",
       "admin-status.js",
       "ai-invitation.js",
       "ai-planner.js",
@@ -679,7 +676,6 @@
       "ownership-transfer.js",
       "rsvp.js",
       "schedule.js",
-      "stripe-webhook.js",
       "subscribe.js",
       "travel-search.js",
       "trips.js",

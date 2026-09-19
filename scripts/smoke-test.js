@@ -21,8 +21,9 @@ const requiredFiles = [
   "navigation.css",
   "public-config.js",
   "vercel.json",
-  "api/corporate-bookings.js",
-  "api/_corporate-policy.js",
+  "api/[route].js",
+  "server/api/corporate-bookings.js",
+  "server/api/_corporate-policy.js",
   "supabase-corporate-booking.sql",
   "icons/icon-192.png",
   "icons/icon-512.png"
@@ -60,7 +61,7 @@ const collectJavaScript = (directory) => {
   });
 };
 
-const javascriptFiles = ["app.js", "sw.js", "public-config.js", ...collectJavaScript("api"), ...collectJavaScript("scripts")];
+const javascriptFiles = ["app.js", "sw.js", "public-config.js", ...collectJavaScript("api"), ...collectJavaScript("server"), ...collectJavaScript("scripts")];
 for (const file of javascriptFiles) {
   const result = spawnSync(process.execPath, ["--check", file], { cwd: root, encoding: "utf8" });
   if (result.status !== 0) fail(`${file} has invalid JavaScript: ${(result.stderr || result.stdout).trim()}`);

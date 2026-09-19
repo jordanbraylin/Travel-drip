@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { canTransitionCorporateBooking, evaluateCorporatePolicy } from "../api/_corporate-policy.js";
+import { canTransitionCorporateBooking, evaluateCorporatePolicy } from "../server/api/_corporate-policy.js";
 
 const policy = {
   flight_cap_cents: 150000,
