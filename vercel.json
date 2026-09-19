@@ -2,7 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "framework": null,
-  "buildCommand": "npm run validate:pwa && npm run verify:qa",
+  "buildCommand": "npm run build:vercel",
+  "outputDirectory": "public",
   "headers": [
     {
       "source": "/(.*)",
