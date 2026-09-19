@@ -68,7 +68,7 @@ VAPID_PRIVATE_KEY=PASTE_YOUR_VAPID_PRIVATE_KEY
 CRON_SECRET=PASTE_A_LONG_RANDOM_CRON_SECRET
 ```
 
-Vercel calls `/api/wallet-reminders` every five minutes. The endpoint requires `CRON_SECRET`, queues one due-payment notification per active recipient, and dispatches queued wallet push alerts when VAPID keys are configured. In-app notifications remain available even when push is not configured.
+Vercel calls `/api/wallet-reminders` once daily at 13:00 UTC, which is compatible with the Hobby plan. The endpoint requires `CRON_SECRET`, queues one due-payment notification per active recipient, and dispatches queued wallet push alerts when VAPID keys are configured. In-app notifications remain available even when push is not configured.
 
 ## GoHighLevel sub-account connection
 
