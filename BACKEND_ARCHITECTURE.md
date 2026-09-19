@@ -64,7 +64,7 @@ New Vercel API routes:
 Required for live backend writes:
 
 ```text
-NEXT_PUBLIC_SUPABASE_URL=https://bfuiqmmbsgfcnyeneunv.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://osjexitranwtndehqyxw.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-browser-safe-publishable-key
 SUPABASE_SERVICE_ROLE_KEY=your-server-only-service-role-key
 SUPABASE_ADMIN_EMAILS=admin@example.com

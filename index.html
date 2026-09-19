@@ -13,8 +13,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Travel-Drip">
-    <link rel="stylesheet" href="styles.css?v=117">
-  <link rel="stylesheet" href="navigation.css?v=89">
+    <link rel="stylesheet" href="styles.css?v=118">
+  <link rel="stylesheet" href="navigation.css?v=90">
   <title>Travel-Drip</title>
 </head>
 <body>
@@ -1642,6 +1642,10 @@
                     <button type="button" data-memory-action="Add Notes or Journal Entry">Add Notes or Journal</button>
                     <button type="button" data-memory-action="Skip for Now">Skip for Now</button>
                   </div>
+                  <input id="memoryPhotoInput" type="file" accept="image/jpeg,image/png,image/heic,image/webp" multiple hidden>
+                  <input id="memoryVideoInput" type="file" accept="video/mp4,video/quicktime,video/webm" multiple hidden>
+                  <input id="memoryCameraInput" type="file" accept="image/*" capture="environment" hidden>
+                  <input id="memoryVideoCameraInput" type="file" accept="video/*" capture="environment" hidden>
                   <label>Visibility
                     <select id="memoryVisibility">
                       <option>Private (Only Me)</option>
@@ -4990,7 +4994,7 @@
   </dialog>
 
   <script src="https://link.msgsndr.com/js/external-tracking.js" data-tracking-id="tk_684cd074f7154fbebd60d6f62b2d331b"></script>
-  <script src="public-config.js?v=2"></script>
-  <script defer src="app.js?v=72"></script>
+  <script src="public-config.js?v=3"></script>
+  <script defer src="app.js?v=73"></script>
 </body>
 </html>

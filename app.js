@@ -5032,8 +5032,17 @@ async function loadConfig() {
   if (state.config.supabaseUrl && state.config.supabaseAnonKey) {
     const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2");
     state.supabase = createClient(state.config.supabaseUrl, state.config.supabaseAnonKey);
-    const { data } = await state.supabase.auth.getSession();
-    state.session = data.session;
+    try {
+      const { data, error } = await state.supabase.auth.getSession();
+      if (error) throw error;
+      state.session = data.session;
+    } catch (error) {
+      state.session = null;
+      setSyncStatus("Account service unavailable");
+      if ($("#authMessage")) {
+        $("#authMessage").textContent = getAuthErrorMessage(error, "Travel-Drip could not restore your session. Please sign in again.");
+      }
+    }
     if (state.session?.access_token) {
       if (state.guestSessionToken) await linkCorporateAccessToPersonalAccount().catch(() => {});
       else await loadCorporatePortalFromSession().catch(() => {});
@@ -5067,6 +5076,13 @@ async function loadConfig() {
       }, 0);
     });
     setSyncStatus("Connected");
+    if (state.session?.user && ["/login", "/register"].includes(normalizeAppPath(location.pathname))) {
+      const profileResult = await ensureProfileForSession().catch((error) => ({ error }));
+      const confirmation = profileResult.error
+        ? "Signed in successfully. Your dashboard is ready, but profile sync needs attention."
+        : "Signed in successfully. Your saved dashboard is ready.";
+      enterAppPreview({ confirmation, forceDashboard: true });
+    }
   } else {
     setSyncStatus(state.config.supabaseUrl ? "Needs public key" : "Needs setup");
   }
@@ -5344,7 +5360,15 @@ function showAuthSetupMessage() {
 
 function getAuthOptions() {
   if (isFilePreview) return {};
-  return { emailRedirectTo: `${location.origin}${location.pathname}` };
+  return { emailRedirectTo: new URL("/login?verified=true", location.origin).toString() };
+}
+
+function getAuthErrorMessage(error, fallback) {
+  const message = String(error?.message || error || "").trim();
+  if (/failed to fetch|networkerror|load failed/i.test(message)) {
+    return "Travel-Drip could not reach the secure account service. Check your connection and try again.";
+  }
+  return message || fallback;
 }
 
 async function signIn(email, password) {
@@ -5353,9 +5377,11 @@ async function signIn(email, password) {
     return;
   }
 
-  const { data, error } = await state.supabase.auth.signInWithPassword({ email, password });
-  $("#authMessage").textContent = error ? error.message : "Logged in. Confirming your saved information...";
-  if (!error) {
+  try {
+    const { data, error } = await state.supabase.auth.signInWithPassword({ email, password });
+    $("#authMessage").textContent = error ? getAuthErrorMessage(error, "Sign-in failed. Please try again.") : "Logged in. Confirming your saved information...";
+    if (error) return false;
+
     state.session = data.session || state.session;
     if (state.guestSessionToken) {
       await linkCorporateAccessToPersonalAccount().catch((linkError) => {
@@ -5371,6 +5397,10 @@ async function signIn(email, password) {
       : "Your information is confirmed saved. Welcome back — your dashboard is ready to start planning.";
     queueGhlSync({ eventType: "user_login", tags: ["Trip Planning"] });
     enterAppPreview({ confirmation, forceDashboard: true });
+    return true;
+  } catch (error) {
+    $("#authMessage").textContent = getAuthErrorMessage(error, "Sign-in failed. Please try again.");
+    return false;
   }
 }
 
@@ -5380,56 +5410,63 @@ async function signUp(fullName, username, email, password) {
     return;
   }
 
-  const { data, error } = await state.supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      ...getAuthOptions(),
-      data: {
-        full_name: fullName,
-        username,
-        profile_photo_privacy: "trip_members",
-        profile_photo_setup: false
-      }
-    }
-  });
-
-  if (error) {
-    $("#authMessage").textContent = error.message;
-    return;
-  }
-
-  if (data.session) {
-    state.session = data.session;
-    if (state.guestSessionToken) {
-      await linkCorporateAccessToPersonalAccount().catch((linkError) => {
-        if ($("#authMessage")) $("#authMessage").textContent = linkError.message;
-      });
-    } else {
-      await loadCorporatePortalFromSession().catch(() => {});
-    }
-    loadWalletAccess();
-    const profileResult = await ensureProfileForSession({ fullName, username });
-    const confirmation = profileResult.error
-      ? "Account created, but your profile could not be confirmed as saved. Please retry profile sync from My Profile."
-      : "Your information is confirmed saved. Your dashboard is ready — start planning your first trip.";
-    $("#authMessage").textContent = confirmation;
-    queueGhlSync({
-      eventType: "user_registration_completed",
-      fullName,
-      username,
+  try {
+    const { data, error } = await state.supabase.auth.signUp({
       email,
-      userType: "traveler",
-      tags: ["New Traveler", "Trip Planning"]
+      password,
+      options: {
+        ...getAuthOptions(),
+        data: {
+          full_name: fullName,
+          username,
+          profile_photo_privacy: "trip_members",
+          profile_photo_setup: false
+        }
+      }
     });
-    enterAppPreview({ confirmation, forceDashboard: true });
-    return;
-  }
 
-  $("#signupForm").hidden = true;
-  $("#verificationPanel").hidden = false;
-  $("#authOnboardingPanel").hidden = true;
-  $("#authMessage").textContent = "Account created. Your information is securely stored. Check your email to verify your address, then sign in to open your saved dashboard and start planning.";
+    if (error) {
+      $("#authMessage").textContent = getAuthErrorMessage(error, "Account creation failed. Please try again.");
+      return false;
+    }
+
+    if (data.session) {
+      state.session = data.session;
+      if (state.guestSessionToken) {
+        await linkCorporateAccessToPersonalAccount().catch((linkError) => {
+          if ($("#authMessage")) $("#authMessage").textContent = linkError.message;
+        });
+      } else {
+        await loadCorporatePortalFromSession().catch(() => {});
+      }
+      loadWalletAccess();
+      const profileResult = await ensureProfileForSession({ fullName, username });
+      const confirmation = profileResult.error
+        ? "Account created, but your profile could not be confirmed as saved. Please retry profile sync from My Profile."
+        : "Your information is confirmed saved. Your dashboard is ready — start planning your first trip.";
+      $("#authMessage").textContent = confirmation;
+      queueGhlSync({
+        eventType: "user_registration_completed",
+        fullName,
+        username,
+        email,
+        userType: "traveler",
+        tags: ["New Traveler", "Trip Planning"]
+      });
+      enterAppPreview({ confirmation, forceDashboard: true });
+      return true;
+    }
+
+    $("#signupForm").hidden = true;
+    $("#verificationPanel").hidden = false;
+    $("#authOnboardingPanel").hidden = true;
+    $("#authMessage").textContent = "Account created. Check your email to verify your address. The verification link will return you to Travel-Drip and open your dashboard.";
+    history.replaceState(null, "", "/login?check-email=true");
+    return true;
+  } catch (error) {
+    $("#authMessage").textContent = getAuthErrorMessage(error, "Account creation failed. Please try again.");
+    return false;
+  }
 }
 
 async function sendMagicLink(email) {
@@ -5438,11 +5475,15 @@ async function sendMagicLink(email) {
     return;
   }
 
-  const { error } = await state.supabase.auth.signInWithOtp({
-    email,
-    options: getAuthOptions()
-  });
-  $("#authMessage").textContent = error ? error.message : "Magic link sent. Check your email.";
+  try {
+    const { error } = await state.supabase.auth.signInWithOtp({
+      email,
+      options: getAuthOptions()
+    });
+    $("#authMessage").textContent = error ? getAuthErrorMessage(error, "Magic link could not be sent.") : "Magic link sent. Check your email.";
+  } catch (error) {
+    $("#authMessage").textContent = getAuthErrorMessage(error, "Magic link could not be sent.");
+  }
 }
 
 async function signInWithOAuth(provider) {
@@ -5451,13 +5492,17 @@ async function signInWithOAuth(provider) {
     return;
   }
 
-  const { error } = await state.supabase.auth.signInWithOAuth({
-    provider,
-    options: getAuthOptions()
-  });
-  $("#authMessage").textContent = error
-    ? error.message
-    : `Redirecting to ${provider === "google" ? "Google" : "Apple"} sign-in...`;
+  try {
+    const { error } = await state.supabase.auth.signInWithOAuth({
+      provider,
+      options: getAuthOptions()
+    });
+    $("#authMessage").textContent = error
+      ? getAuthErrorMessage(error, "Social sign-in could not start.")
+      : `Redirecting to ${provider === "google" ? "Google" : "Apple"} sign-in...`;
+  } catch (error) {
+    $("#authMessage").textContent = getAuthErrorMessage(error, "Social sign-in could not start.");
+  }
 }
 
 function formatPortalMoney(cents = 0, currency = "USD") {
@@ -6723,6 +6768,87 @@ function openPlanningWorkflow(type = "group") {
     label: config.label,
     route: getRouteForTarget("tripsPanel")
   });
+}
+
+function addMemoryPreview(file, sourceUrl, visibility, saved) {
+  const gallery = $("#memoriesPanel .memory-gallery-grid");
+  if (!gallery) return;
+  const card = document.createElement("article");
+  card.className = "memory-media-card memory-media-card--uploaded";
+  const isVideo = file.type.startsWith("video/");
+  const media = document.createElement(isVideo ? "video" : "img");
+  media.src = sourceUrl;
+  media.setAttribute("aria-label", file.name);
+  if (isVideo) {
+    media.controls = true;
+    media.preload = "metadata";
+  } else {
+    media.alt = file.name;
+  }
+  const details = document.createElement("div");
+  const privacy = document.createElement("span");
+  privacy.textContent = visibility;
+  const title = document.createElement("strong");
+  title.textContent = file.name;
+  const status = document.createElement("small");
+  status.textContent = saved ? "Saved securely just now" : "Preview ready - sign in to save";
+  details.append(privacy, title, status);
+  card.append(media, details);
+  gallery.prepend(card);
+}
+
+async function uploadMemoryFiles(files, action) {
+  const selectedFiles = Array.from(files || []);
+  if (!selectedFiles.length) return;
+  const visibility = $("#memoryVisibility")?.value || "Private (Only Me)";
+  const message = $("#dailyMemoryMessage");
+  const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/heic", "image/webp"]);
+  const allowedVideoTypes = new Set(["video/mp4", "video/quicktime", "video/webm"]);
+  const validFiles = selectedFiles.filter((file) => {
+    const isImage = allowedImageTypes.has(file.type);
+    const isVideo = allowedVideoTypes.has(file.type);
+    const maxSize = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024;
+    return (isImage || isVideo) && file.size <= maxSize;
+  });
+
+  if (validFiles.length !== selectedFiles.length) {
+    message.textContent = "Some files were skipped. Use JPG, PNG, HEIC, WEBP, MP4, MOV, or WEBM files; photos must be under 10 MB and videos under 100 MB.";
+  }
+  if (!validFiles.length) return;
+
+  if (!state.supabase || !state.session?.user) {
+    validFiles.forEach((file) => addMemoryPreview(file, URL.createObjectURL(file), visibility, false));
+    message.textContent = `${validFiles.length} ${validFiles.length === 1 ? "memory is" : "memories are"} ready to preview. Sign in to save uploads securely.`;
+    return;
+  }
+
+  message.textContent = `Uploading ${validFiles.length} ${validFiles.length === 1 ? "memory" : "memories"}...`;
+  let savedCount = 0;
+  const failures = [];
+  for (const file of validFiles) {
+    try {
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/-+/g, "-");
+      const uniqueId = typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      const storagePath = `${state.session.user.id}/${uniqueId}-${safeName}`;
+      const { error } = await state.supabase.storage
+        .from("travel-memories")
+        .upload(storagePath, file, { cacheControl: "3600", contentType: file.type, upsert: false });
+      if (error) throw error;
+      const { data: signedData } = await state.supabase.storage.from("travel-memories").createSignedUrl(storagePath, 3600);
+      addMemoryPreview(file, signedData?.signedUrl || URL.createObjectURL(file), visibility, true);
+      savedCount += 1;
+    } catch (_error) {
+      failures.push(file.name);
+    }
+  }
+
+  if (savedCount) {
+    message.textContent = `${savedCount} ${savedCount === 1 ? "memory was" : "memories were"} uploaded securely with ${visibility} visibility.${failures.length ? ` ${failures.length} file(s) could not be saved.` : ""}`;
+    addAuditEntry("Memories uploaded", `${savedCount} file(s) saved from ${action} with ${visibility} visibility.`);
+    await saveSyncedEvent("memory_media_uploaded", { action, visibility, count: savedCount });
+  } else {
+    message.textContent = "The selected memories could not be uploaded. Please retry after confirming your account is signed in.";
+  }
 }
 
 function wireLocalInteractions() {
@@ -8162,17 +8288,35 @@ function wireLocalInteractions() {
     button.addEventListener("click", async () => {
       const action = button.dataset.memoryAction;
       const visibility = $("#memoryVisibility")?.value || "Private (Only Me)";
+      const inputByAction = {
+        "Upload Photos": "#memoryPhotoInput",
+        "Upload Memory": "#memoryPhotoInput",
+        "Upload Videos": "#memoryVideoInput",
+        "Take a Photo": "#memoryCameraInput",
+        "Record a Video": "#memoryVideoCameraInput"
+      };
+      const inputSelector = inputByAction[action];
+      const fileInput = inputSelector ? $(inputSelector) : null;
+      if (fileInput) {
+        $("#dailyMemoryMessage").textContent = `${action} is ready. Choose media to upload with ${visibility} visibility.`;
+        fileInput.click();
+        return;
+      }
       const messages = {
-        "Upload Photos": `Photo uploader opened. New media will be grouped by trip, Day 3, itinerary event, time, and destination with ${visibility} visibility.`,
-        "Upload Videos": `Video uploader opened. Clips will be auto-organized with ${visibility} visibility.`,
-        "Take a Photo": `Camera workflow opened. Photo will not be shared until you approve ${visibility} visibility.`,
-        "Record a Video": `Video recorder opened. Recording stays private until you choose where to share it.`,
         "Add Notes or Journal Entry": "Journal entry opened with today's completed activities as context.",
         "Skip for Now": "Skipped for now. One optional morning follow-up can be sent if reminders remain enabled."
       };
       $("#dailyMemoryMessage").textContent = messages[action] || `${action} selected.`;
       addAuditEntry("Daily memory action", `${action} selected with ${visibility} visibility.`);
       await saveSyncedEvent("daily_memory_action", { action, visibility, autoOrganized: $("#memoryAutoOrganizeToggle")?.checked });
+    });
+  });
+
+  ["#memoryPhotoInput", "#memoryVideoInput", "#memoryCameraInput", "#memoryVideoCameraInput"].forEach((selector) => {
+    $(selector)?.addEventListener("change", async (event) => {
+      const input = event.currentTarget;
+      await uploadMemoryFiles(input.files, input.id);
+      input.value = "";
     });
   });
 
@@ -9004,19 +9148,25 @@ function wireLocalInteractions() {
    });
  });
 
-  $("#authForm")?.addEventListener("submit", (event) => {
+  $("#authForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const email = $("#emailInput").value.trim();
+    const submitButton = event.currentTarget.querySelector('button[type="submit"]');
+    if (submitButton) submitButton.disabled = true;
 
-    if (location.pathname === "/admin.html") {
-      sendMagicLink(email);
-      return;
+    try {
+      if (location.pathname === "/admin.html") {
+        await sendMagicLink(email);
+        return;
+      }
+
+      await signIn(email, $("#passwordInput").value);
+    } finally {
+      if (submitButton) submitButton.disabled = false;
     }
-
-    signIn(email, $("#passwordInput").value);
   });
 
-  $("#signupForm")?.addEventListener("submit", (event) => {
+  $("#signupForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const password = $("#signupPasswordInput").value;
     const confirmPassword = $("#signupConfirmPasswordInput").value;
@@ -9031,12 +9181,18 @@ function wireLocalInteractions() {
       return;
     }
 
-    signUp(
-      $("#signupNameInput").value.trim(),
-      $("#signupUsernameInput").value.trim(),
-      $("#signupEmailInput").value.trim(),
-      password
-    );
+    const submitButton = event.currentTarget.querySelector('button[type="submit"]');
+    if (submitButton) submitButton.disabled = true;
+    try {
+      await signUp(
+        $("#signupNameInput").value.trim(),
+        $("#signupUsernameInput").value.trim(),
+        $("#signupEmailInput").value.trim(),
+        password
+      );
+    } finally {
+      if (submitButton) submitButton.disabled = false;
+    }
   });
 
   $("#guestAccessForm")?.addEventListener("submit", (event) => {

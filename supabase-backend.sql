@@ -490,23 +490,6 @@ create trigger set_trip_wallet_cards_updated_at
 before update on public.trip_wallet_cards
 for each row execute function public.set_updated_at();
 
-create table if not exists public.trip_wallet_contributions (
-  id uuid primary key default gen_random_uuid(),
-  created_at timestamptz not null default now(),
-  trip_wallet_id uuid not null references public.trip_virtual_wallets(id) on delete cascade,
-  trip_id uuid not null references public.trips(id) on delete cascade,
-  user_id uuid not null references auth.users(id) on delete cascade,
-  transaction_id uuid references public.wallet_transactions(id) on delete set null,
-  amount_cents bigint not null check (amount_cents > 0),
-  currency text not null default 'USD',
-  payment_method text,
-  status text not null default 'pending' check (status in ('pending','processing','completed','failed','cancelled','refunded','review_required')),
-  refundable_cents bigint not null default 0,
-  idempotency_key text,
-  metadata jsonb not null default '{}'::jsonb,
-  unique (trip_wallet_id, idempotency_key)
-);
-
 create table if not exists public.wallet_transactions (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
@@ -522,6 +505,23 @@ create table if not exists public.wallet_transactions (
   provider_ref text,
   requires_pin boolean not null default false,
   metadata jsonb not null default '{}'::jsonb
+);
+
+create table if not exists public.trip_wallet_contributions (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  trip_wallet_id uuid not null references public.trip_virtual_wallets(id) on delete cascade,
+  trip_id uuid not null references public.trips(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  transaction_id uuid references public.wallet_transactions(id) on delete set null,
+  amount_cents bigint not null check (amount_cents > 0),
+  currency text not null default 'USD',
+  payment_method text,
+  status text not null default 'pending' check (status in ('pending','processing','completed','failed','cancelled','refunded','review_required')),
+  refundable_cents bigint not null default 0,
+  idempotency_key text,
+  metadata jsonb not null default '{}'::jsonb,
+  unique (trip_wallet_id, idempotency_key)
 );
 
 -- Stripe webhooks call this idempotent function after a hosted Checkout Session is paid.

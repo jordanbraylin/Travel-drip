@@ -9,7 +9,7 @@ Project > Settings > Environment Variables
 ## Required for live Supabase login
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://bfuiqmmbsgfcnyeneunv.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://osjexitranwtndehqyxw.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY
 ```
 
@@ -35,7 +35,7 @@ The live-login fields should show:
 ## Required for serverless API routes
 
 ```env
-SUPABASE_URL=https://bfuiqmmbsgfcnyeneunv.supabase.co
+SUPABASE_URL=https://osjexitranwtndehqyxw.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY
 SUPABASE_ADMIN_EMAILS=you@example.com
 GUEST_ACCESS_PEPPER=PASTE_A_LONG_RANDOM_SERVER_ONLY_SECRET

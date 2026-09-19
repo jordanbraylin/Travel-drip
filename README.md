@@ -45,7 +45,7 @@ Use [PRODUCTION_GO_LIVE_CHECKLIST.md](PRODUCTION_GO_LIVE_CHECKLIST.md) as the re
 3. Run `supabase-backend.sql` to add the production backend foundation for trips, events, invitations, RSVP, schedules, wallet ledgers, receipts, role permissions, notifications, and audit logs.
 4. Run `supabase-event-planning.sql` to add explicit event-planning tables, event-specific RLS, and the expanded event type constraint for weddings, birthdays, anniversaries, reunions, conferences, graduation trips, church retreats, bachelor/bachelorette trips, and special events.
 5. Run `supabase-wallet-notifications.sql` to add trip wallet payment requests, contribution-confirmation notifications, due-payment scheduling, and notification realtime publication.
-6. The project URL is already set to `https://bfuiqmmbsgfcnyeneunv.supabase.co`; copy your publishable key into Vercel as `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
+6. The project URL is already set to `https://osjexitranwtndehqyxw.supabase.co`; copy your browser-safe anon or publishable key into Vercel as `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
 7. Copy your service role key into Vercel as `SUPABASE_SERVICE_ROLE_KEY`. Never put this key in browser code.
 8. Add your admin email to `SUPABASE_ADMIN_EMAILS`.
 9. In Supabase Auth settings, add your Vercel URL to the allowed redirect URLs.

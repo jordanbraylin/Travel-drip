@@ -19214,6 +19214,7 @@ body.app-routed main > section.panel:not([hidden]) {
 
 .wallet-trip-tile img,
 .memory-media-card img,
+.memory-media-card video,
 .profile-social-hero > img,
 .travel-current-trip-card img {
   width: 100%;

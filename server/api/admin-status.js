@@ -17,7 +17,7 @@ function getSupabaseServerConfig() {
   return {
     url: process.env.SUPABASE_URL
       || process.env.NEXT_PUBLIC_SUPABASE_URL
-      || "https://bfuiqmmbsgfcnyeneunv.supabase.co",
+      || "https://osjexitranwtndehqyxw.supabase.co",
     serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || ""
   };
 }
