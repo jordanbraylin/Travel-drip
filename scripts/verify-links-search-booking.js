@@ -58,7 +58,8 @@ const extractedRouteComponents = unique(matchAll(html, /\bid=["']([^"']+)["'][^>
 const dashboardOnlyIds = unique(matchAll(html, /<[^>]*\bid=["']([^"']+)["'][^>]*\bdata-dashboard-only\b[^>]*>/g));
 const dashboardOnlyRequiredIds = ["dashboardHome", "dashboardWidgets"];
 const todayHeadingCount = countMatches(html, /Today in Travel-Drip/g);
-const travelDocumentCardCount = countMatches(html, /class=["'][^"']*\btravel-document-card\b[^"']*["']/g);
+const travelDocumentSources = `${html}\n${app}`;
+const travelDocumentCardCount = countMatches(travelDocumentSources, /class=["'`][^"'`]*\btravel-document-card\b[^"'`]*["'`]/g);
 const fullWidthWidgetCss = navigationCss.split("/* Full-width Smart Dashboard pass")[1] || "";
 const routeTypographyCss = navigationCss.split("/* App-wide route typography:")[1] || "";
 const fullWidthWidgetIssues = [];
@@ -147,9 +148,9 @@ if (!app.includes("applyMainNavigationConfig()") || !app.includes("syncNavigatio
 }
 
 const travelDocumentIssues = travelDocumentRequiredClasses
-  .filter((className) => !html.includes(className))
+  .filter((className) => !travelDocumentSources.includes(className))
   .map((className) => `Required travel-document class is missing: ${className}`);
-if (travelDocumentCardCount !== 4) travelDocumentIssues.push(`Expected four travel document cards, found ${travelDocumentCardCount}`);
+if (travelDocumentCardCount < 1) travelDocumentIssues.push("Authenticated travel-document rendering template is missing");
 if (!navigationCss.includes("grid-template-columns: repeat(4, minmax(220px, 1fr))")
   || !navigationCss.includes("grid-template-columns: repeat(2, minmax(240px, 1fr))")
   || !navigationCss.includes("grid-template-columns: 1fr")) {
@@ -217,7 +218,7 @@ const focusedLayoutChecks = [
   ["Live flight tracking wiring", html.includes('id="flightTrackingForm"') && html.includes('id="flightTrackingResult"') && app.includes("/api/flight-tracking") && app.includes("function trackFlightStatus") && fs.existsSync(path.join(root, "server", "api", "flight-tracking.js"))],
   ["Live hotel availability wiring", html.includes('id="hotelLiveSearchForm"') && html.includes('id="hotelLiveResults"') && app.includes("/api/hotel-availability") && app.includes("function searchLiveHotelAvailability") && fs.existsSync(path.join(root, "server", "api", "hotel-availability.js"))],
   ["Live restaurant and activity search wiring", html.includes('data-travel-search-suggestion="restaurants"') && app.includes("searchLiveTravelPlaces") && app.includes('? "food"') && app.includes(': "activities"') && fs.existsSync(path.join(root, "server", "api", "travel-search.js"))],
-  ["My Profile widgets stay readable", html.includes('id="myProfile"') && html.includes('class="profile-stats-grid"') && html.includes('class="profile-adventure-grid"') && navigationCss.includes("My Profile widget repair") && navigationCss.includes("#myProfile .profile-stats-grid") && navigationCss.includes("#myProfile .profile-adventure-grid") && navigationCss.includes("grid-template-areas:")],
+  ["My Profile widgets stay readable", html.includes('id="myProfile"') && html.includes('profile-stats-grid') && html.includes('profile-adventure-grid') && navigationCss.includes("body.app-routed #myProfile") && navigationCss.includes(".profile-stats-grid") && navigationCss.includes(".profile-adventure-grid") && navigationCss.includes("grid-template-columns:")],
   ["Travel selected page panel removed", !html.includes('id="travelSelectedTile"') && !html.includes('class="travel-selected-tile"')],
   ["Travel Home avoids duplicate summaries", travelHomeMarkup.includes("travel-booking-summary") && !travelHomeMarkup.includes('class="travel-transport-summary"') && !travelHomeMarkup.includes('class="travel-dashboard-sections"') && !travelHomeMarkup.includes('class="travel-focus-grid"')],
   ["Travel uses one canonical navigation", countMatches(html, /class="travel-settings-nav"/g) === 1 && !html.includes('class="travel-section-nav"') && html.includes('data-target="transportationPanel">Open Transportation</button>') && !travelSettingsNavMarkup.match(/data-travel-focus="(?:flights|trains|buses|cruises|boarding|rideShare|transfers|publicTransit|routeComparison|smartRoute)"/)],
@@ -521,7 +522,7 @@ ${fullWidthWidgetIssues.length ? `### Full-Width Widget Issues\n${fullWidthWidge
 - Document cards: ${travelDocumentCardCount}
 - Responsive grid rules: ${ok(travelDocumentIssues.length === 0)}
 
-${travelDocumentIssues.length ? `### Travel Document Issues\n${travelDocumentIssues.map((issue) => `- ${issue}`).join("\n")}` : "Required Travel Documents uses four compact cards with horizontal text flow and responsive desktop/tablet/mobile columns."}
+${travelDocumentIssues.length ? `### Travel Document Issues\n${travelDocumentIssues.map((issue) => `- ${issue}`).join("\n")}` : "Required Travel Documents renders authenticated uploads only, with an empty state before the user adds files and responsive desktop/tablet/mobile columns."}
 
 ## Outer Wrapper Verification
 

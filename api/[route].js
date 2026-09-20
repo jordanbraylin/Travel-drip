@@ -2,6 +2,7 @@ import adminStatus from "../server/api/admin-status.js";
 import aiInvitation from "../server/api/ai-invitation.js";
 import aiPlanner from "../server/api/ai-planner.js";
 import audit from "../server/api/audit.js";
+import chat from "../server/api/chat.js";
 import config from "../server/api/config.js";
 import corporateBookings from "../server/api/corporate-bookings.js";
 import events from "../server/api/events.js";
@@ -28,6 +29,7 @@ const routes = Object.freeze({
   "ai-invitation": aiInvitation,
   "ai-planner": aiPlanner,
   audit,
+  chat,
   config,
   "corporate-bookings": corporateBookings,
   events,

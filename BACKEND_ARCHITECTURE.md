@@ -10,6 +10,7 @@ Run these SQL files in order:
 
 1. `supabase.sql`
 2. `supabase-backend.sql`
+3. `supabase-auth-registration.sql` (run after the profile/auth migrations)
 
 The backend schema adds:
 

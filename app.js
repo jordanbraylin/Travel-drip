@@ -3,6 +3,7 @@ const state = {
   session: null,
   pendingWalletPayment: null,
   pendingSecureAction: null,
+  pendingDocumentType: "travel_document",
   walletAccess: {
     status: "unknown",
     role: "member",
@@ -28,6 +29,35 @@ const state = {
   hasEnteredApp: sessionStorage.getItem("traveldripEnteredApp") === "true",
   pendingProtectedTarget: sessionStorage.getItem("traveldripPendingProtectedTarget") || "dashboardHome",
   authConfirmation: sessionStorage.getItem("traveldripAuthConfirmation") || "",
+  registration: {
+    usernameCheckRequest: 0,
+    usernameCheckTimer: null,
+    normalizedUsername: "",
+    usernameAvailable: null,
+    awaitingEmailVerification: false,
+    email: sessionStorage.getItem("traveldripPendingVerificationEmail") || ""
+  },
+  accountData: {
+    loaded: false,
+    loading: false,
+    trips: [],
+    activeTrip: null,
+    moduleData: {},
+    counts: {},
+    showCreation: false,
+    error: ""
+  },
+  chatData: {
+    loaded: false,
+    rooms: [],
+    messages: [],
+    polls: [],
+    selectedRoomId: ""
+  },
+  pendingInvitation: {
+    tripId: new URLSearchParams(location.search).get("tripId") || sessionStorage.getItem("traveldripPendingInviteTrip") || "",
+    token: new URLSearchParams(location.search).get("inviteToken") || sessionStorage.getItem("traveldripPendingInviteToken") || ""
+  },
   corporateAccess: {
     verified: sessionStorage.getItem("traveldripCorporateAccessVerified") === "true",
     eventId: sessionStorage.getItem("traveldripCorporateEventId") || "",
@@ -38,21 +68,26 @@ const state = {
   },
   theme: localStorage.getItem("traveldripTheme") || "tropical",
   profilePhoto: {
-    dataUrl: localStorage.getItem("traveldripProfilePhoto") || "",
-    savedDataUrl: localStorage.getItem("traveldripProfilePhoto") || "",
-    privacy: localStorage.getItem("traveldripProfilePhotoPrivacy") || "trip_members",
-    initials: localStorage.getItem("traveldripProfileInitials") || "JS",
-    cropShape: localStorage.getItem("traveldripProfilePhotoCropShape") || "circle",
-    zoom: Number(localStorage.getItem("traveldripProfilePhotoZoom") || 1),
-    positionX: Number(localStorage.getItem("traveldripProfilePhotoPositionX") || 50),
-    positionY: Number(localStorage.getItem("traveldripProfilePhotoPositionY") || 50),
-    rotation: Number(localStorage.getItem("traveldripProfilePhotoRotation") || 0),
-    pendingFileName: ""
+    dataUrl: "",
+    savedDataUrl: "",
+    privacy: "trip_members",
+    initials: "TD",
+    cropShape: "circle",
+    zoom: 1,
+    positionX: 50,
+    positionY: 50,
+    rotation: 0,
+    pendingFileName: "",
+    pendingFile: null,
+    storagePath: ""
   },
   profileCover: {
-    dataUrl: localStorage.getItem("traveldripProfileCover") || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1400&auto=format&fit=crop",
-    savedDataUrl: localStorage.getItem("traveldripProfileCover") || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1400&auto=format&fit=crop"
+    dataUrl: "",
+    savedDataUrl: "",
+    pendingFile: null,
+    storagePath: ""
   },
+  profileMetadata: {},
   config: {
     supabaseUrl: "",
     supabaseAnonKey: "",
@@ -70,7 +105,7 @@ const state = {
   globalDestinationTimer: null,
   globalDestinationTouchStartX: 0,
   connectedRideAccounts: {
-    Careem: { connected: true, account: "Connected rider profile", status: "Account Connected" },
+    Careem: { connected: false, account: "", status: "Not connected" },
     Uber: { connected: false, account: "", status: "Not connected" },
     Lyft: { connected: false, account: "", status: "Not connected" },
     Grab: { connected: false, account: "", status: "Not connected" }
@@ -202,33 +237,21 @@ function setSyncStatus(message) {
   if (el) el.textContent = message;
 }
 
-const splitParticipants = [
-  { name: "Jordan", custom: 86, percent: 20, items: ["Appetizer", "Dessert"] },
-  { name: "Sarah", custom: 128, percent: 40, items: ["Steak", "Dessert"] },
-  { name: "Mike", custom: 96, percent: 30, items: ["Pasta", "Appetizer"] },
-  { name: "Alex", custom: 74, percent: 30, items: ["Drinks", "Dessert"] },
-  { name: "Priya", custom: 66, percent: 0, items: ["Appetizer"] },
-  { name: "Noah", custom: 66, percent: 0, items: ["Appetizer"] }
-];
+const receiptItems = [];
+const receiptPaymentStatus = {};
 
-const receiptItems = [
-  { item: "Ribeye Steak", price: 42, diners: ["Sarah"], editable: true },
-  { item: "Caesar Salad", price: 14, diners: ["Alex"], editable: true },
-  { item: "Sushi Roll", price: 18, diners: ["Alex"], editable: true },
-  { item: "Pasta Alfredo", price: 24, diners: ["Mike"], editable: true },
-  { item: "Margarita", price: 16, diners: ["Sarah"], editable: true },
-  { item: "Shared Appetizer", price: 22, diners: ["Sarah", "Mike", "Alex"], editable: true },
-  { item: "Dessert Platter", price: 18, diners: ["Mike"], editable: true }
-];
-
-const receiptPaymentStatus = {
-  Jordan: "Pending",
-  Sarah: "Paid",
-  Mike: "Pending",
-  Alex: "Paid",
-  Priya: "Not dining",
-  Noah: "Not dining"
-};
+function getSplitParticipants(count = 1) {
+  const profileName = $("#profileFullNameInput")?.value.trim()
+    || state.session?.user?.user_metadata?.full_name
+    || state.session?.user?.email?.split("@")[0]
+    || "You";
+  return Array.from({ length: Math.max(1, count) }, (_, index) => ({
+    name: index === 0 ? profileName : `Diner ${index + 1}`,
+    custom: 1,
+    percent: 1,
+    items: []
+  }));
+}
 
 const rideProvidersByDestination = {
   "United States": ["Uber", "Lyft"],
@@ -580,8 +603,8 @@ const featuredLivePlanDestinations = [
     city: "Dubai",
     region: "Dubai",
     country: "United Arab Emirates",
-    title: "Dubai long weekend",
-    description: "Rooftop dinners, desert rides, beach clubs, and a shared wallet that keeps everyone even.",
+    title: "Discover Dubai",
+    description: "Browse public inspiration for rooftop dining, desert experiences, beaches, and cultural stops.",
     photo: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1600&auto=format&fit=crop",
     alt: "Dubai skyline at sunset",
     knownFor: "Futuristic skylines, desert adventures, luxury hotels, global food halls, and record-setting architecture.",
@@ -2363,6 +2386,416 @@ async function apiRequest(path, options = {}) {
   return data;
 }
 
+function renderInviteQrCode(url) {
+  const container = $("#inviteQrCode");
+  if (!container) return;
+  container.innerHTML = "";
+  if (!url || typeof window.qrcode !== "function") {
+    container.textContent = "QR code unavailable in this browser. Use the invitation link.";
+    return;
+  }
+  try {
+    const qr = window.qrcode(0, "M");
+    qr.addData(url);
+    qr.make();
+    container.innerHTML = qr.createSvgTag({ cellSize: 5, margin: 2, scalable: true });
+  } catch (_error) {
+    container.textContent = "QR code unavailable. Use the invitation link.";
+  }
+}
+
+async function createTripInvitation() {
+  const status = $("#invitationStatusMessage");
+  const button = $("#sendInvitesNowButton");
+  if (!state.session?.access_token) {
+    if (status) status.textContent = "Sign in before sending invitations.";
+    return;
+  }
+  if (!state.activeTripId) {
+    if (status) status.textContent = "Create or open a trip before inviting travelers.";
+    return;
+  }
+  const email = $("#inviteRecipientEmail")?.value.trim() || "";
+  const username = normalizeUsername($("#inviteRecipientUsername")?.value || "");
+  if (!email && !username) {
+    if (status) status.textContent = "Enter an email address or Travel-Drip username.";
+    $("#inviteRecipientEmail")?.focus();
+    return;
+  }
+  const methods = $$('[data-invite-method]').filter((input) => input.checked).map((input) => input.dataset.inviteMethod);
+  if (button) button.disabled = true;
+  if (status) status.textContent = "Creating a secure invitation...";
+  try {
+    const result = await apiRequest("/api/invitations", {
+      method: "POST",
+      body: JSON.stringify({
+        tripId: state.activeTripId,
+        inviteeEmail: email || null,
+        inviteeUsername: username || null,
+        role: "traveler",
+        deliveryMethods: methods,
+        expiresAt: $("#inviteDeadlineInput")?.value ? new Date(`${$("#inviteDeadlineInput").value}T23:59:59`).toISOString() : undefined,
+        customization: {
+          title: $("#inviteTitleInput")?.value.trim() || $("#tripNameInput")?.value.trim() || "Travel-Drip invitation",
+          message: $("#inviteMessageInput")?.value.trim() || "",
+          note: $("#inviteNoteInput")?.value.trim() || ""
+        }
+      })
+    });
+    $("#inviteShareLink").value = result.shareUrl || "";
+    setVisibilityWithoutCssLeaks($("#inviteShareOutput"), Boolean(result.shareUrl));
+    renderInviteQrCode(result.shareUrl || "");
+    const emailStatus = result.delivery?.email === "provider_required"
+      ? " The secure link is ready; email delivery still requires a configured transactional email provider."
+      : "";
+    if (status) status.textContent = `Invitation created for ${username ? `@${username}` : email}.${emailStatus}`;
+    $("#rsvpSentCount").textContent = String(Number($("#rsvpSentCount").textContent || 0) + 1);
+    $("#rsvpPendingCount").textContent = String(Number($("#rsvpPendingCount").textContent || 0) + 1);
+    addAuditEntry("Invitation created", `Secure invitation created for ${username ? `@${username}` : email}.`);
+    await saveSyncedEvent("trip_invitations_sent", { methods, invitationId: result.invitation?.id });
+  } catch (error) {
+    if (status) status.textContent = `Invitation could not be created: ${error.message}`;
+  } finally {
+    if (button) button.disabled = false;
+  }
+}
+
+async function handlePendingInvitation() {
+  const pending = state.pendingInvitation;
+  if (!pending.tripId || !pending.token) return;
+  sessionStorage.setItem("traveldripPendingInviteTrip", pending.tripId);
+  sessionStorage.setItem("traveldripPendingInviteToken", pending.token);
+  if (!state.session?.user) {
+    setAuthMode("signin");
+    if ($("#authMessage")) $("#authMessage").textContent = "Sign in with the invited account, or create and verify an account, to respond to this trip invitation.";
+    return;
+  }
+  const dialog = $("#invitationResponseDialog");
+  if (dialog && !dialog.open) dialog.showModal();
+}
+
+async function respondToPendingInvitation(status) {
+  const pending = state.pendingInvitation;
+  const message = $("#invitationResponseMessage");
+  if (!pending.tripId || !pending.token) return;
+  if (message) message.textContent = "Saving your response...";
+  try {
+    await apiRequest("/api/invitations", {
+      method: "PATCH",
+      body: JSON.stringify({ tripId: pending.tripId, token: pending.token, status })
+    });
+    sessionStorage.removeItem("traveldripPendingInviteTrip");
+    sessionStorage.removeItem("traveldripPendingInviteToken");
+    state.pendingInvitation = { tripId: "", token: "" };
+    const cleanUrl = new URL(location.href);
+    cleanUrl.searchParams.delete("tripId");
+    cleanUrl.searchParams.delete("inviteToken");
+    history.replaceState(null, "", `${cleanUrl.pathname}${cleanUrl.search}${cleanUrl.hash}`);
+    $("#invitationResponseDialog")?.close();
+    if (status === "accepted") {
+      await loadAccountData();
+      renderRoute("dashboardHome", { updateHistory: true });
+    }
+    showWorkflowMessage("Trip invitation", status === "accepted" ? "Invitation accepted. The trip is now available on your dashboard." : `Invitation marked ${status}.`);
+  } catch (error) {
+    if (message) message.textContent = error.message;
+  }
+}
+
+const privateAccountTargets = new Set([
+  "eventsPanel",
+  "tripsPanel",
+  "groupBank",
+  "walletPanel",
+  "rideShareHub",
+  "transportationPanel",
+  "splitBill",
+  "itineraryAlerts",
+  "importantInfo",
+  "cruisePanel",
+  "socialHub",
+  "memoriesPanel"
+]);
+
+const emptyAccountRouteCopy = {
+  eventsPanel: ["No events yet", "Create an event when you are ready to invite guests, collect RSVPs, and publish the schedule.", "Create an event", "create-event"],
+  tripsPanel: ["No trips yet", "Start with a blank trip. Travel-Drip will only show the plans and people you add.", "Create your first trip", "create-trip"],
+  groupBank: ["No trip wallet yet", "A shared wallet is created only when you create an eligible trip and connect a PCI-compliant payment provider.", "Create a trip", "create-trip"],
+  walletPanel: ["Your wallet is empty", "No deposits, balances, cards, or transactions are attached to this account.", "Create a trip", "create-trip"],
+  rideShareHub: ["No saved travel yet", "Flights, hotels, and travel records appear here only after you add or import them.", "Explore destinations", "explore"],
+  transportationPanel: ["No transportation saved", "Rides, trains, shuttles, and transfers will appear after you add them to a trip.", "Create a trip", "create-trip"],
+  splitBill: ["No bill to split", "Create a trip and upload a real receipt before assigning items or requesting payments.", "Create a trip", "create-trip"],
+  itineraryAlerts: ["No itinerary yet", "Create a trip, then add real schedule items, flights, hotels, and alerts.", "Create a trip", "create-trip"],
+  importantInfo: ["No trip information yet", "Documents, confirmations, emergency contacts, and policies appear only after you add them.", "Create a trip", "create-trip"],
+  cruisePanel: ["No cruise saved", "Add a cruise trip to manage cabins, ports, boarding documents, and excursions.", "Plan a cruise", "create-cruise"],
+  socialHub: ["No conversations yet", "Trip chats and private messages appear after you create or join a trip.", "Create a trip", "create-trip"],
+  memoriesPanel: ["No memories yet", "Uploaded photos and videos remain private to your account and selected trip visibility.", "Create a trip", "create-trip"]
+};
+
+function accountIsEmpty() {
+  return Boolean(state.session?.user && state.accountData.loaded && state.accountData.trips.length === 0);
+}
+
+function resetAccountData() {
+  state.accountData = { loaded: false, loading: false, trips: [], activeTrip: null, moduleData: {}, counts: {}, showCreation: false, error: "" };
+  state.chatData = { loaded: false, rooms: [], messages: [], polls: [], selectedRoomId: "" };
+  state.activeTripId = "";
+  sessionStorage.removeItem("traveldripActiveTripId");
+  document.body.classList.remove("account-empty", "account-data-ready");
+  document.body.classList.add("account-data-pending");
+}
+
+function scopeBrowserStateToAuthenticatedUser(userId) {
+  if (!userId) return;
+  const storageKey = "traveldripAccountUserId";
+  const previousUserId = sessionStorage.getItem(storageKey) || "";
+  if (previousUserId === userId) return;
+
+  [
+    "traveldripActiveTripId",
+    "traveldripAiPlannerAnswers",
+    "traveldripAiPlannerStep"
+  ].forEach((key) => sessionStorage.removeItem(key));
+  [
+    "traveldripEventInviteDraft",
+    "traveldripSelectedTravelTrip"
+  ].forEach((key) => localStorage.removeItem(key));
+
+  state.activeTripId = "";
+  state.ownershipTransfer.tripId = "";
+  state.aiPlanner = { step: 0, answers: {} };
+  sessionStorage.setItem(storageKey, userId);
+}
+
+function ensureAccountRouteEmptyState(section, target) {
+  if (!section || !emptyAccountRouteCopy[target]) return null;
+  let emptyState = section.querySelector(":scope > .account-route-empty");
+  if (emptyState) return emptyState;
+  const [title, copy, actionLabel, action] = emptyAccountRouteCopy[target];
+  emptyState = document.createElement("section");
+  emptyState.className = "account-route-empty";
+  emptyState.hidden = true;
+  emptyState.innerHTML = `<p class="eyebrow">Blank slate</p><h2>${escapeHtml(title)}</h2><p>${escapeHtml(copy)}</p><div class="account-empty-actions"><button class="primary-button" type="button" data-account-empty-action="${escapeHtml(action)}">${escapeHtml(actionLabel)}</button><button class="ghost-button" type="button" data-account-empty-action="explore">Browse inspiration</button></div>`;
+  section.append(emptyState);
+  return emptyState;
+}
+
+function getAccountRouteLiveCopy(target) {
+  const trip = state.accountData.activeTrip || {};
+  const counts = state.accountData.counts || {};
+  const copy = {
+    tripsPanel: [trip.title || "Your trip", `${trip.destination || "Destination not added"} • ${String(trip.status || "draft").replaceAll("_", " ")}`, [`${state.accountData.trips.length} saved trip${state.accountData.trips.length === 1 ? "" : "s"}`], "Create another trip", "create-trip"],
+    eventsPanel: [trip.title || "Your event", "Only event records saved to this account appear here.", [`${counts.events || 0} saved event${counts.events === 1 ? "" : "s"}`, `${counts.schedule || 0} schedule item${counts.schedule === 1 ? "" : "s"}`], "Create an event", "create-event"],
+    groupBank: ["Trip wallet activity", "Only confirmed provider records and member-owned contributions are counted.", [`${counts.contributions || 0} contribution record${counts.contributions === 1 ? "" : "s"}`], "Open wallet setup", "open-wallet"],
+    walletPanel: ["Your trip wallet", "No balance is inferred from planned expenses. Payment activity appears only after provider confirmation.", [`${counts.contributions || 0} contribution record${counts.contributions === 1 ? "" : "s"}`], "Add funds", "open-wallet"],
+    rideShareHub: ["Your saved travel", "Only flights, stays, transportation, and documents attached to this trip are counted.", [`${counts.flights || 0} flight${counts.flights === 1 ? "" : "s"}`, `${counts.hotels || 0} stay${counts.hotels === 1 ? "" : "s"}`, `${counts.transportation || 0} ride${counts.transportation === 1 ? "" : "s"}`], "Upload confirmation", "upload-document"],
+    transportationPanel: ["Saved transportation", "Only transportation records attached to this authenticated trip are available.", [`${counts.transportation || 0} saved record${counts.transportation === 1 ? "" : "s"}`], "Upload ticket", "upload-transport"],
+    splitBill: ["Saved receipts", "Receipt amounts stay empty until you upload a receipt or enter the totals yourself.", [`${counts.documents || 0} uploaded document${counts.documents === 1 ? "" : "s"}`], "Upload receipt", "upload-receipt"],
+    itineraryAlerts: ["Your itinerary", "Only schedule items saved to this trip appear here.", [`${counts.schedule || 0} itinerary item${counts.schedule === 1 ? "" : "s"}`], "Add itinerary item", "open-trip"],
+    importantInfo: ["Your trip documents", "Only files uploaded to this authenticated trip are available.", [`${counts.documents || 0} document${counts.documents === 1 ? "" : "s"}`], "Upload document", "upload-document"],
+    cruisePanel: [trip.title || "Your cruise", "Only saved cruise records are shown.", [`${counts.schedule || 0} schedule item${counts.schedule === 1 ? "" : "s"}`], "Open trip", "open-trip"],
+    socialHub: ["Trip conversations", "Messages and polls are private to authenticated trip members.", [`${counts.messages || 0} message${counts.messages === 1 ? "" : "s"}`, `${counts.polls || 0} poll${counts.polls === 1 ? "" : "s"}`], "Start a message", "start-chat"],
+    memoriesPanel: ["Your trip memories", "Only photos and videos uploaded to this trip appear here.", [`${counts.media || 0} upload${counts.media === 1 ? "" : "s"}`], "Upload a memory", "upload-memory"]
+  };
+  return copy[target] || ["Your saved data", "Only authenticated records are shown.", [], "Open trip", "open-trip"];
+}
+
+function ensureAccountRouteLiveState(section, target) {
+  if (!section || !privateAccountTargets.has(target)) return null;
+  let liveState = section.querySelector(":scope > .account-route-live");
+  if (!liveState) {
+    liveState = document.createElement("section");
+    liveState.className = "account-route-live";
+    liveState.hidden = true;
+    section.append(liveState);
+  }
+  const [title, copy, metrics, actionLabel, action] = getAccountRouteLiveCopy(target);
+  liveState.innerHTML = `<p class="eyebrow">Authenticated account data</p><h2>${escapeHtml(title)}</h2><p>${escapeHtml(copy)}</p><div class="account-route-live__metrics">${metrics.map((metric) => `<span>${escapeHtml(metric)}</span>`).join("")}</div><div class="account-empty-actions"><button class="primary-button" type="button" data-account-live-action="${escapeHtml(action)}">${escapeHtml(actionLabel)}</button><button class="ghost-button" type="button" data-account-live-action="explore">Browse inspiration</button></div>`;
+  return liveState;
+}
+
+function applyAccountRouteState(target) {
+  const section = getRouteComponentById(target);
+  if (!section) return;
+  const isTripCreation = Boolean(
+    state.session?.user
+      && target === "tripsPanel"
+      && state.accountData.showCreation
+  );
+  const hasAuthenticatedData = target === "tripsPanel"
+    ? state.accountData.trips.length > 0
+    : Boolean(state.accountData.moduleData?.[target]);
+  const shouldShowEmpty = Boolean(
+    state.session?.user
+      && privateAccountTargets.has(target)
+      && !hasAuthenticatedData
+      && !(target === "tripsPanel" && state.accountData.showCreation)
+  );
+  const emptyState = ensureAccountRouteEmptyState(section, target);
+  const liveState = ensureAccountRouteLiveState(section, target);
+  const shouldShowLive = Boolean(state.session?.user && privateAccountTargets.has(target) && !["splitBill", "socialHub"].includes(target) && hasAuthenticatedData && !state.accountData.showCreation);
+  section.classList.toggle("is-account-empty", shouldShowEmpty);
+  section.classList.toggle("is-account-live", shouldShowLive);
+  section.classList.toggle("is-account-creation", isTripCreation);
+  if (emptyState) emptyState.hidden = !shouldShowEmpty;
+  if (liveState) liveState.hidden = !shouldShowLive;
+  if ($("#convertSoloTripButton")) $("#convertSoloTripButton").hidden = state.accountData.trips.length === 0;
+}
+
+function renderAccountState(target = getTargetFromRoute()) {
+  const empty = accountIsEmpty();
+  const accountReady = Boolean(state.session?.user && state.accountData.loaded && !state.accountData.loading);
+  document.body.classList.toggle("account-data-ready", accountReady);
+  document.body.classList.toggle("account-data-pending", Boolean(state.session?.user && !accountReady));
+  document.body.classList.toggle("account-empty", empty);
+  const status = $("#accountDataStatus");
+  if (status) {
+    status.textContent = state.accountData.error
+      ? "Your private account data could not be loaded. Travel-Drip is hiding sample content until the secure connection is restored."
+      : "No private trips, conversations, bookings, wallet activity, memories, or company events are attached to this account yet.";
+  }
+  const homeEmpty = $("#accountEmptyDashboard");
+  if (homeEmpty) setVisibilityWithoutCssLeaks(homeEmpty, target === "dashboardHome" && empty);
+  const homeLive = $("#accountLiveDashboard");
+  if (homeLive) setVisibilityWithoutCssLeaks(homeLive, target === "dashboardHome" && Boolean(state.session?.user) && state.accountData.loaded && !empty);
+  [$(".metrics"), $(".travel-social-strip"), $("#dashboardWidgets")].forEach((element) => {
+    if (!element) return;
+    if (target === "dashboardHome") setVisibilityWithoutCssLeaks(element, !state.session?.user && !empty);
+  });
+  applyAccountRouteState(target);
+}
+
+async function loadAccountModuleData(tripId) {
+  const empty = { moduleData: {}, counts: {} };
+  if (!state.supabase || !state.session?.user || !tripId) return empty;
+  const countRows = async (table, filters = {}) => {
+    try {
+      let query = state.supabase.from(table).select("id", { count: "exact", head: true });
+      Object.entries(filters).forEach(([column, value]) => { query = query.eq(column, value); });
+      const { count, error } = await query;
+      if (error) throw error;
+      return Number(count || 0);
+    } catch (_error) {
+      return 0;
+    }
+  };
+  const [flights, hotels, transportation, schedule, rooms, messages, polls, documents, media, events, contributions] = await Promise.all([
+    countRows("flights", { trip_id: tripId }),
+    countRows("hotels", { trip_id: tripId }),
+    countRows("transportation_records", { trip_id: tripId }),
+    countRows("schedule_items", { trip_id: tripId }),
+    countRows("chat_rooms", { trip_id: tripId }),
+    countRows("messages", { trip_id: tripId }),
+    countRows("polls", { trip_id: tripId }),
+    countRows("documents", { trip_id: tripId }),
+    countRows("media", { trip_id: tripId }),
+    countRows("events", { id: tripId }),
+    countRows("trip_wallet_contributions", { trip_id: tripId })
+  ]);
+  const travel = flights + hotels + transportation;
+  const uploads = documents + media;
+  return {
+    counts: { flights, hotels, transportation, travel, schedule, rooms, messages, polls, documents, media, uploads, events, contributions },
+    moduleData: {
+      eventsPanel: events > 0,
+      groupBank: contributions > 0,
+      walletPanel: contributions > 0,
+      rideShareHub: travel > 0 || documents > 0,
+      transportationPanel: transportation > 0,
+      splitBill: documents > 0,
+      itineraryAlerts: schedule > 0,
+      importantInfo: documents > 0,
+      cruisePanel: state.accountData.activeTrip?.trip_type === "cruise_vacation",
+      socialHub: rooms > 0 || messages > 0 || polls > 0,
+      memoriesPanel: media > 0
+    }
+  };
+}
+
+function renderLiveAccountDashboard() {
+  const trip = state.accountData.activeTrip;
+  if (!trip) return;
+  const counts = state.accountData.counts || {};
+  if ($("#accountLiveDashboardTitle")) $("#accountLiveDashboardTitle").textContent = trip.title || "Untitled trip";
+  const dateParts = [trip.starts_on, trip.ends_on]
+    .filter(Boolean)
+    .map((value) => new Date(`${value}T12:00:00`).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" }));
+  if ($("#accountLiveTripMeta")) {
+    $("#accountLiveTripMeta").textContent = [
+      trip.destination || "Destination not added",
+      dateParts.join(" - ") || "Dates not added",
+      String(trip.status || "draft").replaceAll("_", " ")
+    ].join(" • ");
+  }
+  if ($("#accountTravelRecordCount")) $("#accountTravelRecordCount").textContent = String(counts.travel || 0);
+  if ($("#accountItineraryCount")) $("#accountItineraryCount").textContent = String(counts.schedule || 0);
+  if ($("#accountMessageCount")) $("#accountMessageCount").textContent = String(counts.messages || 0);
+  if ($("#accountUploadCount")) $("#accountUploadCount").textContent = String(counts.uploads || 0);
+  if ($("#accountLiveDataStatus")) {
+    $("#accountLiveDataStatus").textContent = "Only records saved to this authenticated trip are shown. Public destination inspiration remains separate from your private account.";
+  }
+}
+
+function renderActiveTripAccountData() {
+  const trips = state.accountData.trips;
+  const activeTrip = state.accountData.activeTrip;
+  if (!activeTrip) return;
+  const travelerMetric = $("#travelerMetric");
+  if (travelerMetric) travelerMetric.textContent = String(trips.length);
+  const upcomingTitle = $("[data-widget='upcoming'] h3");
+  if (upcomingTitle) upcomingTitle.textContent = activeTrip.title || "Untitled trip";
+  const upcomingCopy = $("[data-widget='upcoming'] p");
+  if (upcomingCopy) upcomingCopy.textContent = activeTrip.starts_on
+    ? `Starts ${new Date(activeTrip.starts_on).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" })}`
+    : "Dates not added yet";
+  const upcomingMeta = $("[data-widget='upcoming'] .widget-meta");
+  if (upcomingMeta) upcomingMeta.innerHTML = `<span>${escapeHtml(activeTrip.destination || "Destination not added")}</span><span>${escapeHtml(String(activeTrip.status || "draft").replaceAll("_", " "))}</span>`;
+}
+
+async function loadAccountData() {
+  if (!state.session?.access_token || isFilePreview || state.accountData.loading) return state.accountData;
+  state.accountData.loading = true;
+  state.accountData.error = "";
+  try {
+    const result = await apiRequest("/api/trips");
+    const trips = Array.isArray(result.trips) ? result.trips.filter(Boolean) : [];
+    const rememberedTrip = trips.find((trip) => trip.id === state.activeTripId);
+    const activeTrip = rememberedTrip || trips[0] || null;
+    state.accountData.trips = trips;
+    state.accountData.activeTrip = activeTrip;
+    state.accountData.loaded = true;
+    state.accountData.showCreation = false;
+    state.activeTripId = activeTrip?.id || "";
+    if (state.activeTripId) sessionStorage.setItem("traveldripActiveTripId", state.activeTripId);
+    else sessionStorage.removeItem("traveldripActiveTripId");
+    const moduleState = await loadAccountModuleData(state.activeTripId);
+    state.accountData.moduleData = moduleState.moduleData;
+    state.accountData.counts = moduleState.counts;
+    renderActiveTripAccountData();
+    renderLiveAccountDashboard();
+    await loadTripChatData();
+  } catch (error) {
+    state.accountData.trips = [];
+    state.accountData.activeTrip = null;
+    state.accountData.loaded = true;
+    state.accountData.error = error.message || "Account data unavailable";
+    state.activeTripId = "";
+    sessionStorage.removeItem("traveldripActiveTripId");
+  } finally {
+    state.accountData.loading = false;
+    renderAccountState();
+    renderProfileSummary({
+      full_name: $("#profileFullNameInput")?.value || "",
+      username: $("#profileUsernameInput")?.value || "",
+      bio: $("#profileBioInput")?.value || ""
+    }, state.profileMetadata.profileDetails || {});
+    loadMemoryFiles().catch(() => {});
+    loadTripDocuments().catch(() => {});
+    subscribeToLiveData();
+  }
+  return state.accountData;
+}
+
 function getCorporateOperationsTripId() {
   const verifiedEventId = state.corporateAccess.eventId || "";
   return verifiedEventId && verifiedEventId !== "leadership-summit-preview"
@@ -3140,6 +3573,8 @@ function renderWalletAccess() {
   const fundsInput = $("#fundAmount");
   const fundsSubmit = fundsForm?.querySelector("button[type='submit']");
   const paymentRequestForm = $("#paymentRequestForm");
+  const providerControlledButtons = ["#activateCardButton", "#lockCardButton", "#revealCardButton", "#replaceCardButton", "#appleWalletButton", "#googleWalletButton", "#samsungWalletButton"];
+  const refundableCents = (access.contributions || []).reduce((total, contribution) => total + Number(contribution.refundableCents || 0), 0);
 
   if (roleElement) roleElement.textContent = roleLabel;
   if (badge) {
@@ -3158,6 +3593,18 @@ function renderWalletAccess() {
   }
   if (fundsInput) fundsInput.disabled = !access.canContribute;
   if (fundsSubmit) fundsSubmit.disabled = !access.canContribute;
+  providerControlledButtons.forEach((selector) => {
+    const button = $(selector);
+    if (!button) return;
+    button.disabled = Boolean(access.providerRequired);
+    button.title = access.providerRequired ? "Connect an authorized card issuer before using this control" : "";
+  });
+  if ($("#requestRefundButton")) {
+    $("#requestRefundButton").disabled = access.providerRequired || refundableCents <= 0;
+    $("#requestRefundButton").title = access.providerRequired
+      ? "Connect the payment provider before requesting a refund"
+      : refundableCents <= 0 ? "No provider-confirmed refundable funds are available" : "Request a refund of eligible unused funds";
+  }
   if (message) {
     if (access.status === "loading") {
       message.textContent = "Checking your trip role and shared-card permissions...";
@@ -3713,11 +4160,12 @@ function setCorporateEmployeeNavigation(employeeMode) {
 function syncCorporateEmployeeDashboardVisibility(employeeMode) {
   const dashboardIsActive = document.body.dataset.activeRoute === "dashboardHome";
   const showEmployeeDashboard = employeeMode && dashboardIsActive;
-  const showPersonalDashboard = !employeeMode && dashboardIsActive;
+  const showPublicInspiration = !state.session?.user && !employeeMode && dashboardIsActive;
 
-  ["#dashboardHome", ".pwa-panel", ".destination-insights", ".travel-social-strip", ".metrics", "#dashboardWidgets"].forEach((selector) => {
-    $$(selector).forEach((section) => setVisibilityWithoutCssLeaks(section, showPersonalDashboard));
+  ["#dashboardHome", ".destination-insights", ".travel-social-strip", ".metrics", "#dashboardWidgets"].forEach((selector) => {
+    $$(selector).forEach((section) => setVisibilityWithoutCssLeaks(section, showPublicInspiration));
   });
+  setVisibilityWithoutCssLeaks($(".pwa-panel"), !employeeMode && dashboardIsActive);
   setVisibilityWithoutCssLeaks($("#corporateHome"), showEmployeeDashboard);
 }
 
@@ -4140,10 +4588,10 @@ async function handleExploreAction(action, itemId) {
 
 function renderInvitationSetup(type) {
   const config = invitationConfigs[type] || invitationConfigs.solo;
-  const tripName = $("#tripNameInput")?.value.trim() || "Tokyo solo food sprint";
-  const destination = $("#tripDestinationInput")?.value.trim() || "Tokyo, Japan";
-  const startDate = $("#tripStartInput")?.value || "2026-08-08";
-  const endDate = $("#tripEndInput")?.value || "2026-08-13";
+  const tripName = $("#tripNameInput")?.value.trim() || "Your trip invitation";
+  const destination = $("#tripDestinationInput")?.value.trim() || "Destination not added";
+  const startDate = $("#tripStartInput")?.value || "Start date not added";
+  const endDate = $("#tripEndInput")?.value || "End date not added";
   const typeLabel = tripTypeConfigs[type]?.label || "Solo Trip";
 
   $("#invitationModeCopy").textContent = config.modeCopy;
@@ -4157,10 +4605,10 @@ function renderInvitationSetup(type) {
   $("#inviteMessageInput").value = config.message;
   $("#inviteRecipientList").innerHTML = config.recipients.map((recipient) => `<span>${escapeHtml(recipient)}</span>`).join("");
   $("#companyLogoField").hidden = !config.companyLogo;
-  $("#rsvpSentCount").textContent = String(config.sent);
-  $("#rsvpOpenedCount").textContent = String(config.opened);
-  $("#rsvpAcceptedCount").textContent = String(config.accepted);
-  $("#rsvpPendingCount").textContent = String(config.pending);
+  $("#rsvpSentCount").textContent = "0";
+  $("#rsvpOpenedCount").textContent = "0";
+  $("#rsvpAcceptedCount").textContent = "0";
+  $("#rsvpPendingCount").textContent = "0";
 }
 
 function startAuthCarousel() {
@@ -4210,7 +4658,7 @@ function getSplitMode() {
 }
 
 function getParticipantSplits(bill, mode) {
-  const participants = splitParticipants.slice(0, bill.diners);
+  const participants = getSplitParticipants(bill.diners);
 
   if (mode === "percentage") {
     const percentTotal = participants.reduce((sum, person) => sum + person.percent, 0) || 100;
@@ -4231,19 +4679,15 @@ function getParticipantSplits(bill, mode) {
   }
 
   if (mode === "itemized") {
-    const itemWeights = {
-      Jordan: 1.05,
-      Sarah: 1.38,
-      Mike: 1.08,
-      Alex: 0.94,
-      Priya: 0.78,
-      Noah: 0.77
-    };
-    const weightTotal = participants.reduce((sum, person) => sum + (itemWeights[person.name] || 1), 0) || participants.length;
+    const itemWeights = Object.fromEntries(participants.map((person) => [
+      person.name,
+      receiptItems.reduce((total, item) => total + (item.diners.includes(person.name) ? item.price / Math.max(1, item.diners.length) : 0), 0)
+    ]));
+    const weightTotal = participants.reduce((sum, person) => sum + (itemWeights[person.name] || 0), 0) || participants.length;
     return participants.map((person) => ({
       ...person,
-      amount: bill.total * ((itemWeights[person.name] || 1) / weightTotal),
-      note: person.items.join(", ")
+      amount: bill.total * ((itemWeights[person.name] || (weightTotal === participants.length ? 1 : 0)) / weightTotal),
+      note: itemWeights[person.name] ? "Assigned receipt items" : "No items assigned"
     }));
   }
 
@@ -4259,7 +4703,7 @@ function renderBillSplit() {
   const bill = getBillInputs();
   const mode = getSplitMode();
   const splits = getParticipantSplits(bill, mode);
-  const paid = splits.slice(0, 2).reduce((sum, person) => sum + person.amount, 0);
+  const paid = splits.filter((person) => receiptPaymentStatus[person.name] === "Paid").reduce((sum, person) => sum + person.amount, 0);
   const each = bill.total / bill.diners;
 
   $("#billFinalTotal").textContent = currency(bill.total);
@@ -4283,7 +4727,7 @@ function renderBillSplit() {
 }
 
 function getReceiptSplits(bill) {
-  const diners = splitParticipants.slice(0, bill.diners);
+  const diners = getSplitParticipants(bill.diners);
   const names = diners.map((person) => person.name);
   const itemTotals = Object.fromEntries(names.map((name) => [name, { food: 0, shared: 0 }]));
 
@@ -4316,17 +4760,17 @@ function renderReceiptScanner(bill = getBillInputs()) {
   const receiptSplits = getReceiptSplits(bill);
   const receiptTotal = receiptSplits.reduce((sum, split) => sum + split.total, 0);
   const paidTotal = receiptSplits.filter((split) => split.status === "Paid").reduce((sum, split) => sum + split.total, 0);
-  const diners = splitParticipants.slice(0, bill.diners);
+  const diners = getSplitParticipants(bill.diners);
   const dinerNames = diners.map((person) => person.name);
   const unassignedItems = receiptItems.filter((item) => !item.diners.some((name) => dinerNames.includes(name)));
 
   $("#receiptExtractedTotal").textContent = currency(bill.total);
-  $("#receiptItemList").innerHTML = receiptItems.map((receiptItem, itemIndex) => `
+  $("#receiptItemList").innerHTML = receiptItems.length ? receiptItems.map((receiptItem, itemIndex) => `
     <article class="${receiptItem.diners.length ? "" : "needs-assignment"}">
       <div class="receipt-item-detail">
         <span class="recognition-chip">${receiptItem.diners.length > 1 ? "Shared" : receiptItem.diners.length === 1 ? "Individual" : "Needs diner"}</span>
         <strong>${escapeHtml(receiptItem.item)}</strong>
-        <span>${currency(receiptItem.price)} • AI confidence 96% • editable</span>
+        <span>${currency(receiptItem.price)} • editable</span>
         <small>Assigned to: ${receiptItem.diners.length ? escapeHtml(receiptItem.diners.join(", ")) : "No one yet"}</small>
       </div>
       <div class="receipt-claim-panel">
@@ -4344,7 +4788,7 @@ function renderReceiptScanner(bill = getBillInputs()) {
         </div>
       </div>
     </article>
-  `).join("");
+  `).join("") : '<article class="wallet-ledger-empty"><strong>No receipt items yet</strong><span>Upload a receipt or enter totals manually. Automatic OCR requires a configured document-processing provider.</span></article>';
 
   $("#receiptStatusList").innerHTML = receiptSplits.map((split) => `
     <div>
@@ -4355,10 +4799,9 @@ function renderReceiptScanner(bill = getBillInputs()) {
     </div>
   `).join("");
 
-  $("#receiptHistoryList").innerHTML = `
-    <div><strong>Marina Social Table</strong><span>Dubai long weekend • ${splitParticipants.slice(0, bill.diners).map((person) => person.name).join(", ")}</span><b>${currency(receiptTotal)}</b></div>
-    <div><strong>Payment status</strong><span>${currency(paidTotal)} paid • ${currency(Math.max(0, receiptTotal - paidTotal))} pending • downloadable receipt ready</span><b>Stored</b></div>
-  `;
+  $("#receiptHistoryList").innerHTML = receiptItems.length
+    ? `<div><strong>${escapeHtml($("#receiptRestaurant")?.textContent || "Uploaded receipt")}</strong><span>${diners.map((person) => escapeHtml(person.name)).join(", ")}</span><b>${currency(receiptTotal)}</b></div><div><strong>Payment status</strong><span>${currency(paidTotal)} provider-confirmed • ${currency(Math.max(0, receiptTotal - paidTotal))} unconfirmed</span><b>Review</b></div>`
+    : '<div><strong>No receipt history</strong><span>Saved uploads appear after a successful private upload.</span><b>Empty</b></div>';
 
   $$("[data-receipt-item]").forEach((checkbox) => {
     checkbox.addEventListener("change", (event) => {
@@ -4390,7 +4833,7 @@ function renderReceiptScanner(bill = getBillInputs()) {
   });
 
   if (unassignedItems.length && $("#receiptReviewMessage")) {
-    $("#receiptReviewMessage").textContent = `AI item recognition needs review: ${unassignedItems.map((item) => item.item).join(", ")} ${unassignedItems.length === 1 ? "has" : "have"} no diner assigned.`;
+    $("#receiptReviewMessage").textContent = `Item assignment needs review: ${unassignedItems.map((item) => item.item).join(", ")} ${unassignedItems.length === 1 ? "has" : "have"} no diner assigned.`;
   }
 }
 
@@ -4958,19 +5401,107 @@ async function deleteTrustedContact(contactId) {
 
 async function loadProfileDetails() {
   if (!state.supabase || !state.session?.user) return;
-  const { data } = await state.supabase
+  [
+    "profileFullNameInput", "profileUsernameInput", "profileDisplayNameInput", "profileBioInput",
+    "profileInterestsInput", "profileLanguagesInput", "profileLinksInput", "profileLocationInput",
+    "profileFavoriteDestinationInput", "profileFunFactInput"
+  ].forEach((id) => { if ($(`#${id}`)) $(`#${id}`).value = ""; });
+  if ($("#settingsAccountEmail")) $("#settingsAccountEmail").textContent = state.session.user.email || "Email unavailable";
+  state.profilePhoto.dataUrl = "";
+  state.profilePhoto.savedDataUrl = "";
+  state.profilePhoto.pendingFile = null;
+  state.profilePhoto.pendingFileName = "";
+  state.profilePhoto.storagePath = "";
+  state.profileCover.dataUrl = "";
+  state.profileCover.savedDataUrl = "";
+  state.profileCover.pendingFile = null;
+  state.profileCover.storagePath = "";
+  state.profileMetadata = {};
+  const { data, error } = await state.supabase
     .from("profiles")
-    .select("full_name, username, bio")
+    .select("full_name, username, bio, avatar_storage_path, avatar_visibility, avatar_metadata")
     .eq("id", state.session.user.id)
     .maybeSingle();
-  if (!data) return;
-  if (data.full_name && $("#profileFullNameInput")) $("#profileFullNameInput").value = data.full_name;
-  if (data.username && $("#profileUsernameInput")) $("#profileUsernameInput").value = data.username;
-  if (data.bio && $("#profileBioInput")) $("#profileBioInput").value = data.bio;
-  if (data.full_name) {
-    state.profilePhoto.initials = initialsFromName(data.full_name);
+  if (error || !data) {
+    state.profilePhoto.initials = initialsFromName(state.session.user.user_metadata?.full_name || state.session.user.email || "Travel Drip");
+    renderProfileSummary({
+      full_name: state.session.user.user_metadata?.full_name || "",
+      username: state.session.user.user_metadata?.username || "",
+      bio: ""
+    }, {});
     renderProfilePhoto();
+    renderProfileCover();
+    return;
   }
+  if ($("#profileFullNameInput")) $("#profileFullNameInput").value = data.full_name || "";
+  if ($("#profileUsernameInput")) $("#profileUsernameInput").value = data.username || "";
+  if ($("#profileBioInput")) $("#profileBioInput").value = data.bio || "";
+  state.profilePhoto.initials = initialsFromName(data.full_name || state.session.user.email || "Travel Drip");
+  state.profilePhoto.privacy = data.avatar_visibility || "trip_members";
+  state.profilePhoto.storagePath = data.avatar_storage_path || "";
+  const metadata = data.avatar_metadata && typeof data.avatar_metadata === "object" ? data.avatar_metadata : {};
+  state.profileMetadata = metadata;
+  const details = metadata.profileDetails && typeof metadata.profileDetails === "object" ? metadata.profileDetails : {};
+  const detailInputMap = {
+    profileDisplayNameInput: "displayName",
+    profileInterestsInput: "interests",
+    profileLanguagesInput: "languages",
+    profileLinksInput: "links",
+    profileLocationInput: "location",
+    profileFavoriteDestinationInput: "favoriteDestination",
+    profileFunFactInput: "funFact"
+  };
+  Object.entries(detailInputMap).forEach(([id, key]) => { if ($(`#${id}`)) $(`#${id}`).value = details[key] || ""; });
+  const editor = metadata.editor && typeof metadata.editor === "object" ? metadata.editor : {};
+  state.profilePhoto.cropShape = editor.cropShape || "circle";
+  state.profilePhoto.zoom = Number(editor.zoom || 1);
+  state.profilePhoto.positionX = Number(editor.positionX || 50);
+  state.profilePhoto.positionY = Number(editor.positionY || 50);
+  state.profilePhoto.rotation = Number(editor.rotation || 0);
+  state.profileCover.storagePath = metadata.coverStoragePath || "";
+  if (state.profilePhoto.storagePath) {
+    const { data: signedPhoto } = await state.supabase.storage.from("profile-photos").createSignedUrl(state.profilePhoto.storagePath, 3600);
+    state.profilePhoto.dataUrl = signedPhoto?.signedUrl || "";
+    state.profilePhoto.savedDataUrl = state.profilePhoto.dataUrl;
+  }
+  if (state.profileCover.storagePath) {
+    const { data: signedCover } = await state.supabase.storage.from("profile-photos").createSignedUrl(state.profileCover.storagePath, 3600);
+    state.profileCover.dataUrl = signedCover?.signedUrl || "";
+    state.profileCover.savedDataUrl = state.profileCover.dataUrl;
+  } else if (metadata.coverUrl) {
+    state.profileCover.dataUrl = metadata.coverUrl;
+    state.profileCover.savedDataUrl = metadata.coverUrl;
+  }
+  $$(`input[name='profilePhotoPrivacy']`).forEach((input) => { input.checked = input.value === state.profilePhoto.privacy; });
+  renderProfileSummary(data, details);
+  renderProfilePhoto();
+  renderProfileCover();
+}
+
+function renderProfileSummary(profile = {}, details = {}) {
+  const email = state.session?.user?.email || "";
+  const fullName = profile.full_name || state.session?.user?.user_metadata?.full_name || "";
+  const displayName = details.displayName || fullName || "Traveler";
+  const username = normalizeUsername(profile.username || state.session?.user?.user_metadata?.username || "");
+  const values = [fullName, username, profile.bio, details.location, details.languages, details.interests, details.favoriteDestination, details.funFact];
+  const completion = Math.round((values.filter((value) => String(value || "").trim()).length / values.length) * 100);
+  const createdAt = state.session?.user?.created_at ? new Date(state.session.user.created_at) : null;
+  const setText = (selector, value) => { const element = $(selector); if (element) element.textContent = value; };
+  setText("#profileWelcomeTitle", `Welcome, ${displayName}!`);
+  setText("#profileWelcomeMeta", username ? `@${username}` : (email || "Complete your profile when you are ready."));
+  setText("#profileCompletionValue", `${completion}%`);
+  if ($("#profileCompletionBar")) $("#profileCompletionBar").style.setProperty("--w", `${completion}%`);
+  setText("#profileCardName", fullName || "Your profile");
+  setText("#profileCardUsername", username ? `@${username}` : "Username not set");
+  setText("#profileCardBio", profile.bio || "Add a bio to introduce yourself to trip members.");
+  setText("#profileCardLocation", details.location || "Not added");
+  setText("#profileCardLanguages", details.languages || "Not added");
+  setText("#profileCardMemberSince", createdAt && !Number.isNaN(createdAt.valueOf()) ? String(createdAt.getFullYear()) : "New member");
+  setText("#profileAboutInterests", details.interests || "Interests not added");
+  setText("#profileAboutTravelStyle", details.favoriteDestination ? `Favorite destination: ${details.favoriteDestination}` : "Add your travel style and favorite destinations.");
+  setText("#profileAboutFunFact", details.funFact || "Add a fun travel fact.");
+  setText("#settingsAccountEmail", email || "Email unavailable");
+  setText("#settingsUserRole", String(state.accountData.activeTrip?.myRole || "traveler").replaceAll("_", " "));
 }
 
 async function saveProfileDetails() {
@@ -4979,17 +5510,41 @@ async function saveProfileDetails() {
     if (status) status.textContent = "Sign in before saving profile details.";
     return;
   }
+  const username = normalizeUsername($("#profileUsernameInput")?.value || "");
+  if (username && !isValidUsername(username)) {
+    if (status) status.textContent = "Username must use 3-24 letters, numbers, or underscores.";
+    return;
+  }
+  if (username) {
+    const availability = await checkUsernameAvailability(username, { statusElementId: "profileDetailsMessage" });
+    if (availability === false) return;
+  }
   const payload = {
     id: state.session.user.id,
     full_name: $("#profileFullNameInput")?.value.trim() || null,
-    username: $("#profileUsernameInput")?.value.trim().replace(/^@/, "") || null,
-    bio: $("#profileBioInput")?.value.trim() || null
+    username: username || null,
+    bio: $("#profileBioInput")?.value.trim() || null,
+    avatar_metadata: {
+      ...state.profileMetadata,
+      profileDetails: {
+        displayName: $("#profileDisplayNameInput")?.value.trim() || "",
+        interests: $("#profileInterestsInput")?.value.trim() || "",
+        languages: $("#profileLanguagesInput")?.value.trim() || "",
+        links: $("#profileLinksInput")?.value.trim() || "",
+        location: $("#profileLocationInput")?.value.trim() || "",
+        favoriteDestination: $("#profileFavoriteDestinationInput")?.value.trim() || "",
+        funFact: $("#profileFunFactInput")?.value.trim() || ""
+      }
+    }
   };
   const { error } = await state.supabase.from("profiles").upsert(payload, { onConflict: "id" });
-  if (status) status.textContent = error ? "Profile details could not be saved. Please try again." : "Profile details saved securely.";
+  if (status) status.textContent = error
+    ? getAuthErrorMessage(error, "Profile details could not be saved. Please try again.")
+    : "Profile details saved securely.";
   if (!error) {
+    state.profileMetadata = payload.avatar_metadata;
     state.profilePhoto.initials = initialsFromName(payload.full_name || "Travel-Drip traveler");
-    localStorage.setItem("traveldripProfileInitials", state.profilePhoto.initials);
+    renderProfileSummary(payload, payload.avatar_metadata.profileDetails);
     renderProfilePhoto();
   }
 }
@@ -5036,6 +5591,14 @@ async function loadConfig() {
       const { data, error } = await state.supabase.auth.getSession();
       if (error) throw error;
       state.session = data.session;
+      if (state.session?.user && !isEmailVerified(state.session.user)) {
+        await state.supabase.auth.signOut({ scope: "local" }).catch(() => {});
+        state.session = null;
+        setAuthConfirmation("");
+        if ($("#authMessage")) {
+          $("#authMessage").textContent = "Verify your email before signing in. Open the verification link in your inbox, then return here.";
+        }
+      }
     } catch (error) {
       state.session = null;
       setSyncStatus("Account service unavailable");
@@ -5044,17 +5607,34 @@ async function loadConfig() {
       }
     }
     if (state.session?.access_token) {
+      scopeBrowserStateToAuthenticatedUser(state.session.user.id);
       if (state.guestSessionToken) await linkCorporateAccessToPersonalAccount().catch(() => {});
       else await loadCorporatePortalFromSession().catch(() => {});
+      await loadAccountData();
     }
     loadWalletAccess();
     state.supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user && (state.registration.awaitingEmailVerification || !isEmailVerified(session.user))) {
+        state.session = null;
+        updateAuthUi();
+        setAuthMode("signin");
+        if ($("#authMessage")) {
+          $("#authMessage").textContent = "Verify your email before signing in. Open the verification link in your inbox, then try again.";
+        }
+        window.setTimeout(() => state.supabase.auth.signOut({ scope: "local" }).catch(() => {}), 0);
+        return;
+      }
       state.session = session;
       if (session?.access_token) {
+        scopeBrowserStateToAuthenticatedUser(session.user.id);
         if (state.guestSessionToken) await linkCorporateAccessToPersonalAccount().catch(() => {});
         else await loadCorporatePortalFromSession().catch(() => {});
+        await loadAccountData();
+      } else {
+        resetAccountData();
       }
       updateAuthUi();
+      await handlePendingInvitation();
       loadWalletAccess();
       subscribeToLiveData();
       loadProfileDetails();
@@ -5090,8 +5670,7 @@ async function loadConfig() {
 
 function updateAuthUi() {
   const signedIn = Boolean(state.session?.user);
-  const previewAccess = isFilePreview && state.hasEnteredApp;
-  const appAccess = signedIn || previewAccess;
+  const appAccess = signedIn;
   const openAuthButton = $("#openAuthButton");
   const openSignupButton = $("#openSignupButton");
   const signOutButton = $("#signOutButton");
@@ -5100,7 +5679,7 @@ function updateAuthUi() {
     state.hasEnteredApp = true;
     sessionStorage.setItem("traveldripEnteredApp", "true");
   }
-  if (!signedIn && !previewAccess) {
+  if (!signedIn) {
     state.hasEnteredApp = false;
     sessionStorage.removeItem("traveldripEnteredApp");
   }
@@ -5175,7 +5754,7 @@ async function ensureProfileForSession({ fullName = "", username = "" } = {}) {
   const profile = {
     id: state.session.user.id,
     full_name: String(fullName || metadata.full_name || "").trim() || null,
-    username: String(username || metadata.username || "").trim().replace(/^@/, "") || null
+    username: normalizeUsername(username || metadata.username || "") || null
   };
 
   return state.supabase.from("profiles").upsert(profile, { onConflict: "id" });
@@ -5303,7 +5882,7 @@ function setAuthMode(mode, scrollIntoView = false) {
   if (bottomCopy) bottomCopy.textContent = isGuest ? "Need a full Travel-Drip profile?" : isSignup ? "Already have an account?" : "New to Travel-Drip?";
   $("#landingSignupButton").hidden = isSignup;
   $("#landingLoginButton").hidden = !isSignup && !isGuest;
-  if ($("#enterAppButton")) $("#enterAppButton").hidden = !isFilePreview || isGuest;
+  if ($("#enterAppButton")) $("#enterAppButton").hidden = true;
   if (authMessage) {
     authMessage.textContent = isGuest
       ? "Guest sessions are temporary, audited, and expire automatically."
@@ -5327,9 +5906,11 @@ function enterAppPreview({ confirmation = "", forceDashboard = false } = {}) {
     if ($("#authMessage")) $("#authMessage").textContent = "Employer access is limited to the Corporate Guest Portal. Choose personal sign-up to create a personal dashboard.";
     return;
   }
-  if (!isFilePreview && !state.session?.user) {
+  if (!state.session?.user) {
     setAuthMode(state.authMode === "signup" ? "signup" : "signin", true);
-    if ($("#authMessage")) $("#authMessage").textContent = "Sign in or create a personal account to open the personal dashboard. Employer access opens only the Corporate Guest Portal.";
+    if ($("#authMessage")) $("#authMessage").textContent = isFilePreview
+      ? "Open the deployed Travel-Drip site to sign in. Local files do not load demo accounts or sample private data."
+      : "Sign in or create a personal account to open the personal dashboard. Employer access opens only the Corporate Guest Portal.";
     return;
   }
   state.hasEnteredApp = true;
@@ -5363,10 +5944,72 @@ function getAuthOptions() {
   return { emailRedirectTo: new URL("/login?verified=true", location.origin).toString() };
 }
 
+function normalizeUsername(value) {
+  return String(value || "").trim().replace(/^@/, "").toLowerCase();
+}
+
+function isValidUsername(value) {
+  return /^[a-z0-9_]{3,24}$/.test(normalizeUsername(value));
+}
+
+function isEmailVerified(user) {
+  return Boolean(user?.email_confirmed_at || user?.confirmed_at);
+}
+
+function setUsernameAvailabilityStatus(message, status = "") {
+  const element = $("#signupUsernameStatus");
+  if (!element) return;
+  element.textContent = message;
+  if (status) element.dataset.status = status;
+  else delete element.dataset.status;
+}
+
+async function checkUsernameAvailability(rawUsername, { statusElementId = "signupUsernameStatus" } = {}) {
+  const username = normalizeUsername(rawUsername);
+  const statusElement = $(`#${statusElementId}`);
+  if (!isValidUsername(username)) {
+    if (statusElement) {
+      statusElement.textContent = "Username must use 3-24 letters, numbers, or underscores.";
+      statusElement.dataset.status = "invalid";
+    }
+    return false;
+  }
+  if (!state.supabase) return null;
+
+  if (statusElement) {
+    statusElement.textContent = "Checking username availability...";
+    delete statusElement.dataset.status;
+  }
+  const { data, error } = await state.supabase.rpc("is_username_available", { candidate_username: username });
+  if (error) {
+    if (statusElement) {
+      statusElement.textContent = "Username uniqueness will be confirmed when you submit.";
+      delete statusElement.dataset.status;
+    }
+    return null;
+  }
+
+  const available = data === true;
+  if (statusElement) {
+    statusElement.textContent = available ? `@${username} is available.` : `@${username} is already in use.`;
+    statusElement.dataset.status = available ? "available" : "unavailable";
+  }
+  return available;
+}
+
 function getAuthErrorMessage(error, fallback) {
   const message = String(error?.message || error || "").trim();
   if (/failed to fetch|networkerror|load failed/i.test(message)) {
     return "Travel-Drip could not reach the secure account service. Check your connection and try again.";
+  }
+  if (/email not confirmed/i.test(message)) {
+    return "Verify your email before signing in. Open the verification link in your inbox, then try again.";
+  }
+  if (/user already registered|email.*already|already.*email/i.test(message)) {
+    return "An account already exists for that email. Sign in or use password recovery instead.";
+  }
+  if (/duplicate key|profiles_username_unique_ci|username.*already|database error saving new user/i.test(message)) {
+    return "That email or username is already in use. Choose a different username or sign in to the existing account.";
   }
   return message || fallback;
 }
@@ -5382,6 +6025,13 @@ async function signIn(email, password) {
     $("#authMessage").textContent = error ? getAuthErrorMessage(error, "Sign-in failed. Please try again.") : "Logged in. Confirming your saved information...";
     if (error) return false;
 
+    if (!isEmailVerified(data.user)) {
+      await state.supabase.auth.signOut({ scope: "local" }).catch(() => {});
+      state.session = null;
+      $("#authMessage").textContent = "Verify your email before signing in. Open the verification link in your inbox, then try again.";
+      return false;
+    }
+
     state.session = data.session || state.session;
     if (state.guestSessionToken) {
       await linkCorporateAccessToPersonalAccount().catch((linkError) => {
@@ -5390,6 +6040,7 @@ async function signIn(email, password) {
     } else {
       await loadCorporatePortalFromSession().catch(() => {});
     }
+    await loadAccountData();
     loadWalletAccess();
     const profileResult = await ensureProfileForSession();
     const confirmation = profileResult.error
@@ -5410,15 +6061,30 @@ async function signUp(fullName, username, email, password) {
     return;
   }
 
+  const normalizedUsername = normalizeUsername(username);
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+  if (!isValidUsername(normalizedUsername)) {
+    setUsernameAvailabilityStatus("Username must use 3-24 letters, numbers, or underscores.", "invalid");
+    $("#authMessage").textContent = "Choose a valid username before creating your account.";
+    return false;
+  }
+
+  const usernameAvailable = await checkUsernameAvailability(normalizedUsername);
+  if (usernameAvailable === false) {
+    $("#authMessage").textContent = "That username is already in use. Choose another username.";
+    return false;
+  }
+
   try {
+    state.registration.awaitingEmailVerification = true;
     const { data, error } = await state.supabase.auth.signUp({
-      email,
+      email: normalizedEmail,
       password,
       options: {
         ...getAuthOptions(),
         data: {
           full_name: fullName,
-          username,
+          username: normalizedUsername,
           profile_photo_privacy: "trip_members",
           profile_photo_setup: false
         }
@@ -5426,46 +6092,59 @@ async function signUp(fullName, username, email, password) {
     });
 
     if (error) {
+      state.registration.awaitingEmailVerification = false;
       $("#authMessage").textContent = getAuthErrorMessage(error, "Account creation failed. Please try again.");
       return false;
     }
 
-    if (data.session) {
-      state.session = data.session;
-      if (state.guestSessionToken) {
-        await linkCorporateAccessToPersonalAccount().catch((linkError) => {
-          if ($("#authMessage")) $("#authMessage").textContent = linkError.message;
-        });
-      } else {
-        await loadCorporatePortalFromSession().catch(() => {});
-      }
-      loadWalletAccess();
-      const profileResult = await ensureProfileForSession({ fullName, username });
-      const confirmation = profileResult.error
-        ? "Account created, but your profile could not be confirmed as saved. Please retry profile sync from My Profile."
-        : "Your information is confirmed saved. Your dashboard is ready — start planning your first trip.";
-      $("#authMessage").textContent = confirmation;
-      queueGhlSync({
-        eventType: "user_registration_completed",
-        fullName,
-        username,
-        email,
-        userType: "traveler",
-        tags: ["New Traveler", "Trip Planning"]
-      });
-      enterAppPreview({ confirmation, forceDashboard: true });
-      return true;
+    if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+      if (data.session) await state.supabase.auth.signOut({ scope: "local" }).catch(() => {});
+      state.session = null;
+      state.registration.awaitingEmailVerification = false;
+      $("#authMessage").textContent = "An account already exists for that email. Sign in or use password recovery instead.";
+      return false;
     }
+
+    if (data.session) await state.supabase.auth.signOut({ scope: "local" }).catch(() => {});
+    state.session = null;
+    state.registration.awaitingEmailVerification = false;
+    state.registration.email = normalizedEmail;
+    sessionStorage.setItem("traveldripPendingVerificationEmail", normalizedEmail);
 
     $("#signupForm").hidden = true;
     $("#verificationPanel").hidden = false;
     $("#authOnboardingPanel").hidden = true;
-    $("#authMessage").textContent = "Account created. Check your email to verify your address. The verification link will return you to Travel-Drip and open your dashboard.";
+    $("#authMessage").textContent = "Account created. Check your email and verify your address before signing in. The dashboard remains locked until verification is complete.";
     history.replaceState(null, "", "/login?check-email=true");
     return true;
   } catch (error) {
+    state.registration.awaitingEmailVerification = false;
     $("#authMessage").textContent = getAuthErrorMessage(error, "Account creation failed. Please try again.");
     return false;
+  }
+}
+
+async function resendVerificationEmail() {
+  const email = state.registration.email || sessionStorage.getItem("traveldripPendingVerificationEmail") || "";
+  if (!state.supabase || !email) {
+    if ($("#authMessage")) $("#authMessage").textContent = "Return to registration and enter the email address that needs verification.";
+    return;
+  }
+  const button = $("#resendVerificationButton");
+  if (button) button.disabled = true;
+  if ($("#authMessage")) $("#authMessage").textContent = "Sending a new verification email...";
+  try {
+    const { error } = await state.supabase.auth.resend({
+      type: "signup",
+      email,
+      options: getAuthOptions()
+    });
+    if (error) throw error;
+    if ($("#authMessage")) $("#authMessage").textContent = `Verification email resent to ${email}. Check your inbox and spam folder.`;
+  } catch (error) {
+    if ($("#authMessage")) $("#authMessage").textContent = getAuthErrorMessage(error, "The verification email could not be resent. Please try again.");
+  } finally {
+    if (button) button.disabled = false;
   }
 }
 
@@ -5836,6 +6515,11 @@ async function verifyGuestAccess() {
   $("#authMessage").textContent = "Verifying secure event access...";
 
   if (isFilePreview) {
+    $("#authMessage").textContent = "Company event access requires the deployed Travel-Drip site. No sample event was loaded.";
+    return;
+  }
+
+  if (isFilePreview) {
     state.guestSessionToken = "local-preview-guest-session";
     sessionStorage.setItem("traveldripGuestSessionToken", state.guestSessionToken);
     const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 4).toISOString();
@@ -5937,6 +6621,7 @@ async function signOut() {
   if (state.corporateAccess.verified) clearCorporateAccess("Corporate and personal sessions ended.");
   rememberProtectedTarget(getTargetFromRoute());
   state.session = null;
+  resetAccountData();
   state.hasEnteredApp = false;
   sessionStorage.removeItem("traveldripEnteredApp");
   setAuthConfirmation("");
@@ -6536,6 +7221,10 @@ async function verifyCorporateAccessGate() {
 
   $("#corporateAccessMessage").textContent = "Verifying corporate event access...";
   if (isFilePreview) {
+    $("#corporateAccessMessage").textContent = "Corporate verification requires the deployed Travel-Drip site. No sample event was loaded.";
+    return;
+  }
+  if (isFilePreview) {
     const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * (remember ? 8 : 4)).toISOString();
     state.corporateAccess = {
       verified: true,
@@ -6645,8 +7334,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   const activeSettingsFocus = resolvedTarget === "adminPanel"
     ? settingsFocus || history.state?.settingsFocus || ""
     : "";
-  const previewAccess = isFilePreview && state.hasEnteredApp;
-  if (!state.session?.user && !previewAccess && location.pathname !== "/admin.html") {
+  if (!state.session?.user && location.pathname !== "/admin.html") {
     rememberProtectedTarget(resolvedTarget);
     setAuthMode("signin");
     if ($("#authMessage")) $("#authMessage").textContent = "Sign in to continue to that Travel-Drip page.";
@@ -6741,6 +7429,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   updateDashboardWidgets();
   if ($("#currentPageTitle")) $("#currentPageTitle").textContent = routeDefinitions[resolvedTarget].label;
   renderGlobalDestinationHeader(resolvedTarget);
+  renderAccountState(resolvedTarget);
   document.title = `${routeDefinitions[resolvedTarget].label} - Travel-Drip`;
   document.body.classList.remove("sidebar-open");
   $("#sidebarMenuButton")?.setAttribute("aria-expanded", "false");
@@ -6797,6 +7486,155 @@ function addMemoryPreview(file, sourceUrl, visibility, saved) {
   gallery.prepend(card);
 }
 
+async function loadMemoryFiles() {
+  const gallery = $("#memoriesPanel .memory-gallery-grid");
+  if (!gallery) return;
+  gallery.innerHTML = "";
+  if (!state.supabase || !state.session?.user || !state.activeTripId) {
+    gallery.innerHTML = '<p class="small memory-gallery-empty" id="memoryGalleryEmpty">No memories uploaded for this trip yet.</p>';
+    return;
+  }
+  const { data, error } = await state.supabase
+    .from("media")
+    .select("id, storage_path, media_type, caption, visibility, metadata, created_at")
+    .eq("trip_id", state.activeTripId)
+    .order("created_at", { ascending: false });
+  if (error) {
+    gallery.innerHTML = '<p class="small memory-gallery-empty">Memories could not be loaded. Please retry after refreshing.</p>';
+    return;
+  }
+  for (const item of data || []) {
+    const { data: signedData, error: signedError } = await state.supabase.storage
+      .from("travel-memories")
+      .createSignedUrl(item.storage_path, 3600);
+    if (signedError || !signedData?.signedUrl) continue;
+    addMemoryPreview({
+      name: item.metadata?.filename || item.caption || "Travel memory",
+      type: item.media_type || item.metadata?.mimeType || "image/jpeg"
+    }, signedData.signedUrl, item.visibility || "private", true);
+  }
+  if (!gallery.children.length) {
+    gallery.innerHTML = '<p class="small memory-gallery-empty" id="memoryGalleryEmpty">No memories uploaded for this trip yet.</p>';
+  }
+}
+
+async function loadTripDocuments() {
+  const list = $("#savedDocumentsList");
+  if (!list) return;
+  list.innerHTML = '<p class="small">Loading saved documents...</p>';
+  if (!state.supabase || !state.session?.user || !state.activeTripId) {
+    list.innerHTML = '<p class="small">No travel documents uploaded for this trip.</p>';
+    if ($("#savedDocumentCount")) $("#savedDocumentCount").textContent = "0";
+    return;
+  }
+  const { data, error } = await state.supabase
+    .from("documents")
+    .select("id, storage_bucket, storage_path, document_type, visibility, metadata, created_at")
+    .eq("trip_id", state.activeTripId)
+    .order("created_at", { ascending: false });
+  if (error) {
+    list.innerHTML = '<p class="small">Documents could not be loaded. Please refresh and retry.</p>';
+    return;
+  }
+  if ($("#savedDocumentCount")) $("#savedDocumentCount").textContent = String((data || []).length);
+  if (!data?.length) {
+    list.innerHTML = '<p class="small">No travel documents uploaded for this trip.</p>';
+    return;
+  }
+  list.innerHTML = data.map((document) => `
+    <article class="travel-document-card">
+      <div class="travel-document-card__heading"><span class="travel-document-card__icon" aria-hidden="true">📄</span><strong class="travel-document-card__title">${escapeHtml(document.metadata?.filename || String(document.document_type || "Travel document").replaceAll("_", " "))}</strong></div>
+      <span class="travel-document-card__description">${escapeHtml(String(document.document_type || "travel document").replaceAll("_", " "))}</span>
+      <time class="travel-document-card__due">Uploaded ${escapeHtml(new Date(document.created_at).toLocaleDateString())}</time>
+      <em class="document-status travel-document-card__status ok">Saved privately</em>
+      <button class="ghost-button" type="button" data-open-document="${escapeHtml(document.id)}" data-document-bucket="${escapeHtml(document.storage_bucket || "trip-documents")}" data-document-path="${escapeHtml(document.storage_path)}">View document</button>
+    </article>
+  `).join("");
+}
+
+async function uploadTripDocument(file, documentType = "travel_document") {
+  const message = $("#documentUploadMessage") || $("#transportMessage");
+  if (!file) return false;
+  if (!state.supabase || !state.session?.user) {
+    if (message) message.textContent = "Sign in before uploading a travel document.";
+    return false;
+  }
+  if (!state.activeTripId) {
+    if (message) message.textContent = "Create or join a trip before uploading documents.";
+    return false;
+  }
+  const allowedTypes = new Set(["application/pdf", "image/jpeg", "image/png", "image/heic", "image/webp"]);
+  if (!allowedTypes.has(file.type) || file.size > 25 * 1024 * 1024) {
+    if (message) message.textContent = "Use a PDF, JPG, PNG, HEIC, or WEBP file no larger than 25 MB.";
+    return false;
+  }
+  if (message) message.textContent = "Uploading document securely...";
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/-+/g, "-");
+  const uniqueId = typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const storagePath = `${state.session.user.id}/${state.activeTripId}/${uniqueId}-${safeName}`;
+  try {
+    const { error: uploadError } = await state.supabase.storage.from("trip-documents").upload(storagePath, file, {
+      cacheControl: "3600",
+      contentType: file.type,
+      upsert: false
+    });
+    if (uploadError) throw uploadError;
+    const { error: metadataError } = await state.supabase.from("documents").insert({
+      trip_id: state.activeTripId,
+      user_id: state.session.user.id,
+      uploaded_by: state.session.user.id,
+      storage_bucket: "trip-documents",
+      storage_path: storagePath,
+      document_type: String(documentType || "travel_document").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, ""),
+      visibility: "owner",
+      metadata: { filename: file.name, mimeType: file.type, size: file.size }
+    });
+    if (metadataError) {
+      await state.supabase.storage.from("trip-documents").remove([storagePath]);
+      throw metadataError;
+    }
+    if (message) message.textContent = `${file.name} was uploaded privately and will remain available after refresh.`;
+    await loadTripDocuments();
+    await saveSyncedEvent("travel_document_uploaded", { documentType, filename: file.name });
+    return true;
+  } catch (error) {
+    if (message) message.textContent = `Document upload failed: ${error.message}`;
+    return false;
+  }
+}
+
+async function handleReceiptUpload(file) {
+  if (!file) return;
+  const saved = await uploadTripDocument(file, "restaurant_receipt");
+  if (!saved) return;
+  if ($("#receiptRestaurant")) $("#receiptRestaurant").textContent = file.name.replace(/\.[^.]+$/, "") || "Uploaded receipt";
+  if ($("#receiptMeta")) $("#receiptMeta").textContent = `Uploaded ${new Date().toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}`;
+  if ($("#billMessage")) {
+    $("#billMessage").textContent = "Receipt saved privately. Automatic item and total extraction is unavailable until a document-processing provider is configured; enter the totals manually.";
+  }
+  if ($("#receiptReviewMessage")) {
+    $("#receiptReviewMessage").textContent = "The upload is saved. Review the receipt and enter its items and totals before splitting or requesting payment.";
+  }
+  state.accountData.counts.documents = Number(state.accountData.counts.documents || 0) + 1;
+  state.accountData.counts.uploads = Number(state.accountData.counts.uploads || 0) + 1;
+  state.accountData.moduleData.splitBill = true;
+  renderBillSplit();
+  renderAccountState("splitBill");
+}
+
+async function detectTicketCode(file) {
+  if (!("BarcodeDetector" in window) || !file?.type.startsWith("image/")) return [];
+  try {
+    const detector = new BarcodeDetector({ formats: ["qr_code", "aztec", "pdf417", "data_matrix"] });
+    const bitmap = await createImageBitmap(file);
+    const codes = await detector.detect(bitmap);
+    bitmap.close?.();
+    return codes.map((code) => code.rawValue).filter(Boolean);
+  } catch (_error) {
+    return [];
+  }
+}
+
 async function uploadMemoryFiles(files, action) {
   const selectedFiles = Array.from(files || []);
   if (!selectedFiles.length) return;
@@ -6821,6 +7659,10 @@ async function uploadMemoryFiles(files, action) {
     message.textContent = `${validFiles.length} ${validFiles.length === 1 ? "memory is" : "memories are"} ready to preview. Sign in to save uploads securely.`;
     return;
   }
+  if (!state.activeTripId) {
+    message.textContent = "Create or join a trip before uploading memories so each file has a private owner and trip.";
+    return;
+  }
 
   message.textContent = `Uploading ${validFiles.length} ${validFiles.length === 1 ? "memory" : "memories"}...`;
   let savedCount = 0;
@@ -6834,6 +7676,22 @@ async function uploadMemoryFiles(files, action) {
         .from("travel-memories")
         .upload(storagePath, file, { cacheControl: "3600", contentType: file.type, upsert: false });
       if (error) throw error;
+      const visibilityValue = visibility.toLowerCase().startsWith("private") ? "private"
+        : visibility.toLowerCase().includes("selected") ? "selected"
+          : visibility.toLowerCase().includes("public") ? "public" : "members";
+      const { error: metadataError } = await state.supabase.from("media").insert({
+        trip_id: state.activeTripId,
+        user_id: state.session.user.id,
+        storage_path: storagePath,
+        media_type: file.type,
+        caption: file.name,
+        visibility: visibilityValue,
+        metadata: { filename: file.name, mimeType: file.type, size: file.size, uploadAction: action }
+      });
+      if (metadataError) {
+        await state.supabase.storage.from("travel-memories").remove([storagePath]);
+        throw metadataError;
+      }
       const { data: signedData } = await state.supabase.storage.from("travel-memories").createSignedUrl(storagePath, 3600);
       addMemoryPreview(file, signedData?.signedUrl || URL.createObjectURL(file), visibility, true);
       savedCount += 1;
@@ -6846,6 +7704,7 @@ async function uploadMemoryFiles(files, action) {
     message.textContent = `${savedCount} ${savedCount === 1 ? "memory was" : "memories were"} uploaded securely with ${visibility} visibility.${failures.length ? ` ${failures.length} file(s) could not be saved.` : ""}`;
     addAuditEntry("Memories uploaded", `${savedCount} file(s) saved from ${action} with ${visibility} visibility.`);
     await saveSyncedEvent("memory_media_uploaded", { action, visibility, count: savedCount });
+    await loadMemoryFiles();
   } else {
     message.textContent = "The selected memories could not be uploaded. Please retry after confirming your account is signed in.";
   }
@@ -6982,11 +7841,19 @@ function wireLocalInteractions() {
 
   $$("#poll button").forEach((button) => {
     button.addEventListener("click", async () => {
-      $$("#poll button").forEach((poll) => poll.classList.remove("selected"));
-      button.classList.add("selected");
-      const count = button.querySelector("strong");
-      count.textContent = String(Number(count.textContent) + 1);
-      await saveSyncedEvent("vote", { choice: button.dataset.choice });
+      const poll = state.chatData.polls?.find((item) => item.status === "open");
+      const index = [...$("#poll").querySelectorAll("button")].indexOf(button);
+      const option = poll?.options?.[index];
+      if (!poll || !option || !state.activeTripId) {
+        showWorkflowMessage("Poll", "Create an authenticated trip poll in Chat before voting. No sample vote was added.");
+        return;
+      }
+      try {
+        await apiRequest("/api/chat", { method: "POST", body: JSON.stringify({ action: "vote", tripId: state.activeTripId, pollId: poll.id, optionId: option.id }) });
+        await loadTripChatData();
+      } catch (error) {
+        showWorkflowMessage("Poll", error.message || "Your vote could not be saved.");
+      }
     });
   });
 
@@ -7092,47 +7959,28 @@ function wireLocalInteractions() {
     }
 
     if (action?.type === "refund") {
-      $("#refundMessage").textContent = "Refund requested: $380 available funds moved to pending review.";
-      addAuditEntry("Refund requested", "User requested $380 refundable available funds after Wallet PIN confirmation.");
-      await saveSyncedEvent("refund_requested", { amount: 380, confirmedWithPin: true });
+      $("#refundMessage").textContent = "Refund processing is unavailable until the PCI-compliant payment provider and webhook are configured. No funds changed.";
     }
 
     if (action?.type === "leave_trip") {
-      $("#refundMessage").textContent = "Leave-trip review started: unused funds will be refunded and committed funds stay tied to bookings.";
-      addAuditEntry("Participant leave review", "System calculated unused funds and preserved non-refundable allocations.");
-      await saveSyncedEvent("leave_trip_review", { refundableAmount: 380, confirmedWithPin: true });
+      $("#refundMessage").textContent = "Leaving the trip will not trigger a refund until provider-confirmed refundable funds can be calculated. No access or funds changed.";
     }
 
     if (action?.type === "reveal_card") {
-      $("#cardNumber").textContent = "•••• •••• •••• 4829";
       $("#cardCvv").textContent = "Provider-controlled";
-      $("#cardMessage").textContent = "PIN verified. Full card credentials remain tokenized with the issuing partner and are not stored or displayed in this demo.";
-      addAuditEntry("Card detail access verified", "Wallet PIN was confirmed; raw card credentials remained provider-controlled.");
-      await saveSyncedEvent("virtual_card_revealed", { confirmedWithPin: true });
+      $("#cardMessage").textContent = "Card details cannot be revealed until an authorized issuer provisions a tokenized card. No card credentials are stored by Travel-Drip.";
     }
 
     if (action?.type === "provision_wallet") {
-      $("#cardMessage").textContent = `${action.walletName} provisioning started after identity and Wallet PIN verification. Issuer wallet-token provisioning is required for production.`;
-      addAuditEntry("Mobile wallet provisioning", `${action.walletName} provisioning started after Wallet PIN confirmation.`);
-      await saveSyncedEvent("wallet_provisioning_started", { walletName: action.walletName, confirmedWithPin: true });
+      $("#cardMessage").textContent = `${action.walletName} provisioning is unavailable until issuer wallet-token support is connected. No provisioning request was created.`;
     }
 
     if (action?.type === "replace_card") {
-      $("#cardStatus").textContent = "Frozen";
-      $("#lockCardButton").textContent = "Unlock card";
-      $("#cardMessage").textContent = "Card reported as compromised. Current token frozen and replacement review started.";
-      addAuditEntry("Card compromised", "Virtual card was frozen and replacement review started after Wallet PIN confirmation.");
-      await saveSyncedEvent("virtual_card_replacement_requested", { confirmedWithPin: true });
+      $("#cardMessage").textContent = "Card replacement is unavailable until an issuer is connected. Contact the issuing provider directly if a provisioned card is compromised.";
     }
 
     if (action?.type === "limit_change") {
-      $("#cardMessage").textContent = "Spending controls updated after Wallet PIN verification.";
-      addAuditEntry("Card limits changed", `Daily limit set to ${$("#dailyLimitValue").textContent}; per-purchase limit set to ${$("#purchaseLimitValue").textContent}.`);
-      await saveSyncedEvent("virtual_card_limits_changed", {
-        dailyLimit: $("#dailyLimit").value,
-        purchaseLimit: $("#purchaseLimit").value,
-        confirmedWithPin: true
-      });
+      $("#cardMessage").textContent = "Spending controls were not saved because no authorized card issuer is connected.";
     }
 
     state.pendingWalletPayment = null;
@@ -7148,15 +7996,28 @@ function wireLocalInteractions() {
   });
 
   $("#requestRefundButton")?.addEventListener("click", () => {
+    if (state.walletAccess.providerRequired) {
+      $("#refundMessage").textContent = "Refunds require a connected PCI-compliant payment provider and confirmed refundable funds. No request was created.";
+      return;
+    }
+    const refundableCents = (state.walletAccess.contributions || []).reduce((total, contribution) => total + Number(contribution.refundableCents || 0), 0);
+    if (refundableCents <= 0) {
+      $("#refundMessage").textContent = "No provider-confirmed refundable funds are available.";
+      return;
+    }
     state.pendingWalletPayment = null;
-    state.pendingSecureAction = { type: "refund" };
-    $("#pinSummary").textContent = "Enter your 4-digit Wallet PIN to request a refund of $380 available funds.";
+    state.pendingSecureAction = { type: "refund", refundableCents };
+    $("#pinSummary").textContent = `Enter your 4-digit Wallet PIN to request a refund review for ${formatWalletMoney(refundableCents, state.walletAccess.wallet?.currency)}.`;
     $("#walletPin").value = "";
     $("#pinDialog").showModal();
     $("#walletPin").focus();
   });
 
   $("#leaveTripButton")?.addEventListener("click", () => {
+    if (state.walletAccess.providerRequired) {
+      $("#refundMessage").textContent = "Leave-trip refunds cannot be calculated until provider-confirmed refundable and committed amounts are available. No membership or funds changed.";
+      return;
+    }
     state.pendingWalletPayment = null;
     state.pendingSecureAction = { type: "leave_trip" };
     $("#pinSummary").textContent = "Enter your 4-digit Wallet PIN to start the leave-trip refund review.";
@@ -7166,19 +8027,16 @@ function wireLocalInteractions() {
   });
 
   $("#activateCardButton")?.addEventListener("click", async () => {
-    $("#cardStatus").textContent = "Active";
-    $("#cardMessage").textContent = "Virtual card activated. Spendable funds remain limited to available wallet balance.";
-    addAuditEntry("Virtual card activated", "Card activated for eligible available wallet funds.");
-    await saveSyncedEvent("virtual_card_activated", { status: "active" });
+    $("#cardMessage").textContent = state.walletAccess.providerRequired
+      ? "Card activation requires an authorized issuer. No virtual card was activated."
+      : "Use the issuer authorization flow to activate this card.";
   });
 
   $("#lockCardButton")?.addEventListener("click", async (event) => {
-    const locked = $("#cardStatus").textContent !== "Locked";
-    $("#cardStatus").textContent = locked ? "Locked" : "Active";
-    event.target.textContent = locked ? "Unlock card" : "Lock card";
-    $("#cardMessage").textContent = locked ? "Virtual card locked. New purchases are blocked." : "Virtual card unlocked after security review.";
-    addAuditEntry(locked ? "Card locked" : "Card unlocked", locked ? "User locked virtual card purchases." : "User unlocked virtual card purchases.");
-    await saveSyncedEvent("virtual_card_lock_changed", { locked });
+    event.preventDefault();
+    $("#cardMessage").textContent = state.walletAccess.providerRequired
+      ? "Card locking requires an authorized issuer. No card state changed."
+      : "Use the issuer authorization flow to change the card lock state.";
   });
 
   $("#revealCardButton")?.addEventListener("click", () => {
@@ -7259,29 +8117,27 @@ function wireLocalInteractions() {
 
   $$("[data-receipt-source]").forEach((button) => {
     button.addEventListener("click", () => {
-      const sourceLabels = {
-        camera: "Camera receipt scan started",
-        photo: "Receipt photo uploaded for AI extraction",
-        pdf: "PDF receipt uploaded for AI extraction",
-        manual: "Manual receipt entry enabled"
-      };
-      $("#billMessage").textContent = `${sourceLabels[button.dataset.receiptSource]}. Restaurant name, date, table, server, items, taxes, fees, gratuity, discounts, and total remain editable before payment.`;
-      $("#receiptReviewMessage").textContent = "Receipt is stored in trip history after organizer review and settlement.";
-      renderReceiptScanner();
-      addAuditEntry("Receipt intake selected", sourceLabels[button.dataset.receiptSource]);
+      const source = button.dataset.receiptSource;
+      if (source === "camera") $("#receiptCameraInput")?.click();
+      if (source === "photo") $("#receiptPhotoInput")?.click();
+      if (source === "pdf") $("#receiptPdfInput")?.click();
+      if (source === "manual") {
+        $("#billMessage").textContent = "Manual receipt entry is ready. Enter the restaurant totals and diner count; no payment is recorded until a provider confirms it.";
+        $("#billSubtotal")?.focus();
+      }
     });
   });
 
   $("#scanReceiptButton")?.addEventListener("click", () => {
-    $("#billSubtotal").value = "438.75";
-    $("#billTax").value = "34.66";
-    $("#billTipPercent").value = "18";
-    $("#billFees").value = "7.50";
-    $("#billDiscount").value = "25.00";
-    $("#billDiners").value = "6";
-    renderBillSplit();
-    $("#billMessage").textContent = "Receipt scan detected menu items, tax, service fee, discount, and total for review.";
-    addAuditEntry("Restaurant bill scanned", "Receipt data pre-populated the Smart Bill Split calculator.");
+    $("#receiptCameraInput")?.click();
+  });
+
+  ["#receiptCameraInput", "#receiptPhotoInput", "#receiptPdfInput"].forEach((selector) => {
+    $(selector)?.addEventListener("change", async (event) => {
+      const input = event.currentTarget;
+      await handleReceiptUpload(input.files?.[0]);
+      input.value = "";
+    });
   });
 
   $("#aiBillReviewButton")?.addEventListener("click", () => {
@@ -7296,8 +8152,8 @@ function wireLocalInteractions() {
     if (unassigned.length) issues.push(`Unassigned items: ${unassigned.join(", ")}`);
     if (bill.tipPercent > 25) issues.push("Tip is above the usual range for this group");
     if (!issues.length) issues.push("No duplicate items, missing diners, tax discrepancy, or shared-item imbalance detected");
-    $("#receiptReviewMessage").textContent = `AI bill review: ${issues.join(". ")}.`;
-    addAuditEntry("AI bill review completed", issues.join("; "));
+    $("#receiptReviewMessage").textContent = `Bill review: ${issues.join(". ")}.`;
+    addAuditEntry("Bill arithmetic review completed", issues.join("; "));
   });
 
   $("#tipAdviceButton")?.addEventListener("click", () => {
@@ -7309,11 +8165,18 @@ function wireLocalInteractions() {
   });
 
   $$("[data-bill-pay]").forEach((button) => {
-    button.addEventListener("click", async () => {
+    button.addEventListener("click", () => {
       const method = button.dataset.billPay;
-      $("#billMessage").textContent = `${method} selected. Each participant sees their total, tax, tip, final amount due, paid amount, and remaining group balance.`;
-      addAuditEntry("Bill payment method selected", `${method} selected for restaurant bill settlement.`);
-      await saveSyncedEvent("restaurant_bill_payment_method", { method, total: getBillInputs().total });
+      const total = getBillInputs().total;
+      if (!total) {
+        $("#billMessage").textContent = "Enter a real bill total before choosing a payment method.";
+        return;
+      }
+      if (method === "Outside app") {
+        $("#billMessage").textContent = "Outside payment selected. Travel-Drip will not mark this bill paid without a saved confirmation or receipt.";
+        return;
+      }
+      $("#billMessage").textContent = `${method} settlement is unavailable until the PCI-compliant payment provider is connected. No charge or balance change occurred.`;
     });
   });
 
@@ -7737,16 +8600,31 @@ function wireLocalInteractions() {
     }
   });
 
-  $("#uploadTransportTicketButton")?.addEventListener("click", async () => {
-    $("#transportMessage").textContent = "Upload workflow opened for PDFs, screenshots, mobile passes, QR codes, barcodes, email confirmations, and wallet-pass files. Review extracted fields before saving.";
-    addAuditEntry("Transportation document upload opened", "Multi-transport ticket upload workflow opened.");
-    await saveSyncedEvent("transport_upload_opened", { supportedTypes: Object.values(transportTypeLabels) });
+  $("#uploadTransportTicketButton")?.addEventListener("click", () => {
+    state.pendingDocumentType = "transportation_ticket";
+    $("#transportTicketInput")?.click();
   });
 
-  $("#scanTransportTicketButton")?.addEventListener("click", async () => {
-    $("#transportMessage").textContent = "Ticket scan simulated. OCR can extract passenger, provider, confirmation number, route, departure time, seat, gate/platform, QR code, and barcode for user review.";
-    addAuditEntry("Transportation ticket scan", "OCR review workflow simulated for paper tickets.");
-    await saveSyncedEvent("transport_ticket_scan", { extractionReviewRequired: true });
+  $("#scanTransportTicketButton")?.addEventListener("click", () => {
+    state.pendingDocumentType = "scanned_transportation_ticket";
+    $("#transportTicketCameraInput")?.click();
+  });
+
+  $("#transportTicketInput")?.addEventListener("change", async (event) => {
+    await uploadTripDocument(event.currentTarget.files?.[0], state.pendingDocumentType);
+    event.currentTarget.value = "";
+  });
+
+  $("#transportTicketCameraInput")?.addEventListener("change", async (event) => {
+    const file = event.currentTarget.files?.[0];
+    const codes = await detectTicketCode(file);
+    await uploadTripDocument(file, state.pendingDocumentType);
+    if ($("#transportMessage")) {
+      $("#transportMessage").textContent = codes.length
+        ? `Ticket saved. ${codes.length} QR or barcode value${codes.length === 1 ? " was" : "s were"} detected for review.`
+        : "Ticket image saved. This browser did not expose a supported QR/barcode detector; OCR field extraction requires a configured document-processing provider.";
+    }
+    event.currentTarget.value = "";
   });
 
   $("#privateDriverSearchInput")?.addEventListener("input", renderPrivateDrivers);
@@ -8097,6 +8975,7 @@ function wireLocalInteractions() {
           if ($("#ownershipTransferEntityType")) $("#ownershipTransferEntityType").value = result.event ? "event" : "trip";
           await loadOwnershipMembers();
         }
+        await loadAccountData();
       }
     } catch (error) {
       $("#soloModeMessage").textContent = `Event setup could not be saved: ${error.message}. Your form data is still visible so you can retry.`;
@@ -8154,13 +9033,22 @@ function wireLocalInteractions() {
     await saveSyncedEvent("ai_invitation_copy_generated", { type });
   });
 
-  $("#sendInvitesNowButton")?.addEventListener("click", async () => {
-    const methods = $$("[data-invite-method]").filter((input) => input.checked).map((input) => input.dataset.inviteMethod);
-    $("#rsvpSentCount").textContent = String(Math.max(1, Number($("#rsvpSentCount").textContent || 0) + 1));
-    $("#rsvpPendingCount").textContent = String(Math.max(1, Number($("#rsvpPendingCount").textContent || 0) + 1));
-    $("#invitationStatusMessage").textContent = `Invitations queued through ${methods.join(", ") || "in-app notification"}. Invitees can accept, maybe, or decline directly from the invite.`;
-    addAuditEntry("Invitations sent", `Invitation methods: ${methods.join(", ") || "in-app notification"}.`);
-    await saveSyncedEvent("trip_invitations_sent", { methods });
+  $("#sendInvitesNowButton")?.addEventListener("click", createTripInvitation);
+  $("#copyInviteLinkButton")?.addEventListener("click", async () => {
+    const link = $("#inviteShareLink")?.value || "";
+    if (!link) return;
+    try {
+      await navigator.clipboard.writeText(link);
+      $("#invitationStatusMessage").textContent = "Secure invitation link copied.";
+    } catch (_error) {
+      $("#inviteShareLink")?.select();
+      $("#invitationStatusMessage").textContent = "Select and copy the invitation link shown above.";
+    }
+  });
+  $("#invitationResponseForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const status = event.submitter?.dataset.invitationResponse;
+    if (status) await respondToPendingInvitation(status);
   });
 
   $("#saveInvitesLaterButton")?.addEventListener("click", async () => {
@@ -8231,12 +9119,22 @@ function wireLocalInteractions() {
   });
 
   $("#downloadReportButton")?.addEventListener("click", () => {
+    const contributions = Array.isArray(state.walletAccess.contributions) ? state.walletAccess.contributions : [];
+    if (!contributions.length) {
+      if ($("#walletMessage")) $("#walletMessage").textContent = "There are no provider-confirmed wallet records to export.";
+      return;
+    }
+    const csvCell = (value) => `"${String(value ?? "").replaceAll('"', '""')}"`;
     const csv = [
-      "timestamp,type,amount,status",
-      "2026-07-20 09:42,deposit,100,available",
-      "2026-07-18 14:15,reserved,250,hotel deposit hold",
-      "2026-07-14 11:20,allocated,420,non-refundable flight",
-      "2026-07-10 18:05,deposit,950,original payment method"
+      ["timestamp", "member", "amount", "currency", "status", "refundable"].map(csvCell).join(","),
+      ...contributions.map((contribution) => [
+        contribution.createdAt || "",
+        contribution.memberName || "Trip member",
+        (Number(contribution.amountCents || 0) / 100).toFixed(2),
+        contribution.currency || state.walletAccess.wallet?.currency || "USD",
+        contribution.status || "pending",
+        (Number(contribution.refundableCents || 0) / 100).toFixed(2)
+      ].map(csvCell).join(","))
     ].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const link = document.createElement("a");
@@ -8787,12 +9685,31 @@ function wireLocalInteractions() {
     checkbox.addEventListener("change", updateChecklistProgress);
   });
   $$("[data-document-action]").forEach((button) => {
-    button.addEventListener("click", async () => {
+    button.addEventListener("click", () => {
       const action = button.dataset.documentAction || "Document action";
-      showWorkflowMessage("Travel document", `${action} opened in the secure Travel Documents workflow.`);
-      addAuditEntry("Travel document action", action);
-      await saveSyncedEvent("travel_document_action", { action });
+      state.pendingDocumentType = action.replace(/^Upload\s+/i, "") || "travel_document";
+      $("#tripDocumentInput")?.click();
     });
+  });
+  $("#tripDocumentInput")?.addEventListener("change", async (event) => {
+    await uploadTripDocument(event.currentTarget.files?.[0], state.pendingDocumentType);
+    event.currentTarget.value = "";
+  });
+  $("#savedDocumentsList")?.addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-open-document]");
+    if (!button || !state.supabase) return;
+    const viewer = window.open("about:blank", "_blank");
+    if (viewer) viewer.opener = null;
+    const { data, error } = await state.supabase.storage
+      .from(button.dataset.documentBucket || "trip-documents")
+      .createSignedUrl(button.dataset.documentPath, 300);
+    if (error || !data?.signedUrl) {
+      viewer?.close();
+      $("#documentUploadMessage").textContent = "That document could not be opened. Refresh and try again.";
+      return;
+    }
+    if (viewer) viewer.location.href = data.signedUrl;
+    else location.href = data.signedUrl;
   });
   $("#policyAck")?.addEventListener("change", updatePolicyAcknowledgment);
   updateChecklistProgress();
@@ -8805,12 +9722,34 @@ function wireLocalInteractions() {
   $("#runGoLiveAuditButton")?.addEventListener("click", renderGoLiveAudit);
   $("#signupNameInput")?.addEventListener("input", (event) => {
     state.profilePhoto.initials = initialsFromName(event.target.value);
-    localStorage.setItem("traveldripProfileInitials", state.profilePhoto.initials);
     renderProfilePhoto();
+  });
+  $("#signupUsernameInput")?.addEventListener("input", (event) => {
+    const username = normalizeUsername(event.target.value);
+    state.registration.normalizedUsername = username;
+    state.registration.usernameAvailable = null;
+    state.registration.usernameCheckRequest += 1;
+    const requestId = state.registration.usernameCheckRequest;
+    window.clearTimeout(state.registration.usernameCheckTimer);
+
+    if (!username) {
+      setUsernameAvailabilityStatus("Use 3-24 letters, numbers, or underscores. Usernames are unique.");
+      return;
+    }
+    if (!isValidUsername(username)) {
+      setUsernameAvailabilityStatus("Username must use 3-24 letters, numbers, or underscores.", "invalid");
+      return;
+    }
+
+    setUsernameAvailabilityStatus("Checking username availability...");
+    state.registration.usernameCheckTimer = window.setTimeout(async () => {
+      const available = await checkUsernameAvailability(username);
+      if (requestId !== state.registration.usernameCheckRequest) return;
+      state.registration.usernameAvailable = available;
+    }, 350);
   });
   $("#profileFullNameInput")?.addEventListener("input", (event) => {
     state.profilePhoto.initials = initialsFromName(event.target.value);
-    localStorage.setItem("traveldripProfileInitials", state.profilePhoto.initials);
     renderProfilePhoto();
   });
   $("#profilePhotoInput")?.addEventListener("change", (event) => handleProfilePhotoFile(event.target.files?.[0], "Profile upload"));
@@ -8856,34 +9795,27 @@ function wireLocalInteractions() {
       const action = button.dataset.coverPhotoAction;
       if (action === "Use Beach Cover") {
         state.profileCover.dataUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1400&auto=format&fit=crop";
-        state.profileCover.savedDataUrl = state.profileCover.dataUrl;
-        localStorage.setItem("traveldripProfileCover", state.profileCover.savedDataUrl);
+        state.profileCover.pendingFile = null;
         renderProfileCover();
-        setProfilePhotoMessage("Beach cover saved for your My Profile header.");
-        await saveSyncedEvent("profile_cover_updated", { source: "default_beach_cover" });
+        setProfilePhotoMessage("Beach cover selected. Save changes to attach it to this account.");
         return;
       }
       state.profileCover.dataUrl = "";
-      state.profileCover.savedDataUrl = "";
-      localStorage.removeItem("traveldripProfileCover");
+      state.profileCover.pendingFile = null;
       renderProfileCover();
-      setProfilePhotoMessage("Cover photo removed. Your profile header now uses the default Travel-Drip gradient.");
-      await saveSyncedEvent("profile_cover_removed", { source: "my_profile" });
+      setProfilePhotoMessage("Cover photo removed from preview. Save changes to apply the default background.");
     });
   });
   $$("[data-profile-photo-action]").forEach((button) => {
     button.addEventListener("click", async () => {
       const action = button.dataset.profilePhotoAction;
       if (action === "Choose Recent Photo") {
-        state.profilePhoto.dataUrl = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=220&q=80";
-        state.profilePhoto.pendingFileName = "recent-travel-photo.jpg";
-        renderProfilePhoto();
-        setProfilePhotoMessage("Recent photo selected for preview. Save changes to use it as your profile photo.");
-        await saveSyncedEvent("profile_photo_recent_selected", { source: "recent_photo" });
+        setProfilePhotoMessage("Upload one of your own photos first. Travel-Drip does not insert a stock photo into a personal profile.");
         return;
       }
       state.profilePhoto.dataUrl = "";
       state.profilePhoto.pendingFileName = "";
+      state.profilePhoto.pendingFile = null;
       renderProfilePhoto();
       setProfilePhotoMessage(action === "Remove Profile Photo"
         ? "Profile photo removed from preview. Save changes to keep the default initials avatar."
@@ -8899,38 +9831,17 @@ function wireLocalInteractions() {
       await saveSyncedEvent("profile_photo_privacy_changed", { privacy: input.value });
     });
   });
-  $("#saveProfilePhotoButton")?.addEventListener("click", async () => {
-    state.profilePhoto.savedDataUrl = state.profilePhoto.dataUrl;
-    localStorage.setItem("traveldripProfilePhoto", state.profilePhoto.savedDataUrl);
-    localStorage.setItem("traveldripProfilePhotoPrivacy", state.profilePhoto.privacy);
-    localStorage.setItem("traveldripProfileInitials", state.profilePhoto.initials);
-    localStorage.setItem("traveldripProfilePhotoCropShape", state.profilePhoto.cropShape);
-    localStorage.setItem("traveldripProfilePhotoZoom", String(state.profilePhoto.zoom));
-    localStorage.setItem("traveldripProfilePhotoPositionX", String(state.profilePhoto.positionX));
-    localStorage.setItem("traveldripProfilePhotoPositionY", String(state.profilePhoto.positionY));
-    localStorage.setItem("traveldripProfilePhotoRotation", String(state.profilePhoto.rotation));
-    setProfilePhotoMessage("Profile photo settings saved. The avatar now appears across profile, chat, members, reactions, albums, journals, directories, invitations, feeds, and notifications where allowed.");
-    addAuditEntry("Profile photo saved", `Privacy: ${state.profilePhoto.privacy}. File: ${state.profilePhoto.pendingFileName || "default avatar"}.`);
-    await saveSyncedEvent("profile_photo_saved", {
-      hasPhoto: Boolean(state.profilePhoto.savedDataUrl),
-      privacy: state.profilePhoto.privacy,
-      optimizedPreview: true,
-      editor: {
-        cropShape: state.profilePhoto.cropShape,
-        zoom: state.profilePhoto.zoom,
-        positionX: state.profilePhoto.positionX,
-        positionY: state.profilePhoto.positionY,
-        rotation: state.profilePhoto.rotation
-      },
-      moderationStatus: "pending_if_uploaded"
-    });
-  });
+  $("#saveProfilePhotoButton")?.addEventListener("click", saveProfileMedia);
   $("#profileHeroSaveButton")?.addEventListener("click", () => {
     $("#saveProfilePhotoButton")?.click();
   });
   $("#cancelProfilePhotoButton")?.addEventListener("click", () => {
     state.profilePhoto.dataUrl = state.profilePhoto.savedDataUrl;
+    state.profilePhoto.pendingFile = null;
+    state.profileCover.dataUrl = state.profileCover.savedDataUrl;
+    state.profileCover.pendingFile = null;
     renderProfilePhoto();
+    renderProfileCover();
     setProfilePhotoMessage("Profile photo changes canceled. Your last saved avatar remains active.");
   });
   wireNavigationFallbacks();
@@ -8946,18 +9857,32 @@ function wireLocalInteractions() {
     const input = $("#chatInput");
     const text = input.value.trim();
     if (!text) return;
-    const conversation = $("#activeConversationName")?.textContent || "Trip chat";
-    appendMessage("You", text);
-    input.value = "";
-    addMessageNotification(conversation, "sent");
-    $("#messageStatus").textContent = "Order received. Message sent, user notifications queued, and realtime sync is active for this conversation.";
-    addAuditEntry("Message notification sent", `${conversation}: message notification queued for conversation members.`);
-    await saveSyncedEvent("message", { text, conversation });
-    await saveSyncedEvent("message_notification_sent", {
-      conversation,
-      delivery: ["in_app", "push_when_enabled"],
-      sensitiveContentHidden: true
-    });
+    if (!state.activeTripId || !state.chatData.selectedRoomId) {
+      $("#messageStatus").textContent = "Create or select a trip conversation before sending a message.";
+      return;
+    }
+    const submit = event.currentTarget.querySelector("button[type='submit']");
+    submit.disabled = true;
+    try {
+      await apiRequest("/api/chat", {
+        method: "POST",
+        body: JSON.stringify({ action: "send_message", tripId: state.activeTripId, roomId: state.chatData.selectedRoomId, text })
+      });
+      input.value = "";
+      await loadTripChatData();
+      $("#messageStatus").textContent = "Message saved to this trip conversation.";
+    } catch (error) {
+      $("#messageStatus").textContent = error.message || "The message could not be sent.";
+    } finally {
+      submit.disabled = false;
+    }
+  });
+
+  $("#conversationList")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-chat-room-id]");
+    if (!button) return;
+    state.chatData.selectedRoomId = button.dataset.chatRoomId;
+    renderTripChatData();
   });
 
   $$("[data-message-tab]").forEach((button) => {
@@ -9017,26 +9942,57 @@ function wireLocalInteractions() {
   $$("[data-chat-tool]").forEach((button) => {
     button.addEventListener("click", async () => {
       const tool = button.dataset.chatTool;
+      if (tool === "Poll") {
+        setVisibilityWithoutCssLeaks($("#chatPollForm"), true);
+        $("#chatPollQuestion")?.focus();
+        $("#messageStatus").textContent = "Create a poll with at least two comma-separated options.";
+        return;
+      }
       $("#messageStatus").textContent = `${tool} composer opened. Shared media, locations, polls, payment requests, and itinerary cards stay attached to this chat.`;
       await saveSyncedEvent("chat_tool_opened", { tool, conversation: $("#activeConversationName")?.textContent });
     });
   });
 
+  $("#cancelChatPollButton")?.addEventListener("click", () => setVisibilityWithoutCssLeaks($("#chatPollForm"), false));
+  $("#chatPollForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const question = $("#chatPollQuestion")?.value.trim();
+    const options = ($("#chatPollOptions")?.value || "").split(",").map((value) => value.trim()).filter(Boolean);
+    if (!state.activeTripId || options.length < 2) {
+      $("#messageStatus").textContent = "Add a poll question and at least two comma-separated options.";
+      return;
+    }
+    try {
+      await apiRequest("/api/chat", { method: "POST", body: JSON.stringify({ action: "create_poll", tripId: state.activeTripId, question, options }) });
+      event.currentTarget.reset();
+      setVisibilityWithoutCssLeaks(event.currentTarget, false);
+      await loadTripChatData();
+      $("#messageStatus").textContent = "Poll created and saved for this trip.";
+    } catch (error) {
+      $("#messageStatus").textContent = error.message || "The poll could not be created.";
+    }
+  });
+
+  $("#messages")?.addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-chat-poll-option-id]");
+    if (!button || !state.activeTripId) return;
+    button.disabled = true;
+    try {
+      await apiRequest("/api/chat", { method: "POST", body: JSON.stringify({ action: "vote", tripId: state.activeTripId, pollId: button.dataset.chatPollId, optionId: button.dataset.chatPollOptionId }) });
+      await loadTripChatData();
+      $("#messageStatus").textContent = "Your vote was saved. Voting again changes your selection rather than adding a duplicate.";
+    } catch (error) {
+      $("#messageStatus").textContent = error.message || "Your vote could not be saved.";
+      button.disabled = false;
+    }
+  });
+
   $("#messageAiButton")?.addEventListener("click", async () => {
-    appendMessage("AI Trip Manager", "Your group is meeting in the hotel lobby at 8:00 AM tomorrow. I only show payment or finance details you are allowed to see.");
-    $("#messageStatus").textContent = "AI Trip Manager answered inside chat with permission-aware trip context.";
-    await saveSyncedEvent("message_ai_assistant", { permissionAware: true });
+    $("#messageStatus").textContent = "AI chat is unavailable until the OpenAI provider key is configured. No generated answer was added.";
   });
 
   $("#newConversationButton")?.addEventListener("click", async () => {
-    $("#messageStatus").textContent = "New conversation flow opened. Choose trip members, friends, corporate teammates, organizers, hosts, vendors, or event staff based on permissions.";
-    await saveSyncedEvent("new_conversation_started", { source: "messages_hub" });
-  });
-
-  $("#simulateMessageNotificationButton")?.addEventListener("click", async () => {
-    $("#messageStatus").textContent = "Notification simulated: @mention in Miami 2027 opened the correct group chat and highlighted the message.";
-    addAuditEntry("Message notification routed", "Simulated @mention notification opened the correct conversation.");
-    await saveSyncedEvent("message_notification_routed", { type: "mention", conversation: "Miami 2027" });
+    await createFirstTripChat();
   });
 
   $$("[data-memory-like]").forEach((button) => {
@@ -9238,7 +10194,11 @@ function wireLocalInteractions() {
       $("#guestPortalCreateAccountButton")?.focus();
       return;
     }
-    const amount = $("#employeeFundAmount")?.value || "100";
+    const amount = $("#employeeFundAmount")?.value || "";
+    if (!Number.isFinite(Number(amount)) || Number(amount) < 10) {
+      setPortalText("#employeeWalletMessage", "Enter an amount of at least $10 before continuing to secure checkout.");
+      return;
+    }
     if ($("#fundAmount")) $("#fundAmount").value = amount;
     document.body.classList.remove("employee-portal-active", "auth-screen");
     if ($("#dashboardTripType")) $("#dashboardTripType").value = "corporate";
@@ -9251,7 +10211,12 @@ function wireLocalInteractions() {
       showWorkflowMessage("Employee wallet", "This event wallet is not accepting contributions yet. Ask the event administrator to activate its PCI-compliant payment provider.");
       return;
     }
-    if ($("#fundAmount")) $("#fundAmount").value = $("#linkedEmployeeFundAmount")?.value || "100";
+    const amount = $("#linkedEmployeeFundAmount")?.value || "";
+    if (!Number.isFinite(Number(amount)) || Number(amount) < 10) {
+      showWorkflowMessage("Employee wallet", "Enter an amount of at least $10 before continuing to secure checkout.");
+      return;
+    }
+    if ($("#fundAmount")) $("#fundAmount").value = amount;
     $("#fundsForm")?.requestSubmit();
   });
   $("#guestHelpButton")?.addEventListener("click", () => {
@@ -9317,7 +10282,7 @@ function wireLocalInteractions() {
       if ($("#corporateEmployeeInviteMessage")) $("#corporateEmployeeInviteMessage").textContent = error.message;
     }
   });
-  if ($("#enterAppButton")) $("#enterAppButton").hidden = !isFilePreview;
+  if ($("#enterAppButton")) $("#enterAppButton").hidden = true;
   $("#enterAppButton")?.addEventListener("click", enterAppPreview);
   $("#globalSearchInput")?.addEventListener("keydown", (event) => {
     if (event.key !== "Enter") return;
@@ -9498,9 +10463,54 @@ function wireLocalInteractions() {
     });
   });
   $("#continueOnboardingButton")?.addEventListener("click", () => {
-    $("#verificationPanel").hidden = true;
-    $("#authOnboardingPanel").hidden = false;
-    $("#authMessage").textContent = "Choose the first travel experience you want to create.";
+    setAuthMode("signin", true);
+    $("#authMessage").textContent = "After verifying your email, sign in to open your dashboard.";
+  });
+  $("#resendVerificationButton")?.addEventListener("click", resendVerificationEmail);
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-account-empty-action], [data-account-live-action]");
+    if (!button) return;
+    const action = button.dataset.accountEmptyAction || button.dataset.accountLiveAction;
+    if (action === "explore") {
+      navigateSafely("exploreDrops", { updateHistory: true });
+      return;
+    }
+    if (action === "upload-document") {
+      state.pendingDocumentType = "travel_document";
+      $("#tripDocumentInput")?.click();
+      return;
+    }
+    if (action === "upload-transport") {
+      state.pendingDocumentType = "transportation_ticket";
+      $("#transportTicketInput")?.click();
+      return;
+    }
+    if (action === "upload-receipt") {
+      state.pendingDocumentType = "restaurant_receipt";
+      $("#receiptPhotoInput")?.click();
+      return;
+    }
+    if (action === "upload-memory") {
+      $("#memoryPhotoInput")?.click();
+      return;
+    }
+    if (action === "open-wallet") {
+      showWorkflowMessage("Trip wallet", state.walletAccess.canContribute
+        ? "Enter an amount in Wallet to begin secure hosted checkout. A balance changes only after provider confirmation."
+        : "No payment provider is active for this wallet. No funds or balances have been created.");
+      return;
+    }
+    if (action === "start-chat") {
+      createFirstTripChat();
+      return;
+    }
+    if (action === "open-trip") {
+      navigateSafely("tripsPanel", { updateHistory: true });
+      return;
+    }
+    state.accountData.showCreation = true;
+    const type = action === "create-event" ? "special_event" : action === "create-cruise" ? "cruise" : "group";
+    openPlanningWorkflow(type);
   });
   $$("[data-onboarding-choice]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -9607,12 +10617,143 @@ function appendMessage(author, text) {
   message.scrollIntoView({ block: "nearest" });
 }
 
+function renderTripChatData() {
+  const rooms = state.chatData.rooms || [];
+  const selectedRoom = rooms.find((room) => room.id === state.chatData.selectedRoomId) || rooms[0] || null;
+  state.chatData.selectedRoomId = selectedRoom?.id || "";
+  const conversationList = $("#conversationList");
+  if (conversationList) {
+    conversationList.replaceChildren();
+    rooms.forEach((room) => {
+      const button = document.createElement("button");
+      button.className = `conversation-card${room.id === state.chatData.selectedRoomId ? " active" : ""}`;
+      button.type = "button";
+      button.dataset.chatRoomId = room.id;
+      const avatar = document.createElement("span");
+      avatar.className = "message-avatar";
+      avatar.textContent = initialsFromName(room.title);
+      const copy = document.createElement("span");
+      const title = document.createElement("strong");
+      title.textContent = room.title || "Trip chat";
+      const recent = [...(state.chatData.messages || [])].reverse().find((message) => message.room_id === room.id);
+      const preview = document.createElement("small");
+      preview.textContent = recent ? `${recent.senderName}: ${recent.body}` : "No messages yet";
+      copy.append(title, preview);
+      const status = document.createElement("em");
+      status.textContent = "Trip members";
+      button.append(avatar, copy, status);
+      conversationList.append(button);
+    });
+    if (!rooms.length) {
+      const empty = document.createElement("p");
+      empty.className = "small";
+      empty.textContent = "No conversations have been created for this trip.";
+      conversationList.append(empty);
+    }
+  }
+  if ($("#activeConversationName")) $("#activeConversationName").textContent = selectedRoom?.title || "No conversation selected";
+  if ($("#conversationTypeLabel")) $("#conversationTypeLabel").textContent = selectedRoom ? "Trip chat" : "Messages";
+  if ($("#conversationMeta")) $("#conversationMeta").textContent = selectedRoom ? "Private to active trip members" : "Create a conversation to begin";
+  if ($("#chatInput")) $("#chatInput").disabled = !selectedRoom;
+  const messages = $("#messages");
+  if (messages) {
+    messages.replaceChildren();
+    (state.chatData.messages || []).filter((message) => message.room_id === selectedRoom?.id).forEach((message) => appendMessage(message.senderName || "Trip member", message.body || ""));
+    (state.chatData.polls || []).forEach((poll) => {
+      const card = document.createElement("article");
+      card.className = "chat-poll-card";
+      const question = document.createElement("strong");
+      question.textContent = poll.question;
+      const options = document.createElement("div");
+      options.className = "chat-poll-options";
+      (poll.options || []).forEach((option) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.chatPollId = poll.id;
+        button.dataset.chatPollOptionId = option.id;
+        button.disabled = poll.status !== "open";
+        button.classList.toggle("selected", poll.selectedOptionId === option.id);
+        const label = document.createElement("span");
+        label.textContent = option.label;
+        const count = document.createElement("b");
+        count.textContent = String(option.votes || 0);
+        button.append(label, count);
+        options.append(button);
+      });
+      card.append(question, options);
+      messages.append(card);
+    });
+    if (!messages.children.length) {
+      const empty = document.createElement("p");
+      empty.className = "small";
+      empty.textContent = selectedRoom ? "No messages yet. Send the first message." : "Create a conversation to begin.";
+      messages.append(empty);
+    }
+  }
+  if ($("#typingIndicator")) $("#typingIndicator").textContent = "Messages persist to this trip after they are sent.";
+  setVisibilityWithoutCssLeaks($(".pinned-message"), false);
+  const detailTitle = $(".conversation-details-panel .chat-detail-card h3");
+  if (detailTitle) detailTitle.textContent = selectedRoom?.title || "Trip chat";
+  const memberList = $(".conversation-details-panel .chat-member-list");
+  if (memberList) memberList.innerHTML = "<span>Membership follows the active trip access list.</span>";
+  const dailyMemory = $("#dailyMemoryPanel");
+  if (dailyMemory?.closest("#socialHub")) setVisibilityWithoutCssLeaks(dailyMemory, false);
+}
+
+async function loadTripChatData() {
+  if (!state.session?.access_token || !state.activeTripId || isFilePreview) {
+    state.chatData = { loaded: true, rooms: [], messages: [], polls: [], selectedRoomId: "" };
+    renderTripChatData();
+    return state.chatData;
+  }
+  try {
+    const result = await apiRequest(`/api/chat?tripId=${encodeURIComponent(state.activeTripId)}`);
+    state.chatData = {
+      loaded: true,
+      rooms: result.rooms || [],
+      messages: result.messages || [],
+      polls: result.polls || [],
+      selectedRoomId: state.chatData.selectedRoomId || result.rooms?.[0]?.id || ""
+    };
+    state.accountData.counts.rooms = state.chatData.rooms.length;
+    state.accountData.counts.messages = state.chatData.messages.length;
+    state.accountData.counts.polls = state.chatData.polls.length;
+    state.accountData.moduleData.socialHub = Boolean(state.chatData.rooms.length || state.chatData.messages.length || state.chatData.polls.length);
+    renderTripChatData();
+    renderLiveAccountDashboard();
+    return state.chatData;
+  } catch (error) {
+    state.chatData = { loaded: true, rooms: [], messages: [], polls: [], selectedRoomId: "" };
+    renderTripChatData();
+    if ($("#messageStatus")) $("#messageStatus").textContent = error.message || "Messages could not be loaded.";
+    return state.chatData;
+  }
+}
+
+async function createFirstTripChat() {
+  if (!state.activeTripId) {
+    showWorkflowMessage("Trip chat", "Create or join a trip before starting a conversation.");
+    return;
+  }
+  try {
+    const title = `${state.accountData.activeTrip?.title || "Trip"} chat`;
+    const result = await apiRequest("/api/chat", { method: "POST", body: JSON.stringify({ action: "create_room", tripId: state.activeTripId, title }) });
+    state.chatData.selectedRoomId = result.room?.id || "";
+    await loadTripChatData();
+    renderAccountState("socialHub");
+    navigateSafely("socialHub", { updateHistory: true });
+    if ($("#messageStatus")) $("#messageStatus").textContent = result.existing ? "Your trip conversation is open." : "Trip conversation created. Messages are private to active members.";
+  } catch (error) {
+    showWorkflowMessage("Trip chat", error.message || "The conversation could not be created.");
+  }
+}
+
 function initialsFromName(name) {
   const parts = String(name || "")
     .trim()
     .split(/\s+/)
     .filter(Boolean);
-  if (!parts.length) return "JS";
+  if (!parts.length) return "TD";
   return parts.slice(0, 2).map((part) => part[0]?.toUpperCase()).join("");
 }
 
@@ -9676,10 +10817,9 @@ function handleProfileCoverFile(file) {
   const reader = new FileReader();
   reader.addEventListener("load", () => {
     state.profileCover.dataUrl = String(reader.result || "");
-    state.profileCover.savedDataUrl = state.profileCover.dataUrl;
-    localStorage.setItem("traveldripProfileCover", state.profileCover.savedDataUrl);
+    state.profileCover.pendingFile = file;
     renderProfileCover();
-    setProfilePhotoMessage(`${file.name} is now your profile cover photo.`);
+    setProfilePhotoMessage(`${file.name} is ready. Save changes to upload it securely.`);
     addAuditEntry("Profile cover updated", `${file.name} validated for type, size, and profile cover preview.`);
   });
   reader.addEventListener("error", () => {
@@ -9704,6 +10844,7 @@ function handleProfilePhotoFile(file, source = "upload") {
   reader.addEventListener("load", () => {
     state.profilePhoto.dataUrl = String(reader.result || "");
     state.profilePhoto.pendingFileName = file.name;
+    state.profilePhoto.pendingFile = file;
     renderProfilePhoto();
     setProfilePhotoMessage(`${source} preview ready. Crop, reposition, rotate, choose privacy, then save changes.`);
     addAuditEntry("Profile photo previewed", `${file.name} validated for type, size, preview, and moderation-ready upload.`);
@@ -9712,6 +10853,79 @@ function handleProfilePhotoFile(file, source = "upload") {
     setProfilePhotoMessage("Unable to preview that image. Try another JPG, PNG, HEIC, or WEBP file.");
   });
   reader.readAsDataURL(file);
+}
+
+async function uploadProfileAsset(file, kind) {
+  if (!file || !state.supabase || !state.session?.user) return "";
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/-+/g, "-");
+  const uniqueId = typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const storagePath = `${state.session.user.id}/${kind}/${uniqueId}-${safeName}`;
+  const { error } = await state.supabase.storage
+    .from("profile-photos")
+    .upload(storagePath, file, { cacheControl: "3600", contentType: file.type, upsert: false });
+  if (error) throw error;
+  return storagePath;
+}
+
+async function saveProfileMedia() {
+  if (!state.supabase || !state.session?.user) {
+    setProfilePhotoMessage("Sign in before saving profile images.");
+    return;
+  }
+  const saveButton = $("#saveProfilePhotoButton");
+  if (saveButton) saveButton.disabled = true;
+  setProfilePhotoMessage("Saving profile images securely...");
+  try {
+    const oldPhotoPath = state.profilePhoto.storagePath;
+    const oldCoverPath = state.profileCover.storagePath;
+    if (state.profilePhoto.pendingFile) {
+      state.profilePhoto.storagePath = await uploadProfileAsset(state.profilePhoto.pendingFile, "avatar");
+    } else if (!state.profilePhoto.dataUrl) {
+      state.profilePhoto.storagePath = "";
+    }
+    if (state.profileCover.pendingFile) {
+      state.profileCover.storagePath = await uploadProfileAsset(state.profileCover.pendingFile, "cover");
+    } else if (!state.profileCover.dataUrl || /^https?:/.test(state.profileCover.dataUrl)) {
+      state.profileCover.storagePath = "";
+    }
+    const avatarMetadata = {
+      ...state.profileMetadata,
+      editor: {
+        cropShape: state.profilePhoto.cropShape,
+        zoom: state.profilePhoto.zoom,
+        positionX: state.profilePhoto.positionX,
+        positionY: state.profilePhoto.positionY,
+        rotation: state.profilePhoto.rotation
+      },
+      coverStoragePath: state.profileCover.storagePath || null,
+      coverUrl: !state.profileCover.storagePath && /^https?:/.test(state.profileCover.dataUrl) ? state.profileCover.dataUrl : null
+    };
+    const { error } = await state.supabase.from("profiles").update({
+      avatar_storage_path: state.profilePhoto.storagePath || null,
+      avatar_visibility: state.profilePhoto.privacy,
+      avatar_source: state.profilePhoto.storagePath ? "user_upload" : "default_initials",
+      avatar_moderation_status: state.profilePhoto.storagePath ? "pending" : "not_required",
+      avatar_metadata: avatarMetadata
+    }).eq("id", state.session.user.id);
+    if (error) throw error;
+    state.profileMetadata = avatarMetadata;
+    const stalePaths = [
+      oldPhotoPath && oldPhotoPath !== state.profilePhoto.storagePath ? oldPhotoPath : "",
+      oldCoverPath && oldCoverPath !== state.profileCover.storagePath ? oldCoverPath : ""
+    ].filter(Boolean);
+    if (stalePaths.length) await state.supabase.storage.from("profile-photos").remove(stalePaths).catch(() => {});
+    state.profilePhoto.pendingFile = null;
+    state.profileCover.pendingFile = null;
+    state.profilePhoto.savedDataUrl = state.profilePhoto.dataUrl;
+    state.profileCover.savedDataUrl = state.profileCover.dataUrl;
+    setProfilePhotoMessage("Profile images and privacy settings were saved to your account.");
+    addAuditEntry("Profile images saved", `Privacy: ${state.profilePhoto.privacy}.`);
+    await loadProfileDetails();
+  } catch (error) {
+    setProfilePhotoMessage(`Profile images could not be saved: ${error.message}`);
+  } finally {
+    if (saveButton) saveButton.disabled = false;
+  }
 }
 
 function addAuditEntry(title, detail) {
@@ -10044,13 +11258,14 @@ function wireNavigationFallbacks() {
 }
 
 async function saveSyncedEvent(type, payload) {
-  if (!state.supabase || !state.session) return;
-  await state.supabase.from("trip_events").insert({
-    trip_id: "dubai-weekend",
+  if (!state.supabase || !state.session || !state.activeTripId) return;
+  const { error } = await state.supabase.from("trip_events").insert({
+    trip_id: state.activeTripId,
     event_type: type,
     payload,
     user_id: state.session.user.id
   });
+  if (error) console.warn("Travel-Drip event sync failed", error.message);
   const crmEventTypes = new Set([
     "guided_trip_created",
     "trip_invitations_sent",
@@ -10080,14 +11295,21 @@ async function saveSyncedEvent(type, payload) {
 function subscribeToLiveData() {
   if (!state.supabase || !state.session) return;
   const userId = state.session.user.id;
-  if (!window.tripChannel) {
+  const tripId = state.activeTripId;
+  if (window.tripChannel && window.tripChannelTripId !== tripId) {
+    state.supabase.removeChannel(window.tripChannel);
+    window.tripChannel = null;
+    window.tripChannelTripId = "";
+  }
+  if (tripId && !window.tripChannel) {
+    window.tripChannelTripId = tripId;
     window.tripChannel = state.supabase
-      .channel("trip_events:dubai-weekend")
+      .channel(`trip_events:${tripId}`)
       .on("postgres_changes", {
         event: "INSERT",
         schema: "public",
         table: "trip_events",
-        filter: "trip_id=eq.dubai-weekend"
+        filter: `trip_id=eq.${tripId}`
       }, ({ new: event }) => {
         if (event.user_id === state.session.user.id) return;
         if (event.event_type === "message") {
@@ -10287,6 +11509,7 @@ async function init() {
   await loadProfileDetails();
   await loadTrustedContacts();
   updateAuthUi();
+  await handlePendingInvitation();
   subscribeToLiveData();
   hideLoader();
 }

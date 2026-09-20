@@ -11,7 +11,7 @@ This is an open beta by default: anyone who can reach the Render URL can create 
 1. In Render, create a Blueprint from the `jordanbraylin/Travel-drip` GitHub repository.
 2. Confirm the service root is the directory containing `render.yaml`, `package.json`, and `index.html` (the committed app root).
 3. Add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and the Stripe test publishable key as `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` to the Render service. The build creates `public-config.js` from these values; do not paste a service-role key or Stripe secret key into Render's public build variables or any browser file.
-4. Run `supabase.sql`, `supabase-backend.sql`, and `supabase-event-planning.sql` in the Supabase SQL editor. Then run `supabase-corporate-booking.sql`, `supabase-beta.sql`, and `supabase-ownership-transfer.sql` to create corporate booking operations, the profile metadata trigger, protected trusted-contact table, and atomic owner-transfer function.
+4. Run `supabase.sql`, `supabase-backend.sql`, and `supabase-event-planning.sql` in the Supabase SQL editor. Then run `supabase-corporate-booking.sql`, `supabase-beta.sql`, `supabase-ownership-transfer.sql`, and `supabase-auth-registration.sql` to create corporate booking operations, protected profile data, atomic owner transfer, verified-email registration, and case-insensitive unique usernames.
 5. In Supabase Auth URL Configuration, add the Render URL, `/login`, and `/register` as allowed redirect URLs.
 6. After the first deploy, install the beta from the browser and test sign-up, email verification, sign-in, profile save, trusted-contact create/remove, sign-out, and a fresh browser session.
 

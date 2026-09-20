@@ -1,22 +1,22 @@
 {
-  "generatedAt": "2026-09-19T14:30:50.809Z",
+  "generatedAt": "2026-09-20T04:52:52.786Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
   },
   "totals": {
-    "screenIds": 821,
-    "buttons": 768,
+    "screenIds": 881,
+    "buttons": 762,
     "hrefLinks": 15,
-    "dataTargets": 99,
+    "dataTargets": 100,
     "uniqueDataTargets": 18,
     "mainNavigationControls": 38,
     "mainNavigationItems": 12,
     "routeDefinitions": 20,
     "dateInputs": 13,
     "searchInputs": 12,
-    "actionAttributeTypes": 99,
-    "apiRoutes": 23
+    "actionAttributeTypes": 98,
+    "apiRoutes": 24
   },
   "linkAndRouteVerification": {
     "workingLocalTargets": 18,
@@ -103,6 +103,8 @@
       "dashboardWidgets"
     ],
     "markedIds": [
+      "accountEmptyDashboard",
+      "accountLiveDashboard",
       "corporateHome",
       "dashboardHome",
       "dashboardWidgets"
@@ -148,7 +150,7 @@
     "status": "PASS"
   },
   "travelDocumentsVerification": {
-    "cardCount": 4,
+    "cardCount": 1,
     "requiredClasses": [
       "travel-documents-section",
       "travel-documents-grid",
@@ -468,37 +470,37 @@
         "id": "eventDateInput",
         "type": "date",
         "referencedInApp": true,
-        "hasDefaultValue": true
+        "hasDefaultValue": false
       },
       {
         "id": "eventRsvpInput",
         "type": "date",
         "referencedInApp": true,
-        "hasDefaultValue": true
+        "hasDefaultValue": false
       },
       {
         "id": "tripStartInput",
         "type": "date",
         "referencedInApp": true,
-        "hasDefaultValue": true
+        "hasDefaultValue": false
       },
       {
         "id": "tripEndInput",
         "type": "date",
         "referencedInApp": true,
-        "hasDefaultValue": true
+        "hasDefaultValue": false
       },
       {
         "id": "eventRsvpDeadlineInput",
         "type": "date",
         "referencedInApp": true,
-        "hasDefaultValue": true
+        "hasDefaultValue": false
       },
       {
         "id": "inviteDeadlineInput",
         "type": "date",
         "referencedInApp": true,
-        "hasDefaultValue": true
+        "hasDefaultValue": false
       },
       {
         "id": "corporateBookingStartsAt",
@@ -522,25 +524,25 @@
         "id": "flightTrackingDate",
         "type": "date",
         "referencedInApp": true,
-        "hasDefaultValue": true
+        "hasDefaultValue": false
       },
       {
         "id": "flightDepartureDateInput",
         "type": "date",
         "referencedInApp": true,
-        "hasDefaultValue": true
+        "hasDefaultValue": false
       },
       {
         "id": "hotelLiveCheckIn",
         "type": "date",
         "referencedInApp": true,
-        "hasDefaultValue": true
+        "hasDefaultValue": false
       },
       {
         "id": "hotelLiveCheckOut",
         "type": "date",
         "referencedInApp": true,
-        "hasDefaultValue": true
+        "hasDefaultValue": false
       }
     ],
     "ranges": [
@@ -662,6 +664,7 @@
       "ai-invitation.js",
       "ai-planner.js",
       "audit.js",
+      "chat.js",
       "config.js",
       "corporate-bookings.js",
       "events.js",

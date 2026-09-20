@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Travel-Drip">
-    <link rel="stylesheet" href="styles.css?v=118">
+    <link rel="stylesheet" href="styles.css?v=119">
   <link rel="stylesheet" href="navigation.css?v=90">
   <title>Travel-Drip</title>
 </head>
@@ -222,8 +222,8 @@
             </form>
             <form class="auth-form" id="signupForm" hidden>
               <label>Full name<input id="signupNameInput" type="text" autocomplete="name" placeholder="Jordan Taylor" required></label>
-              <label>Username<input id="signupUsernameInput" type="text" autocomplete="username" placeholder="jordangoes" required minlength="3" maxlength="24" pattern="[A-Za-z0-9_]+"></label>
-              <label>Email address<input id="signupEmailInput" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+              <label>Username<input id="signupUsernameInput" type="text" autocomplete="username" placeholder="jordangoes" required minlength="3" maxlength="24" pattern="[A-Za-z0-9_]+" aria-describedby="signupUsernameStatus"><small class="auth-field-status" id="signupUsernameStatus" role="status" aria-live="polite">Use 3-24 letters, numbers, or underscores. Usernames are unique.</small></label>
+              <label>Email address<input id="signupEmailInput" type="email" autocomplete="email" placeholder="you@example.com" required aria-describedby="signupEmailHelp"><small class="auth-field-status" id="signupEmailHelp">One account per email. You must verify this address before signing in.</small></label>
               <label>Password
                 <span class="password-field"><input id="signupPasswordInput" type="password" autocomplete="new-password" placeholder="Create a password" required minlength="6"><button type="button" data-password-toggle="signupPasswordInput">Show</button></span>
               </label>
@@ -316,13 +316,13 @@
                   <article><span>Personal funds added</span><strong id="employeePersonalFunds">$0.00</strong><small>Only your contributions are visible to you.</small></article>
                 </div>
                 <div class="employee-wallet-actions">
-                  <label>Add amount<input id="employeeFundAmount" type="number" min="10" max="5000" step="10" value="100" inputmode="decimal"></label>
+                  <label>Add amount<input id="employeeFundAmount" type="number" min="10" max="5000" step="10" inputmode="decimal" placeholder="0"></label>
                   <button class="primary-button" type="button" id="employeeAddFundsButton">Add personal funds</button>
                 </div>
                 <section class="employee-bill-splitter" aria-labelledby="employeeBillSplitTitle">
                   <div><span>Bill splitter</span><h3 id="employeeBillSplitTitle">Split a meal or rideshare</h3></div>
-                  <label>Total<input id="employeeBillTotal" type="number" min="0" step="0.01" value="120"></label>
-                  <label>People<input id="employeeBillPeople" type="number" min="1" max="50" step="1" value="4"></label>
+                  <label>Total<input id="employeeBillTotal" type="number" min="0" step="0.01" value="0"></label>
+                  <label>People<input id="employeeBillPeople" type="number" min="1" max="50" step="1" value="1"></label>
                   <strong id="employeeBillEach">$30.00 each</strong>
                 </section>
                 <p class="small" id="employeeWalletMessage">Financial checkout requires a verified, linked account and the configured PCI-compliant payment provider.</p>
@@ -339,9 +339,12 @@
               </div>
             </section>
             <section class="verification-panel" id="verificationPanel" hidden>
-              <strong>Email verification sent</strong>
-              <span>Check your inbox, verify your email, then continue to onboarding.</span>
-              <button class="ghost-button" type="button" id="continueOnboardingButton">Continue to onboarding</button>
+              <strong>Welcome to TravelDrip!</strong>
+              <span>Please verify your email address to activate your account. We've sent a verification link to your email. Once verified, you can log in and start planning your next adventure!</span>
+              <div class="verification-actions">
+                <button class="ghost-button" type="button" id="resendVerificationButton">Resend Verification Email</button>
+                <button class="ghost-button" type="button" id="continueOnboardingButton">Return to Login</button>
+              </div>
             </section>
             <section class="onboarding-panel" id="authOnboardingPanel" hidden>
               <strong>What type of travel experience do you want to create?</strong>
@@ -384,9 +387,9 @@
       <section class="hero destination-banner" id="dashboardHome" data-dashboard-only aria-label="Rotating featured destinations">
         <img id="livePlanPhoto" src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1600&auto=format&fit=crop" alt="Dubai skyline at sunset">
         <div class="hero-copy">
-          <p class="eyebrow" id="livePlanLocation">Live group plan • United Arab Emirates</p>
-          <h1 id="livePlanTitle">Dubai long weekend</h1>
-          <p id="livePlanDescription">Rooftop dinners, desert rides, beach clubs, and a shared wallet that keeps everyone even.</p>
+          <p class="eyebrow" id="livePlanLocation">Featured destination • United Arab Emirates</p>
+          <h1 id="livePlanTitle">Discover Dubai</h1>
+          <p id="livePlanDescription">Browse public inspiration for rooftop dining, desert experiences, beaches, and cultural stops.</p>
           <p class="auth-confirmation-banner" id="authConfirmationMessage" role="status" aria-live="polite" hidden></p>
           <div class="destination-banner-meta">
             <span id="livePlanFunFact">Fun fact: Dubai is home to the Burj Khalifa, famous worldwide for its record-setting height.</span>
@@ -408,6 +411,39 @@
         </div>
         <button class="icon-button glass" type="button" id="destinationPauseButton" aria-label="Pause destination slideshow" title="Pause slideshow" aria-pressed="false">Ⅱ</button>
         <div class="destination-banner-dots" id="destinationDots" aria-label="Featured destination slides"></div>
+      </section>
+
+      <section class="account-empty-dashboard" id="accountEmptyDashboard" data-dashboard-only hidden aria-labelledby="accountEmptyDashboardTitle">
+        <div>
+          <p class="eyebrow">Welcome to Travel-Drip</p>
+          <h2 id="accountEmptyDashboardTitle">Your travel story starts here</h2>
+          <p>Your private dashboard is empty. Create your first trip, search live destinations, or browse public travel inspiration. Nothing is added to your account until you save it.</p>
+        </div>
+        <div class="account-empty-actions">
+          <button class="primary-button" type="button" data-account-empty-action="create-trip">Create your first trip</button>
+          <button class="ghost-button" type="button" data-account-empty-action="explore">Search destinations</button>
+        </div>
+        <p class="small" id="accountDataStatus" role="status" aria-live="polite">No private trips, conversations, bookings, wallet activity, memories, or company events are attached to this account yet.</p>
+      </section>
+
+      <section class="account-live-dashboard" id="accountLiveDashboard" data-dashboard-only hidden aria-labelledby="accountLiveDashboardTitle">
+        <div class="account-live-trip">
+          <p class="eyebrow">Your active trip</p>
+          <h2 id="accountLiveDashboardTitle">Trip</h2>
+          <p id="accountLiveTripMeta">Destination and dates not added yet.</p>
+          <div class="account-empty-actions">
+            <button class="primary-button" type="button" data-target="tripsPanel">Open trip</button>
+            <button class="ghost-button" type="button" data-target="rideShareHub">Add travel</button>
+            <button class="ghost-button" type="button" data-target="socialHub">Open chat</button>
+          </div>
+        </div>
+        <div class="account-live-counts" aria-label="Saved account records">
+          <article><span>Travel records</span><strong id="accountTravelRecordCount">0</strong><small>Flights, stays, and transportation</small></article>
+          <article><span>Itinerary items</span><strong id="accountItineraryCount">0</strong><small>Only saved trip plans</small></article>
+          <article><span>Messages</span><strong id="accountMessageCount">0</strong><small>Private to trip members</small></article>
+          <article><span>Uploads</span><strong id="accountUploadCount">0</strong><small>Documents and memories</small></article>
+        </div>
+        <p class="small" id="accountLiveDataStatus" role="status" aria-live="polite">Loading your saved trip data...</p>
       </section>
 
       <nav class="trip-tab-bar" aria-label="Selected trip sections">
@@ -809,14 +845,14 @@
                 <button class="ghost-button" type="button" data-event-dashboard-action="Save Draft">Save Draft</button>
               </div>
               <div class="event-create-grid">
-                <label>Event name<input id="eventNameInput" type="text" value="Maya's rooftop birthday"></label>
+                <label>Event name<input id="eventNameInput" type="text" placeholder="Name your event"></label>
                 <label>Event type<select id="eventTypeInput"><option value="birthday">Birthday</option><option value="wedding">Wedding</option><option value="anniversary">Anniversary</option><option value="family_reunion">Family Reunion</option><option value="bachelor_bachelorette">Bachelor or Bachelorette</option><option value="corporate_retreat">Corporate Retreat</option><option value="conference">Conference</option><option value="graduation_trip">Graduation Trip</option><option value="church_retreat">Church Retreat</option><option value="special_event">Special Event</option></select></label>
-                <label>Date<input id="eventDateInput" type="date" value="2026-08-12"></label>
-                <label>Start time<input id="eventStartTimeInput" type="time" value="19:30"></label>
-                <label>End time<input id="eventEndTimeInput" type="time" value="23:00"></label>
-                <label>Venue<input id="eventVenueInput" type="text" value="Skyline Rooftop"></label>
-                <label class="wide">Address<input id="eventAddressInput" type="text" value="Miami, FL"></label>
-                <label>RSVP deadline<input id="eventRsvpInput" type="date" value="2026-08-01"></label>
+                <label>Date<input id="eventDateInput" type="date"></label>
+                <label>Start time<input id="eventStartTimeInput" type="time"></label>
+                <label>End time<input id="eventEndTimeInput" type="time"></label>
+                <label>Venue<input id="eventVenueInput" type="text" placeholder="Venue name"></label>
+                <label class="wide">Address<input id="eventAddressInput" type="text" placeholder="Venue address"></label>
+                <label>RSVP deadline<input id="eventRsvpInput" type="date"></label>
                 <label>Privacy<select><option>Invite only</option><option>Approval required</option><option>Public invitation link</option><option>Private</option></select></label>
                 <label class="wide">Description<textarea id="eventDescriptionInput">Celebrate with dinner, music, photos, memories, RSVP tracking, guest updates, and shared event expenses.</textarea></label>
               </div>
@@ -833,7 +869,7 @@
                 <div class="event-invite-form-grid">
                   <label>Event type<select id="eventInviteEventType"><option value="birthday">Birthday</option><option value="wedding">Wedding</option><option value="anniversary">Anniversary</option><option value="family_reunion">Family Reunion</option><option value="bachelor_bachelorette">Bachelor or Bachelorette</option><option value="corporate_retreat">Corporate Retreat</option><option value="conference">Conference</option><option value="graduation_trip">Graduation Trip</option><option value="church_retreat">Church Retreat</option><option value="special_event">Special Event</option></select></label>
                   <label>Tone<select id="eventInviteTone"><option value="warm">Warm</option><option value="playful">Playful</option><option value="elegant">Elegant</option><option value="professional">Professional</option><option value="casual">Casual</option></select></label>
-                  <label class="wide">Audience<input id="eventInviteAudience" type="text" value="friends and family" placeholder="friends, family, coworkers"></label>
+                  <label class="wide">Audience<input id="eventInviteAudience" type="text" placeholder="friends, family, coworkers"></label>
                   <label class="wide">Extra details<textarea id="eventInviteDetails" rows="3" placeholder="Dress code, meal notes, parking, or a personal message"></textarea></label>
                 </div>
                 <div class="event-invite-actions">
@@ -945,7 +981,7 @@
               <div class="section-heading compact">
                 <div>
                   <p class="eyebrow">Generated Plan</p>
-                  <h3 id="aiTripTitle">Miami group weekend draft</h3>
+                  <h3 id="aiTripTitle">Your generated trip plan</h3>
                   <p id="aiTripSummary">Answer a few prompts to personalize the destination, budget, travel dates, dining, transportation, accessibility needs, and itinerary pace.</p>
                 </div>
                 <span class="compliance-badge" id="aiPlannerEstimateBadge">Estimates only</span>
@@ -996,8 +1032,8 @@
               <button class="ghost-button" type="button" id="exploreBackButton" hidden>Back to results</button>
             </div>
             <div class="explore-context-grid">
-              <label>Destination<input id="exploreDestinationInput" type="text" value="Miami"></label>
-              <label>Dates<input id="exploreDatesInput" type="text" value="Aug 8 - Aug 11"></label>
+              <label>Destination<input id="exploreDestinationInput" type="text" placeholder="City or destination"></label>
+              <label>Dates<input id="exploreDatesInput" type="text" placeholder="Add travel dates"></label>
               <label>Budget<select id="exploreBudgetFilter"><option value="any">Any budget</option><option value="25">Under $25</option><option value="50">$25-$50</option><option value="100">$50-$100</option><option value="900">Under $900</option></select></label>
               <label>Trip type<select id="exploreTripTypeFilter"><option value="group">Group Trip</option><option value="solo">Solo Trip</option><option value="corporate">Corporate Retreat</option></select></label>
             </div>
@@ -1027,7 +1063,7 @@
             </div>
             <div class="explore-subfilters" id="exploreSubfilters" aria-label="Explore filters"></div>
             <div class="explore-results-toolbar">
-              <span id="exploreResultsSummary">Trending results for Miami group travel</span>
+              <span id="exploreResultsSummary">Public travel inspiration</span>
               <div class="button-row no-margin">
                 <button class="primary-button" type="button" id="exploreLiveSearchButton">Search live sources</button>
                 <button class="ghost-button" type="button" id="exploreRetryButton" hidden>Retry</button>
@@ -1116,21 +1152,21 @@
                 <span>Step 2</span>
                 <h3 id="tripDetailsTitle">Solo trip details</h3>
                 <form class="trip-creation-form" id="tripCreationForm">
-                  <label>Event name<input id="tripNameInput" type="text" value="Tokyo solo food sprint"></label>
-                  <label class="wide">Event description<textarea id="eventDescriptionInput">A tailored Travel-Drip event with invitations, schedule, travel, wallet, messages, media, and notifications.</textarea></label>
-                  <label>Destination<input id="tripDestinationInput" type="text" value="Tokyo, Japan"></label>
-                  <label>Start date<input id="tripStartInput" type="date" value="2026-08-08"></label>
-                  <label>End date<input id="tripEndInput" type="date" value="2026-08-13"></label>
-                  <label>Host or organizer<input id="eventHostInput" type="text" value="Jordan Smith"></label>
+                  <label>Event name<input id="tripNameInput" type="text" placeholder="Name your trip or event"></label>
+                  <label class="wide">Event description<textarea id="eventDescriptionInput" placeholder="Describe the trip or event"></textarea></label>
+                  <label>Destination<input id="tripDestinationInput" type="text" placeholder="City or destination"></label>
+                  <label>Start date<input id="tripStartInput" type="date"></label>
+                  <label>End date<input id="tripEndInput" type="date"></label>
+                  <label>Host or organizer<input id="eventHostInput" type="text" placeholder="Organizer name"></label>
                   <label id="travelerCountField" hidden>Number of travelers<input id="tripTravelersInput" type="number" min="1" value="1"></label>
-                  <label>Guest count<input id="eventGuestCountInput" type="number" min="1" value="24"></label>
-                  <label>Budget<input id="tripBudgetInput" type="number" min="0" value="2000"></label>
+                  <label>Guest count<input id="eventGuestCountInput" type="number" min="1" value="1"></label>
+                  <label>Budget<input id="tripBudgetInput" type="number" min="0" placeholder="0"></label>
                   <label>Currency<select id="eventCurrencyInput"><option value="USD">USD</option><option value="CAD">CAD</option><option value="EUR">EUR</option><option value="GBP">GBP</option></select></label>
                   <label>Travel style<select id="tripStyleInput"><option>Food and culture</option><option>Relaxed luxury</option><option>Adventure</option><option>Business efficient</option></select></label>
-                  <label>Interests<input id="tripInterestsInput" type="text" value="Ramen, museums, safe evening routes"></label>
+                  <label>Interests<input id="tripInterestsInput" type="text" placeholder="Food, museums, outdoors"></label>
                   <label>Cover photo<input id="tripCoverInput" type="file" accept="image/*"></label>
                   <label>Privacy<select id="eventPrivacyInput"><option value="invite_only">Invite only</option><option value="approval_required">Approval required</option><option value="private">Private</option><option value="public_link">Public invite link</option></select></label>
-                  <label>RSVP deadline<input id="eventRsvpDeadlineInput" type="date" value="2026-07-30"></label>
+                  <label>RSVP deadline<input id="eventRsvpDeadlineInput" type="date"></label>
                   <label>Event status<select id="eventStatusInput"><option value="draft">Draft</option><option value="active">Active</option></select></label>
                   <div class="event-requirements wide" aria-label="Event requirements">
                     <label><input id="eventTravelRequiredInput" type="checkbox" checked> Travel required</label>
@@ -1166,23 +1202,23 @@
                 <div class="invitation-builder-grid">
                   <section class="invite-card invitation-preview-card">
                     <span class="invite-template-badge" id="inviteTemplateBadge">Solo itinerary share</span>
-                    <h3 id="invitePreviewTitle">Tokyo solo food sprint</h3>
-                    <p id="invitePreviewMessage">You're invited to follow my Tokyo itinerary, check in on key travel updates, and stay connected while I explore.</p>
+                    <h3 id="invitePreviewTitle">Your invitation preview</h3>
+                    <p id="invitePreviewMessage">Add trip details and a message to preview the invitation.</p>
                     <div class="invite-preview-meta">
-                      <span id="invitePreviewDestination">Tokyo, Japan</span>
-                      <span id="invitePreviewDates">Aug 8 - Aug 13, 2026</span>
+                      <span id="invitePreviewDestination">Destination</span>
+                      <span id="invitePreviewDates">Dates not added</span>
                       <span id="invitePreviewType">Solo Trip</span>
                     </div>
                   </section>
                   <section class="invite-card">
                     <h3>Customize invitation</h3>
                     <div class="invitation-form-grid">
-                      <label>Custom title<input id="inviteTitleInput" type="text" value="You're invited to my Tokyo solo food sprint"></label>
-                      <label>RSVP deadline<input id="inviteDeadlineInput" type="date" value="2026-07-30"></label>
+                      <label>Custom title<input id="inviteTitleInput" type="text" placeholder="Invitation title"></label>
+                      <label>RSVP deadline<input id="inviteDeadlineInput" type="date"></label>
                       <label>Theme color<select id="inviteThemeInput"><option>Ocean blue</option><option>Sunset orange</option><option>Sand beige</option><option>Corporate navy</option></select></label>
                       <label id="companyLogoField" hidden>Company logo<input id="companyLogoInput" type="file" accept="image/*"></label>
-                      <label class="wide">Welcome message<textarea id="inviteMessageInput">You're invited to join the trip plan, view key details, and RSVP in Travel-Drip.</textarea></label>
-                      <label class="wide">Personal note<textarea id="inviteNoteInput">I would love for you to be part of this travel experience.</textarea></label>
+                      <label class="wide">Welcome message<textarea id="inviteMessageInput" placeholder="Write a welcome message"></textarea></label>
+                      <label class="wide">Personal note<textarea id="inviteNoteInput" placeholder="Add an optional personal note"></textarea></label>
                     </div>
                     <button class="ghost-button" type="button" id="aiInviteCopyButton">AI write invitation</button>
                   </section>
@@ -1190,8 +1226,14 @@
                 <div class="invitation-options-grid">
                   <section>
                     <h3>Recipients</h3>
-                    <div class="solo-tag-list" id="inviteRecipientList">
-                      <span>Trusted family</span><span>Emergency contact</span><span>Invite someone later</span>
+                    <div class="invitation-form-grid invitation-recipient-fields">
+                      <label>Email address<input id="inviteRecipientEmail" type="email" autocomplete="email" placeholder="traveler@example.com"></label>
+                      <label>Or Travel-Drip username<input id="inviteRecipientUsername" type="text" autocomplete="off" placeholder="@username"></label>
+                    </div>
+                    <div class="invite-share-output" id="inviteShareOutput" hidden>
+                      <label>Shareable invitation link<input id="inviteShareLink" type="url" readonly></label>
+                      <div id="inviteQrCode" aria-label="Invitation QR code"></div>
+                      <button class="ghost-button" type="button" id="copyInviteLinkButton">Copy link</button>
                     </div>
                   </section>
                   <section>
@@ -1545,6 +1587,11 @@
                     <input id="chatInput" placeholder="Message the group" aria-label="Message the group">
                     <button type="submit" aria-label="Send">Send</button>
                   </form>
+                  <form class="chat-poll-form" id="chatPollForm" hidden>
+                    <label>Poll question<input id="chatPollQuestion" type="text" maxlength="240" placeholder="What should the group decide?" required></label>
+                    <label>Options<input id="chatPollOptions" type="text" maxlength="600" placeholder="Option one, Option two" required></label>
+                    <div class="mini-action-row"><button class="primary-button" type="submit">Create poll</button><button class="ghost-button" type="button" id="cancelChatPollButton">Cancel</button></div>
+                  </form>
                   <div class="typing-indicator" id="typingIndicator">Maya is typing • read receipts on</div>
                 </section>
                 <aside class="conversation-details-panel" aria-label="Conversation details">
@@ -1603,9 +1650,7 @@
                 <article>
                   <span>Notifications</span>
                   <strong>Mentions, private messages, polls, pinned announcements, payment requests, rides, and reservation reminders open the right chat.</strong>
-                  <div class="mini-action-row">
-                    <button type="button" id="simulateMessageNotificationButton">Simulate notification</button>
-                  </div>
+                  <div class="mini-action-row"><span class="small">Use Notify in the header after browser push keys are configured.</span></div>
                 </article>
               </div>
               <p class="small" id="messageStatus">Messages sync with the selected trip or private conversation. AI replies respect user permissions.</p>
@@ -1646,6 +1691,12 @@
                   <input id="memoryVideoInput" type="file" accept="video/mp4,video/quicktime,video/webm" multiple hidden>
                   <input id="memoryCameraInput" type="file" accept="image/*" capture="environment" hidden>
                   <input id="memoryVideoCameraInput" type="file" accept="video/*" capture="environment" hidden>
+                  <input id="tripDocumentInput" type="file" accept="application/pdf,image/jpeg,image/png,image/heic,image/webp" hidden>
+                  <input id="transportTicketInput" type="file" accept="application/pdf,image/jpeg,image/png,image/heic,image/webp" hidden>
+                  <input id="transportTicketCameraInput" type="file" accept="image/*" capture="environment" hidden>
+                  <input id="receiptCameraInput" type="file" accept="image/*" capture="environment" hidden>
+                  <input id="receiptPhotoInput" type="file" accept="image/jpeg,image/png,image/heic,image/webp" hidden>
+                  <input id="receiptPdfInput" type="file" accept="application/pdf" hidden>
                   <label>Visibility
                     <select id="memoryVisibility">
                       <option>Private (Only Me)</option>
@@ -1926,53 +1977,12 @@
             </div>
             <div class="memories-gallery-shell">
               <section class="memory-gallery-grid" aria-label="Memory gallery">
-                <article class="memory-media-card" data-memory-card="santorini-sunset">
-                  <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=900&q=78" alt="Santorini sunset memory">
-                  <div>
-                    <span>Trip Members</span>
-                    <strong>Santorini sunset dinner</strong>
-                    <small>Jordan • Day 3 • 24 likes • 6 comments</small>
-                  </div>
-                  <div class="memory-card-actions">
-                    <button type="button" data-memory-like="santorini-sunset" aria-pressed="false">Like <b>24</b></button>
-                    <button type="button" data-memory-comment-open="santorini-sunset">Comment</button>
-                    <button type="button" data-memory-action="Favorite Memory">Favorite</button>
-                  </div>
-                </article>
-                <article class="memory-media-card" data-memory-card="miami-beach">
-                  <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=78" alt="Miami beach group memory">
-                  <div>
-                    <span>Shared Album</span>
-                    <strong>Miami beach day</strong>
-                    <small>Maya • Miami 2027 • 18 likes • 3 comments</small>
-                  </div>
-                  <div class="memory-card-actions">
-                    <button type="button" data-memory-like="miami-beach" aria-pressed="false">Like <b>18</b></button>
-                    <button type="button" data-memory-comment-open="miami-beach">Comment</button>
-                    <button type="button" data-memory-action="Share Album">Share</button>
-                  </div>
-                </article>
-                <article class="memory-media-card" data-memory-card="team-retreat">
-                  <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=900&q=78" alt="Corporate retreat team memory">
-                  <div>
-                    <span>Company Only</span>
-                    <strong>Leadership retreat workshop</strong>
-                    <small>Event Team • Corporate Retreat • 9 likes • 2 comments</small>
-                  </div>
-                  <div class="memory-card-actions">
-                    <button type="button" data-memory-like="team-retreat" aria-pressed="false">Like <b>9</b></button>
-                    <button type="button" data-memory-comment-open="team-retreat">Comment</button>
-                    <button type="button" data-memory-action="Set Privacy">Privacy</button>
-                  </div>
-                </article>
+                <p class="small memory-gallery-empty" id="memoryGalleryEmpty">No memories uploaded for this trip yet.</p>
               </section>
-              <aside class="memory-comments-panel" aria-label="Selected memory comments">
+              <aside class="memory-comments-panel" aria-label="Selected memory comments" hidden>
                 <p class="eyebrow">Comments</p>
-                <h3 id="memoryCommentTitle">Santorini sunset dinner</h3>
-                <div class="memory-comment-list" id="memoryCommentList">
-                  <div><b>AM</b><span>That view was unreal.</span><time>8:42 PM</time></div>
-                  <div><b>MC</b><span>Adding this to the shared album.</span><time>8:49 PM</time></div>
-                </div>
+                <h3 id="memoryCommentTitle">Selected memory</h3>
+                <div class="memory-comment-list" id="memoryCommentList"></div>
                 <form class="memory-comment-form" id="memoryCommentForm">
                   <input id="memoryCommentInput" placeholder="Add a comment to this memory" aria-label="Add a comment to this memory">
                   <button type="submit">Post</button>
@@ -1980,11 +1990,7 @@
                 <p class="small" id="memoriesStatus">Likes, comments, and notifications follow each media item's privacy setting.</p>
               </aside>
             </div>
-            <div class="memory-album-grid">
-              <article><strong>Day 3 - Santorini</strong><span>42 photos • 8 videos • Trip Members</span><button type="button" data-memory-action="Open Album">Open Album</button></article>
-              <article><strong>Miami 2027 Favorites</strong><span>18 photos • Selected Users</span><button type="button" data-memory-action="Manage Album">Manage</button></article>
-              <article><strong>Corporate Approved</strong><span>12 photos • Company Only</span><button type="button" data-memory-action="Review Privacy">Review</button></article>
-            </div>
+            <div class="memory-album-grid"><p class="small">Albums appear after you upload memories.</p></div>
           </section>
 
           <section class="panel enterprise-rbac" id="enterpriseRbac">
@@ -2122,10 +2128,10 @@
                       </select>
                     </label>
                     <label>Traveler
-                      <input id="corporateBookingTraveler" type="text" value="Jordan Smith" autocomplete="name" required>
+                      <input id="corporateBookingTraveler" type="text" autocomplete="name" placeholder="Traveler name" required>
                     </label>
                     <label>Traveler email
-                      <input id="corporateBookingTravelerEmail" type="email" value="jordan@company.com" autocomplete="email">
+                      <input id="corporateBookingTravelerEmail" type="email" autocomplete="email" placeholder="traveler@company.com">
                     </label>
                     <label>Provider
                       <input id="corporateBookingProvider" type="text" placeholder="Airline, hotel, rail, or venue" required>
@@ -2171,7 +2177,7 @@
                   <details class="corporate-policy-editor" data-corporate-policy-admin-only>
                     <summary>Update policy limits</summary>
                     <form id="corporatePolicyForm" class="corporate-booking-form">
-                      <label>Policy name<input id="corporatePolicyNameInput" type="text" value="Global business travel" required></label>
+                      <label>Policy name<input id="corporatePolicyNameInput" type="text" placeholder="Policy name" required></label>
                       <label>Flight cabin<select id="corporatePolicyCabinInput"><option value="economy">Economy</option><option value="premium_economy">Premium economy</option><option value="business">Business</option><option value="first">First</option></select></label>
                       <label>Flight cap<input id="corporatePolicyFlightInput" type="number" min="0" step="1" value="1500" required></label>
                       <label>Hotel nightly cap<input id="corporatePolicyHotelInput" type="number" min="0" step="1" value="325" required></label>
@@ -2539,45 +2545,18 @@
             </div>
 
             <div class="info-status-grid">
-              <article><span>Checklist complete</span><strong id="checklistProgress">2 / 6</strong></article>
-              <article><span>Documents due</span><strong>3</strong></article>
-              <article><span>Pinned updates</span><strong>2</strong></article>
+              <article><span>Checklist complete</span><strong id="checklistProgress">0 / 6</strong></article>
+              <article><span>Saved documents</span><strong id="savedDocumentCount">0</strong></article>
+              <article><span>Pinned updates</span><strong>0</strong></article>
               <article><span>Policy status</span><strong id="policyStatus">Needs acknowledgment</strong></article>
             </div>
 
             <div class="info-accordion" id="infoAccordion">
               <details class="info-section travel-documents-section" open>
                 <summary>Required Travel Documents</summary>
-                <div class="document-list travel-documents-grid">
-                  <article class="travel-document-card">
-                    <div class="travel-document-card__heading"><span class="travel-document-card__icon" aria-hidden="true">🛂</span><strong class="travel-document-card__title">Passport</strong></div>
-                    <span class="travel-document-card__description">Uploaded and valid for at least 6 months after return.</span>
-                    <time class="travel-document-card__due">Due: July 22</time>
-                    <em class="document-status travel-document-card__status ok">Complete</em>
-                    <button class="ghost-button" type="button" data-document-action="View Passport">View document</button>
-                  </article>
-                  <article class="travel-document-card">
-                    <div class="travel-document-card__heading"><span class="travel-document-card__icon" aria-hidden="true">✈️</span><strong class="travel-document-card__title">Flight Confirmation</strong></div>
-                    <span class="travel-document-card__description">Confirmation received for Delta DL 241.</span>
-                    <time class="travel-document-card__due">Due: July 22</time>
-                    <em class="document-status travel-document-card__status ok">Complete</em>
-                    <button class="ghost-button" type="button" data-document-action="View Flight Confirmation">View document</button>
-                  </article>
-                  <article class="travel-document-card">
-                    <div class="travel-document-card__heading"><span class="travel-document-card__icon" aria-hidden="true">🛡️</span><strong class="travel-document-card__title">Travel Insurance</strong></div>
-                    <span class="travel-document-card__description">Policy upload is still required before departure.</span>
-                    <time class="travel-document-card__due">Due: July 23</time>
-                    <em class="document-status travel-document-card__status warn">Needed</em>
-                    <button class="ghost-button" type="button" data-document-action="Upload Travel Insurance">Upload document</button>
-                  </article>
-                  <article class="travel-document-card">
-                    <div class="travel-document-card__heading"><span class="travel-document-card__icon" aria-hidden="true">🪪</span><strong class="travel-document-card__title">Company Credentials</strong></div>
-                    <span class="travel-document-card__description">Bring the company ID badge for workshop check-in.</span>
-                    <time class="travel-document-card__due">Due: July 24</time>
-                    <em class="document-status travel-document-card__status warn">Needed</em>
-                    <button class="ghost-button" type="button" data-document-action="View Company Credentials">View document</button>
-                  </article>
-                </div>
+                <div class="button-row"><button class="primary-button" type="button" data-document-action="Upload Travel Document">Upload document</button></div>
+                <div class="document-list travel-documents-grid" id="savedDocumentsList"><p class="small">No travel documents uploaded for this trip.</p></div>
+                <p class="small" id="documentUploadMessage" role="status">PDF, JPG, PNG, HEIC, and WEBP files up to 25 MB are stored privately.</p>
               </details>
 
               <details class="info-section">
@@ -2616,8 +2595,8 @@
               <details class="info-section">
                 <summary>Packing List & Trip Checklist</summary>
                 <div class="checklist-grid">
-                  <label><input type="checkbox" class="trip-check" checked> Passport uploaded</label>
-                  <label><input type="checkbox" class="trip-check" checked> Flight confirmed</label>
+                  <label><input type="checkbox" class="trip-check"> Passport uploaded</label>
+                  <label><input type="checkbox" class="trip-check"> Flight confirmed</label>
                   <label><input type="checkbox" class="trip-check"> Hotel confirmed</label>
                   <label><input type="checkbox" class="trip-check"> Wallet funded</label>
                   <label><input type="checkbox" class="trip-check"> Emergency contact completed</label>
@@ -2744,13 +2723,13 @@
                 <article><span>Personal funds</span><strong id="linkedEmployeeFunds">$0.00</strong><small>You can add and view only your own money.</small></article>
               </div>
               <div class="employee-wallet-actions">
-                <label>Add amount<input id="linkedEmployeeFundAmount" type="number" min="10" max="5000" step="10" value="100" inputmode="decimal"></label>
+                <label>Add amount<input id="linkedEmployeeFundAmount" type="number" min="10" max="5000" step="10" inputmode="decimal" placeholder="0"></label>
                 <button class="primary-button" type="button" id="linkedEmployeeAddFundsButton">Add personal funds</button>
               </div>
               <section class="employee-bill-splitter" aria-label="Quick employee bill splitter">
                 <div><span>Quick split</span><h3>Split a meal or rideshare</h3></div>
-                <label>Total<input id="linkedEmployeeBillTotal" type="number" min="0" step="0.01" value="120"></label>
-                <label>People<input id="linkedEmployeeBillPeople" type="number" min="1" max="50" step="1" value="4"></label>
+                <label>Total<input id="linkedEmployeeBillTotal" type="number" min="0" step="0.01" value="0"></label>
+                <label>People<input id="linkedEmployeeBillPeople" type="number" min="1" max="50" step="1" value="1"></label>
                 <strong id="linkedEmployeeBillEach">$30.00 each</strong>
               </section>
             </section>
@@ -2831,10 +2810,10 @@
                 <p>Add funds securely, create payment reminders, and review the personal ledger for this trip.</p>
               </div>
             </div>
-            <label class="range-wrap" for="deposit">Planning target per person: <strong id="depositValue">$800</strong><input id="deposit" type="range" min="500" max="1200" step="50" value="800"><small>This estimate does not move wallet funds. Members add funds through secure checkout below.</small></label>
+            <label class="range-wrap" for="deposit">Planning target per person: <strong id="depositValue">$0</strong><input id="deposit" type="range" min="0" max="5000" step="50" value="0"><small>This estimate does not move wallet funds. Members add funds through secure checkout below.</small></label>
             <form class="funds-form" id="fundsForm">
               <label>Add funds
-                <input id="fundAmount" type="number" min="10" max="5000" step="10" value="100" inputmode="decimal" required>
+                <input id="fundAmount" type="number" min="10" max="5000" step="10" placeholder="Amount" inputmode="decimal" required>
               </label>
               <button class="primary-button wide" type="submit">Continue to secure checkout</button>
             </form>
@@ -2844,8 +2823,8 @@
                 <strong>Request a trip payment</strong>
                 <span>Set a due time. The member receives an in-app alert, and a browser push when notifications are enabled.</span>
               </div>
-              <label>Payment title<input id="paymentRequestTitle" type="text" maxlength="160" value="Upcoming trip payment" required></label>
-              <label>Amount<input id="paymentRequestAmount" type="number" min="10" max="5000" step="10" value="100" inputmode="decimal" required></label>
+              <label>Payment title<input id="paymentRequestTitle" type="text" maxlength="160" placeholder="What is this payment for?" required></label>
+              <label>Amount<input id="paymentRequestAmount" type="number" min="10" max="5000" step="10" placeholder="Amount" inputmode="decimal" required></label>
               <label>Due date and time<input id="paymentRequestDueAt" type="datetime-local" required></label>
               <button class="ghost-button" type="submit">Create payment reminder</button>
               <p class="small" id="paymentRequestMessage">Payment reminders are sent to active trip members.</p>
@@ -2855,18 +2834,13 @@
               <strong id="walletContributionVisibility">Personal contribution view</strong>
               <span id="walletContributionMessage">Sign in to load your contribution history.</span>
             </div>
-            <div class="shared-wallet-ledger" id="sharedWalletLedger" aria-label="Shared trip wallet ledger">
-              <div><time>Jul 20, 2026 9:42 AM</time><strong>Jordan contribution</strong><span>+$100 completed • Debit card • Refundable</span></div>
-              <div><time>Jul 19, 2026 6:15 PM</time><strong>Hotel deposit allocation</strong><span>-$1,200 approved • Organizer • Non-refundable hold</span></div>
-              <div><time>Jul 18, 2026 3:05 PM</time><strong>Shared activity payment</strong><span>-$840 completed • Wallet card • Audit logged</span></div>
-            </div>
+            <div class="shared-wallet-ledger" id="sharedWalletLedger" aria-label="Shared trip wallet ledger"><div class="wallet-ledger-empty">No provider-confirmed wallet activity yet.</div></div>
             <div class="wallet-notification-status" aria-live="polite">
               <strong id="walletNotificationStatus">Wallet alerts are on</strong>
               <span id="walletNotificationMessage">In-app deposit and payment reminders are enabled. Tap Notify for browser push alerts.</span>
             </div>
             <div class="wallet-notification-list" id="walletNotificationList" aria-label="Recent wallet notifications"></div>
-            <div class="budget-line"><span>Flights</span><strong>$3,200</strong></div><div class="bar"><i style="--w:50%"></i></div>
-            <div class="budget-line"><span>Stay</span><strong>$2,100</strong></div><div class="bar"><i style="--w:33%"></i></div>
+            <div class="budget-line"><span>Confirmed spending</span><strong>$0.00</strong></div><div class="bar"><i style="--w:0%"></i></div>
             <div class="budget-line"><span>Food and events</span><strong>$1,100</strong></div><div class="bar"><i style="--w:17%"></i></div>
             </section>
           </section>
@@ -2938,11 +2912,7 @@
               <div><strong>Shared-card permission</strong><span>Only the trip owner, trip admin, organizer, or finance admin can manage or start a shared-card purchase. Members can contribute their own funds.</span></div>
               <div><strong>Provider-controlled security</strong><span>Card issuance, NFC tokenization, purchase authorization, and refunds must be completed by the connected PCI-compliant provider.</span></div>
             </div>
-            <div class="card-ledger" id="cardLedger">
-              <div><time>Jul 20, 2026 12:18 PM</time><strong>Marina Cafe</strong><span>-$42.80 pending • Dubai weekend • $337.20 left</span></div>
-              <div><time>Jul 19, 2026 7:04 PM</time><strong>Metro Day Pass</strong><span>-$18.00 completed • Dubai weekend • $380.00 left</span></div>
-              <div><time>Jul 18, 2026 4:22 PM</time><strong>Activity refund</strong><span>+$60.00 pending settlement • refund notification queued</span></div>
-            </div>
+            <div class="card-ledger" id="cardLedger"><div class="wallet-ledger-empty">No issuer-confirmed card transactions yet.</div></div>
           </section>
 
           <section class="panel split-bill-panel" id="splitBill">
@@ -2954,7 +2924,7 @@
               </div>
               <div class="bill-hero-total">
                 <span>Ready to split</span>
-                <strong id="billHeroTotal">$516.00</strong>
+                <strong id="billHeroTotal">$0.00</strong>
                 <small>Live preview</small>
               </div>
             </div>
@@ -2981,12 +2951,12 @@
                 <div class="receipt-summary">
                   <div>
                     <p class="eyebrow">AI receipt scanner</p>
-                    <h3 id="receiptRestaurant">Marina Social Table</h3>
-                    <span id="receiptMeta">Jul 20, 2026 • 8:42 PM • Table 12 • Server Lina</span>
+                    <h3 id="receiptRestaurant">No receipt loaded</h3>
+                    <span id="receiptMeta">Scan, upload, or enter a receipt manually.</span>
                   </div>
                   <div>
-                    <strong id="receiptExtractedTotal">$516.00</strong>
-                    <span>Scanned receipt saved for review, edits, reimbursement, and trip history.</span>
+                    <strong id="receiptExtractedTotal">$0.00</strong>
+                    <span>Uploaded receipts are stored privately for review. Totals remain editable.</span>
                   </div>
                 </div>
                 <div class="bill-entry-card">
@@ -2995,12 +2965,12 @@
                     <h3>Adjust totals before splitting</h3>
                   </div>
                   <div class="bill-entry-grid">
-                    <label>Total bill<input id="billSubtotal" type="number" min="0" step="0.01" value="420.00" inputmode="decimal"></label>
-                    <label>Tax<input id="billTax" type="number" min="0" step="0.01" value="32.40" inputmode="decimal"></label>
-                    <label>Tip %<input id="billTipPercent" type="number" min="0" step="1" value="18" inputmode="decimal"></label>
-                    <label>Service fees<input id="billFees" type="number" min="0" step="0.01" value="8.00" inputmode="decimal"></label>
-                    <label>Discounts / coupons<input id="billDiscount" type="number" min="0" step="0.01" value="20.00" inputmode="decimal"></label>
-                    <label>Diners<input id="billDiners" type="number" min="1" max="24" step="1" value="6" inputmode="numeric"></label>
+                    <label>Total bill<input id="billSubtotal" type="number" min="0" step="0.01" value="0" inputmode="decimal"></label>
+                    <label>Tax<input id="billTax" type="number" min="0" step="0.01" value="0" inputmode="decimal"></label>
+                    <label>Tip %<input id="billTipPercent" type="number" min="0" step="1" value="0" inputmode="decimal"></label>
+                    <label>Service fees<input id="billFees" type="number" min="0" step="0.01" value="0" inputmode="decimal"></label>
+                    <label>Discounts / coupons<input id="billDiscount" type="number" min="0" step="0.01" value="0" inputmode="decimal"></label>
+                    <label>Diners<input id="billDiners" type="number" min="1" max="24" step="1" value="1" inputmode="numeric"></label>
                   </div>
                 </div>
                 <div class="split-mode-tabs" role="tablist" aria-label="Bill split mode">
@@ -3016,33 +2986,33 @@
                         <p class="eyebrow">AI item recognition</p>
                         <h3>Review detected items and claim what you ordered</h3>
                       </div>
-                      <button class="ghost-button" type="button" id="aiBillReviewButton">Run AI review</button>
+                      <button class="ghost-button" type="button" id="aiBillReviewButton">Review bill</button>
                     </div>
                     <div class="receipt-item-list" id="receiptItemList" aria-label="Recognized receipt items"></div>
                   </section>
                   <aside class="payment-status-panel">
                     <p class="eyebrow">Live group payment status</p>
                     <div class="receipt-status-list" id="receiptStatusList" aria-label="Live payment status"></div>
-                    <p class="small" id="receiptReviewMessage">AI review checks missing diners, duplicate items, tax math, tip discrepancies, and uneven shared-item assignments.</p>
+                    <p class="small" id="receiptReviewMessage">Upload a receipt or enter the bill details to check assignments and arithmetic.</p>
                   </aside>
                 </div>
               </div>
               <aside class="bill-side-column">
                 <div class="bill-total-grid">
-                  <div><span>Final total</span><strong id="billFinalTotal">$516.00</strong></div>
-                  <div><span>Each person</span><strong id="billEachTotal">$86.00</strong></div>
-                  <div><span>Remaining balance</span><strong id="billRemaining">$516.00</strong></div>
+                  <div><span>Final total</span><strong id="billFinalTotal">$0.00</strong></div>
+                  <div><span>Each person</span><strong id="billEachTotal">$0.00</strong></div>
+                  <div><span>Remaining balance</span><strong id="billRemaining">$0.00</strong></div>
                 </div>
                 <div class="split-preview" id="splitPreview" aria-label="Participant split preview"></div>
                 <div class="bill-tools-grid">
                   <div>
                     <h3>Receipt scanner</h3>
                     <p>Scan or upload a receipt to detect menu items, tax, tip, service fees, discounts, and total before review.</p>
-                    <button class="ghost-button wide" type="button" id="scanReceiptButton">Simulate receipt scan</button>
+                    <button class="ghost-button wide" type="button" id="scanReceiptButton">Scan receipt</button>
                   </div>
                   <div>
                     <h3>AI tip calculator</h3>
-                    <p id="tipAdvice">An 18% tip is customary for this restaurant based on group size and local dining norms.</p>
+                    <p id="tipAdvice">Enter the group size and bill details to calculate a tip estimate.</p>
                     <button class="ghost-button wide" type="button" id="tipAdviceButton">Recommend tip</button>
                   </div>
                 </div>
@@ -3098,13 +3068,13 @@
               </div>
               <form class="flight-tracking-form" id="flightTrackingForm">
                 <label>Flight number
-                  <input id="flightTrackingIdent" name="ident" type="text" value="DL241" placeholder="DL241" autocomplete="off" required>
+                  <input id="flightTrackingIdent" name="ident" type="text" placeholder="DL241" autocomplete="off" required>
                 </label>
                 <label>Departure date
-                  <input id="flightTrackingDate" name="date" type="date" value="2026-07-18">
+                  <input id="flightTrackingDate" name="date" type="date">
                 </label>
                 <label>Origin airport
-                  <input id="flightTrackingOrigin" name="origin" type="text" value="MIA" placeholder="MIA" autocomplete="off">
+                  <input id="flightTrackingOrigin" name="origin" type="text" placeholder="MIA" autocomplete="off">
                 </label>
                 <button class="primary-button" type="submit">Track flight</button>
               </form>
@@ -3326,7 +3296,7 @@
                 </section>
                 <section class="travel-focus-panel" data-travel-panel="flights">
                   <div class="travel-focus-header"><span class="travel-focus-icon">✈️</span><div><p class="eyebrow">Flights</p><h3>Search, save, and manage flights</h3><p>Only flight-related confirmations, alerts, and boarding-pass shortcuts appear here.</p></div><button class="primary-button" type="button" data-travel-focus-action="Search Flights">Search Flights</button></div>
-                  <div class="travel-form-row"><input type="text" value="Miami (MIA)" aria-label="Origin airport"><input type="text" value="Tokyo (HND)" aria-label="Destination airport"><input id="flightDepartureDateInput" type="date" value="2026-07-18" aria-label="Departure date"><button type="button" data-travel-focus-action="Upload Flight Confirmation">Upload Confirmation</button></div>
+                  <div class="travel-form-row"><input type="text" placeholder="Origin airport" aria-label="Origin airport"><input type="text" placeholder="Destination airport" aria-label="Destination airport"><input id="flightDepartureDateInput" type="date" aria-label="Departure date"><button type="button" data-travel-focus-action="Upload Flight Confirmation">Upload Confirmation</button></div>
                   <div class="travel-focus-grid"><article><span>Confirmed flight</span><strong>Delta DL 241</strong><small>MIA 8:45 AM → HND 3:20 PM • Conf DL-48291</small><button type="button" data-travel-focus="boarding">View Boarding Pass</button></article><article><span>Flight alert</span><strong>Check-in opens soon</strong><small>Reminder queued 24 hours before departure.</small><button type="button" data-travel-focus-action="Set Flight Reminder">Set Reminder</button></article></div>
                 </section>
                 <section class="travel-focus-panel" data-travel-panel="hotels">
@@ -3343,16 +3313,16 @@
                     </div>
                     <form class="hotel-live-form" id="hotelLiveSearchForm">
                       <label>City code
-                        <input id="hotelLiveCityCode" type="text" value="TYO" placeholder="TYO" maxlength="3" autocomplete="off" required>
+                        <input id="hotelLiveCityCode" type="text" placeholder="TYO" maxlength="3" autocomplete="off" required>
                       </label>
                       <label>Check-in
-                        <input id="hotelLiveCheckIn" type="date" value="2026-08-08" required>
+                        <input id="hotelLiveCheckIn" type="date" required>
                       </label>
                       <label>Check-out
-                        <input id="hotelLiveCheckOut" type="date" value="2026-08-13" required>
+                        <input id="hotelLiveCheckOut" type="date" required>
                       </label>
                       <label>Adults
-                        <input id="hotelLiveAdults" type="number" value="2" min="1" max="9" required>
+                        <input id="hotelLiveAdults" type="number" value="1" min="1" max="9" required>
                       </label>
                       <label>Hotel ID (optional)
                         <input id="hotelLiveHotelId" type="text" placeholder="Search city" maxlength="24" autocomplete="off">
@@ -3820,7 +3790,7 @@
             <div class="ride-destination-row">
               <label>Destination
                 <select id="rideDestination">
-                  <option value="United Arab Emirates" selected>United Arab Emirates</option>
+                  <option value="" selected>Choose a country</option><option value="United Arab Emirates">United Arab Emirates</option>
                   <option value="United States">United States</option>
                   <option value="Canada">Canada</option>
                   <option value="United Kingdom">United Kingdom</option>
@@ -3858,9 +3828,9 @@
                   <button class="ghost-button" type="button" data-ride-hub-action="View Route">View route</button>
                 </div>
             <div class="ride-location-grid">
-              <label>Favorite pickup<input id="ridePickup" value="JBR Hotel Lobby"></label>
-              <label>Drop-off<input id="rideDropoff" value="Dubai Marina Dinner"></label>
-              <label>Passengers<input id="ridePassengers" type="number" min="1" max="8" value="4" inputmode="numeric"></label>
+              <label>Favorite pickup<input id="ridePickup" placeholder="Pickup location"></label>
+              <label>Drop-off<input id="rideDropoff" placeholder="Destination"></label>
+              <label>Passengers<input id="ridePassengers" type="number" min="1" max="8" value="1" inputmode="numeric"></label>
             </div>
             <div class="ride-estimate-grid">
               <div><span>Recommended</span><strong id="rideRecommended">Careem</strong></div>
@@ -3965,11 +3935,11 @@
                   </div>
                 </div>
             <div class="ride-entry-grid">
-              <label>Total fare<input id="rideFare" type="number" min="0" step="0.01" value="48.00" inputmode="decimal"></label>
-              <label>Taxes<input id="rideTax" type="number" min="0" step="0.01" value="2.80" inputmode="decimal"></label>
-              <label>Tolls<input id="rideTolls" type="number" min="0" step="0.01" value="4.25" inputmode="decimal"></label>
-              <label>Booking fees<input id="rideFees" type="number" min="0" step="0.01" value="3.00" inputmode="decimal"></label>
-              <label>Tip<input id="rideTip" type="number" min="0" step="0.01" value="5.00" inputmode="decimal"></label>
+              <label>Total fare<input id="rideFare" type="number" min="0" step="0.01" value="0" inputmode="decimal"></label>
+              <label>Taxes<input id="rideTax" type="number" min="0" step="0.01" value="0" inputmode="decimal"></label>
+              <label>Tolls<input id="rideTolls" type="number" min="0" step="0.01" value="0" inputmode="decimal"></label>
+              <label>Booking fees<input id="rideFees" type="number" min="0" step="0.01" value="0" inputmode="decimal"></label>
+              <label>Tip<input id="rideTip" type="number" min="0" step="0.01" value="0" inputmode="decimal"></label>
             </div>
             <div class="split-mode-tabs ride-tabs" role="tablist" aria-label="Ride split mode">
               <button class="active" type="button" data-ride-mode="equal">Equal</button>
@@ -4325,20 +4295,20 @@
 
           <section class="panel my-profile-panel" id="myProfile">
             <div class="profile-social-hero">
-              <img id="profileCoverImage" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1400&auto=format&fit=crop" alt="Sunny beach cover for Jordan's travel profile">
+              <img id="profileCoverImage" alt="Travel profile cover" hidden>
               <div class="profile-social-overlay">
                 <div class="profile-photo-preview profile-social-avatar" id="profilePhotoPreview" data-profile-preview>
-                  <span class="profile-photo-avatar xl" data-profile-initials>JS</span>
+                  <span class="profile-photo-avatar xl" data-profile-initials>TD</span>
                 </div>
                 <div>
                   <p class="eyebrow">My Travel Identity</p>
-                  <h2>Welcome back, Jordan!</h2>
-                  <p>@jordansmith • Miami, Florida</p>
+                  <h2 id="profileWelcomeTitle">Welcome to Travel-Drip!</h2>
+                  <p id="profileWelcomeMeta">Complete your profile when you are ready.</p>
                   <strong>Ready for your next adventure?</strong>
                 </div>
                 <div class="profile-completion-track" aria-label="Profile completion">
-                  <span><strong>82%</strong> complete</span>
-                  <i><b style="--w:82%"></b></i>
+                  <span><strong id="profileCompletionValue">0%</strong> complete</span>
+                  <i><b id="profileCompletionBar" style="--w:0%"></b></i>
                 </div>
               </div>
             </div>
@@ -4352,59 +4322,39 @@
             </section>
             <section class="profile-card-grid" aria-label="Profile summary">
               <article class="profile-identity-card">
-                <span class="profile-photo-avatar large" data-profile-initials>JS</span>
+                <span class="profile-photo-avatar large" data-profile-initials>TD</span>
                 <div>
                   <p class="eyebrow">Profile Card</p>
-                  <h3>Jordan Smith</h3>
-                  <p>@jordansmith</p>
-                  <strong>Planning unforgettable trips, events, and shared memories with Travel-Drip.</strong>
+                  <h3 id="profileCardName">Your profile</h3>
+                  <p id="profileCardUsername">Username not set</p>
+                  <strong id="profileCardBio">Add a bio to introduce yourself to trip members.</strong>
                 </div>
                 <dl>
-                  <div><dt>Home</dt><dd>Miami, Florida</dd></div>
-                  <div><dt>Languages</dt><dd>English, Spanish</dd></div>
-                  <div><dt>Member since</dt><dd>2026</dd></div>
-                  <div><dt>Connections</dt><dd>128 travel friends</dd></div>
+                  <div><dt>Home</dt><dd id="profileCardLocation">Not added</dd></div>
+                  <div><dt>Languages</dt><dd id="profileCardLanguages">Not added</dd></div>
+                  <div><dt>Member since</dt><dd id="profileCardMemberSince">New member</dd></div>
+                  <div><dt>Connections</dt><dd id="profileCardConnections">0 travel friends</dd></div>
                 </dl>
               </article>
               <article>
                 <p class="eyebrow">About Me</p>
-                <h3>Food, beaches, nightlife, cruises, hidden gems</h3>
-                <p>Travel style: flexible plans, local restaurants, photo-worthy views, and group memories. Favorite destinations include Miami, Tokyo, Dubai, and Santorini.</p>
-                <p>Fun travel fact: Jordan always saves the first sunset photo from every trip.</p>
+                <h3 id="profileAboutInterests">Interests not added</h3>
+                <p id="profileAboutTravelStyle">Add your travel style and favorite destinations.</p>
+                <p id="profileAboutFunFact">Add a fun travel fact.</p>
               </article>
             </section>
             <section class="profile-stats-grid" aria-label="My travel stats">
-              <article><span>Countries</span><strong>12</strong><small>Visited</small></article>
-              <article><span>Cities</span><strong>38</strong><small>Explored</small></article>
-              <article><span>Upcoming</span><strong>4</strong><small>Trips</small></article>
-              <article><span>Completed</span><strong>9</strong><small>Trips</small></article>
-              <article><span>Events</span><strong>6</strong><small>Created</small></article>
-              <article><span>Memories</span><strong>214</strong><small>Saved</small></article>
-              <article><span>Photos</span><strong>486</strong><small>Uploaded</small></article>
-              <article><span>Miles</span><strong>42K</strong><small>Traveled</small></article>
+              <article><span>Countries</span><strong>0</strong><small>Visited</small></article>
+              <article><span>Cities</span><strong>0</strong><small>Explored</small></article>
+              <article><span>Upcoming</span><strong>0</strong><small>Trips</small></article>
+              <article><span>Completed</span><strong>0</strong><small>Trips</small></article>
+              <article><span>Events</span><strong>0</strong><small>Created</small></article>
+              <article><span>Memories</span><strong>0</strong><small>Saved</small></article>
+              <article><span>Photos</span><strong>0</strong><small>Uploaded</small></article>
+              <article><span>Miles</span><strong>0</strong><small>Traveled</small></article>
             </section>
-            <section class="profile-adventure-grid" aria-label="My adventures">
-              <article>
-                <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=700&auto=format&fit=crop" alt="Tokyo skyline">
-                <span>Upcoming Trip</span>
-                <strong>Miami to Tokyo Adventure</strong>
-                <small>Jul 18 - Jul 28 • 4 travelers</small>
-                <button type="button" data-target="rideShareHub">Open Trip</button>
-              </article>
-              <article>
-                <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=700&auto=format&fit=crop" alt="Dubai skyline">
-                <span>Recent Trip</span>
-                <strong>Dubai Weekend</strong>
-                <small>Memories saved • wallet reconciled</small>
-                <button type="button" data-target="memoriesPanel">View Memories</button>
-              </article>
-              <article>
-                <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?q=80&w=700&auto=format&fit=crop" alt="Beach destination">
-                <span>Favorite Destination</span>
-                <strong>Caribbean Cruise</strong>
-                <small>Ports, beaches, shore excursions</small>
-                <button type="button" data-target="cruisePanel">Open Cruise</button>
-              </article>
+            <section class="profile-adventure-grid profile-empty-collection" aria-label="My adventures">
+              <article><span>My trips</span><strong>No trips to show</strong><small>Create or join a trip to see it here.</small><button type="button" data-target="tripsPanel">Create a trip</button></article>
             </section>
             <section class="profile-memory-preview" aria-label="Memories preview">
               <div class="section-heading compact">
@@ -4417,18 +4367,10 @@
                   <button type="button" data-memory-action="Upload Memory">Upload</button>
                 </div>
               </div>
-              <div class="profile-memory-gallery">
-                <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=500&auto=format&fit=crop" alt="Travel meal memory">
-                <img src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?q=80&w=500&auto=format&fit=crop" alt="Beach memory">
-                <img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=500&auto=format&fit=crop" alt="Desert road trip memory">
-                <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=500&auto=format&fit=crop" alt="Group celebration memory">
-              </div>
+              <div class="profile-memory-gallery profile-empty-collection"><p>No memories uploaded yet.</p></div>
             </section>
-            <section class="profile-connections-grid" aria-label="Friends and connections">
-              <article><span class="profile-photo-avatar small">SL</span><strong>Sarah Lee</strong><small>3 shared trips</small></article>
-              <article><span class="profile-photo-avatar small">MA</span><strong>Mike Adams</strong><small>2 shared events</small></article>
-              <article><span class="profile-photo-avatar small">AR</span><strong>Alex Rivera</strong><small>5 shared memories</small></article>
-              <article><span class="profile-photo-avatar small">TJ</span><strong>Taylor Jones</strong><small>Upcoming cruise</small></article>
+            <section class="profile-connections-grid profile-empty-collection" aria-label="Friends and connections">
+              <article><span class="profile-photo-avatar small">+</span><strong>No connections yet</strong><small>Invite friends after you create a trip.</small></article>
             </section>
             <section class="profile-photo-manager">
               <div class="profile-photo-main">
@@ -4489,16 +4431,16 @@
                 </div>
               </div>
               <div class="profile-photo-appearances">
-                <div><span class="profile-photo-avatar small" data-profile-initials>JS</span><strong>Group Chat</strong></div>
-                <div><span class="profile-photo-avatar small" data-profile-initials>JS</span><strong>Trip Members</strong></div>
-                <div><span class="profile-photo-avatar small" data-profile-initials>JS</span><strong>Poll Votes</strong></div>
-                <div><span class="profile-photo-avatar small" data-profile-initials>JS</span><strong>Company Directory</strong></div>
-                <div><span class="profile-photo-avatar small" data-profile-initials>JS</span><strong>Notifications</strong></div>
+                <div><span class="profile-photo-avatar small" data-profile-initials>TD</span><strong>Group Chat</strong></div>
+                <div><span class="profile-photo-avatar small" data-profile-initials>TD</span><strong>Trip Members</strong></div>
+                <div><span class="profile-photo-avatar small" data-profile-initials>TD</span><strong>Poll Votes</strong></div>
+                <div><span class="profile-photo-avatar small" data-profile-initials>TD</span><strong>Company Directory</strong></div>
+                <div><span class="profile-photo-avatar small" data-profile-initials>TD</span><strong>Notifications</strong></div>
               </div>
               <div class="profile-photo-policy-grid">
                 <div><strong>Upload guidance</strong><span>JPG, JPEG, PNG, HEIC, or WEBP. Max 5 MB. Travel-Drip previews the image before saving.</span></div>
                 <div><strong>Corporate accounts</strong><span>Companies can allow employee uploads, sync company directory photos, or display company-issued photos when policy requires it.</span></div>
-                <div><strong>Default avatar</strong><span>If no photo is uploaded, Travel-Drip shows initials such as JS for Jordan Smith.</span></div>
+                <div><strong>Default avatar</strong><span>If no photo is uploaded, Travel-Drip shows initials based on the account profile.</span></div>
               </div>
               <div class="button-row">
                 <button class="primary-button" type="button" id="saveProfilePhotoButton">Save Changes</button>
@@ -4509,24 +4451,24 @@
             <section class="profile-personal-grid" aria-label="Personal profile details">
               <article>
                 <p class="eyebrow">Basic Information</p>
-                <label>Full name<input id="profileFullNameInput" value="Jordan Smith"></label>
-                <label>Username<input id="profileUsernameInput" value="@jordansmith"></label>
-                <label>Display name<input value="Jordan"></label>
-                <label>Bio<textarea id="profileBioInput" rows="3">Planning unforgettable trips, events, and shared memories with Travel-Drip.</textarea></label>
+                <label>Full name<input id="profileFullNameInput" autocomplete="name" placeholder="Your full name"></label>
+                <label>Username<input id="profileUsernameInput" autocomplete="username" placeholder="your_username"></label>
+                <label>Display name<input id="profileDisplayNameInput" placeholder="Display name"></label>
+                <label>Bio<textarea id="profileBioInput" rows="3" placeholder="Tell trip members a little about you"></textarea></label>
               </article>
               <article>
                 <p class="eyebrow">Public Profile Details</p>
-                <label>Interests<input value="Food, beaches, nightlife, cruises, hidden gems"></label>
-                <label>Languages<input value="English, Spanish"></label>
-                <label>Personal links<input value="instagram.com/jordansmith"></label>
-                <label>Location<input value="Miami, Florida"></label>
+                <label>Interests<input id="profileInterestsInput" placeholder="Food, beaches, museums"></label>
+                <label>Languages<input id="profileLanguagesInput" placeholder="Languages you speak"></label>
+                <label>Personal links<input id="profileLinksInput" placeholder="Your website or social profile"></label>
+                <label>Location<input id="profileLocationInput" placeholder="City, country"></label>
               </article>
               <article>
                 <p class="eyebrow">Profile Preferences</p>
                 <label>Public profile visibility<select><option>Trip Members Only</option><option>Friends Only</option><option>Public</option><option>Private</option></select></label>
                 <label>Travel style<select><option>Food, beaches, and hidden gems</option><option>Luxury and wellness</option><option>Adventure and outdoors</option><option>Family-friendly</option></select></label>
-                <label>Favorite destination<input value="Tokyo, Japan"></label>
-                <label>Fun travel fact<input value="I save the first sunset photo from every trip."></label>
+                <label>Favorite destination<input id="profileFavoriteDestinationInput" placeholder="Favorite destination"></label>
+                <label>Fun travel fact<input id="profileFunFactInput" placeholder="Share a travel fact"></label>
               </article>
               <div class="profile-details-actions">
                 <button class="primary-button" type="button" id="saveProfileDetailsButton">Save profile details</button>
@@ -4539,20 +4481,9 @@
                   <p class="eyebrow">Travel Badges</p>
                   <h3>Public travel interests</h3>
                 </div>
-                <span class="status-pill">10 badges</span>
+                <span class="status-pill">0 badges</span>
               </div>
-              <div class="travel-badge-grid">
-                <span>Beach Lover</span>
-                <span>Frequent Flyer</span>
-                <span>Cruise Captain</span>
-                <span>World Explorer</span>
-                <span>Foodie Traveler</span>
-                <span>Adventure Seeker</span>
-                <span>Mountain Climber</span>
-                <span>Nightlife Expert</span>
-                <span>Business Traveler</span>
-                <span>Family Planner</span>
-              </div>
+              <div class="travel-badge-grid"><span>Badges appear as you use Travel-Drip.</span></div>
             </section>
           </section>
 
@@ -4584,7 +4515,7 @@
               <div class="settings-main-panel">
                 <section class="settings-section active" data-settings-panel="account">
                   <div><p class="eyebrow">Account Management</p><h3>Credentials and account status</h3><p>Email, password, connected accounts, recovery, and account lifecycle controls live here instead of My Profile.</p></div>
-                  <div class="settings-row"><div><strong>Account email</strong><span>jordan@example.com</span></div><button type="button" data-auth-workflow="Verify Email">Verify</button></div>
+                  <div class="settings-row"><div><strong>Account email</strong><span id="settingsAccountEmail">Sign in to view</span></div><button type="button" data-auth-workflow="Verify Email">Verify</button></div>
                   <div class="settings-row"><div><strong>Password management</strong><span>Reset password, change password, and enforce strong credentials.</span></div><button type="button" data-auth-workflow="Reset Password">Manage</button></div>
                   <div class="settings-row"><div><strong>Connected accounts</strong><span>Google, Apple, Microsoft, and social sign-in connections.</span></div><button type="button" data-target="adminPanel" data-settings-focus="socialMediaHub">Manage</button></div>
                   <div class="settings-row"><div><strong>Account status</strong><span>Active account with recovery configured.</span></div><span class="status-pill">Active</span></div>
@@ -4595,13 +4526,13 @@
                   <div class="settings-row"><div><strong>Two-factor authentication</strong><span>Optional second step for sensitive account access.</span></div><label class="settings-toggle"><input type="checkbox"><span></span></label></div>
                   <div class="settings-row"><div><strong>Wallet PIN</strong><span>Required for adding funds, refunds, transfers, trip payments, and card details.</span></div><button type="button" data-wallet-section="security">Manage</button></div>
                   <div class="settings-row"><div><strong>Login activity</strong><span>Review recent sign-ins, locations, and authentication events.</span></div><button type="button" data-profile-photo-action="Review Login Activity">Review</button></div>
-                  <div class="settings-row"><div><strong>Trusted devices</strong><span>2 active sessions in this preview.</span></div><button type="button" data-profile-photo-action="Review Devices">Review</button></div>
+                  <div class="settings-row"><div><strong>Trusted devices</strong><span>Review active sessions for this account.</span></div><button type="button" data-profile-photo-action="Review Devices">Review</button></div>
                   <div class="settings-row"><div><strong>Recovery methods</strong><span>Email recovery and backup verification methods.</span></div><button type="button" data-profile-photo-action="Review Recovery Methods">Manage</button></div>
                   <div class="settings-row"><div><strong>Security alerts</strong><span>Notify on new devices, unusual refunds, rapid PIN failures, and impossible travel login.</span></div><label class="settings-toggle"><input type="checkbox" checked><span></span></label></div>
                 </section>
                 <section class="settings-section" data-settings-panel="roles">
                   <div><p class="eyebrow">Roles and Permissions</p><h3>User, organizer, event, wallet, and content access</h3><p>Controls are role-limited; restricted admin settings are not exposed to unauthorized users.</p></div>
-                  <div class="settings-row"><div><strong>User role</strong><span>Traveler with trip organizer permissions.</span></div><span class="status-pill">Organizer</span></div>
+                  <div class="settings-row"><div><strong>User role</strong><span id="settingsUserRoleCopy">Permissions are based on your active trip memberships.</span></div><span class="status-pill" id="settingsUserRole">Traveler</span></div>
                   <div class="settings-row" data-admin-only><div><strong>System administrator</strong><span>Platform-level users, roles, permissions, and integration configuration.</span></div><button type="button" data-corporate-access-admin="Review System Roles">Review</button></div>
                   <div class="settings-row"><div><strong>Trip permissions</strong><span>Invite members, edit trip details, approve shared wallet requests.</span></div><button type="button" data-target="tripsPanel">Manage</button></div>
                   <div class="settings-row"><div><strong>Event permissions</strong><span>Guest management, RSVPs, event schedule edits, and announcements.</span></div><button type="button" data-target="eventsPanel">Manage</button></div>
@@ -4957,10 +4888,23 @@
       <p id="pinSummary">Enter your 4-digit trip wallet PIN to add funds.</p>
       <label for="walletPin">Wallet PIN</label>
       <input id="walletPin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="one-time-code" placeholder="4-digit PIN" required>
-      <p class="small">For this mock, any 4-digit PIN confirms the payment. In production, PIN checks must happen on the server and card data must never touch this app.</p>
+      <p class="small">Wallet PIN verification and card authorization are completed by the secure server and configured payment provider. Travel-Drip never stores raw card data.</p>
       <div class="dialog-actions">
         <button class="ghost-button" value="cancel" type="button" id="cancelPinButton">Cancel</button>
         <button class="primary-button" value="confirm" type="submit">Confirm payment</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="pin-dialog" id="invitationResponseDialog" aria-labelledby="invitationResponseTitle">
+    <form method="dialog" class="pin-card" id="invitationResponseForm">
+      <p class="eyebrow">Trip invitation</p>
+      <h2 id="invitationResponseTitle">You were invited to a Travel-Drip trip</h2>
+      <p id="invitationResponseMessage">Review the invitation and choose whether to join. Accepted trips are added to your dashboard.</p>
+      <div class="dialog-actions">
+        <button class="ghost-button" value="declined" type="submit" data-invitation-response="declined">Decline</button>
+        <button class="ghost-button" value="maybe" type="submit" data-invitation-response="maybe">Maybe</button>
+        <button class="primary-button" value="accepted" type="submit" data-invitation-response="accepted">Accept invitation</button>
       </div>
     </form>
   </dialog>
@@ -4995,6 +4939,7 @@
 
   <script src="https://link.msgsndr.com/js/external-tracking.js" data-tracking-id="tk_684cd074f7154fbebd60d6f62b2d331b"></script>
   <script src="public-config.js?v=3"></script>
-  <script defer src="app.js?v=73"></script>
+  <script src="vendor/qrcode.js?v=1"></script>
+  <script defer src="app.js?v=76"></script>
 </body>
 </html>

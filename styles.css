@@ -1476,6 +1476,256 @@ body.auth-screen .auth-panel[hidden] {
   font-weight: 800;
 }
 
+.auth-field-status {
+  color: #607781;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.auth-field-status[data-status="available"] {
+  color: #13754b;
+}
+
+.auth-field-status[data-status="unavailable"],
+.auth-field-status[data-status="invalid"] {
+  color: #a33425;
+}
+
+.verification-actions,
+.account-empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.account-empty-dashboard,
+.account-live-dashboard,
+.account-route-empty {
+  border: 1px solid #cfe5e9;
+  border-left: 5px solid #19a7b8;
+  background: #fff;
+  padding: 26px;
+  box-shadow: 0 14px 34px rgba(20, 62, 74, 0.08);
+}
+
+.account-route-live {
+  min-height: 320px;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 12px;
+  border: 1px solid #cfe5e9;
+  border-left: 5px solid #19a7b8;
+  background: #fff;
+  padding: 26px;
+  box-shadow: 0 14px 34px rgba(20, 62, 74, 0.08);
+}
+
+.account-route-live__metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.account-route-live__metrics span {
+  border: 1px solid #d8e8eb;
+  background: #f8fcfc;
+  padding: 10px 12px;
+  font-weight: 700;
+}
+
+.chat-poll-form {
+  display: grid;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.chat-poll-form label {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.chat-poll-form input {
+  width: 100%;
+  min-width: 0;
+}
+
+.chat-poll-card {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--sun);
+  background: #fffdf7;
+  padding: 14px;
+}
+
+.chat-poll-options {
+  display: grid;
+  gap: 8px;
+}
+
+.chat-poll-options button {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+}
+
+.account-empty-dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 22px;
+  align-items: center;
+}
+
+.account-empty-dashboard > .small {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.account-live-dashboard {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.6fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.account-live-trip {
+  display: grid;
+  align-content: center;
+  gap: 10px;
+}
+
+.account-live-trip h2,
+.account-live-trip p {
+  margin: 0;
+}
+
+.account-live-counts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.account-live-counts article {
+  border: 1px solid #d8e8eb;
+  background: #f8fcfc;
+  padding: 16px;
+  min-width: 0;
+}
+
+.account-live-counts span,
+.account-live-counts small,
+.account-live-counts strong {
+  display: block;
+}
+
+.account-live-counts strong {
+  margin: 6px 0 4px;
+  font-size: 1.7rem;
+}
+
+.account-live-dashboard > .small {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+body.signed-in-shell .metrics,
+body.signed-in-shell .travel-social-strip,
+body.signed-in-shell #dashboardWidgets,
+body.signed-in-shell #dashboardHome,
+body.signed-in-shell .destination-insights {
+  display: none !important;
+}
+
+body.signed-in-shell:not(.corporate-employee-mode) #corporateHome {
+  display: none !important;
+}
+
+body.signed-in-shell[data-active-route="dashboardHome"] #globalDestinationHeader {
+  display: none !important;
+}
+
+body.account-data-pending #accountEmptyDashboard,
+body.account-data-pending #accountLiveDashboard {
+  display: none !important;
+}
+
+.account-route-empty {
+  min-height: 320px;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 10px;
+}
+
+.route-screen.is-account-empty > *:not(.account-route-empty) {
+  display: none !important;
+}
+
+.route-screen.is-account-empty > .account-route-empty {
+  display: grid !important;
+}
+
+.route-screen.is-account-live > *:not(.account-route-live) {
+  display: none !important;
+}
+
+.route-screen.is-account-live > .account-route-live {
+  display: grid !important;
+}
+
+#tripsPanel.is-account-creation > *:not(.section-heading):not(#guidedTripFlow) {
+  display: none !important;
+}
+
+#tripsPanel.is-account-creation > .section-heading,
+#tripsPanel.is-account-creation > #guidedTripFlow {
+  display: grid !important;
+}
+
+.invitation-recipient-fields {
+  margin-bottom: 14px;
+}
+
+.invite-share-output {
+  display: grid;
+  gap: 12px;
+}
+
+#inviteQrCode canvas,
+#inviteQrCode img,
+#inviteQrCode svg {
+  display: block;
+  width: 168px;
+  height: 168px;
+  border: 1px solid #d5e7e9;
+  background: #fff;
+  padding: 8px;
+}
+
+@media (max-width: 760px) {
+  .account-live-dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .account-live-counts {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .account-empty-dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .account-empty-dashboard > .small {
+    grid-column: auto;
+  }
+}
+
 .auth-form input,
 .admin-form input,
 .admin-form textarea {

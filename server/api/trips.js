@@ -119,16 +119,12 @@ function makeWalletIdentifier(tripId) {
 }
 
 async function listTrips(request, response, supabase, user) {
-  const { searchParams } = new URL(request.url, "https://traveldrip.local");
-  const status = sanitizeText(searchParams.get("status"), "", 40);
-
-  let query = supabase
+  const query = supabase
     .from("trip_members")
     .select("role, status, trips(*)")
     .eq("user_id", user.id)
+    .eq("status", "active")
     .order("created_at", { ascending: false });
-
-  if (status) query = query.eq("status", status);
 
   const { data, error } = await query;
   if (error) {
@@ -137,11 +133,13 @@ async function listTrips(request, response, supabase, user) {
   }
 
   response.status(200).json({
-    trips: (data || []).map((row) => ({
-      ...row.trips,
-      myRole: row.role,
-      myStatus: row.status
-    }))
+    trips: (data || [])
+      .filter((row) => row?.trips?.id)
+      .map((row) => ({
+        ...row.trips,
+        myRole: row.role,
+        myStatus: row.status
+      }))
   });
 }
 

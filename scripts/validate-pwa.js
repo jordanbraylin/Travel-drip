@@ -112,7 +112,7 @@ for (const [label, source, required] of [
   ["employee bill splitter remains inside wallet", app, '"splitBill"'],
   ["reusable employee access mode", app, 'accessMode === "persistent"'],
   ["complete employee access removal action", app, 'action: "remove-attendee-access"'],
-  ["personal dashboard authentication guard", app, '!isFilePreview && !state.session?.user'],
+  ["personal dashboard authentication guard", app, '!state.session?.user'],
   ["post-sign-up guest account upgrade", guestAccess, 'action === "upgrade-account"'],
   ["corporate invite list authorization", guestAccess, 'action === "list-invites"'],
   ["server employee access revocation", guestAccess, 'action === "remove-attendee-access"'],

@@ -21,7 +21,7 @@ const staticFiles = [
   "terms.html",
 ];
 
-const staticDirectories = ["documents", "icons"];
+const staticDirectories = ["documents", "icons", "vendor"];
 
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
