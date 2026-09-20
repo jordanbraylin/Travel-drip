@@ -1655,6 +1655,10 @@ body.account-data-pending #accountLiveDashboard {
   display: none !important;
 }
 
+body.account-empty #letsPlan .event-experience-grid {
+  display: none !important;
+}
+
 .account-route-empty {
   min-height: 320px;
   display: grid;

@@ -2514,7 +2514,8 @@ const privateAccountTargets = new Set([
   "importantInfo",
   "cruisePanel",
   "socialHub",
-  "memoriesPanel"
+  "memoriesPanel",
+  "enterpriseRbac"
 ]);
 
 const emptyAccountRouteCopy = {
@@ -2529,7 +2530,8 @@ const emptyAccountRouteCopy = {
   importantInfo: ["No trip information yet", "Documents, confirmations, emergency contacts, and policies appear only after you add them.", "Create a trip", "create-trip"],
   cruisePanel: ["No cruise saved", "Add a cruise trip to manage cabins, ports, boarding documents, and excursions.", "Plan a cruise", "create-cruise"],
   socialHub: ["No conversations yet", "Trip chats and private messages appear after you create or join a trip.", "Create a trip", "create-trip"],
-  memoriesPanel: ["No memories yet", "Uploaded photos and videos remain private to your account and selected trip visibility.", "Create a trip", "create-trip"]
+  memoriesPanel: ["No memories yet", "Uploaded photos and videos remain private to your account and selected trip visibility.", "Create a trip", "create-trip"],
+  enterpriseRbac: ["No company workspace", "Corporate events, employee travel, approvals, and reports appear only after your company creates or assigns them.", "Create a corporate trip", "create-trip"]
 };
 
 function accountIsEmpty() {
@@ -2595,7 +2597,8 @@ function getAccountRouteLiveCopy(target) {
     importantInfo: ["Your trip documents", "Only files uploaded to this authenticated trip are available.", [`${counts.documents || 0} document${counts.documents === 1 ? "" : "s"}`], "Upload document", "upload-document"],
     cruisePanel: [trip.title || "Your cruise", "Only saved cruise records are shown.", [`${counts.schedule || 0} schedule item${counts.schedule === 1 ? "" : "s"}`], "Open trip", "open-trip"],
     socialHub: ["Trip conversations", "Messages and polls are private to authenticated trip members.", [`${counts.messages || 0} message${counts.messages === 1 ? "" : "s"}`, `${counts.polls || 0} poll${counts.polls === 1 ? "" : "s"}`], "Start a message", "start-chat"],
-    memoriesPanel: ["Your trip memories", "Only photos and videos uploaded to this trip appear here.", [`${counts.media || 0} upload${counts.media === 1 ? "" : "s"}`], "Upload a memory", "upload-memory"]
+    memoriesPanel: ["Your trip memories", "Only photos and videos uploaded to this trip appear here.", [`${counts.media || 0} upload${counts.media === 1 ? "" : "s"}`], "Upload a memory", "upload-memory"],
+    enterpriseRbac: [trip.title || "Company workspace", "Only corporate events and employee assignments connected to this authenticated account are shown.", [`${counts.events || 0} company event${counts.events === 1 ? "" : "s"}`], "Open trip", "open-trip"]
   };
   return copy[target] || ["Your saved data", "Only authenticated records are shown.", [], "Open trip", "open-trip"];
 }
@@ -2707,7 +2710,8 @@ async function loadAccountModuleData(tripId) {
       importantInfo: documents > 0,
       cruisePanel: state.accountData.activeTrip?.trip_type === "cruise_vacation",
       socialHub: rooms > 0 || messages > 0 || polls > 0,
-      memoriesPanel: media > 0
+      memoriesPanel: media > 0,
+      enterpriseRbac: ["corporate_retreat", "business_event", "conference"].includes(state.accountData.activeTrip?.trip_type)
     }
   };
 }
