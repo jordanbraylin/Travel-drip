@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-08T13:56:20.169Z",
+  "generatedAt": "2026-10-08T22:01:28.705Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
@@ -348,6 +348,14 @@
         "status": "PASS"
       },
       {
+        "label": "Overview widgets render without prefilled trip data",
+        "status": "PASS"
+      },
+      {
+        "label": "Private tabs default to blank live states",
+        "status": "PASS"
+      },
+      {
         "label": "Live flight tracking wiring",
         "status": "PASS"
       },
@@ -357,6 +365,14 @@
       },
       {
         "label": "Live restaurant and activity search wiring",
+        "status": "PASS"
+      },
+      {
+        "label": "Live provider searches can run before sign-in",
+        "status": "PASS"
+      },
+      {
+        "label": "Live AI research can run before sign-in",
         "status": "PASS"
       },
       {

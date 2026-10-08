@@ -2390,6 +2390,27 @@ async function apiRequest(path, options = {}) {
   return data;
 }
 
+async function liveSearchApiRequest(path, options = {}) {
+  if (isFilePreview) return { skipped: true, reason: "Open the deployed app to use live provider search" };
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {})
+  };
+  if (state.session?.access_token) headers.Authorization = `Bearer ${state.session.access_token}`;
+  const response = await fetch(path, {
+    ...options,
+    headers
+  });
+  let data = {};
+  try {
+    data = await response.json();
+  } catch (_error) {
+    data = {};
+  }
+  if (!response.ok) throw new Error(data.error || `Request failed with ${response.status}`);
+  return data;
+}
+
 function renderInviteQrCode(url) {
   const container = $("#inviteQrCode");
   if (!container) return;
@@ -2542,6 +2563,11 @@ function accountIsEmpty() {
   return Boolean(state.session?.user && state.accountData.loaded && state.accountData.trips.length === 0);
 }
 
+function dashboardShouldShowBlankState() {
+  if (!state.session?.user) return true;
+  return Boolean(state.accountData.loaded && state.accountData.trips.length === 0);
+}
+
 function resetAccountData() {
   state.accountData = { loaded: false, loading: false, trips: [], activeTrip: null, moduleData: {}, counts: {}, showCreation: false, error: "" };
   state.chatData = { loaded: false, rooms: [], messages: [], polls: [], selectedRoomId: "" };
@@ -2624,17 +2650,17 @@ function ensureAccountRouteLiveState(section, target) {
 function applyAccountRouteState(target) {
   const section = getRouteComponentById(target);
   if (!section) return;
+  const isAuthenticated = Boolean(state.session?.user);
   const isTripCreation = Boolean(
-    state.session?.user
+    isAuthenticated
       && target === "tripsPanel"
       && state.accountData.showCreation
   );
-  const hasAuthenticatedData = target === "tripsPanel"
+  const hasAuthenticatedData = isAuthenticated && (target === "tripsPanel"
     ? state.accountData.trips.length > 0
-    : Boolean(state.accountData.moduleData?.[target]);
+    : Boolean(state.accountData.moduleData?.[target]));
   const shouldShowEmpty = Boolean(
-    state.session?.user
-      && privateAccountTargets.has(target)
+    privateAccountTargets.has(target)
       && !hasAuthenticatedData
       && !(target === "tripsPanel" && state.accountData.showCreation)
   );
@@ -2651,6 +2677,7 @@ function applyAccountRouteState(target) {
 
 function renderAccountState(target = getTargetFromRoute()) {
   const empty = accountIsEmpty();
+  const dashboardBlank = dashboardShouldShowBlankState();
   const accountReady = Boolean(state.session?.user && state.accountData.loaded && !state.accountData.loading);
   document.body.classList.toggle("account-data-ready", accountReady);
   document.body.classList.toggle("account-data-pending", Boolean(state.session?.user && !accountReady));
@@ -2662,13 +2689,14 @@ function renderAccountState(target = getTargetFromRoute()) {
       : "No private trips, conversations, bookings, wallet activity, memories, or company events are attached to this account yet.";
   }
   const homeEmpty = $("#accountEmptyDashboard");
-  if (homeEmpty) setVisibilityWithoutCssLeaks(homeEmpty, target === "dashboardHome" && empty);
+  if (homeEmpty) setVisibilityWithoutCssLeaks(homeEmpty, target === "dashboardHome" && dashboardBlank);
   const homeLive = $("#accountLiveDashboard");
   if (homeLive) setVisibilityWithoutCssLeaks(homeLive, target === "dashboardHome" && Boolean(state.session?.user) && state.accountData.loaded && !empty);
-  [$(".metrics"), $(".travel-social-strip"), $("#dashboardWidgets")].forEach((element) => {
+  [$(".metrics"), $(".travel-social-strip"), $(".destination-insights")].forEach((element) => {
     if (!element) return;
-    if (target === "dashboardHome") setVisibilityWithoutCssLeaks(element, !state.session?.user && !empty);
+    if (target === "dashboardHome") setVisibilityWithoutCssLeaks(element, false);
   });
+  if ($("#dashboardWidgets")) setVisibilityWithoutCssLeaks($("#dashboardWidgets"), target === "dashboardHome");
   applyAccountRouteState(target);
 }
 
@@ -3862,11 +3890,11 @@ function liveSearchMessage(target, message, tone = "") {
 async function searchLiveTravelPlaces({ category, query = "", destination = "", target }) {
   liveSearchMessage(target, "Searching live travel sources...", "loading");
   try {
-    const result = await apiRequest("/api/travel-search", {
+    const result = await liveSearchApiRequest("/api/travel-search", {
       method: "POST",
       body: JSON.stringify({ category, q: query, destination, limit: 8 })
     });
-    if (result.skipped) throw new Error("Live search requires a signed-in deployed app.");
+    if (result.skipped) throw new Error(result.reason || "Open the deployed app to use live provider search.");
     const results = result.results || [];
     if (target === "explore") {
       state.liveSearch.exploreResults = results;
@@ -4008,11 +4036,11 @@ async function searchLiveHotelAvailability({ cityCode, checkInDate, checkOutDate
   hotelAvailabilityMessage("Checking current hotel availability...", "loading");
   renderLiveHotelResults([]);
   try {
-    const result = await apiRequest("/api/hotel-availability", {
+    const result = await liveSearchApiRequest("/api/hotel-availability", {
       method: "POST",
       body: JSON.stringify({ cityCode, checkInDate, checkOutDate, adults, hotelId })
     });
-    if (result.skipped) throw new Error("Live hotel availability requires a signed-in deployed app.");
+    if (result.skipped) throw new Error(result.reason || "Open the deployed app to use live hotel availability.");
     const results = result.results || [];
     state.liveSearch.hotelResults = results;
     renderLiveHotelResults(results, result.sourceLabel);
@@ -4100,14 +4128,14 @@ async function runLiveAiResearch() {
   if (status) status.textContent = "AI is researching current travel sources...";
   if (research) research.innerHTML = `<p class="small">Searching current destinations, activities, restaurants, and transportation sources...</p>`;
   try {
-    const response = await apiRequest("/api/ai-planner", {
+    const response = await liveSearchApiRequest("/api/ai-planner", {
       method: "POST",
       body: JSON.stringify({
         answers: state.aiPlanner.answers,
         query: $("#aiPlannerResearchInput")?.value.trim() || ""
       })
     });
-    if (response.skipped) throw new Error("Live AI research requires a signed-in deployed app.");
+    if (response.skipped) throw new Error(response.reason || "Open the deployed app to use live AI research.");
     state.liveSearch.aiResearch = response;
     if (research) {
       research.innerHTML = `
@@ -4509,10 +4537,10 @@ function getAiPlannerTripMode() {
 function getAiPlannerPlan() {
   const answers = state.aiPlanner.answers;
   const tripType = answers.tripType || "Group Vacation";
-  const destination = answers.destination || "Miami";
-  const budget = answers.budget || "$875/person";
+  const destination = answers.destination || "Destination not selected";
+  const budget = answers.budget || "Not set";
   const dates = answers.dates || "Flexible dates";
-  const interests = answers.interests || "Food and Dining";
+  const interests = answers.interests || "Waiting for preferences";
   const corporate = /corporate|business|conference/i.test(tripType);
   const cruise = /cruise/i.test(tripType);
   const solo = /solo/i.test(tripType);
@@ -4525,7 +4553,7 @@ function getAiPlannerPlan() {
         : solo
           ? "Personal concierge draft focused on safety, flexible pacing, local recommendations, budget tracking, documents, and memories."
           : "Collaborative trip draft with invitations, shared budget, polls, group-friendly dining, transportation, wallet contributions, and editable itinerary blocks.",
-    cost: budget.includes("$") ? budget : "$875/person estimate",
+    cost: budget.includes("$") ? budget : "Set a budget to estimate costs",
     window: dates,
     style: interests,
     mode: getAiPlannerTripMode(),
@@ -4533,7 +4561,7 @@ function getAiPlannerPlan() {
       ? ["Arrival, policy briefing, hotel check-in", "Meeting blocks, team lunch, approved team-building", "Conference sessions, transport windows, expense closeout"]
       : cruise
         ? ["Embarkation, cabin setup, welcome dinner", "Port morning, shore excursion, onboard show", "Sea day wellness, specialty dining, packing reminders"]
-        : ["Arrival, check-in, local dinner", `${interests} anchor activity, lunch, evening experience`, "Flexible morning, favorite stop, departure"]
+        : ["Add arrival details", "Add an anchor activity", "Add departure or final-day plans"]
   };
 }
 

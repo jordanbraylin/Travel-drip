@@ -2,7 +2,6 @@ import {
   applySecurityHeaders,
   getRequestBody,
   methodNotAllowed,
-  requireAuthenticatedUser,
   sanitizeText
 } from "./_security.js";
 
@@ -32,9 +31,6 @@ export default async function handler(request, response) {
     methodNotAllowed(response, "POST");
     return;
   }
-
-  const { user } = await requireAuthenticatedUser(request, response);
-  if (!user) return;
 
   const apiKey = process.env.OPENAI_API_KEY || "";
   if (!apiKey) {

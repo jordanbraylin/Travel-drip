@@ -2,7 +2,6 @@ import {
   applySecurityHeaders,
   getRequestBody,
   methodNotAllowed,
-  requireAuthenticatedUser,
   sanitizeText
 } from "./_security.js";
 
@@ -121,9 +120,6 @@ export default async function handler(request, response) {
     response.status(429).json({ error: "Hotel availability rate limit reached. Try again in a minute." });
     return;
   }
-
-  const { user } = await requireAuthenticatedUser(request, response);
-  if (!user) return;
 
   const body = getRequestBody(request);
   const cityCode = cleanCityCode(body.cityCode || body.destination);

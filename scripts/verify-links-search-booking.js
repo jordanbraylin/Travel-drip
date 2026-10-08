@@ -8,6 +8,9 @@ const html = read("index.html");
 const app = read("app.js");
 const navigationCss = read("navigation.css");
 const pkg = JSON.parse(read("package.json"));
+const travelSearchApi = read("server/api/travel-search.js");
+const hotelAvailabilityApi = read("server/api/hotel-availability.js");
+const aiPlannerApi = read("server/api/ai-planner.js");
 const travelHomeMarkup = html.match(/<section class="travel-focus-panel active" data-travel-panel="overview">([\s\S]*?)<\/section>\s*<section class="travel-focus-panel" data-travel-panel="flights">/)?.[1] || "";
 const travelSettingsNavMarkup = html.match(/<nav class="travel-settings-nav"[\s\S]*?<\/nav>/)?.[0] || "";
 
@@ -215,9 +218,13 @@ const focusedLayoutChecks = [
   ["Travel uses social discovery layout", html.includes("travel-discovery-feed") && html.includes('class="travel-feed-card') && navigationCss.includes("Social Travel + Chat refresh") && navigationCss.includes("#rideShareHub .travel-discovery-feed") && navigationCss.includes("#rideShareHub .travel-feed-card img")],
   ["Chat uses social conversation layout", html.includes('id="socialHub"') && html.includes('class="conversation-card active"') && navigationCss.includes("#socialHub .modern-messages .msg") && navigationCss.includes("#socialHub .conversation-card img") && navigationCss.includes("#socialHub .chat-vibe-strip")],
   ["Home dashboard uses travel-first layout", html.includes('id="dashboardHome"') && html.includes('id="dashboardWidgets"') && navigationCss.includes("Home dashboard refresh: make the first screen travel-first") && navigationCss.includes('[data-active-route="dashboardHome"] .destination-fact-grid') && navigationCss.includes('[data-active-route="dashboardHome"] main > .dashboard-widgets .widget-grid') && navigationCss.includes("linear-gradient(135deg, #9ef1dc, #ffd39a)")],
+  ["Overview widgets render without prefilled trip data", html.includes("No upcoming trip yet") && html.includes("No budget set") && html.includes("No flight saved") && html.includes("No forecast yet") && !html.includes("Dubai long weekend") && !html.includes("Confirm rooftop dinner headcount") && !navigationCss.includes("body.signed-in-shell #dashboardWidgets")],
+  ["Private tabs default to blank live states", app.includes("function dashboardShouldShowBlankState") && app.includes("privateAccountTargets.has(target)") && app.includes("!hasAuthenticatedData") && app.includes("section.classList.toggle(\"is-account-empty\", shouldShowEmpty)")],
   ["Live flight tracking wiring", html.includes('id="flightTrackingForm"') && html.includes('id="flightTrackingResult"') && app.includes("/api/flight-tracking") && app.includes("function trackFlightStatus") && fs.existsSync(path.join(root, "server", "api", "flight-tracking.js"))],
   ["Live hotel availability wiring", html.includes('id="hotelLiveSearchForm"') && html.includes('id="hotelLiveResults"') && app.includes("/api/hotel-availability") && app.includes("function searchLiveHotelAvailability") && fs.existsSync(path.join(root, "server", "api", "hotel-availability.js"))],
   ["Live restaurant and activity search wiring", html.includes('data-travel-search-suggestion="restaurants"') && app.includes("searchLiveTravelPlaces") && app.includes('? "food"') && app.includes(': "activities"') && fs.existsSync(path.join(root, "server", "api", "travel-search.js"))],
+  ["Live provider searches can run before sign-in", app.includes("function liveSearchApiRequest") && app.includes('liveSearchApiRequest("/api/travel-search"') && app.includes('liveSearchApiRequest("/api/hotel-availability"') && !travelSearchApi.includes("requireAuthenticatedUser") && !hotelAvailabilityApi.includes("requireAuthenticatedUser")],
+  ["Live AI research can run before sign-in", app.includes('liveSearchApiRequest("/api/ai-planner"') && aiPlannerApi.includes('tools: [{ type: "web_search" }]') && !aiPlannerApi.includes("requireAuthenticatedUser")],
   ["My Profile widgets stay readable", html.includes('id="myProfile"') && html.includes('profile-stats-grid') && html.includes('profile-adventure-grid') && navigationCss.includes("body.app-routed #myProfile") && navigationCss.includes(".profile-stats-grid") && navigationCss.includes(".profile-adventure-grid") && navigationCss.includes("grid-template-columns:")],
   ["Travel selected page panel removed", !html.includes('id="travelSelectedTile"') && !html.includes('class="travel-selected-tile"')],
   ["Travel Home avoids duplicate summaries", travelHomeMarkup.includes("travel-booking-summary") && !travelHomeMarkup.includes('class="travel-transport-summary"') && !travelHomeMarkup.includes('class="travel-dashboard-sections"') && !travelHomeMarkup.includes('class="travel-focus-grid"')],

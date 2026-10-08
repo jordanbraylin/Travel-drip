@@ -1654,7 +1654,6 @@ body.auth-screen .auth-panel[hidden] {
 
 body.signed-in-shell .metrics,
 body.signed-in-shell .travel-social-strip,
-body.signed-in-shell #dashboardWidgets,
 body.signed-in-shell #dashboardHome,
 body.signed-in-shell .destination-insights {
   display: none !important;

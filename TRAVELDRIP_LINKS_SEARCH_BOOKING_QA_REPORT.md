@@ -1,6 +1,6 @@
 # Travel-Drip Links, Search, Date Picker, Booking, and Real-Time Updates Verification
 
-Generated: 2026-10-08T13:56:20.169Z
+Generated: 2026-10-08T22:01:28.705Z
 
 ## Final Status
 
@@ -141,9 +141,13 @@ Route roots and visible inner shells are transparent; individual widgets retain 
 - Travel uses social discovery layout: PASS
 - Chat uses social conversation layout: PASS
 - Home dashboard uses travel-first layout: PASS
+- Overview widgets render without prefilled trip data: PASS
+- Private tabs default to blank live states: PASS
 - Live flight tracking wiring: PASS
 - Live hotel availability wiring: PASS
 - Live restaurant and activity search wiring: PASS
+- Live provider searches can run before sign-in: PASS
+- Live AI research can run before sign-in: PASS
 - My Profile widgets stay readable: PASS
 - Travel selected page panel removed: PASS
 - Travel Home avoids duplicate summaries: PASS
