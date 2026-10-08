@@ -1,4 +1,5 @@
 import adminStatus from "../server/api/admin-status.js";
+import authLogin from "../server/api/auth-login.js";
 import aiInvitation from "../server/api/ai-invitation.js";
 import aiPlanner from "../server/api/ai-planner.js";
 import audit from "../server/api/audit.js";
@@ -26,6 +27,7 @@ import { applySecurityHeaders } from "../server/api/_security.js";
 
 const routes = Object.freeze({
   "admin-status": adminStatus,
+  "auth-login": authLogin,
   "ai-invitation": aiInvitation,
   "ai-planner": aiPlanner,
   audit,

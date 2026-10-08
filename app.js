@@ -239,6 +239,7 @@ function setSyncStatus(message) {
 
 const receiptItems = [];
 const receiptPaymentStatus = {};
+const savedReceiptTotals = [];
 
 function getSplitParticipants(count = 1) {
   const profileName = $("#profileFullNameInput")?.value.trim()
@@ -1760,7 +1761,10 @@ async function openDestinationExplore(action = "destinations") {
     getDestinationExploreRoute(destination, destinationRouteAction)
   );
   renderRoute("exploreDrops");
-  showDestinationExploreDetail(destination.id, destinationRouteAction);
+  window.requestAnimationFrame(() => {
+    showDestinationExploreDetail(destination.id, destinationRouteAction);
+    $("#exploreDetailPanel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
   const actionCopy = {
     destinations: `Explore destination details opened for ${destination.location}.`,
     activities: `Activities filtered for ${destination.location}.`,
@@ -2757,7 +2761,29 @@ function renderActiveTripAccountData() {
 }
 
 async function loadAccountData() {
-  if (!state.session?.access_token || isFilePreview || state.accountData.loading) return state.accountData;
+  if (!state.session?.access_token || state.accountData.loading) return state.accountData;
+  if (isFilePreview) {
+    state.accountData = {
+      loaded: true,
+      loading: false,
+      trips: [],
+      activeTrip: null,
+      moduleData: {},
+      counts: {},
+      showCreation: false,
+      error: "Private account data is unavailable in a local file preview. Open the deployed app to load it securely."
+    };
+    state.activeTripId = "";
+    sessionStorage.removeItem("traveldripActiveTripId");
+    await loadTripChatData();
+    renderAccountState();
+    renderProfileSummary({
+      full_name: $("#profileFullNameInput")?.value || "",
+      username: $("#profileUsernameInput")?.value || "",
+      bio: $("#profileBioInput")?.value || ""
+    }, state.profileMetadata.profileDetails || {});
+    return state.accountData;
+  }
   state.accountData.loading = true;
   state.accountData.error = "";
   try {
@@ -2778,6 +2804,7 @@ async function loadAccountData() {
     renderActiveTripAccountData();
     renderLiveAccountDashboard();
     await loadTripChatData();
+    await loadSavedReceiptTotals();
   } catch (error) {
     state.accountData.trips = [];
     state.accountData.activeTrip = null;
@@ -3858,7 +3885,7 @@ async function searchLiveTravelPlaces({ category, query = "", destination = "", 
       : "No live results matched. Try a broader destination or search term.", results.length ? "success" : "empty");
     return result;
   } catch (error) {
-    liveSearchMessage(target, `${error.message} Local estimates remain available.`, "error");
+    liveSearchMessage(target, `${error.message} Public inspiration below is not live availability.`, "error");
     if (target === "explore") renderLiveExploreResults([]);
     if (target === "travel") renderLiveTravelResults([]);
     if (target === "privateDriver") renderLivePrivateDriverResults([]);
@@ -4355,7 +4382,7 @@ function renderExplore(categoryKey = getActiveExploreCategory()) {
   $("#exploreBackButton").hidden = true;
   $("#exploreResultsGrid").hidden = false;
   $("#exploreSubfilters").innerHTML = category.filters.map((filter) => `<button type="button" data-explore-subfilter="${escapeHtml(filter)}">${escapeHtml(filter)}</button>`).join("");
-  $("#exploreResultsSummary").textContent = `${category.label} results for ${destination} ${tripType.toLowerCase()}`;
+  $("#exploreResultsSummary").textContent = `${category.label} public inspiration for ${destination} ${tripType.toLowerCase()} (not live availability)`;
   $("#exploreEmptyState").hidden = items.length > 0;
   $("#exploreResultsGrid").innerHTML = items.map((item) => {
     const primaryActions = item.actions.filter((action) => ["Save", "Add to Trip", "Add to Itinerary", "Create This Trip"].includes(action)).slice(0, 2);
@@ -4366,7 +4393,7 @@ function renderExplore(categoryKey = getActiveExploreCategory()) {
           <img src="${item.image}" alt="${escapeHtml(item.title)}" loading="lazy">
         </span>
         <span class="discovery-content">
-          <span class="eyebrow">${escapeHtml(item.type)}</span>
+          <span class="eyebrow">Inspiration • ${escapeHtml(item.type)}</span>
           <strong class="discovery-title">${escapeHtml(item.title)}</strong>
           <span class="discovery-location">${escapeHtml(destination)}</span>
           <span class="discovery-description">${escapeHtml(item.description)}</span>
@@ -4585,7 +4612,7 @@ async function handleExploreAction(action, itemId) {
     category,
     destination,
     tripType: $("#exploreTripTypeFilter")?.value || "group",
-    dates: $("#exploreDatesInput")?.value || "",
+    dates: [$("#exploreStartDateInput")?.value, $("#exploreEndDateInput")?.value].filter(Boolean).join(" to "),
     budget: $("#exploreBudgetFilter")?.value || "any"
   });
 }
@@ -4659,6 +4686,26 @@ function getBillInputs() {
 
 function getSplitMode() {
   return $(".split-mode-tabs button.active")?.dataset.splitMode || "equal";
+}
+
+async function loadSavedReceiptTotals() {
+  savedReceiptTotals.splice(0);
+  if (!state.supabase || !state.session?.user || !state.activeTripId || isFilePreview) return;
+  const { data, error } = await state.supabase
+    .from("trip_events")
+    .select("id, payload, created_at")
+    .eq("trip_id", state.activeTripId)
+    .eq("user_id", state.session.user.id)
+    .eq("event_type", "receipt_total_saved")
+    .order("created_at", { ascending: false })
+    .limit(20);
+  if (error) return;
+  (data || []).forEach((entry) => savedReceiptTotals.push({
+    id: entry.id,
+    ...(entry.payload || {}),
+    savedAt: entry.created_at
+  }));
+  renderBillSplit();
 }
 
 function getParticipantSplits(bill, mode) {
@@ -4803,9 +4850,16 @@ function renderReceiptScanner(bill = getBillInputs()) {
     </div>
   `).join("");
 
-  $("#receiptHistoryList").innerHTML = receiptItems.length
+  const currentReceiptHistory = receiptItems.length
     ? `<div><strong>${escapeHtml($("#receiptRestaurant")?.textContent || "Uploaded receipt")}</strong><span>${diners.map((person) => escapeHtml(person.name)).join(", ")}</span><b>${currency(receiptTotal)}</b></div><div><strong>Payment status</strong><span>${currency(paidTotal)} provider-confirmed • ${currency(Math.max(0, receiptTotal - paidTotal))} unconfirmed</span><b>Review</b></div>`
-    : '<div><strong>No receipt history</strong><span>Saved uploads appear after a successful private upload.</span><b>Empty</b></div>';
+    : "";
+  const savedTotalHistory = savedReceiptTotals.map((entry) => {
+    const savedDate = entry.savedAt ? new Date(entry.savedAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" }) : "Saved now";
+    return `<div><strong>${escapeHtml(entry.name || "Saved bill total")}</strong><span>${escapeHtml(savedDate)} • ${Number(entry.diners || 1)} diner${Number(entry.diners || 1) === 1 ? "" : "s"}</span><b>${currency(Number(entry.total || 0))}</b></div>`;
+  }).join("");
+  $("#receiptHistoryList").innerHTML = currentReceiptHistory || savedTotalHistory
+    ? `${currentReceiptHistory}${savedTotalHistory}`
+    : '<div><strong>No receipt history</strong><span>Save a total or upload a receipt to keep it here.</span><b>Empty</b></div>';
 
   $$("[data-receipt-item]").forEach((checkbox) => {
     checkbox.addEventListener("change", (event) => {
@@ -5438,7 +5492,10 @@ async function loadProfileDetails() {
     return;
   }
   if ($("#profileFullNameInput")) $("#profileFullNameInput").value = data.full_name || "";
-  if ($("#profileUsernameInput")) $("#profileUsernameInput").value = data.username || "";
+  if ($("#profileUsernameInput")) {
+    $("#profileUsernameInput").value = data.username || "";
+    $("#profileUsernameInput").dataset.savedUsername = normalizeUsername(data.username || "");
+  }
   if ($("#profileBioInput")) $("#profileBioInput").value = data.bio || "";
   state.profilePhoto.initials = initialsFromName(data.full_name || state.session.user.email || "Travel Drip");
   state.profilePhoto.privacy = data.avatar_visibility || "trip_members";
@@ -5519,7 +5576,8 @@ async function saveProfileDetails() {
     if (status) status.textContent = "Username must use 3-24 letters, numbers, or underscores.";
     return;
   }
-  if (username) {
+  const savedUsername = normalizeUsername($("#profileUsernameInput")?.dataset.savedUsername || "");
+  if (username && username !== savedUsername) {
     const availability = await checkUsernameAvailability(username, { statusElementId: "profileDetailsMessage" });
     if (availability === false) return;
   }
@@ -5550,6 +5608,7 @@ async function saveProfileDetails() {
     state.profilePhoto.initials = initialsFromName(payload.full_name || "Travel-Drip traveler");
     renderProfileSummary(payload, payload.avatar_metadata.profileDetails);
     renderProfilePhoto();
+    if ($("#profileUsernameInput")) $("#profileUsernameInput").dataset.savedUsername = username;
   }
 }
 
@@ -5686,6 +5745,15 @@ function updateAuthUi() {
   if (!signedIn) {
     state.hasEnteredApp = false;
     sessionStorage.removeItem("traveldripEnteredApp");
+    if (location.pathname !== "/admin.html") {
+      const loginRoute = isFilePreview ? "index.html#login" : "/login";
+      const isLoginRoute = isFilePreview
+        ? location.hash === "#login"
+        : normalizeAppPath(location.pathname) === "/login";
+      if (!isLoginRoute) history.replaceState({ target: "login" }, "", loginRoute);
+      state.activeRoute = "login";
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    }
   }
   const showGate = !appAccess;
 
@@ -6018,14 +6086,38 @@ function getAuthErrorMessage(error, fallback) {
   return message || fallback;
 }
 
-async function signIn(email, password) {
+async function signIn(identifier, password) {
   if (!state.supabase) {
     showAuthSetupMessage();
     return;
   }
 
   try {
-    const { data, error } = await state.supabase.auth.signInWithPassword({ email, password });
+    const normalizedIdentifier = String(identifier || "").trim();
+    let data;
+    let error;
+    if (normalizedIdentifier.includes("@")) {
+      ({ data, error } = await state.supabase.auth.signInWithPassword({
+        email: normalizedIdentifier.toLowerCase(),
+        password
+      }));
+    } else {
+      if (isFilePreview) {
+        $("#authMessage").textContent = "Username sign-in uses Travel-Drip's secure server. Open the deployed site, or sign in here with your email address.";
+        return false;
+      }
+      const response = await fetch("/api/auth-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: normalizeUsername(normalizedIdentifier), password })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "Sign-in failed. Please try again.");
+      ({ data, error } = await state.supabase.auth.setSession({
+        access_token: result.accessToken,
+        refresh_token: result.refreshToken
+      }));
+    }
     $("#authMessage").textContent = error ? getAuthErrorMessage(error, "Sign-in failed. Please try again.") : "Logged in. Confirming your saved information...";
     if (error) return false;
 
@@ -6644,6 +6736,9 @@ async function signOut() {
   state.ownershipTransfer = { status: "idle", tripId: "", entityType: "auto", members: [] };
   sessionStorage.removeItem("traveldripActiveTripId");
   setAuthMode("signin");
+  const loginRoute = isFilePreview ? "index.html#login" : "/login";
+  history.replaceState({ target: "login" }, "", loginRoute);
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   updateAuthUi();
   renderWalletAccess();
   renderOwnershipTransferMembers();
@@ -7738,12 +7833,68 @@ function wireLocalInteractions() {
   startLivePlanRotation();
   startGlobalDestinationHeader();
 
+  const closeDialog = (selector) => $(selector)?.close();
+  $("#letsPlanButton")?.addEventListener("click", () => {
+    const dialog = $("#letsPlanDialog");
+    if (dialog && !dialog.open) dialog.showModal();
+    $("#letsPlanDestinationInput")?.focus();
+  });
+  ["#closeLetsPlanDialogButton", "#cancelLetsPlanDialogButton"].forEach((selector) => {
+    $(selector)?.addEventListener("click", () => closeDialog("#letsPlanDialog"));
+  });
+  $("#letsPlanStartDateInput")?.addEventListener("change", (event) => {
+    const end = $("#letsPlanEndDateInput");
+    if (!end) return;
+    end.min = event.target.value;
+    if (end.value && end.value < event.target.value) end.value = event.target.value;
+  });
+  $("#letsPlanForm")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const destination = $("#letsPlanDestinationInput")?.value.trim();
+    const startDate = $("#letsPlanStartDateInput")?.value || "";
+    const endDate = $("#letsPlanEndDateInput")?.value || "";
+    const type = $("#letsPlanTypeInput")?.value || "group";
+    if (!destination || !startDate || !endDate || endDate < startDate) {
+      $("#letsPlanDialogMessage").textContent = "Add a destination and a valid start and end date.";
+      return;
+    }
+    state.accountData.showCreation = true;
+    closeDialog("#letsPlanDialog");
+    openPlanningWorkflow(type);
+    if ($("#tripNameInput")) $("#tripNameInput").value = `Trip to ${destination}`;
+    if ($("#tripDestinationInput")) $("#tripDestinationInput").value = destination;
+    if ($("#tripStartInput")) $("#tripStartInput").value = startDate;
+    if ($("#tripEndInput")) $("#tripEndInput").value = endDate;
+    if ($("#tripTravelersInput")) $("#tripTravelersInput").value = $("#letsPlanTravelersInput")?.value || "1";
+    if ($("#eventGuestCountInput")) $("#eventGuestCountInput").value = $("#letsPlanTravelersInput")?.value || "1";
+    if ($("#tripBudgetInput")) $("#tripBudgetInput").value = $("#letsPlanBudgetInput")?.value || "";
+    if ($("#tripInterestsInput")) $("#tripInterestsInput").value = $("#letsPlanInterestsInput")?.value.trim() || "";
+    renderInvitationSetup(type);
+  });
+
+  $("#exploreStartDateInput")?.addEventListener("change", (event) => {
+    const end = $("#exploreEndDateInput");
+    if (!end) return;
+    end.min = event.target.value;
+    if (end.value && end.value < event.target.value) end.value = event.target.value;
+  });
+
   $$(".tab").forEach((button) => {
     button.addEventListener("click", () => {
       $$(".tab").forEach((tab) => tab.classList.remove("active"));
       button.classList.add("active");
       renderPlan(Number(button.dataset.day));
     });
+  });
+
+  $("#generateItineraryRefreshButton")?.addEventListener("click", async () => {
+    const activeDay = Number($("[data-day].active")?.dataset.day || 0);
+    const nextDay = (activeDay + 1) % plans.length;
+    $$("[data-day]").forEach((button) => button.classList.toggle("active", Number(button.dataset.day) === nextDay));
+    renderPlan(nextDay);
+    if ($("#builderCopy")) $("#builderCopy").textContent += " Refreshed from your current planning context.";
+    addAuditEntry("Itinerary refreshed", "A new itinerary variation was generated from the current planning context.");
+    await saveSyncedEvent("itinerary_refreshed", { source: "builder", providerBacked: false });
   });
 
   $$(".chip").forEach((button) => {
@@ -7768,7 +7919,7 @@ function wireLocalInteractions() {
     });
   });
 
-  ["#exploreSearchInput", "#exploreDestinationInput", "#exploreDatesInput", "#exploreBudgetFilter", "#exploreTripTypeFilter", "#exploreRatingFilter", "#exploreDistanceFilter", "#exploreOpenNowFilter", "#exploreAccessibleFilter"].forEach((selector) => {
+  ["#exploreSearchInput", "#exploreDestinationInput", "#exploreStartDateInput", "#exploreEndDateInput", "#exploreBudgetFilter", "#exploreTripTypeFilter", "#exploreRatingFilter", "#exploreDistanceFilter", "#exploreOpenNowFilter", "#exploreAccessibleFilter"].forEach((selector) => {
     $(selector)?.addEventListener("input", () => renderExplore());
     $(selector)?.addEventListener("change", () => renderExplore());
   });
@@ -8110,6 +8261,41 @@ function wireLocalInteractions() {
     $(selector)?.addEventListener("input", renderBillSplit);
   });
 
+  $("#clearBillTotalsButton")?.addEventListener("click", () => {
+    ["#billSubtotal", "#billTax", "#billTipPercent", "#billFees", "#billDiscount"].forEach((selector) => {
+      if ($(selector)) $(selector).value = "0";
+    });
+    if ($("#billDiners")) $("#billDiners").value = "1";
+    receiptItems.splice(0);
+    Object.keys(receiptPaymentStatus).forEach((key) => delete receiptPaymentStatus[key]);
+    if ($("#receiptRestaurant")) $("#receiptRestaurant").textContent = "No receipt loaded";
+    if ($("#receiptMeta")) $("#receiptMeta").textContent = "Scan, upload, or enter a receipt manually.";
+    renderBillSplit();
+    $("#billMessage").textContent = "Current bill fields and detected items were cleared. Previously saved receipt totals remain in Receipt history.";
+  });
+
+  $("#saveBillTotalButton")?.addEventListener("click", async () => {
+    const bill = getBillInputs();
+    if (!bill.total) {
+      $("#billMessage").textContent = "Enter a bill total before saving it to Receipt history.";
+      $("#billSubtotal")?.focus();
+      return;
+    }
+    if (!state.activeTripId || !state.session?.user) {
+      $("#billMessage").textContent = "Create or join a trip and sign in before saving a receipt total.";
+      return;
+    }
+    const entry = {
+      name: $("#receiptRestaurant")?.textContent === "No receipt loaded" ? "Manual bill total" : $("#receiptRestaurant")?.textContent,
+      ...bill,
+      savedAt: new Date().toISOString()
+    };
+    savedReceiptTotals.unshift(entry);
+    renderBillSplit();
+    await saveSyncedEvent("receipt_total_saved", entry);
+    $("#billMessage").textContent = `${currency(bill.total)} was saved to Receipt history for this trip.`;
+  });
+
   $$("[data-split-mode]").forEach((button) => {
     button.addEventListener("click", () => {
       $$("[data-split-mode]").forEach((modeButton) => modeButton.classList.remove("active"));
@@ -8437,8 +8623,20 @@ function wireLocalInteractions() {
   $$("[data-travel-focus-action]").forEach((button) => {
     button.addEventListener("click", async () => {
       const action = button.dataset.travelFocusAction;
+      if (/\bupload\b/i.test(action)) {
+        state.pendingDocumentType = action.replace(/^Upload\s+/i, "") || "travel_document";
+        $("#tripDocumentInput")?.click();
+        if ($("#travelSettingsMessage")) $("#travelSettingsMessage").textContent = `${action} is ready. Choose a PDF or image to save privately to the active trip.`;
+        return;
+      }
+      if (/\bscan\b/i.test(action)) {
+        state.pendingDocumentType = action.replace(/^Scan\s+/i, "") || "scanned_travel_document";
+        $("#tripDocumentCameraInput")?.click();
+        if ($("#travelSettingsMessage")) $("#travelSettingsMessage").textContent = `${action} is ready. Allow camera access when your browser asks.`;
+        return;
+      }
       if ($("#travelSettingsMessage")) {
-        $("#travelSettingsMessage").textContent = `${action} opened in the active Travel section. Production provider actions remain labeled until connected.`;
+        $("#travelSettingsMessage").textContent = `${action} selected. If it requires a live provider, Travel-Drip will show an unavailable message instead of sample results.`;
       }
       addAuditEntry("Travel focus action", action);
       await saveSyncedEvent("travel_focus_action", { action });
@@ -9699,6 +9897,18 @@ function wireLocalInteractions() {
     await uploadTripDocument(event.currentTarget.files?.[0], state.pendingDocumentType);
     event.currentTarget.value = "";
   });
+  $("#tripDocumentCameraInput")?.addEventListener("change", async (event) => {
+    const file = event.currentTarget.files?.[0];
+    const codes = await detectTicketCode(file);
+    await uploadTripDocument(file, state.pendingDocumentType || "scanned_travel_document");
+    const message = $("#documentUploadMessage") || $("#travelSettingsMessage");
+    if (message && file) {
+      message.textContent = codes.length
+        ? `Document saved. ${codes.length} QR or barcode value${codes.length === 1 ? " was" : "s were"} detected for review.`
+        : "Document image saved. QR detection is unavailable in this browser or no supported code was found.";
+    }
+    event.currentTarget.value = "";
+  });
   $("#savedDocumentsList")?.addEventListener("click", async (event) => {
     const button = event.target.closest("[data-open-document]");
     if (!button || !state.supabase) return;
@@ -9813,10 +10023,54 @@ function wireLocalInteractions() {
   $$("[data-profile-photo-action]").forEach((button) => {
     button.addEventListener("click", async () => {
       const action = button.dataset.profilePhotoAction;
+      if (action === "Share Profile") {
+        const username = $("#profileUsernameInput")?.value.trim();
+        const route = getRouteForTarget("myProfile");
+        const shareUrl = isFilePreview ? location.href : new URL(route, location.origin).href;
+        try {
+          if (navigator.share) await navigator.share({ title: username ? `@${username} on Travel-Drip` : "My Travel-Drip profile", url: shareUrl });
+          else await navigator.clipboard.writeText(shareUrl);
+          setProfilePhotoMessage(navigator.share ? "Profile sharing opened." : "Profile link copied.");
+        } catch (error) {
+          if (error?.name !== "AbortError") setProfilePhotoMessage("Profile sharing is unavailable in this browser.", "error");
+        }
+        return;
+      }
+      if (["Review Login Activity", "Review Devices", "Review Recovery Methods"].includes(action)) {
+        navigateSafely("adminPanel", { updateHistory: true });
+        $("[data-settings-section='security']")?.click();
+        $("[data-settings-panel='security']")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        if ($("#settingsStatusMessage")) $("#settingsStatusMessage").textContent = `${action} opened in Password & Security.`;
+        return;
+      }
+      if (action === "Export Data") {
+        const exportPayload = {
+          exportedAt: new Date().toISOString(),
+          profile: state.profileMetadata.profileDetails || {},
+          trips: state.accountData.trips || [],
+          counts: state.accountData.counts || {}
+        };
+        const url = URL.createObjectURL(new Blob([JSON.stringify(exportPayload, null, 2)], { type: "application/json" }));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `travel-drip-export-${new Date().toISOString().slice(0, 10)}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+        if ($("#settingsStatusMessage")) $("#settingsStatusMessage").textContent = "Your available Travel-Drip account data was exported.";
+        return;
+      }
+      if (action === "Clear Cache") {
+        if (!window.confirm("Clear Travel-Drip offline files and cached previews from this device? Your saved account data will remain in the cloud.")) return;
+        if ("caches" in window) await Promise.all((await caches.keys()).map((key) => caches.delete(key)));
+        ["traveldripEventInviteDraft", "traveldripSelectedTravelTrip"].forEach((key) => localStorage.removeItem(key));
+        if ($("#settingsStatusMessage")) $("#settingsStatusMessage").textContent = "Offline files and cached previews were cleared from this device.";
+        return;
+      }
       if (action === "Choose Recent Photo") {
         setProfilePhotoMessage("Upload one of your own photos first. Travel-Drip does not insert a stock photo into a personal profile.");
         return;
       }
+      if (!["Remove Profile Photo", "Restore Default Avatar"].includes(action)) return;
       state.profilePhoto.dataUrl = "";
       state.profilePhoto.pendingFileName = "";
       state.profilePhoto.pendingFile = null;
@@ -9837,7 +10091,9 @@ function wireLocalInteractions() {
   });
   $("#saveProfilePhotoButton")?.addEventListener("click", saveProfileMedia);
   $("#profileHeroSaveButton")?.addEventListener("click", () => {
-    $("#saveProfilePhotoButton")?.click();
+    $("#myProfile .profile-personal-grid")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.setTimeout(() => $("#profileFullNameInput")?.focus(), 350);
+    if ($("#profileDetailsMessage")) $("#profileDetailsMessage").textContent = "Edit the fields below, then choose Save profile details.";
   });
   $("#cancelProfilePhotoButton")?.addEventListener("click", () => {
     state.profilePhoto.dataUrl = state.profilePhoto.savedDataUrl;
@@ -9937,11 +10193,30 @@ function wireLocalInteractions() {
   $$("[data-message-action]").forEach((button) => {
     button.addEventListener("click", async () => {
       const action = button.dataset.messageAction;
-      $("#messageStatus").textContent = `${action} is connected for ${$("#activeConversationName")?.textContent || "this conversation"}. Permission checks apply before restricted content opens.`;
+      const utilityCopy = {
+        "Open media tab": ["Shared media", "Photos, videos, links, and locations uploaded to this conversation appear here. No sample media is inserted."],
+        "Open files tab": ["Shared files", "Files saved to this trip conversation appear here after a successful private upload."],
+        "Open poll history": ["Poll history", "Saved polls and your recorded votes appear here for the selected trip."],
+        "View shared files": ["Shared files", "Files saved to this trip conversation appear here after a successful private upload."],
+        "Block conversation": ["Block conversation", "Blocking requires a selected private conversation. No access was changed by opening this review."],
+        "Report conversation": ["Report conversation", "Review the selected conversation before submitting a safety report. Opening this panel does not send a report."],
+        "Manage privacy": ["Conversation privacy", "Only active trip members can open group chats. Corporate finance and administrator conversations remain role restricted."],
+        "Notification settings": ["Chat notifications", "Manage message alerts without changing access to the conversation."],
+        "Search in conversation": ["Search this conversation", "Use the message search field to find people, text, polls, photos, files, and links in this chat."],
+        "View pinned messages": ["Pinned messages", "Pinned announcements saved to the selected conversation appear here."]
+      };
+      const utility = utilityCopy[action] || [action, `This action applies only to ${$("#activeConversationName")?.textContent || "the selected conversation"}.`];
+      if ($("#messageUtilityTitle")) $("#messageUtilityTitle").textContent = utility[0];
+      if ($("#messageUtilityCopy")) $("#messageUtilityCopy").textContent = utility[1];
+      setVisibilityWithoutCssLeaks($("#messageUtilityPanel"), true);
+      $("#messageUtilityPanel")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      $("#messageStatus").textContent = `${utility[0]} opened. Permission checks remain scoped to the selected conversation.`;
       addAuditEntry("Message action", `${action} selected in the messaging hub.`);
       await saveSyncedEvent("message_action", { action, conversation: $("#activeConversationName")?.textContent });
     });
   });
+
+  $("#closeMessageUtilityButton")?.addEventListener("click", () => setVisibilityWithoutCssLeaks($("#messageUtilityPanel"), false));
 
   $$("[data-chat-tool]").forEach((button) => {
     button.addEventListener("click", async () => {
@@ -9950,6 +10225,19 @@ function wireLocalInteractions() {
         setVisibilityWithoutCssLeaks($("#chatPollForm"), true);
         $("#chatPollQuestion")?.focus();
         $("#messageStatus").textContent = "Create a poll with at least two comma-separated options.";
+        return;
+      }
+      if (tool === "Photo") {
+        $("#memoryPhotoInput")?.click();
+        return;
+      }
+      if (tool === "Video") {
+        $("#memoryVideoInput")?.click();
+        return;
+      }
+      if (tool === "File") {
+        state.pendingDocumentType = "chat_attachment";
+        $("#tripDocumentInput")?.click();
         return;
       }
       $("#messageStatus").textContent = `${tool} composer opened. Shared media, locations, polls, payment requests, and itinerary cards stay attached to this chat.`;
@@ -9995,8 +10283,37 @@ function wireLocalInteractions() {
     $("#messageStatus").textContent = "AI chat is unavailable until the OpenAI provider key is configured. No generated answer was added.";
   });
 
-  $("#newConversationButton")?.addEventListener("click", async () => {
-    await createFirstTripChat();
+  $("#newConversationButton")?.addEventListener("click", () => {
+    const dialog = $("#newMessageDialog");
+    if ($("#newMessageTitleInput") && !$("#newMessageTitleInput").value) {
+      $("#newMessageTitleInput").value = `${state.accountData.activeTrip?.title || "Trip"} chat`;
+    }
+    if ($("#newMessageDialogStatus")) {
+      $("#newMessageDialogStatus").textContent = state.activeTripId
+        ? "Only active members of the selected trip can open this conversation."
+        : "Create or join a trip before starting a conversation.";
+    }
+    if (dialog && !dialog.open) dialog.showModal();
+    $("#newMessageTitleInput")?.focus();
+  });
+  ["#closeNewMessageDialogButton", "#cancelNewMessageDialogButton"].forEach((selector) => {
+    $(selector)?.addEventListener("click", () => $("#newMessageDialog")?.close());
+  });
+  $("#newMessageForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const title = $("#newMessageTitleInput")?.value.trim() || "Trip chat";
+    const firstMessage = $("#newMessageBodyInput")?.value.trim() || "";
+    const submit = event.currentTarget.querySelector("button[type='submit']");
+    submit.disabled = true;
+    try {
+      const created = await createFirstTripChat(title, firstMessage);
+      if (created) {
+        event.currentTarget.reset();
+        $("#newMessageDialog")?.close();
+      }
+    } finally {
+      submit.disabled = false;
+    }
   });
 
   $$("[data-memory-like]").forEach((button) => {
@@ -10110,17 +10427,17 @@ function wireLocalInteractions() {
 
   $("#authForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const email = $("#emailInput").value.trim();
+    const identifier = $("#emailInput").value.trim();
     const submitButton = event.currentTarget.querySelector('button[type="submit"]');
     if (submitButton) submitButton.disabled = true;
 
     try {
       if (location.pathname === "/admin.html") {
-        await sendMagicLink(email);
+        await sendMagicLink(identifier);
         return;
       }
 
-      await signIn(email, $("#passwordInput").value);
+      await signIn(identifier, $("#passwordInput").value);
     } finally {
       if (submitButton) submitButton.disabled = false;
     }
@@ -10734,21 +11051,33 @@ async function loadTripChatData() {
   }
 }
 
-async function createFirstTripChat() {
+async function createFirstTripChat(requestedTitle = "", firstMessage = "") {
   if (!state.activeTripId) {
     showWorkflowMessage("Trip chat", "Create or join a trip before starting a conversation.");
-    return;
+    if ($("#newMessageDialogStatus")) $("#newMessageDialogStatus").textContent = "Create or join a trip before starting a conversation.";
+    return false;
   }
   try {
-    const title = `${state.accountData.activeTrip?.title || "Trip"} chat`;
+    const title = requestedTitle.trim() || `${state.accountData.activeTrip?.title || "Trip"} chat`;
     const result = await apiRequest("/api/chat", { method: "POST", body: JSON.stringify({ action: "create_room", tripId: state.activeTripId, title }) });
     state.chatData.selectedRoomId = result.room?.id || "";
+    if (firstMessage.trim() && state.chatData.selectedRoomId) {
+      await apiRequest("/api/chat", {
+        method: "POST",
+        body: JSON.stringify({ action: "send_message", tripId: state.activeTripId, roomId: state.chatData.selectedRoomId, text: firstMessage.trim() })
+      });
+    }
     await loadTripChatData();
     renderAccountState("socialHub");
     navigateSafely("socialHub", { updateHistory: true });
-    if ($("#messageStatus")) $("#messageStatus").textContent = result.existing ? "Your trip conversation is open." : "Trip conversation created. Messages are private to active members.";
+    if ($("#messageStatus")) $("#messageStatus").textContent = result.existing
+      ? (firstMessage.trim() ? "Your trip conversation is open and the message was sent." : "Your trip conversation is open.")
+      : (firstMessage.trim() ? "Trip conversation created and the first message was sent." : "Trip conversation created. Messages are private to active members.");
+    return true;
   } catch (error) {
     showWorkflowMessage("Trip chat", error.message || "The conversation could not be created.");
+    if ($("#newMessageDialogStatus")) $("#newMessageDialogStatus").textContent = error.message || "The conversation could not be created.";
+    return false;
   }
 }
 
@@ -11146,6 +11475,7 @@ function setGoLiveHealthCheck(key, status, detail) {
 
 function applyGoLiveHealth(health) {
   const required = health.requiredChecks || health;
+  const capabilities = health.capabilityChecks || health;
   const optional = health.optionalChecks || health;
   const publicReady = Boolean(
     required.supabasePublicUrlConfigured
@@ -11164,8 +11494,8 @@ function applyGoLiveHealth(health) {
       && required.cronSecretConfigured
   );
   const paymentReady = Boolean(
-    required.stripeSecretConfigured
-      && required.stripeWebhookConfigured
+    capabilities.stripeSecretConfigured
+      && capabilities.stripeWebhookConfigured
       && required.appBaseUrlConfigured
   );
   const missingExternal = [
@@ -11183,14 +11513,14 @@ function applyGoLiveHealth(health) {
   setGoLiveHealthCheck("push", pushReady ? "pass" : "blocked", pushReady
     ? "VAPID keys, subject, and scheduled reminder secret are configured."
     : "VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, and CRON_SECRET are required.");
-  setGoLiveHealthCheck("payments", paymentReady ? "review" : "blocked", paymentReady
+  setGoLiveHealthCheck("payments", "review", paymentReady
     ? "Stripe funding and webhook variables are configured; issuer and PCI tap-to-pay testing remains required."
-    : "Stripe live funding requires STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, and APP_BASE_URL.");
-  setGoLiveHealthCheck("external", missingExternal.length ? "blocked" : "review", missingExternal.length
-    ? `Missing provider configuration: ${missingExternal.join(", ")}. Email, SMS, maps, storage, and monitoring still require manual verification.`
+    : "Core travel features are available. Add Funds remains disabled until STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET are configured.");
+  setGoLiveHealthCheck("external", "review", missingExternal.length
+    ? `Optional provider configuration pending: ${missingExternal.join(", ")}. Features that require those providers remain disabled instead of returning fabricated results.`
     : "Core search and AI providers are configured; email, SMS, maps, storage, monitoring, and backups still require manual verification.");
   $("#goLiveDeploymentStatus").textContent = "Live health checked";
-  $("#goLiveEnvironmentStatus").textContent = health.ready ? "Ready" : "Blocked";
+  $("#goLiveEnvironmentStatus").textContent = health.ready ? "Core ready" : "Blocked";
   $("#goLiveLocalStatus").textContent = "Validated";
 }
 
@@ -11257,7 +11587,7 @@ function wireNavigationFallbacks() {
     if (!button || button.disabled || button.type === "submit" || button.closest("dialog")) return;
     if (button.matches(handledSelector) || button.id) return;
     const label = describeControl(button);
-    showWorkflowMessage(label, "Feature route is connected to a mock workflow message until the production screen is built.");
+    showWorkflowMessage(label, "This action is not available because its production integration has not been configured.");
   });
 }
 

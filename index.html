@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Travel-Drip">
-    <link rel="stylesheet" href="styles.css?v=120">
+    <link rel="stylesheet" href="styles.css?v=122">
   <link rel="stylesheet" href="navigation.css?v=90">
   <title>Travel-Drip</title>
 </head>
@@ -90,16 +90,6 @@
           <button type="button" data-target="eventsPanel">Past Events</button>
           <button type="button" data-target="enterpriseRbac">Corporate Controls</button>
         </details>
-        <details class="nav-group corporate-entry-nav" data-corporate-entry open>
-          <summary>Corporate</summary>
-          <button type="button" data-target="enterpriseRbac">Corporate Dashboard</button>
-          <button type="button" data-target="enterpriseRbac" data-corporate-focus="corporateEmployeeInvites">Invite Employees</button>
-          <button type="button" data-target="enterpriseRbac" data-corporate-focus="corporateTravelerCare">Traveler Care</button>
-          <button type="button" data-target="enterpriseRbac">Travel Policies</button>
-          <button type="button" data-target="enterpriseRbac">Employee Travel</button>
-          <button type="button" data-target="enterpriseRbac">Budget &amp; Approvals</button>
-          <button type="button" data-target="enterpriseRbac">Audit Log</button>
-        </details>
         <details class="nav-group">
           <summary>Messages</summary>
           <button type="button" data-main-nav-id="chat">Group Chats</button>
@@ -119,6 +109,16 @@
           <button type="button" data-main-nav-id="settings">Settings</button>
           <button type="button" data-target="adminPanel" data-settings-section="security">Security</button>
           <button type="button" data-target="copyrightPolicy">Help & Support</button>
+          <details class="corporate-entry-nav" data-corporate-entry>
+            <summary>Corporate</summary>
+            <button type="button" data-target="enterpriseRbac">Corporate Dashboard</button>
+            <button type="button" data-target="enterpriseRbac" data-corporate-focus="corporateEmployeeInvites">Invite Employees</button>
+            <button type="button" data-target="enterpriseRbac" data-corporate-focus="corporateTravelerCare">Traveler Care</button>
+            <button type="button" data-target="enterpriseRbac">Travel Policies</button>
+            <button type="button" data-target="enterpriseRbac">Employee Travel</button>
+            <button type="button" data-target="enterpriseRbac">Budget &amp; Approvals</button>
+            <button type="button" data-target="enterpriseRbac">Audit Log</button>
+          </details>
           <a href="admin.html" data-admin-only>Admin</a>
         </details>
       </nav>
@@ -146,7 +146,7 @@
             <option value="corporate">Company event</option>
           </select>
         </label>
-        <button class="lets-plan-button" type="button" id="letsPlanButton" data-main-nav-id="planning" aria-label="Open Planning"><span aria-hidden="true">✨</span><strong>Let's Plan</strong></button>
+        <button class="lets-plan-button" type="button" id="letsPlanButton" aria-haspopup="dialog" aria-controls="letsPlanDialog"><span aria-hidden="true">✨</span><strong>Let's Plan</strong></button>
         <div class="top-actions">
           <button class="profile-avatar-button" type="button" data-target="myProfile" aria-label="Open My Profile"><span class="profile-photo-avatar" data-profile-initials>JS</span></button>
           <button class="icon-button" type="button" id="notifyButton" aria-label="Enable notifications">Notify</button>
@@ -206,7 +206,7 @@
               <button type="button" id="formGuestButton" role="tab" aria-controls="guestAccessForm" aria-selected="false">Company Event</button>
             </div>
             <form class="auth-form" id="authForm">
-              <label>Email address<input id="emailInput" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+              <label>Email or username<input id="emailInput" type="text" autocomplete="username" placeholder="you@example.com or username" required></label>
               <label>Password
                 <span class="password-field"><input id="passwordInput" type="password" autocomplete="current-password" placeholder="Your password" required minlength="6"><button type="button" data-password-toggle="passwordInput">Show</button></span>
               </label>
@@ -1033,7 +1033,10 @@
             </div>
             <div class="explore-context-grid">
               <label>Destination<input id="exploreDestinationInput" type="text" placeholder="City or destination"></label>
-              <label>Dates<input id="exploreDatesInput" type="text" placeholder="Add travel dates"></label>
+              <div class="explore-date-range" role="group" aria-label="Travel dates">
+                <label>Start date<input id="exploreStartDateInput" type="date"></label>
+                <label>End date<input id="exploreEndDateInput" type="date"></label>
+              </div>
               <label>Budget<select id="exploreBudgetFilter"><option value="any">Any budget</option><option value="25">Under $25</option><option value="50">$25-$50</option><option value="100">$50-$100</option><option value="900">Under $900</option></select></label>
               <label>Trip type<select id="exploreTripTypeFilter"><option value="group">Group Trip</option><option value="solo">Solo Trip</option><option value="corporate">Corporate Retreat</option></select></label>
             </div>
@@ -1069,7 +1072,7 @@
                 <button class="ghost-button" type="button" id="exploreRetryButton" hidden>Retry</button>
               </div>
             </div>
-            <p class="small provider-status" id="exploreProviderStatus">Local estimates are shown until you search live sources.</p>
+            <p class="small provider-status" id="exploreProviderStatus">Public inspiration is shown below. Live availability appears only when a travel provider is configured and returns results.</p>
             <div class="explore-skeleton-grid" id="exploreSkeleton" hidden>
               <div></div><div></div><div></div>
             </div>
@@ -1653,6 +1656,14 @@
                   <div class="mini-action-row"><span class="small">Use Notify in the header after browser push keys are configured.</span></div>
                 </article>
               </div>
+              <section class="message-utility-panel" id="messageUtilityPanel" aria-live="polite" hidden>
+                <div>
+                  <p class="eyebrow" id="messageUtilityEyebrow">Conversation tools</p>
+                  <h3 id="messageUtilityTitle">Choose a chat tool</h3>
+                  <p id="messageUtilityCopy">Media, files, polls, and privacy actions stay scoped to the selected conversation.</p>
+                </div>
+                <button class="ghost-button" type="button" id="closeMessageUtilityButton" aria-label="Close conversation tools">Close</button>
+              </section>
               <p class="small" id="messageStatus">Messages sync with the selected trip or private conversation. AI replies respect user permissions.</p>
             </section>
 
@@ -1692,6 +1703,7 @@
                   <input id="memoryCameraInput" type="file" accept="image/*" capture="environment" hidden>
                   <input id="memoryVideoCameraInput" type="file" accept="video/*" capture="environment" hidden>
                   <input id="tripDocumentInput" type="file" accept="application/pdf,image/jpeg,image/png,image/heic,image/webp" hidden>
+                  <input id="tripDocumentCameraInput" type="file" accept="image/*" capture="environment" hidden>
                   <input id="transportTicketInput" type="file" accept="application/pdf,image/jpeg,image/png,image/heic,image/webp" hidden>
                   <input id="transportTicketCameraInput" type="file" accept="image/*" capture="environment" hidden>
                   <input id="receiptCameraInput" type="file" accept="image/*" capture="environment" hidden>
@@ -2698,7 +2710,7 @@
               <button class="tab" type="button" data-day="2">Day 3</button>
             </div>
             <div class="itinerary" id="itinerary"></div>
-            <button class="primary-button wide" type="button">Generate refresh</button>
+            <button class="primary-button wide" type="button" id="generateItineraryRefreshButton">Generate refresh</button>
           </section>
 
           <section class="panel" id="walletPanel">
@@ -2960,9 +2972,15 @@
                   </div>
                 </div>
                 <div class="bill-entry-card">
-                  <div>
+                  <div class="bill-entry-heading">
+                    <div>
                     <p class="eyebrow">Bill details</p>
                     <h3>Adjust totals before splitting</h3>
+                    </div>
+                    <div class="mini-action-row bill-entry-actions">
+                      <button class="ghost-button" type="button" id="clearBillTotalsButton">Clear all</button>
+                      <button class="primary-button" type="button" id="saveBillTotalButton">Save total</button>
+                    </div>
                   </div>
                   <div class="bill-entry-grid">
                     <label>Total bill<input id="billSubtotal" type="number" min="0" step="0.01" value="0" inputmode="decimal"></label>
@@ -3340,7 +3358,7 @@
                 </section>
                 <section class="travel-focus-panel" data-travel-panel="boarding">
                   <div class="travel-focus-header"><span class="travel-focus-icon">🎫</span><div><p class="eyebrow">Boarding Passes</p><h3>Upcoming, active, completed, and cancelled passes</h3><p>Each pass uses its own visual ticket. Official QR or barcode is shown only when imported from a valid provider document.</p></div><button class="primary-button" type="button" data-travel-focus-action="Save Offline">Save Offline</button></div>
-                  <div class="travel-pass-filters"><button class="active" type="button">Upcoming</button><button type="button">Active</button><button type="button">Completed</button><button type="button">Cancelled</button></div>
+                  <div class="travel-pass-filters"><button class="active" type="button" data-pass-filter="Upcoming">Upcoming</button><button type="button" data-pass-filter="Active">Active</button><button type="button" data-pass-filter="Completed">Completed</button><button type="button" data-pass-filter="Cancelled">Cancelled</button></div>
                   <div class="visual-pass-grid single-focus-pass"><article class="visual-pass-card visual-pass-card--flight digital-boarding-pass"><div class="pass-topline"><span>Flight boarding pass</span><strong>On Time</strong></div><div class="pass-provider"><b>Travel-Drip Pass</b><span>Verified travel document</span></div><div class="pass-route"><b>MIA</b><i></i><b>HND</b></div><h4>DL 241 • Miami to Tokyo</h4><dl><div><dt>Passenger</dt><dd>Jordan Smith</dd></div><div><dt>Flight</dt><dd>DL 241</dd></div><div><dt>Boarding</dt><dd>7:55 AM</dd></div><div><dt>Departs</dt><dd>8:45 AM</dd></div><div><dt>Gate</dt><dd>B18</dd></div><div><dt>Seat</dt><dd>14A</dd></div><div><dt>Group</dt><dd>3</dd></div><div><dt>Status</dt><dd>Checked In</dd></div></dl><div class="official-code" aria-label="QR code for boarding pass"></div><div class="barcode-strip" aria-label="Barcode for boarding pass"></div><div class="pass-actions"><button type="button" data-pass-action="View Boarding Pass">View Details</button><button type="button" data-pass-action="Save Offline">Save Offline</button></div></article></div>
                 </section>
                 <section class="travel-focus-panel" data-travel-panel="weather">
@@ -3399,15 +3417,15 @@
                 </section>
                 <section class="travel-focus-panel" data-travel-panel="maps">
                   <div class="travel-focus-header"><span class="travel-focus-icon">🗺️</span><div><p class="eyebrow">Maps</p><h3>Places, directions, and saved stops</h3><p>Airports, hotels, event venues, restaurants, and local places for the selected trip.</p></div><button class="primary-button" type="button" data-travel-focus-action="Open Directions">Open Directions</button></div>
-                  <div class="travel-map-dashboard"><div><p class="eyebrow">Route context</p><h3>Airport to hotel</h3><p>MIA departure, HND arrival, hotel location, pickup point, dinner stop, and saved places.</p></div><div class="route-chip-list"><button type="button">Airport</button><button type="button">Hotel</button><button type="button">Pickup</button><button type="button">Dinner</button></div></div>
+                  <div class="travel-map-dashboard"><div><p class="eyebrow">Route context</p><h3>Airport to hotel</h3><p>MIA departure, HND arrival, hotel location, pickup point, dinner stop, and saved places.</p></div><div class="route-chip-list"><button type="button" data-travel-focus-action="Open Airport Map">Airport</button><button type="button" data-travel-focus-action="Open Hotel Map">Hotel</button><button type="button" data-travel-focus-action="Open Pickup Map">Pickup</button><button type="button" data-travel-focus-action="Open Dinner Map">Dinner</button></div></div>
                 </section>
                 <section class="travel-focus-panel" data-travel-panel="alerts"><div class="travel-focus-header"><span class="travel-focus-icon">🚨</span><div><p class="eyebrow">Travel Alerts</p><h3>Current trip alerts</h3><p>Flight check-in, weather, document, and reservation alerts for the selected trip.</p></div><button class="primary-button" type="button" data-travel-focus-action="Manage Alerts">Manage Alerts</button></div><div class="travel-focus-grid"><article><span>Check-in</span><strong>DL 241 opens soon</strong><small>Reminder queued.</small></article><article><span>Weather</span><strong>Light rain on arrival</strong><small>Pack a jacket.</small></article></div></section>
                 <section class="travel-focus-panel" data-travel-panel="missing"><div class="travel-focus-header"><span class="travel-focus-icon">✅</span><div><p class="eyebrow">Missing Items</p><h3>Items to finish before departure</h3><p>Short, actionable list instead of blank containers.</p></div><button class="primary-button" type="button" data-travel-focus="documents">Resolve Items</button></div><div class="travel-empty-state"><strong>1 item needs attention</strong><span>Upload travel insurance before departure.</span><button type="button" data-travel-focus="documents">Upload Insurance</button></div></section>
                 <section class="travel-focus-panel" data-travel-panel="trains"><div class="travel-focus-header"><span class="travel-focus-icon">🚆</span><div><p class="eyebrow">Trains</p><h3>Rail tickets and station reminders</h3><p>One train ticket per card with fare, class, accessibility, and platform status.</p></div><button class="primary-button" type="button" data-travel-focus-action="Search Trains">Search Trains</button></div><div class="travel-focus-grid"><article><span>Rail ticket</span><strong>Tokyo → Kyoto</strong><small>Nozomi 33 • Coach 8 • Seat 12D</small><button type="button" data-travel-focus="boarding">View Ticket</button></article></div></section>
                 <section class="travel-focus-panel" data-travel-panel="buses"><div class="travel-focus-header"><span class="travel-focus-icon">🚌</span><div><p class="eyebrow">Buses</p><h3>Bus tickets and shuttle plans</h3><p>Confirmed bus and shuttle tickets appear as their own cards.</p></div><button class="primary-button" type="button" data-travel-focus-action="Add Bus">Add Bus</button></div><div class="travel-empty-state"><strong>No bus tickets added yet</strong><span>Add a bus, shuttle, or upload an existing confirmation.</span><button type="button" data-travel-focus-action="Upload Bus Ticket">Upload Ticket</button></div></section>
                 <section class="travel-focus-panel" data-travel-panel="cruises"><div class="travel-focus-header"><span class="travel-focus-icon">🚢</span><div><p class="eyebrow">Cruises</p><h3>Cruise details inside Travel</h3><p>Cruise line, ship, cabin, ports, shore excursions, boarding documents, weather, and port transportation.</p></div><button class="primary-button" type="button" data-travel-focus-action="Add Cruise">Add Cruise</button></div><div class="travel-focus-grid"><article><span>Cruise pass</span><strong>Oceanic Vista • Cabin 11234</strong><small>Luggage tags attached • QR imported</small><button type="button" data-travel-focus="boarding">View Cruise Pass</button></article></div></section>
-                <section class="travel-focus-panel" data-travel-panel="transfers"><div class="travel-focus-header"><span class="travel-focus-icon">🚐</span><div><p class="eyebrow">Airport Transfers</p><h3>Airport, hotel, event, and cruise transfers</h3><p>Transfer cards show pickup, destination, passengers, estimate status, and booking method.</p></div><button class="primary-button" type="button" data-travel-focus-action="Add Transfer">Add Transfer</button></div><div class="travel-focus-grid"><article><span>Airport pickup</span><strong>HND → Tokyo Station Hotel</strong><small>Estimated $38 • 42 min • External booking</small><button type="button">Book Transfer</button></article></div></section>
-                <section class="travel-focus-panel" data-travel-panel="publicTransit"><div class="travel-focus-header"><span class="travel-focus-icon">🚇</span><div><p class="eyebrow">Public Transit</p><h3>Train, subway, bus, and walking alternatives</h3><p>Compare cost, duration, walking distance, transfers, accessibility, and savings.</p></div><button class="primary-button" type="button" data-travel-focus-action="Compare Transit">Compare Transit</button></div><div class="travel-focus-grid"><article><span>Best value</span><strong>Train + walking</strong><small>$8.50 • 32 minutes • save about $31.50</small><button type="button">Use Route</button></article></div></section>
+                <section class="travel-focus-panel" data-travel-panel="transfers"><div class="travel-focus-header"><span class="travel-focus-icon">🚐</span><div><p class="eyebrow">Airport Transfers</p><h3>Airport, hotel, event, and cruise transfers</h3><p>Transfer cards show pickup, destination, passengers, estimate status, and booking method.</p></div><button class="primary-button" type="button" data-travel-focus-action="Add Transfer">Add Transfer</button></div><div class="travel-focus-grid"><article><span>Airport pickup</span><strong>HND → Tokyo Station Hotel</strong><small>Estimated $38 • 42 min • External booking</small><button type="button" data-travel-focus-action="Book Transfer">Book Transfer</button></article></div></section>
+                <section class="travel-focus-panel" data-travel-panel="publicTransit"><div class="travel-focus-header"><span class="travel-focus-icon">🚇</span><div><p class="eyebrow">Public Transit</p><h3>Train, subway, bus, and walking alternatives</h3><p>Compare cost, duration, walking distance, transfers, accessibility, and savings.</p></div><button class="primary-button" type="button" data-travel-focus-action="Compare Transit">Compare Transit</button></div><div class="travel-focus-grid"><article><span>Best value</span><strong>Train + walking</strong><small>$8.50 • 32 minutes • save about $31.50</small><button type="button" data-travel-focus-action="Use Transit Route">Use Route</button></article></div></section>
                 <section class="travel-focus-panel" data-travel-panel="routeComparison"><div class="travel-focus-header"><span class="travel-focus-icon">🧭</span><div><p class="eyebrow">Route Comparison</p><h3>Compare multi-leg routes</h3><p>See total cost, duration, transfers, walking, arrival, booking needs, and savings.</p></div><button class="primary-button" type="button" data-travel-focus-action="Compare Route">Compare Route</button></div><div class="travel-focus-grid"><article><span>Fastest</span><strong>Ride share</strong><small>$42 • 18 min • provider app required</small></article><article><span>Cheapest</span><strong>Public transit</strong><small>$8.50 • 32 min • accessible route</small></article></div></section>
                 <section class="travel-focus-panel" data-travel-panel="smartRoute"><div class="travel-focus-header"><span class="travel-focus-icon">🧠</span><div><p class="eyebrow">Smart Route</p><h3>Rain-aware route planning</h3><p>Smart Route stays next to Your Trips inside this itinerary-focused section.</p></div><button class="primary-button" type="button" data-travel-focus="itinerary">Open Itinerary</button></div><div class="travel-focus-grid"><article><span>Smart Route</span><strong>Leave 20 minutes earlier</strong><small>Rain and traffic are affecting arrival timing.</small></article><article><span>Your Trips</span><strong>Miami to Tokyo Adventure</strong><small>Selected and synced across Travel.</small></article></div></section>
                 <section class="travel-focus-panel" data-travel-panel="yourTrips"><div class="travel-focus-header"><span class="travel-focus-icon">🧳</span><div><p class="eyebrow">Your Trips</p><h3>Saved and archived trips</h3><p>Switch trips without losing the active Travel section.</p></div><button class="primary-button" type="button" data-travel-focus-action="Open All Trips">Open All Trips</button></div><div class="travel-focus-grid"><article><span>Active</span><strong>Miami to Tokyo Adventure</strong><small>4 travelers • 84% ready</small></article><article><span>Archived</span><strong>Dubai Weekend</strong><small>Completed • memories saved</small></article></div></section>
@@ -4864,6 +4882,39 @@
     <span>Live sync, wallet actions, uploads, and private corporate files are paused until your connection returns.</span>
   </section>
 
+  <dialog class="pin-dialog planning-dialog" id="letsPlanDialog" aria-labelledby="letsPlanDialogTitle">
+    <form method="dialog" id="letsPlanForm">
+      <div class="dialog-heading">
+        <div><p class="eyebrow">Start a trip</p><h2 id="letsPlanDialogTitle">Where are you going?</h2></div>
+        <button class="ghost-button" type="button" id="closeLetsPlanDialogButton" aria-label="Close trip planner">Close</button>
+      </div>
+      <div class="dialog-form-grid">
+        <label>Destination<input id="letsPlanDestinationInput" type="text" placeholder="City or destination" required></label>
+        <label>Start date<input id="letsPlanStartDateInput" type="date" required></label>
+        <label>End date<input id="letsPlanEndDateInput" type="date" required></label>
+        <label>Travelers<input id="letsPlanTravelersInput" type="number" min="1" max="50" value="1" required></label>
+        <label>Trip type<select id="letsPlanTypeInput"><option value="solo">Solo trip</option><option value="group">Group trip</option><option value="special_event">Event</option><option value="corporate">Corporate retreat</option><option value="cruise">Cruise</option></select></label>
+        <label>Budget<input id="letsPlanBudgetInput" type="number" min="0" step="50" placeholder="Optional"></label>
+      </div>
+      <label>What would make this trip great?<textarea id="letsPlanInterestsInput" rows="3" placeholder="Food, museums, beaches, accessibility needs, or anything else"></textarea></label>
+      <p class="small" id="letsPlanDialogMessage">Add the basics now. You can edit every detail before saving the trip.</p>
+      <div class="button-row"><button class="primary-button" type="submit">Continue planning</button><button class="ghost-button" type="button" id="cancelLetsPlanDialogButton">Cancel</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="pin-dialog new-message-dialog" id="newMessageDialog" aria-labelledby="newMessageDialogTitle">
+    <form method="dialog" id="newMessageForm">
+      <div class="dialog-heading">
+        <div><p class="eyebrow">New message</p><h2 id="newMessageDialogTitle">Start a trip conversation</h2></div>
+        <button class="ghost-button" type="button" id="closeNewMessageDialogButton" aria-label="Close new message">Close</button>
+      </div>
+      <label>Conversation name<input id="newMessageTitleInput" type="text" maxlength="120" placeholder="Weekend plans" required></label>
+      <label>First message<textarea id="newMessageBodyInput" rows="4" maxlength="4000" placeholder="Write a message to your trip members"></textarea></label>
+      <p class="small" id="newMessageDialogStatus">Only active members of the selected trip can open this conversation.</p>
+      <div class="button-row"><button class="primary-button" type="submit">Start conversation</button><button class="ghost-button" type="button" id="cancelNewMessageDialogButton">Cancel</button></div>
+    </form>
+  </dialog>
+
   <dialog class="pin-dialog install-help-dialog" id="installHelpDialog" aria-labelledby="installHelpTitle">
     <form method="dialog" class="pin-card">
       <p class="eyebrow">Install Travel-Drip</p>
@@ -4940,6 +4991,6 @@
   <script src="https://link.msgsndr.com/js/external-tracking.js" data-tracking-id="tk_684cd074f7154fbebd60d6f62b2d331b"></script>
   <script src="public-config.js?v=3"></script>
   <script src="vendor/qrcode.js?v=1"></script>
-  <script defer src="app.js?v=77"></script>
+  <script defer src="app.js?v=79"></script>
 </body>
 </html>

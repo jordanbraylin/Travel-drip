@@ -1,22 +1,22 @@
 {
-  "generatedAt": "2026-09-20T13:37:46.851Z",
+  "generatedAt": "2026-10-08T13:56:20.169Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
   },
   "totals": {
-    "screenIds": 881,
-    "buttons": 762,
+    "screenIds": 912,
+    "buttons": 771,
     "hrefLinks": 15,
     "dataTargets": 100,
     "uniqueDataTargets": 18,
-    "mainNavigationControls": 38,
+    "mainNavigationControls": 37,
     "mainNavigationItems": 12,
     "routeDefinitions": 20,
-    "dateInputs": 13,
+    "dateInputs": 17,
     "searchInputs": 12,
     "actionAttributeTypes": 98,
-    "apiRoutes": 24
+    "apiRoutes": 25
   },
   "linkAndRouteVerification": {
     "workingLocalTargets": 18,
@@ -73,7 +73,7 @@
       "/travel",
       "/wallet"
     ],
-    "renderedControlCount": 38,
+    "renderedControlCount": 37,
     "issues": []
   },
   "routeIsolationVerification": {
@@ -479,6 +479,18 @@
         "hasDefaultValue": false
       },
       {
+        "id": "exploreStartDateInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": false
+      },
+      {
+        "id": "exploreEndDateInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": false
+      },
+      {
         "id": "tripStartInput",
         "type": "date",
         "referencedInApp": true,
@@ -540,6 +552,18 @@
       },
       {
         "id": "hotelLiveCheckOut",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": false
+      },
+      {
+        "id": "letsPlanStartDateInput",
+        "type": "date",
+        "referencedInApp": true,
+        "hasDefaultValue": false
+      },
+      {
+        "id": "letsPlanEndDateInput",
         "type": "date",
         "referencedInApp": true,
         "hasDefaultValue": false
@@ -664,6 +688,7 @@
       "ai-invitation.js",
       "ai-planner.js",
       "audit.js",
+      "auth-login.js",
       "chat.js",
       "config.js",
       "corporate-bookings.js",

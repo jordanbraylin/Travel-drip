@@ -666,6 +666,24 @@ img {
   color: #fff;
 }
 
+.nav-group > .corporate-entry-nav {
+  margin-top: 4px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.nav-group > .corporate-entry-nav > summary {
+  min-height: 38px;
+  padding: 0 10px;
+  list-style-position: inside;
+}
+
+.nav-group > .corporate-entry-nav > button {
+  padding-left: 18px;
+}
+
 .nav button,
 .nav a,
 .primary-button,
@@ -5315,6 +5333,275 @@ body.app-routed main :where(.trip-tab-bar button, .tabs .tab, .message-tabs butt
   body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome),
   body.app-routed main > section.panel:not([hidden]) :where(.travel-dashboard-sections, .travel-booking-summary, .travel-transport-summary, .travel-focus-grid, .travel-provider-cards, .wallet-dashboard-header, .wallet-home-grid, .wallet-trip-card-grid, .wallet-dashboard-sections, .wallet-section-card-grid, .wallet-action-grid, .info-status-grid, .important-info-grid, .security-status-grid, .security-control-grid, .backend-summary-grid, .backend-readiness-grid, .audit-grid, .memory-gallery-grid, .memory-album-grid, .platform-grid, .messages-layout, .message-support-grid) {
     grid-template-columns: 1fr !important;
+  }
+}
+
+/* Section 80: final chat workspace sizing after shared dashboard rules */
+body.app-routed #socialHub .messages-layout {
+  grid-template-columns: minmax(210px, 0.72fr) minmax(340px, 1.5fr) minmax(230px, 0.82fr) !important;
+  align-items: stretch !important;
+}
+
+@media (max-width: 1100px) {
+  body.app-routed #socialHub .messages-layout {
+    grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.5fr) !important;
+  }
+
+  body.app-routed #socialHub .conversation-details-panel {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+@media (max-width: 680px) {
+  body.app-routed #socialHub .messages-layout,
+  body.app-routed #socialHub .message-support-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+/* Section 81: production interaction and layout repairs */
+body.app-routed main > section.panel:not([hidden]) > *,
+body.app-routed main > section.route-screen:not([hidden]):not(#dashboardHome) > * {
+  grid-column: 1 / -1 !important;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.explore-date-range {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.explore-date-range label,
+.explore-date-range input {
+  min-width: 0;
+  width: 100%;
+}
+
+#myProfile,
+#myProfile .profile-photo-manager,
+#myProfile .profile-photo-main,
+#myProfile .profile-photo-main > div {
+  min-width: 0;
+  overflow: visible;
+}
+
+#myProfile .profile-photo-main {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+#myProfile .profile-photo-main :where(.eyebrow, h3, p) {
+  position: static;
+  max-width: 100%;
+  overflow: visible;
+  text-indent: 0;
+  transform: none;
+  overflow-wrap: anywhere;
+}
+
+#myProfile .profile-quick-actions,
+#myProfile .profile-photo-manager,
+#myProfile .profile-personal-grid,
+#socialHub > .messages-hub,
+#socialHub > .message-support-grid,
+#socialHub > .message-utility-panel,
+#splitBill > .bill-redesign-grid {
+  width: 100%;
+  grid-column: 1 / -1 !important;
+}
+
+#socialHub .messages-layout {
+  grid-template-columns: minmax(210px, 0.72fr) minmax(340px, 1.5fr) minmax(230px, 0.82fr) !important;
+  align-items: stretch !important;
+}
+
+#socialHub .chat-tool-row {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-height: 0;
+  overflow: visible;
+}
+
+#socialHub .chat-tool-row button {
+  width: auto !important;
+  min-width: max-content !important;
+  min-height: 40px;
+  padding: 0 13px;
+  writing-mode: horizontal-tb;
+}
+
+#socialHub .message-support-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+#socialHub .message-support-grid article {
+  align-content: start;
+  min-height: 0;
+  padding: 16px;
+}
+
+#socialHub .message-support-grid .mini-action-row {
+  display: flex !important;
+  flex-wrap: wrap;
+}
+
+#socialHub .message-support-grid .mini-action-row button {
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+.message-utility-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: start;
+  padding: 16px;
+  border: 1px solid rgba(8, 127, 140, 0.18);
+  border-radius: 8px;
+  background: #f8fcfd;
+}
+
+.message-utility-panel[hidden] {
+  display: none !important;
+}
+
+.message-utility-panel :where(h3, p) {
+  margin: 0;
+}
+
+.message-utility-panel p:not(.eyebrow) {
+  margin-top: 6px;
+  color: var(--muted);
+}
+
+.planning-dialog,
+.new-message-dialog {
+  width: min(680px, calc(100vw - 28px));
+  max-width: 680px;
+}
+
+.planning-dialog form,
+.new-message-dialog form {
+  display: grid;
+  gap: 16px;
+}
+
+.dialog-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: start;
+}
+
+.dialog-heading :where(h2, p) {
+  margin: 0;
+}
+
+.dialog-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.planning-dialog label,
+.new-message-dialog label,
+.dialog-form-grid label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.planning-dialog :where(input, select, textarea),
+.new-message-dialog :where(input, textarea) {
+  width: 100%;
+  min-width: 0;
+}
+
+.bill-entry-card {
+  gap: 10px !important;
+  padding: 12px !important;
+}
+
+.bill-entry-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.bill-entry-heading :where(h3, p) {
+  margin: 0;
+}
+
+.bill-entry-actions {
+  flex: 0 0 auto;
+}
+
+.bill-entry-card .bill-entry-grid {
+  gap: 8px;
+}
+
+.bill-entry-card .bill-entry-grid label {
+  gap: 4px;
+  font-size: 12px;
+}
+
+.bill-entry-card .bill-entry-grid input {
+  min-height: 40px;
+}
+
+.digital-boarding-pass h4,
+.digital-boarding-pass dl,
+.digital-boarding-pass dl dt,
+.digital-boarding-pass dl dd {
+  color: #0f2f3a !important;
+  opacity: 1 !important;
+}
+
+.digital-boarding-pass .pass-topline,
+.digital-boarding-pass .pass-provider,
+.digital-boarding-pass .pass-provider :where(b, span),
+.digital-boarding-pass .pass-route,
+.digital-boarding-pass .pass-route b {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 1100px) {
+  #socialHub .messages-layout {
+    grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.5fr) !important;
+  }
+
+  #socialHub .conversation-details-panel {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 700px) {
+  .explore-date-range,
+  .dialog-form-grid,
+  #socialHub .messages-layout,
+  #socialHub .message-support-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .dialog-heading,
+  .bill-entry-heading,
+  .message-utility-panel {
+    grid-template-columns: minmax(0, 1fr);
+    flex-direction: column;
+  }
+
+  .bill-entry-actions,
+  .bill-entry-actions button {
+    width: 100% !important;
   }
 }
 

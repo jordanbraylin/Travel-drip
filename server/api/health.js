@@ -17,7 +17,9 @@ export default function handler(_request, response) {
     vapidPublicKeyConfigured: Boolean(process.env.VAPID_PUBLIC_KEY),
     vapidPrivateKeyConfigured: Boolean(process.env.VAPID_PRIVATE_KEY),
     cronSecretConfigured: Boolean(process.env.CRON_SECRET),
-    appBaseUrlConfigured: Boolean(process.env.APP_BASE_URL),
+    appBaseUrlConfigured: Boolean(process.env.APP_BASE_URL)
+  };
+  const capabilityChecks = {
     stripeSecretConfigured: Boolean(process.env.STRIPE_SECRET_KEY),
     stripeWebhookConfigured: Boolean(process.env.STRIPE_WEBHOOK_SECRET)
   };
@@ -35,10 +37,15 @@ export default function handler(_request, response) {
     vapidPublicKeyConfigured: "VAPID_PUBLIC_KEY",
     vapidPrivateKeyConfigured: "VAPID_PRIVATE_KEY",
     cronSecretConfigured: "CRON_SECRET",
-    appBaseUrlConfigured: "APP_BASE_URL",
+    appBaseUrlConfigured: "APP_BASE_URL"
+  };
+  const capabilityEnvNames = {
     stripeSecretConfigured: "STRIPE_SECRET_KEY",
     stripeWebhookConfigured: "STRIPE_WEBHOOK_SECRET"
   };
+  const missingCapabilities = Object.entries(capabilityChecks)
+    .filter(([, configured]) => !configured)
+    .map(([name]) => name);
   const optionalChecks = {
     ghlApiKeyConfigured: Boolean(process.env.GHL_API_KEY),
     ghlLocationConfigured: Boolean(process.env.GHL_LOCATION_ID),
@@ -57,15 +64,19 @@ export default function handler(_request, response) {
     readinessStatus: missingRequired.length ? "blocked" : "ready",
     missingRequired,
     missingRequiredEnv: missingRequired.map((name) => requiredEnvNames[name] || name),
+    missingCapabilities,
+    missingCapabilityEnv: missingCapabilities.map((name) => capabilityEnvNames[name] || name),
     requiredChecks,
+    capabilityChecks,
     optionalChecks,
     supabaseUrlConfigured: requiredChecks.supabasePublicUrlConfigured && requiredChecks.supabaseServerUrlConfigured,
     ...requiredChecks,
+    ...capabilityChecks,
     ...optionalChecks,
     invitationAiConfigured: Boolean(process.env.OPENAI_API_KEY && process.env.OPENAI_MODEL),
     walletFundingConfigured: Boolean(
-      process.env.STRIPE_SECRET_KEY
-        && process.env.STRIPE_WEBHOOK_SECRET
+      capabilityChecks.stripeSecretConfigured
+        && capabilityChecks.stripeWebhookConfigured
         && process.env.APP_BASE_URL
     )
   });

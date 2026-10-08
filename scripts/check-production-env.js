@@ -9,12 +9,12 @@ const required = [
   "VAPID_PUBLIC_KEY",
   "VAPID_PRIVATE_KEY",
   "CRON_SECRET",
-  "APP_BASE_URL",
-  "STRIPE_SECRET_KEY",
-  "STRIPE_WEBHOOK_SECRET"
+  "APP_BASE_URL"
 ];
 
-const optionalProviders = [
+const capabilityProviders = [
+  "STRIPE_SECRET_KEY",
+  "STRIPE_WEBHOOK_SECRET",
   "GHL_API_KEY",
   "GHL_LOCATION_ID",
   "GOOGLE_PLACES_API_KEY",
@@ -27,18 +27,18 @@ const optionalProviders = [
 
 const missing = (names) => names.filter((name) => !String(process.env[name] || "").trim());
 const requiredMissing = missing(required);
-const optionalMissing = missing(optionalProviders);
+const capabilityMissing = missing(capabilityProviders);
 
 console.log("Travel-Drip production environment audit");
 console.log(`Required configured: ${required.length - requiredMissing.length}/${required.length}`);
-console.log(`Optional providers configured: ${optionalProviders.length - optionalMissing.length}/${optionalProviders.length}`);
+console.log(`Capability providers configured: ${capabilityProviders.length - capabilityMissing.length}/${capabilityProviders.length}`);
 
 if (requiredMissing.length) {
   console.log(`Missing required variables: ${requiredMissing.join(", ")}`);
 }
 
-if (optionalMissing.length) {
-  console.log(`Missing optional provider variables: ${optionalMissing.join(", ")}`);
+if (capabilityMissing.length) {
+  console.log(`Unavailable provider capabilities: ${capabilityMissing.join(", ")}`);
 }
 
 if (process.argv.includes("--strict") && requiredMissing.length) {
