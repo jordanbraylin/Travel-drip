@@ -88,7 +88,7 @@ GHL_DEFAULT_WORKFLOW_ID=
 GHL_WEBHOOK_SECRET=
 ```
 
-Keep `GHL_API_KEY` and `GHL_WEBHOOK_SECRET` server-only. After adding them in Vercel, redeploy and use **Settings → GoHighLevel CRM → Test connection** as an administrator.
+Keep `GHL_API_KEY` and `GHL_WEBHOOK_SECRET` server-only. After adding them in Vercel, redeploy and use **Settings → GoHighLevel CRM → Test connection** as an administrator. Signed-in live search activity also queues non-blocking GoHighLevel contact updates with the `Live Search` tag, provider, query/category, destination or city code, result count, and relevant travel dates when the CRM credentials are configured.
 
 ## Live outside-source travel search
 

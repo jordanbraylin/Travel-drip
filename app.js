@@ -3969,6 +3969,16 @@ async function searchLiveTravelPlaces({ category, query = "", destination = "", 
     liveSearchMessage(target, results.length
       ? `${results.length} live result${results.length === 1 ? "" : "s"} from ${result.sourceLabel || "an outside source"}. Verify details before booking.`
       : "No live results matched. Try a broader destination or search term.", results.length ? "success" : "empty");
+    await saveSyncedEvent("live_travel_search", {
+      category,
+      query,
+      destination,
+      target,
+      provider: result.provider,
+      sourceLabel: result.sourceLabel,
+      resultCount: results.length,
+      live: true
+    });
     return result;
   } catch (error) {
     liveSearchMessage(target, `${error.message} Public inspiration below is not live availability.`, "error");
@@ -4053,7 +4063,15 @@ async function trackFlightStatus({ ident, date = "", origin = "" } = {}) {
       result.flight ? "success" : "empty"
     );
     addAuditEntry("Live flight status checked", `${normalizedIdent} searched through the configured flight provider.`);
-    await saveSyncedEvent("flight_status_checked", { ident: normalizedIdent, date, origin });
+    await saveSyncedEvent("flight_status_checked", {
+      ident: normalizedIdent,
+      date,
+      origin,
+      provider: result.provider,
+      sourceLabel: result.sourceLabel,
+      resultCount: result.flight ? 1 : 0,
+      live: true
+    });
   } catch (error) {
     state.liveSearch.flight = null;
     flightTrackingMessage(`${error.message} Saved confirmation details remain available below.`, "error");
@@ -4109,7 +4127,17 @@ async function searchLiveHotelAvailability({ cityCode, checkInDate, checkOutDate
       results.length ? "success" : "empty"
     );
     addAuditEntry("Live hotel availability checked", `${cityCode} searched for ${checkInDate} through ${checkOutDate}.`);
-    await saveSyncedEvent("hotel_availability_checked", { cityCode, checkInDate, checkOutDate, adults, hotelId });
+    await saveSyncedEvent("hotel_availability_checked", {
+      cityCode,
+      checkInDate,
+      checkOutDate,
+      adults,
+      hotelId,
+      provider: result.provider,
+      sourceLabel: result.sourceLabel,
+      resultCount: results.length,
+      live: true
+    });
   } catch (error) {
     state.liveSearch.hotelResults = [];
     hotelAvailabilityMessage(`${error.message} Saved hotel confirmations remain available.`, "error");
@@ -4206,6 +4234,15 @@ async function runLiveAiResearch() {
       `;
     }
     if (status) status.textContent = "Live AI research is ready. Source links are shown below the summary; verify availability before booking.";
+    await saveSyncedEvent("ai_live_research_checked", {
+      query: $("#aiPlannerResearchInput")?.value.trim() || "",
+      destination: state.aiPlanner.answers.destination,
+      tripType: state.aiPlanner.answers.tripType,
+      provider: response.provider,
+      sourceLabel: response.sourceLabel,
+      resultCount: response.citations?.length || 0,
+      live: true
+    });
   } catch (error) {
     if (research) research.innerHTML = `<p class="small">${escapeHtml(error.message)} Local planning estimates remain available.</p>`;
     if (status) status.textContent = "Live AI research is unavailable. Configure the AI provider in Vercel and try again.";
@@ -11678,15 +11715,7 @@ function wireNavigationFallbacks() {
   });
 }
 
-async function saveSyncedEvent(type, payload) {
-  if (!state.supabase || !state.session || !state.activeTripId) return;
-  const { error } = await state.supabase.from("trip_events").insert({
-    trip_id: state.activeTripId,
-    event_type: type,
-    payload,
-    user_id: state.session.user.id
-  });
-  if (error) console.warn("Travel-Drip event sync failed", error.message);
+function queueCrmEventFromSyncedEvent(type, payload = {}) {
   const crmEventTypes = new Set([
     "guided_trip_created",
     "trip_invitations_sent",
@@ -11695,22 +11724,59 @@ async function saveSyncedEvent(type, payload) {
     "refund_requested",
     "trip_invitations_skipped",
     "daily_memory_action",
-    "corporate_access_admin_action"
+    "corporate_access_admin_action",
+    "live_travel_search",
+    "hotel_availability_checked",
+    "flight_status_checked",
+    "ai_live_research_checked"
   ]);
   if (crmEventTypes.has(type)) {
+    const activeTrip = state.accountData.activeTrip || {};
+    const eventType = type === "guided_trip_created" ? "trip_created" : type;
+    const destination = payload.destination || payload.cityCode || activeTrip.destination;
+    const query = payload.query || payload.ident || payload.cityCode || "";
     queueGhlSync({
-      eventType: type === "guided_trip_created" ? "trip_created" : type,
-      tripName: payload.tripName,
-      tripType: payload.type || payload.tripType,
-      destination: payload.destination,
-      departureDate: payload.startDate,
-      returnDate: payload.endDate,
-      travelerCount: payload.travelers,
-      budget: payload.budget,
+      eventType,
+      tripName: payload.tripName || activeTrip.title,
+      tripType: payload.type || payload.tripType || activeTrip.trip_type,
+      destination,
+      departureDate: payload.startDate || payload.departureDate || payload.date || payload.checkInDate || activeTrip.starts_on,
+      returnDate: payload.endDate || payload.returnDate || payload.checkOutDate || activeTrip.ends_on,
+      travelerCount: payload.travelers || payload.travelerCount,
+      budget: payload.budget || activeTrip.budget_cents,
       tripStatus: payload.status || "planning",
-      tags: [payload.type, payload.tripType, type === "refund_requested" ? "Refund Requested" : "Trip Planning"]
+      searchQuery: query,
+      searchCategory: payload.category || payload.target || "",
+      searchProvider: payload.provider || "",
+      searchSource: payload.sourceLabel || "",
+      searchResultCount: payload.resultCount,
+      flightNumber: payload.ident,
+      cityCode: payload.cityCode,
+      checkInDate: payload.checkInDate,
+      checkOutDate: payload.checkOutDate,
+      eventCategory: payload.live ? "Live Search" : payload.eventCategory,
+      tags: [
+        payload.type,
+        payload.tripType,
+        payload.live ? "Live Search" : "",
+        payload.provider,
+        payload.category,
+        type === "refund_requested" ? "Refund Requested" : "Trip Planning"
+      ]
     });
   }
+}
+
+async function saveSyncedEvent(type, payload = {}) {
+  if (state.session) queueCrmEventFromSyncedEvent(type, payload);
+  if (!state.supabase || !state.session || !state.activeTripId) return;
+  const { error } = await state.supabase.from("trip_events").insert({
+    trip_id: state.activeTripId,
+    event_type: type,
+    payload,
+    user_id: state.session.user.id
+  });
+  if (error) console.warn("Travel-Drip event sync failed", error.message);
 }
 
 function subscribeToLiveData() {

@@ -11,6 +11,7 @@ const pkg = JSON.parse(read("package.json"));
 const travelSearchApi = read("server/api/travel-search.js");
 const hotelAvailabilityApi = read("server/api/hotel-availability.js");
 const aiPlannerApi = read("server/api/ai-planner.js");
+const ghlSyncApi = read("server/api/ghl-sync.js");
 const travelHomeMarkup = html.match(/<section class="travel-focus-panel active" data-travel-panel="overview">([\s\S]*?)<\/section>\s*<section class="travel-focus-panel" data-travel-panel="flights">/)?.[1] || "";
 const travelSettingsNavMarkup = html.match(/<nav class="travel-settings-nav"[\s\S]*?<\/nav>/)?.[0] || "";
 
@@ -225,6 +226,7 @@ const focusedLayoutChecks = [
   ["Live restaurant and activity search wiring", html.includes('data-travel-search-suggestion="restaurants"') && app.includes("searchLiveTravelPlaces") && app.includes('? "food"') && app.includes(': "activities"') && fs.existsSync(path.join(root, "server", "api", "travel-search.js"))],
   ["Live provider searches can run before sign-in", app.includes("function liveSearchApiRequest") && app.includes('liveSearchApiRequest("/api/travel-search"') && app.includes('liveSearchApiRequest("/api/hotel-availability"') && !travelSearchApi.includes("requireAuthenticatedUser") && !hotelAvailabilityApi.includes("requireAuthenticatedUser")],
   ["Live AI research can run before sign-in", app.includes('liveSearchApiRequest("/api/ai-planner"') && aiPlannerApi.includes('tools: [{ type: "web_search" }]') && !aiPlannerApi.includes("requireAuthenticatedUser")],
+  ["Signed-in live searches sync to GoHighLevel", app.includes('"live_travel_search"') && app.includes('"hotel_availability_checked"') && app.includes('"flight_status_checked"') && app.includes('"ai_live_research_checked"') && app.includes('payload.live ? "Live Search"') && ghlSyncApi.includes("live_search_query") && ghlSyncApi.includes("live_search_result_count")],
   ["My Profile widgets stay readable", html.includes('id="myProfile"') && html.includes('profile-stats-grid') && html.includes('profile-adventure-grid') && navigationCss.includes("body.app-routed #myProfile") && navigationCss.includes(".profile-stats-grid") && navigationCss.includes(".profile-adventure-grid") && navigationCss.includes("grid-template-columns:")],
   ["Travel selected page panel removed", !html.includes('id="travelSelectedTile"') && !html.includes('class="travel-selected-tile"')],
   ["Travel Home avoids duplicate summaries", travelHomeMarkup.includes("travel-booking-summary") && !travelHomeMarkup.includes('class="travel-transport-summary"') && !travelHomeMarkup.includes('class="travel-dashboard-sections"') && !travelHomeMarkup.includes('class="travel-focus-grid"')],
