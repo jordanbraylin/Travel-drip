@@ -2615,11 +2615,12 @@ function ensureAccountRouteEmptyState(section, target) {
 function getAccountRouteLiveCopy(target) {
   const trip = state.accountData.activeTrip || {};
   const counts = state.accountData.counts || {};
+  const displayName = walletDisplayName({ tripType: trip.trip_type || trip.tripType, wallet: state.walletAccess.wallet });
   const copy = {
     tripsPanel: [trip.title || "Your trip", `${trip.destination || "Destination not added"} • ${String(trip.status || "draft").replaceAll("_", " ")}`, [`${state.accountData.trips.length} saved trip${state.accountData.trips.length === 1 ? "" : "s"}`], "Create another trip", "create-trip"],
     eventsPanel: [trip.title || "Your event", "Only event records saved to this account appear here.", [`${counts.events || 0} saved event${counts.events === 1 ? "" : "s"}`, `${counts.schedule || 0} schedule item${counts.schedule === 1 ? "" : "s"}`], "Create an event", "create-event"],
-    groupBank: ["Trip wallet activity", "Only confirmed provider records and member-owned contributions are counted.", [`${counts.contributions || 0} contribution record${counts.contributions === 1 ? "" : "s"}`], "Open wallet setup", "open-wallet"],
-    walletPanel: ["Your trip wallet", "No balance is inferred from planned expenses. Payment activity appears only after provider confirmation.", [`${counts.contributions || 0} contribution record${counts.contributions === 1 ? "" : "s"}`], "Add funds", "open-wallet"],
+    groupBank: [`${displayName} activity`, "Only confirmed provider records and member-owned contributions are counted.", [`${counts.contributions || 0} contribution record${counts.contributions === 1 ? "" : "s"}`], "Open wallet setup", "open-wallet"],
+    walletPanel: [displayName, "No balance is inferred from planned expenses. Payment activity appears only after provider confirmation.", [`${counts.contributions || 0} contribution record${counts.contributions === 1 ? "" : "s"}`], "Add funds", "open-wallet"],
     rideShareHub: ["Your saved travel", "Only flights, stays, transportation, and documents attached to this trip are counted.", [`${counts.flights || 0} flight${counts.flights === 1 ? "" : "s"}`, `${counts.hotels || 0} stay${counts.hotels === 1 ? "" : "s"}`, `${counts.transportation || 0} ride${counts.transportation === 1 ? "" : "s"}`], "Upload confirmation", "upload-document"],
     transportationPanel: ["Saved transportation", "Only transportation records attached to this authenticated trip are available.", [`${counts.transportation || 0} saved record${counts.transportation === 1 ? "" : "s"}`], "Upload ticket", "upload-transport"],
     splitBill: ["Saved receipts", "Receipt amounts stay empty until you upload a receipt or enter the totals yourself.", [`${counts.documents || 0} uploaded document${counts.documents === 1 ? "" : "s"}`], "Upload receipt", "upload-receipt"],
@@ -3502,6 +3503,60 @@ function formatWalletMoney(cents, currency = "USD") {
   }).format(Number(cents || 0) / 100);
 }
 
+function walletDisplayName(access = state.walletAccess) {
+  const savedName = access?.wallet?.displayName || access?.wallet?.depositLabel;
+  if (savedName) return savedName;
+  const tripType = access?.tripType || state.accountData.activeTrip?.trip_type || state.accountData.activeTrip?.tripType;
+  return tripType === "group_trip" ? "Friend Group Funds" : "Trip Wallet";
+}
+
+function syncWalletLabels(access = state.walletAccess) {
+  const displayName = walletDisplayName(access);
+  const isFriendGroupFunds = displayName === "Friend Group Funds";
+  const labels = isFriendGroupFunds
+    ? {
+      title: displayName,
+      heading: "Friend group funds, clearly organized",
+      intro: "Track personal balances, friend contributions, refunds, payment requests, and transactions in one place.",
+      tab: displayName,
+      balanceCopy: "Friend group funds available after reservations, holds, and pending refunds.",
+      summary: displayName,
+      operationsTitle: `Add money to ${displayName}`,
+      operationsCopy: "Deposit funds securely, create reminders, and review each friend's contribution ledger for this group trip.",
+      addFunds: `Add funds to ${displayName}`,
+      ledgerLabel: `${displayName} ledger`
+    }
+    : {
+      title: "Trip Wallet",
+      heading: "Shared trip funds, clearly organized",
+      intro: "Track personal balances, shared contributions, refunds, payment requests, and transactions in one place.",
+      tab: "Trip Wallets",
+      balanceCopy: "Shared wallet funds available after reservations, holds, and pending refunds.",
+      summary: "Shared Trip Wallet",
+      operationsTitle: "Funding, reminders, and wallet activity",
+      operationsCopy: "Add funds securely, create payment reminders, and review the personal ledger for this trip.",
+      addFunds: "Add funds",
+      ledgerLabel: "Shared trip wallet ledger"
+    };
+
+  const targets = [
+    ["#walletTitleLabel", labels.title],
+    ["#walletHeading", labels.heading],
+    ["#walletIntroCopy", labels.intro],
+    ["#walletTripFundsTab", labels.tab],
+    ["#tripAvailableBalanceCopy", labels.balanceCopy],
+    ["#walletSharedFundsLabel", labels.summary],
+    ["#walletOperationsTitle", labels.operationsTitle],
+    ["#walletOperationsCopy", labels.operationsCopy],
+    ["#walletAddFundsLabel", labels.addFunds]
+  ];
+  targets.forEach(([selector, text]) => {
+    const element = $(selector);
+    if (element) element.textContent = text;
+  });
+  $("#sharedWalletLedger")?.setAttribute("aria-label", labels.ledgerLabel);
+}
+
 function renderWalletContributions(access) {
   const scope = $("#walletContributionVisibility");
   const message = $("#walletContributionMessage");
@@ -3511,10 +3566,11 @@ function renderWalletContributions(access) {
   const isAdminView = access.contributionVisibility === "all_members";
   const isRestricted = access.contributionVisibility === "restricted";
   const currency = access.wallet?.currency || "USD";
+  const displayName = walletDisplayName(access);
 
   if (scope) scope.textContent = isRestricted
     ? "Finance details restricted by trip policy"
-    : (isAdminView ? "Admin view • all member contributions" : "Personal view • your contributions only");
+    : (isAdminView ? `Admin view • ${displayName}` : `Personal view • ${displayName}`);
   if (message) {
     const personalTotal = contributions
       .filter((contribution) => !state.session?.user?.id || contribution.userId === state.session.user.id)
@@ -3522,8 +3578,8 @@ function renderWalletContributions(access) {
     message.textContent = isRestricted
       ? "Corporate and business-trip financial details are limited to authorized finance roles."
       : isAdminView
-      ? `${contributions.length} contribution record${contributions.length === 1 ? "" : "s"} across the active trip members.`
-      : `Your recorded contributions total ${formatWalletMoney(personalTotal, currency)}. Pending payments are not added to the shared balance.`;
+      ? `${contributions.length} contribution record${contributions.length === 1 ? "" : "s"} in ${displayName}.`
+      : `Your recorded contributions to ${displayName} total ${formatWalletMoney(personalTotal, currency)}. Pending payments are not added to the shared balance.`;
   }
 
   if (access.status !== "ready") return;
@@ -3545,7 +3601,7 @@ function renderWalletContributions(access) {
     if (!contributions.length) {
       const empty = document.createElement("div");
       empty.className = "wallet-ledger-empty";
-      empty.textContent = isAdminView ? "No member contributions have been confirmed yet." : "Your contribution history will appear here after secure checkout confirmation.";
+      empty.textContent = isAdminView ? `No member contributions have been confirmed in ${displayName} yet.` : `Your ${displayName} contribution history will appear here after secure checkout confirmation.`;
       ledger.append(empty);
     } else {
       contributions.forEach((contribution) => ledger.append(makeContributionRow(contribution)));
@@ -3567,7 +3623,7 @@ function renderWalletContributions(access) {
       const row = document.createElement("div");
       row.setAttribute("role", "row");
       const cell = document.createElement("span");
-      cell.textContent = isAdminView ? "No confirmed deposits yet." : "Your confirmed deposits will appear here.";
+      cell.textContent = isAdminView ? `No confirmed deposits in ${displayName} yet.` : `Your confirmed ${displayName} deposits will appear here.`;
       cell.setAttribute("role", "cell");
       row.append(cell);
       memberTable.append(row);
@@ -3616,6 +3672,7 @@ function renderWalletNotifications(access) {
 
 function renderWalletAccess() {
   const access = state.walletAccess;
+  const displayName = walletDisplayName(access);
   const roleLabel = {
     owner: "Trip owner",
     admin: "Trip admin",
@@ -3635,6 +3692,7 @@ function renderWalletAccess() {
   const providerControlledButtons = ["#activateCardButton", "#lockCardButton", "#revealCardButton", "#replaceCardButton", "#appleWalletButton", "#googleWalletButton", "#samsungWalletButton"];
   const refundableCents = (access.contributions || []).reduce((total, contribution) => total + Number(contribution.refundableCents || 0), 0);
 
+  syncWalletLabels(access);
   if (roleElement) roleElement.textContent = roleLabel;
   if (badge) {
     badge.textContent = access.status === "ready"
@@ -3670,15 +3728,15 @@ function renderWalletAccess() {
     } else if (access.status === "error") {
       message.textContent = access.message || "Wallet permissions could not be loaded. Refresh after signing in.";
     } else if (!state.session?.user && !isFilePreview) {
-      message.textContent = "Sign in to load your trip role. Members can add their own funds; only trip admins can use shared-card controls.";
+      message.textContent = `Sign in to load your trip role. Members can add their own funds to ${displayName}; only trip admins can use shared-card controls.`;
     } else if (access.canManageCard) {
       message.textContent = access.canTapToPay
-        ? `${roleLabel} access confirmed. You can start an issuer-authorized tap-to-pay purchase from the shared card.`
-        : `${roleLabel} access confirmed. Card controls are visible, but tap-to-pay stays disabled until the issuer provisions the trip card.`;
+        ? `${roleLabel} access confirmed. You can start an issuer-authorized tap-to-pay purchase from ${displayName}.`
+        : `${roleLabel} access confirmed. Card controls are visible, but tap-to-pay stays disabled until the issuer provisions the trip card for ${displayName}.`;
     } else if (access.canContribute) {
-      message.textContent = `${roleLabel} access confirmed. You can add your own funds through secure hosted checkout. Shared-card controls stay with the trip admin.`;
+      message.textContent = `${roleLabel} access confirmed. You can add funds to ${displayName} through secure hosted checkout. Shared-card controls stay with the trip admin.`;
     } else {
-      message.textContent = "This trip does not currently accept member contributions.";
+      message.textContent = `${displayName} is not accepting contributions yet.`;
     }
   }
   renderWalletContributions(access);
@@ -8064,7 +8122,7 @@ function wireLocalInteractions() {
 
     state.pendingWalletPayment = amount;
     state.pendingSecureAction = { type: "add_funds", amount };
-    $("#pinSummary").textContent = `Enter your 4-digit trip wallet PIN to add $${amount.toLocaleString()} to the group wallet.`;
+    $("#pinSummary").textContent = `Enter your 4-digit Wallet PIN to add $${amount.toLocaleString()} to ${walletDisplayName()}.`;
     $("#walletPin").value = "";
     $("#pinDialog").showModal();
     $("#walletPin").focus();
@@ -10844,7 +10902,8 @@ function wireLocalInteractions() {
       return;
     }
     if (action === "open-wallet") {
-      showWorkflowMessage("Trip wallet", state.walletAccess.canContribute
+      const displayName = walletDisplayName();
+      showWorkflowMessage(displayName, state.walletAccess.canContribute
         ? "Enter an amount in Wallet to begin secure hosted checkout. A balance changes only after provider confirmation."
         : "No payment provider is active for this wallet. No funds or balances have been created.");
       return;

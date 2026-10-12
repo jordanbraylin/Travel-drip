@@ -43,6 +43,12 @@ function isFundingTrip(trip) {
   );
 }
 
+function walletDisplayName(context) {
+  const savedName = context?.wallet?.settings?.displayName || context?.wallet?.settings?.depositLabel;
+  if (savedName) return sanitizeText(savedName, "Trip Wallet", 80);
+  return context?.trip?.trip_type === "group_trip" ? "Friend Group Funds" : "Trip Wallet";
+}
+
 async function getTripContext(supabase, user, tripId = "") {
   let membershipQuery = supabase
     .from("trip_members")
@@ -72,7 +78,7 @@ async function getTripContext(supabase, user, tripId = "") {
 
   const { data: wallet, error: walletError } = await supabase
     .from("trip_virtual_wallets")
-    .select("id, trip_id, wallet_identifier, currency, available_cents, total_contributions_cents, status, provider, provider_wallet_ref")
+    .select("id, trip_id, wallet_identifier, currency, available_cents, total_contributions_cents, status, provider, provider_wallet_ref, settings")
     .eq("trip_id", selected.trip.id)
     .maybeSingle();
   if (walletError) throw new Error(walletError.message);
@@ -142,6 +148,7 @@ async function getTripContext(supabase, user, tripId = "") {
 
 function accessPayload(context) {
   const isAdmin = ADMIN_ROLES.includes(context.role);
+  const displayName = walletDisplayName(context);
   const canContribute = isFundingTrip(context.trip) && context.wallet?.status === "active";
   const cardReady = Boolean(context.card?.provider_card_ref && context.card.card_status === "active");
   const financeRestricted = ["corporate_retreat", "business_event", "conference"].includes(context.trip.trip_type);
@@ -166,6 +173,7 @@ function accessPayload(context) {
     wallet: canViewFinancialDetails && context.wallet ? {
       id: context.wallet.id,
       identifier: context.wallet.wallet_identifier,
+      displayName,
       currency: context.wallet.currency,
       status: context.wallet.status,
       availableCents: context.wallet.available_cents,
@@ -191,10 +199,11 @@ async function stripeCheckout(request, contribution, context, amountCents, curre
   }
 
   const form = new URLSearchParams();
+  const displayName = walletDisplayName(context);
   form.set("mode", "payment");
   form.set("line_items[0][price_data][currency]", currency.toLowerCase());
-  form.set("line_items[0][price_data][product_data][name]", `Travel-Drip contribution • ${context.trip.title || "shared trip"}`);
-  form.set("line_items[0][price_data][product_data][description]", `Contribution to ${context.trip.destination || "the selected trip"} shared wallet`);
+  form.set("line_items[0][price_data][product_data][name]", `Travel-Drip contribution • ${displayName}`);
+  form.set("line_items[0][price_data][product_data][description]", `Contribution to ${displayName} for ${context.trip.title || context.trip.destination || "the selected trip"}`);
   form.set("line_items[0][price_data][unit_amount]", String(amountCents));
   form.set("line_items[0][quantity]", "1");
   form.set("client_reference_id", contribution.id);
@@ -226,7 +235,8 @@ async function stripeCheckout(request, contribution, context, amountCents, curre
 async function createContributionCheckout(request, response, supabase, user, body) {
   const context = await getTripContext(supabase, user, sanitizeText(body.tripId || body.trip_id, "", 80));
   if (!context || !context.wallet || !isFundingTrip(context.trip) || context.wallet.status !== "active") {
-    response.status(403).json({ error: "An active shared trip wallet is required before adding funds." });
+    const displayName = context ? walletDisplayName(context) : "shared trip wallet";
+    response.status(403).json({ error: `An active ${displayName} wallet is required before adding funds.` });
     return;
   }
 
@@ -308,7 +318,8 @@ async function createPaymentRequest(response, supabase, user, body) {
     return;
   }
 
-  const title = sanitizeText(body.title, "Trip wallet payment", 160);
+  const displayName = walletDisplayName(context);
+  const title = sanitizeText(body.title, `${displayName} payment`, 160);
   const amountCents = moneyCents(body.amountCents ?? body.amount_cents);
   const dueAt = new Date(String(body.dueAt || body.due_at || ""));
   if (!amountCents) {
@@ -364,8 +375,8 @@ async function createPaymentRequest(response, supabase, user, body) {
       trip_id: tripId,
       user_id: recipientId,
       notification_type: "wallet_payment_request",
-      title: "New trip wallet payment request",
-      body: `A trip wallet payment request is due ${dueAt.toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })}. Open Travel-Drip to review it.`,
+      title: `New ${displayName} payment request`,
+      body: `A payment request for ${displayName} is due ${dueAt.toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })}. Open Travel-Drip to review it.`,
       channels: ["in_app", "push"],
       status: "queued",
       metadata: { payment_request_id: paymentRequest.id, due_at: paymentRequest.due_at }

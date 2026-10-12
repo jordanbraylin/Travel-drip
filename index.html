@@ -2716,9 +2716,9 @@
           <section class="panel" id="walletPanel">
             <div class="section-heading compact">
               <div>
-                <p class="eyebrow">Trip Wallet</p>
-                <h2>Shared trip funds, clearly organized</h2>
-                <p>Track personal balances, shared contributions, refunds, payment requests, and transactions in one place.</p>
+                <p class="eyebrow" id="walletTitleLabel">Trip Wallet</p>
+                <h2 id="walletHeading">Shared trip funds, clearly organized</h2>
+                <p id="walletIntroCopy">Track personal balances, shared contributions, refunds, payment requests, and transactions in one place.</p>
               </div>
               <span class="card-status active">Active</span>
             </div>
@@ -2749,7 +2749,7 @@
               <aside class="wallet-section-nav" aria-label="Wallet sections">
                 <button class="active" type="button" data-wallet-section="overview">Overview</button>
                 <button type="button" data-wallet-section="myWallet">My Wallet</button>
-                <button type="button" data-wallet-section="tripWallets">Trip Wallets</button>
+                <button type="button" data-wallet-section="tripWallets" id="walletTripFundsTab">Trip Wallets</button>
                 <button type="button" data-wallet-section="virtualCard">Virtual Card</button>
                 <button type="button" data-target="splitBill">Split Bills</button>
                 <button type="button" data-wallet-section="requests">Payment Requests</button>
@@ -2761,11 +2761,11 @@
                 <article class="wallet-balance-hero">
                   <span>Total Available Balance</span>
                   <strong id="tripAvailableBalance">$3,880</strong>
-                  <small>Shared wallet funds available after reservations, holds, and pending refunds.</small>
+                  <small id="tripAvailableBalanceCopy">Shared wallet funds available after reservations, holds, and pending refunds.</small>
                   <div class="wallet-progress"><i style="--w:61%"></i></div>
                 </article>
                 <article class="wallet-summary-card"><span>Personal Wallet</span><strong>$1,050</strong><small>Deposited by Jordan</small></article>
-                <article class="wallet-summary-card"><span>Shared Trip Wallet</span><strong id="walletTotal">$6,400</strong><small>Total contributed</small></article>
+                <article class="wallet-summary-card"><span id="walletSharedFundsLabel">Shared Trip Wallet</span><strong id="walletTotal">$6,400</strong><small>Total contributed</small></article>
               </div>
               <section class="wallet-dashboard-sections" aria-label="Wallet dashboard sections">
                 <article class="wallet-section-widget wallet-section-widget--overview" data-wallet-pane="overview">
@@ -2818,13 +2818,13 @@
             <div class="wallet-operations-heading">
               <div>
                 <p class="eyebrow">Manage funds</p>
-                <h3>Funding, reminders, and wallet activity</h3>
-                <p>Add funds securely, create payment reminders, and review the personal ledger for this trip.</p>
+                <h3 id="walletOperationsTitle">Funding, reminders, and wallet activity</h3>
+                <p id="walletOperationsCopy">Add funds securely, create payment reminders, and review the personal ledger for this trip.</p>
               </div>
             </div>
             <label class="range-wrap" for="deposit">Planning target per person: <strong id="depositValue">$0</strong><input id="deposit" type="range" min="0" max="5000" step="50" value="0"><small>This estimate does not move wallet funds. Members add funds through secure checkout below.</small></label>
             <form class="funds-form" id="fundsForm">
-              <label>Add funds
+              <label><span id="walletAddFundsLabel">Add funds</span>
                 <input id="fundAmount" type="number" min="10" max="5000" step="10" placeholder="Amount" inputmode="decimal" required>
               </label>
               <button class="primary-button wide" type="submit">Continue to secure checkout</button>

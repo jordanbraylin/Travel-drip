@@ -114,6 +114,10 @@ function walletTypeForTrip(tripType) {
   return "shared_trip";
 }
 
+function walletDisplayNameForTrip(tripType) {
+  return tripType === "group_trip" ? "Friend Group Funds" : "Trip Wallet";
+}
+
 function makeWalletIdentifier(tripId) {
   return `TDW-${String(tripId).replace(/-/g, "").slice(0, 12).toUpperCase()}`;
 }
@@ -207,12 +211,15 @@ async function createTrip(response, supabase, user, body) {
   let tripWalletCard = null;
   if (tripUsesSharedWallet(tripType)) {
     const walletIdentifier = makeWalletIdentifier(trip.id);
+    const walletDisplayName = walletDisplayNameForTrip(tripType);
     const { data: groupBank, error: groupBankError } = await supabase
       .from("group_banks")
       .insert({
         trip_id: trip.id,
         currency: sanitizeText(body.currency, "USD", 12),
         settings: {
+          displayName: walletDisplayName,
+          depositLabel: walletDisplayName,
           walletIdentifier,
           createdAutomatically: true,
           corporateFundsSeparate: tripType === "corporate_retreat"
@@ -237,6 +244,8 @@ async function createTrip(response, supabase, user, body) {
         currency: groupBank.currency,
         status: "active",
         settings: {
+          displayName: walletDisplayName,
+          depositLabel: walletDisplayName,
           oneWalletPerTrip: true,
           memberContributionLedger: true,
           duplicatePaymentProtection: true,
