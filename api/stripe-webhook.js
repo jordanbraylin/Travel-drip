@@ -4,11 +4,21 @@ import { dispatchQueuedNotifications } from "../server/api/_push-notifications.j
 
 export const config = { api: { bodyParser: false } };
 
-function rawBody(request) {
+async function rawBody(request) {
   if (Buffer.isBuffer(request.rawBody)) return request.rawBody.toString("utf8");
   if (typeof request.rawBody === "string") return request.rawBody;
   if (Buffer.isBuffer(request.body)) return request.body.toString("utf8");
-  return typeof request.body === "string" ? request.body : "";
+  if (typeof request.body === "string") return request.body;
+  if (!request[Symbol.asyncIterator]) return "";
+  const chunks = [];
+  let size = 0;
+  for await (const chunk of request) {
+    const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+    size += buffer.length;
+    if (size > 1_048_576) throw new Error("Stripe webhook payload is too large");
+    chunks.push(buffer);
+  }
+  return Buffer.concat(chunks).toString("utf8");
 }
 
 function validStripeSignature(payload, header, secret) {
@@ -37,7 +47,13 @@ export default async function handler(request, response) {
   }
 
   const secret = String(process.env.STRIPE_WEBHOOK_SECRET || "").trim();
-  const payload = rawBody(request);
+  let payload;
+  try {
+    payload = await rawBody(request);
+  } catch (_error) {
+    response.status(400).json({ error: "Invalid webhook payload" });
+    return;
+  }
   if (!secret || !payload || !validStripeSignature(payload, request.headers["stripe-signature"], secret)) {
     response.status(400).json({ error: "Invalid Stripe webhook signature" });
     return;
