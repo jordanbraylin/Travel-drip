@@ -4,6 +4,7 @@ import {
   methodNotAllowed,
   sanitizeText
 } from "./_security.js";
+import { getResponseText } from "./_openai-response.js";
 
 function collectCitations(value, citations = []) {
   if (!value || typeof value !== "object") return citations;
@@ -98,10 +99,19 @@ export default async function handler(request, response) {
       return;
     }
 
+    const text = getResponseText(payload);
+    if (!text.trim()) {
+      response.status(502).json({
+        error: "The AI travel research provider returned no summary.",
+        code: "provider_invalid_response",
+        provider: "openai"
+      });
+      return;
+    }
     response.status(200).json({
       provider: "openai",
       sourceLabel: "AI research with live web sources",
-      text: sanitizeText(payload.output_text, "No research summary was returned.", 8_000),
+      text: sanitizeText(text, "", 8_000),
       citations: uniqueCitations(collectCitations(payload))
     });
   } catch (error) {

@@ -5,6 +5,7 @@ import {
   requireAuthenticatedUser,
   sanitizeText
 } from "./_security.js";
+import { getResponseText } from "./_openai-response.js";
 
 const templateFields = ["subject", "headline", "body", "meta", "rsvpLabel"];
 
@@ -99,7 +100,7 @@ export default async function handler(request, response) {
       return;
     }
 
-    const template = parseTemplate(payload.output_text);
+    const template = parseTemplate(getResponseText(payload));
     if (!template || !template.headline || !template.body) {
       response.status(502).json({
         error: "The AI invitation provider returned an invalid template.",

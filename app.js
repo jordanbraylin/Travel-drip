@@ -4316,9 +4316,10 @@ function syncCorporateEmployeeDashboardVisibility(employeeMode) {
   const showEmployeeDashboard = employeeMode && dashboardIsActive;
   const showPublicInspiration = !state.session?.user && !employeeMode && dashboardIsActive;
 
-  ["#dashboardHome", ".destination-insights", ".travel-social-strip", ".metrics", "#dashboardWidgets"].forEach((selector) => {
+  ["#dashboardHome", ".destination-insights", ".travel-social-strip", ".metrics"].forEach((selector) => {
     $$(selector).forEach((section) => setVisibilityWithoutCssLeaks(section, showPublicInspiration));
   });
+  setVisibilityWithoutCssLeaks($("#dashboardWidgets"), !employeeMode && dashboardIsActive);
   setVisibilityWithoutCssLeaks($(".pwa-panel"), !employeeMode && dashboardIsActive);
   setVisibilityWithoutCssLeaks($("#corporateHome"), showEmployeeDashboard);
 }
