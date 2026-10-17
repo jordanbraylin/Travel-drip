@@ -29,11 +29,13 @@ function allowRequest(request) {
 
 function isoDate(value, fallback = "") {
   const text = sanitizeText(value, fallback, 20);
-  return /^\d{4}-\d{2}-\d{2}$/.test(text) ? text : fallback;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) return fallback;
+  const date = new Date(`${text}T00:00:00Z`);
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === text ? text : fallback;
 }
 
 function cleanCityCode(value) {
-  return sanitizeText(value, "TYO", 3).toUpperCase().replace(/[^A-Z]/g, "").slice(0, 3);
+  return sanitizeText(value, "", 3).toUpperCase().replace(/[^A-Z]/g, "").slice(0, 3);
 }
 
 function cleanHotelId(value) {
@@ -123,8 +125,8 @@ export default async function handler(request, response) {
 
   const body = getRequestBody(request);
   const cityCode = cleanCityCode(body.cityCode || body.destination);
-  const checkInDate = isoDate(body.checkInDate, "2026-08-20");
-  const checkOutDate = isoDate(body.checkOutDate, "2026-08-24");
+  const checkInDate = isoDate(body.checkInDate);
+  const checkOutDate = isoDate(body.checkOutDate);
   const adults = cleanAdults(body.adults);
   const hotelId = cleanHotelId(body.hotelId);
   const clientId = String(process.env.AMADEUS_CLIENT_ID || "").trim();
@@ -133,6 +135,14 @@ export default async function handler(request, response) {
 
   if (!/^[A-Z]{3}$/.test(cityCode)) {
     response.status(400).json({ error: "Enter a three-letter IATA city code such as TYO or MIA.", code: "invalid_city_code" });
+    return;
+  }
+  if (!checkInDate || !checkOutDate) {
+    response.status(400).json({ error: "Enter valid check-in and check-out dates.", code: "invalid_dates" });
+    return;
+  }
+  if (checkInDate < new Date().toISOString().slice(0, 10)) {
+    response.status(400).json({ error: "Check-in cannot be in the past.", code: "past_check_in" });
     return;
   }
   if (checkInDate >= checkOutDate) {
@@ -173,6 +183,8 @@ export default async function handler(request, response) {
       `/v3/shopping/hotel-offers?hotelIds=${encodeURIComponent(id)}&adults=${adults}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&roomQuantity=1`,
       controller.signal
     )));
+    const failedOffers = offerPayloads.filter((result) => result.status === "rejected");
+    if (failedOffers.length === offerPayloads.length) throw failedOffers[0].reason;
     const results = offerPayloads
       .filter((result) => result.status === "fulfilled")
       .flatMap((result) => result.value.data || [])
@@ -182,6 +194,8 @@ export default async function handler(request, response) {
 
     response.status(200).json({
       provider: "amadeus",
+      live: true,
+      partial: failedOffers.length > 0,
       sourceLabel: "Live Amadeus hotel availability",
       query: { cityCode, checkInDate, checkOutDate, adults, hotelId: hotelId || null },
       results

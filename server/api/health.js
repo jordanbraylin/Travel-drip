@@ -57,11 +57,26 @@ export default function handler(_request, response) {
     openAiConfigured: Boolean(process.env.OPENAI_API_KEY),
     openAiModelConfigured: Boolean(process.env.OPENAI_MODEL)
   };
+  const requiredFeatures = {
+    walletFunding: capabilityChecks.stripeSecretConfigured && capabilityChecks.stripeWebhookConfigured && requiredChecks.appBaseUrlConfigured,
+    placesSearch: optionalChecks.googlePlacesConfigured,
+    flightTracking: optionalChecks.flightAwareConfigured,
+    hotelAvailability: optionalChecks.amadeusHotelsConfigured,
+    aiResearch: optionalChecks.openAiConfigured && optionalChecks.openAiModelConfigured
+  };
+  const unavailableFeatures = Object.entries(requiredFeatures).filter(([, configured]) => !configured).map(([name]) => name);
+  const coreReady = missingRequired.length === 0;
+  const configurationReady = coreReady && unavailableFeatures.length === 0;
   response.status(200).json({
     ok: true,
     app: "Travel-Drip",
-    ready: missingRequired.length === 0,
-    readinessStatus: missingRequired.length ? "blocked" : "ready",
+    ready: configurationReady,
+    coreReady,
+    configurationReady,
+    readinessStatus: !coreReady ? "blocked" : configurationReady ? "verification_required" : "limited",
+    verificationScope: "configuration_only",
+    providerConnectivityVerified: false,
+    unavailableFeatures,
     missingRequired,
     missingRequiredEnv: missingRequired.map((name) => requiredEnvNames[name] || name),
     missingCapabilities,

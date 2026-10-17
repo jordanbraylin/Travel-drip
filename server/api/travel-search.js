@@ -179,6 +179,7 @@ export default async function handler(request, response) {
     response.status(200).json({
       provider: "google_places",
       sourceLabel: "Live Google Places results",
+      live: true,
       query: textQuery,
       category,
       destination: destination || null,

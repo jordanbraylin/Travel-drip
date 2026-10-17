@@ -34,9 +34,10 @@ Public store-readiness pages are available at `/privacy.html` and `/terms.html`.
 3. Run `npx vercel` and choose this directory as the project root.
 4. Add the environment variables from `.env.example` in Vercel Project Settings. See `VERCEL_ENV_SETUP.md` for the exact values and commands.
 5. Run `npx vercel --prod` after the variables are set.
-6. Open `/api/health` on the deployed domain and confirm the required values return `true`.
+6. Open `/api/health` on the deployed domain and review `coreReady`, `unavailableFeatures`, and `readinessStatus`. This endpoint checks configuration, not provider connectivity or payment completion.
+7. Run `npm run check:live -- --include-ai` for live page, authentication-service, access-control, and provider probes. The AI probe makes an API request. A zero exit code does not replace signed-in trip, upload, messaging, and payment journey tests.
 
-Use [PRODUCTION_GO_LIVE_CHECKLIST.md](PRODUCTION_GO_LIVE_CHECKLIST.md) as the release gate. The Vercel build runs the PWA and route checks, while `/api/health` reports whether the server environment is ready for production.
+Use [PRODUCTION_GO_LIVE_CHECKLIST.md](PRODUCTION_GO_LIVE_CHECKLIST.md) as the release gate. The Vercel build runs the PWA and route checks. Configuration flags alone do not certify the site as operational.
 
 ## Supabase setup
 

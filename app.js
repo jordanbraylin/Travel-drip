@@ -11156,7 +11156,7 @@ function applyGoLiveHealth(health) {
     ? `Optional provider configuration pending: ${missingExternal.join(", ")}. Features that require those providers remain disabled instead of returning fabricated results.`
     : "Core search and AI providers are configured; email, SMS, maps, storage, monitoring, and backups still require manual verification.");
   $("#goLiveDeploymentStatus").textContent = "Live health checked";
-  $("#goLiveEnvironmentStatus").textContent = health.ready ? "Core ready" : "Blocked";
+  $("#goLiveEnvironmentStatus").textContent = (health.coreReady ?? health.ready) ? "Core configured" : "Blocked";
   $("#goLiveLocalStatus").textContent = "Validated";
 }
 
