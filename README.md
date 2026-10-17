@@ -35,9 +35,11 @@ Public store-readiness pages are available at `/privacy.html` and `/terms.html`.
 4. Add the environment variables from `.env.example` in Vercel Project Settings. See `VERCEL_ENV_SETUP.md` for the exact values and commands.
 5. Run `npx vercel --prod` after the variables are set.
 6. Open `/api/health` on the deployed domain and review `coreReady`, `unavailableFeatures`, and `readinessStatus`. This endpoint checks configuration, not provider connectivity or payment completion.
-7. Run `npm run check:live -- --include-ai` for live page, authentication-service, access-control, and provider probes. Search probes make provider API requests; `--include-ai` also tests the AI planner. A zero exit code does not replace signed-in trip, upload, messaging, and payment journey tests.
+7. Run `npm run check:live` for live page, authentication-service, access-control, and search handoff probes. Add `--include-ai` to test the paid AI planner. A zero exit code does not replace signed-in trip, upload, messaging, and payment journey tests.
 
-Travel, discovery, and global search use OpenAI web research with linked sources by default. The server uses the Responses API with a required `web_search` call. This requires funded OpenAI API access; a ChatGPT subscription does not provide website API credits. Google Places remains available only when explicitly requested with `provider: "google_places"`. AI research does not confirm hotel inventory, flight status, or bookings.
+Travel, discovery, and global search default to free DuckDuckGo web search. Results open on DuckDuckGo in a new tab, with a fallback results link in the app. No search API key or OpenAI credits are required. The site does not scrape or embed DuckDuckGo results or label a search handoff as live inventory. `POST /api/travel-search` returns the external search URL; `GET /api/travel-search?q=...` redirects to it.
+
+OpenAI research remains available explicitly with `provider: "openai"` and through the AI planner. It uses the Responses API with a required `web_search` call and requires funded API access. A ChatGPT subscription does not provide website API credits. Google Places remains available explicitly with `provider: "google_places"`. None of these search modes confirms hotel inventory, flight status, or bookings.
 
 Use [PRODUCTION_GO_LIVE_CHECKLIST.md](PRODUCTION_GO_LIVE_CHECKLIST.md) as the release gate. The Vercel build runs the PWA and route checks. Configuration flags alone do not certify the site as operational.
 

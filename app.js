@@ -3563,6 +3563,35 @@ function liveSearchMessage(target, message, tone = "") {
   element.dataset.tone = tone;
 }
 
+function renderFreeWebSearchResults(target, result) {
+  const selector = { explore: "#exploreLiveResultsGrid", travel: "#travelLiveResults", privateDriver: "#privateDriverLiveList" }[target];
+  const container = $(selector);
+  if (!container) return;
+  const searchUrl = new URL(result.searchUrl);
+  if (searchUrl.origin !== "https://duckduckgo.com" || searchUrl.pathname !== "/") throw new Error("Invalid free search link.");
+  const article = document.createElement("article");
+  article.className = "live-ai-search-answer";
+  const heading = document.createElement("h3");
+  heading.textContent = "DuckDuckGo search";
+  const query = document.createElement("p");
+  query.textContent = result.query;
+  const link = document.createElement("a");
+  link.className = "primary-button";
+  link.href = searchUrl.href;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.textContent = "View results on DuckDuckGo";
+  article.append(heading, query, link);
+  container.replaceChildren(article);
+  container.hidden = false;
+  if (target === "explore") {
+    state.liveSearch.exploreResults = [];
+    if ($("#exploreEmptyState")) $("#exploreEmptyState").hidden = true;
+  }
+  if (target === "travel") state.liveSearch.travelResults = [];
+  if (target === "privateDriver") state.liveSearch.privateDriverResults = [];
+}
+
 function renderLiveAiSearchResults(target, result) {
   const selector = { explore: "#exploreLiveResultsGrid", travel: "#travelLiveResults", privateDriver: "#privateDriverLiveList" }[target];
   const container = $(selector);
@@ -3594,7 +3623,15 @@ function renderLiveAiSearchResults(target, result) {
 }
 
 async function searchLiveTravelPlaces({ category, query = "", destination = "", target }) {
-  liveSearchMessage(target, "OpenAI is searching current web sources...", "loading");
+  liveSearchMessage(target, "Preparing free DuckDuckGo search...", "loading");
+  if (!isFilePreview) {
+    const params = new URLSearchParams({ category: category || "trending", q: query, destination });
+    try {
+      window.open(`/api/travel-search?${params}`, "_blank", "noopener,noreferrer");
+    } catch {
+      // The result link below also works when the browser blocks a new tab.
+    }
+  }
   if (target === "explore") renderLiveExploreResults([]);
   if (target === "travel") renderLiveTravelResults([]);
   if (target === "privateDriver") renderLivePrivateDriverResults([]);
@@ -3604,6 +3641,12 @@ async function searchLiveTravelPlaces({ category, query = "", destination = "", 
       body: JSON.stringify({ category, q: query, destination, limit: 8 })
     });
     if (result.skipped) throw new Error(result.reason || "Open the deployed app to use live provider search.");
+    if (result.provider === "duckduckgo") {
+      renderFreeWebSearchResults(target, result);
+      liveSearchMessage(target, "DuckDuckGo search ready.", "success");
+      await saveSyncedEvent("free_web_search_requested", { category, query, destination, target, provider: result.provider, searchMode: result.searchMode, live: false });
+      return result;
+    }
     const results = result.results || [];
     if (target === "explore") {
       state.liveSearch.exploreResults = results;
@@ -10266,7 +10309,7 @@ function wireLocalInteractions() {
     const query = event.target.value.trim();
     if ($("#exploreSearchInput")) $("#exploreSearchInput").value = query;
     renderRoute("exploreDrops", { updateHistory: true });
-    $("#exploreStatusMessage").textContent = query ? `Searching the web for "${query}"...` : "Explore opened from global search.";
+    $("#exploreStatusMessage").textContent = query ? `DuckDuckGo search: ${query}` : "Explore opened from global search.";
     if (query) searchLiveTravelPlaces({ category: "trending", query, destination: state.accountData.activeTrip?.destination || "", target: "explore" });
     addAuditEntry("Global search opened", query || "Explore opened without a search term.");
   });

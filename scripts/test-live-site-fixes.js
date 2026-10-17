@@ -47,7 +47,7 @@ try {
   assert.equal(sentRequest.tool_choice, "required");
   assert.deepEqual(sentRequest.tools, [{ type: "web_search" }]);
   const search = response();
-  await travelSearch({ method: "POST", headers: {}, body: { query: "Museums", destination: "New York" } }, search);
+  await travelSearch({ method: "POST", headers: {}, body: { provider: "openai", query: "Museums", destination: "New York" } }, search);
   assert.equal(search.statusCode, 200);
   assert.equal(search.body.provider, "openai");
   assert.ok(sentRequest.input[1].content[0].text.includes("Museums in New York"));
@@ -63,7 +63,7 @@ try {
   assert.equal(empty.body.code, "provider_invalid_response");
   globalThis.fetch = async () => ({ ok: false, status: 429, json: async () => ({ error: { code: "credit_balance_exhausted" } }) });
   const exhausted = response();
-  await travelSearch({ method: "POST", headers: {}, body: { query: "Museums" } }, exhausted);
+  await travelSearch({ method: "POST", headers: {}, body: { provider: "openai", query: "Museums" } }, exhausted);
   assert.equal(exhausted.statusCode, 429);
   assert.equal(exhausted.body.code, "provider_quota_exhausted");
 } finally {

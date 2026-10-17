@@ -109,8 +109,8 @@ function mapPlace(place, category, destination) {
 
 export default async function handler(request, response) {
   applySecurityHeaders(response);
-  if (request.method !== "POST") {
-    methodNotAllowed(response, "POST");
+  if (!["GET", "POST"].includes(request.method)) {
+    methodNotAllowed(response, "GET, POST");
     return;
   }
 
@@ -119,11 +119,33 @@ export default async function handler(request, response) {
     return;
   }
 
-  const body = getRequestBody(request);
+  const body = request.method === "GET" ? request.query || {} : getRequestBody(request);
   const category = normalizeCategory(body.category);
   const destination = sanitizeText(body.destination, "", 160);
   const query = sanitizeText(body.q || body.query, "", 180);
-  if (body.provider !== "google_places") {
+  const provider = sanitizeText(body.provider, "duckduckgo", 32);
+  if (request.method === "GET" || provider === "duckduckgo") {
+    const textQuery = [query || categoryQueries[category], destination].filter(Boolean).join(" in ");
+    const searchUrl = new URL("https://duckduckgo.com/");
+    searchUrl.searchParams.set("q", textQuery);
+    if (request.method === "GET") {
+      response.setHeader("Location", searchUrl.href);
+      response.status(302).end();
+      return;
+    }
+    response.status(200).json({
+      provider: "duckduckgo",
+      sourceLabel: "DuckDuckGo free web search",
+      searchMode: "external_results",
+      free: true,
+      live: false,
+      query: textQuery,
+      searchUrl: searchUrl.href,
+      results: []
+    });
+    return;
+  }
+  if (provider === "openai") {
     await aiPlanner({
       method: "POST",
       headers: request.headers,
@@ -132,6 +154,10 @@ export default async function handler(request, response) {
         answers: { destination, interests: categoryQueries[category] }
       }
     }, response);
+    return;
+  }
+  if (provider !== "google_places") {
+    response.status(400).json({ error: "Unsupported search provider.", code: "invalid_provider" });
     return;
   }
   const maxResults = Math.min(Math.max(Number(body.limit || 8), 1), 12);

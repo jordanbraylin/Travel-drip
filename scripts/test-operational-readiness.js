@@ -24,7 +24,9 @@ try {
   assert.equal(limited.body.coreReady, true);
   assert.equal(limited.body.ready, false);
   assert.equal(limited.body.readinessStatus, "limited");
-  assert.deepEqual(limited.body.unavailableFeatures, ["walletFunding", "placesSearch", "flightTracking", "hotelAvailability", "aiResearch"]);
+  assert.deepEqual(limited.body.unavailableFeatures, ["walletFunding", "flightTracking", "hotelAvailability", "aiResearch"]);
+  assert.equal(limited.body.primarySearchProvider, "duckduckgo");
+  assert.equal(limited.body.freeWebSearchConfigured, true);
   for (const name of providers) process.env[name] = "test-only";
   const configured = response();
   health({}, configured);
