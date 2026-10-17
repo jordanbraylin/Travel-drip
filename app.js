@@ -134,29 +134,9 @@ const state = {
   }
 };
 
-const plans = [
-  [
-    ["10:00", "Arrive and bag drop", "Check in with the group host near JBR."],
-    ["13:30", "Marina lunch", "Seafood table reserved for eight."],
-    ["20:00", "Rooftop dinner", "Open-air skyline spot with budget cap."]
-  ],
-  [
-    ["08:30", "Desert pickup", "Shared shuttle, dune ride, and coffee stop."],
-    ["15:00", "Pool reset", "Two cabanas on hold until the vote closes."],
-    ["21:30", "Listening lounge", "Low-volume bar near the hotel cluster."]
-  ],
-  [
-    ["09:45", "Old city walk", "Gold souk, creek crossing, and street snacks."],
-    ["14:15", "Museum slot", "Timed tickets grouped under one QR code."],
-    ["18:30", "Farewell dinner", "Family-style menu with deposit applied."]
-  ]
-];
+const plans = [[], [], []];
 
-const dayCopy = [
-  "Balanced pace with one anchor activity each day.",
-  "Adventure-heavy day with a relaxed evening recovery window.",
-  "Culture and food stops grouped by walking distance."
-];
+const dayCopy = ["No itinerary items saved.", "No itinerary items saved.", "No itinerary items saved."];
 
 const aiPlannerSteps = [
   {
@@ -269,102 +249,13 @@ const rideProvidersByDestination = {
   "United Arab Emirates": ["Careem", "Uber"]
 };
 
-const privateDriverCompaniesByDestination = {
-  "United Arab Emirates": [
-    { name: "Blacklane Dubai", type: "Chauffeur service", estimate: "$72-$110", eta: "45 min notice", rating: "4.8", vehicles: "Sedan, SUV, van" },
-    { name: "Careem Chauffeur", type: "Private driver", estimate: "$58-$96", eta: "30 min notice", rating: "4.7", vehicles: "Business sedan, XL" },
-    { name: "Dubai Private Driver", type: "Hourly hire", estimate: "$95/hr", eta: "2 hr minimum", rating: "4.6", vehicles: "Luxury sedan, sprinter" }
-  ],
-  "United States": [
-    { name: "Blacklane", type: "Chauffeur service", estimate: "$85-$140", eta: "60 min notice", rating: "4.8", vehicles: "Sedan, SUV, van" },
-    { name: "Alto", type: "Private rides", estimate: "$45-$90", eta: "Select cities", rating: "4.7", vehicles: "Premium SUV" },
-    { name: "Dryver", type: "Personal driver", estimate: "$38/hr", eta: "Advance booking", rating: "4.5", vehicles: "Your car or hired car" }
-  ],
-  "Canada": [
-    { name: "Blacklane Canada", type: "Chauffeur service", estimate: "$90-$150", eta: "60 min notice", rating: "4.8", vehicles: "Sedan, SUV" },
-    { name: "DriverSeat", type: "Designated driver", estimate: "$42/hr", eta: "Advance booking", rating: "4.5", vehicles: "Hourly driver" }
-  ],
-  "United Kingdom": [
-    { name: "Addison Lee", type: "Executive car", estimate: "£45-£95", eta: "30 min notice", rating: "4.6", vehicles: "Exec car, people carrier" },
-    { name: "Blacklane London", type: "Chauffeur service", estimate: "£75-£140", eta: "60 min notice", rating: "4.8", vehicles: "Business sedan, van" }
-  ],
-  "Mexico": [
-    { name: "Blacklane Mexico City", type: "Chauffeur service", estimate: "$55-$105", eta: "60 min notice", rating: "4.7", vehicles: "Sedan, SUV" },
-    { name: "Mexico Private Driver", type: "Tour driver", estimate: "$45/hr", eta: "Advance booking", rating: "4.6", vehicles: "Sedan, van" }
-  ],
-  "Brazil": [
-    { name: "Blacklane Sao Paulo", type: "Chauffeur service", estimate: "$65-$120", eta: "60 min notice", rating: "4.7", vehicles: "Sedan, SUV" },
-    { name: "Brazil Executive Transfers", type: "Private transfer", estimate: "$40-$85", eta: "Advance booking", rating: "4.5", vehicles: "Sedan, van" }
-  ],
-  "Japan": [
-    { name: "Tokyo Chauffeur Service", type: "Private driver", estimate: "¥12,000-¥28,000", eta: "Advance booking", rating: "4.8", vehicles: "Sedan, van" },
-    { name: "MK Taxi Hire", type: "Hire car", estimate: "¥8,000/hr", eta: "2 hr minimum", rating: "4.7", vehicles: "Premium taxi, van" }
-  ],
-  "Singapore": [
-    { name: "GrabRentals Chauffeur", type: "Private driver", estimate: "S$65-S$120", eta: "Advance booking", rating: "4.7", vehicles: "Sedan, MPV" },
-    { name: "Singapore Limousine", type: "Airport and hourly", estimate: "S$75/hr", eta: "2 hr minimum", rating: "4.6", vehicles: "Luxury sedan, van" }
-  ],
-  "Malaysia": [
-    { name: "Kuala Lumpur Chauffeur", type: "Private driver", estimate: "RM180-RM420", eta: "Advance booking", rating: "4.6", vehicles: "Sedan, MPV" },
-    { name: "Blacklane KL", type: "Chauffeur service", estimate: "RM260-RM520", eta: "60 min notice", rating: "4.8", vehicles: "Business sedan, van" }
-  ],
-  "Thailand": [
-    { name: "Bangkok Private Driver", type: "Hourly driver", estimate: "฿1,200-฿3,200", eta: "Advance booking", rating: "4.6", vehicles: "Sedan, van" },
-    { name: "Blacklane Bangkok", type: "Chauffeur service", estimate: "฿2,400-฿5,200", eta: "60 min notice", rating: "4.8", vehicles: "Business sedan, SUV" }
-  ],
-  "Indonesia": [
-    { name: "Bali Private Driver", type: "Day hire", estimate: "Rp650k-Rp1.2m", eta: "Advance booking", rating: "4.8", vehicles: "SUV, van" },
-    { name: "Jakarta Executive Driver", type: "Chauffeur service", estimate: "Rp500k-Rp1.1m", eta: "Advance booking", rating: "4.6", vehicles: "Sedan, MPV" }
-  ],
-  "India": [
-    { name: "Savaari Chauffeur", type: "Outstation and hourly", estimate: "₹1,800-₹4,500", eta: "Advance booking", rating: "4.6", vehicles: "Sedan, SUV" },
-    { name: "Blacklane India", type: "Chauffeur service", estimate: "₹3,500-₹8,000", eta: "60 min notice", rating: "4.8", vehicles: "Business sedan, van" }
-  ]
-};
+const privateDriverCompaniesByDestination = {};
 
-const rideParticipants = [
-  { name: "Jordan", custom: 14, percent: 25, note: "Full route" },
-  { name: "Sarah", custom: 18, percent: 40, note: "Extra stop" },
-  { name: "Mike", custom: 15, percent: 20, note: "Shared pickup" },
-  { name: "Alex", custom: 16, percent: 15, note: "Shared drop-off" },
-  { name: "Priya", custom: 12, percent: 0, note: "Short segment" },
-  { name: "Noah", custom: 12, percent: 0, note: "Short segment" }
-];
+const rideParticipants = [];
 
-const sharedRideMembers = [
-  { name: "Jordan", status: "Organizer", splitting: true },
-  { name: "Sarah", status: "Joined", splitting: true },
-  { name: "Mike", status: "Joined", splitting: true },
-  { name: "Alex", status: "Leaving later", splitting: false }
-];
+const sharedRideMembers = [];
 
-const rideHubItems = {
-  upcoming: [
-    { title: "Dinner transfer", meta: "Today 7:15 PM • JBR Hotel Lobby to Dubai Marina", status: "Ready to book", estimate: "$18-$22", tag: "Group ride" },
-    { title: "Airport return", meta: "Tomorrow 10:30 AM • Hotel to DXB Terminal 3", status: "Reminder set", estimate: "$34-$42", tag: "Private transfer" },
-    { title: "Beach club pickup", meta: "Friday 1:00 PM • Marina walk to Palm Jumeirah", status: "Voting open", estimate: "$21-$28", tag: "Shared ride" }
-  ],
-  recommendations: [
-    { title: "Fastest pickup", meta: "Careem Comfort • 8 min wait • best for four travelers", cta: "Book ride" },
-    { title: "Best group value", meta: "SUV or van recommended over two standard cars", cta: "Compare fares" },
-    { title: "Private driver", meta: "Hourly driver works best for dinner, nightlife, and return ride", cta: "Search drivers" }
-  ],
-  timeline: [
-    { time: "6:40 PM", title: "Time-to-leave alert", detail: "Traffic check runs before dinner transfer." },
-    { time: "7:15 PM", title: "Pickup window", detail: "Passengers meet at JBR Hotel Lobby." },
-    { time: "After ride", title: "Receipt and split", detail: "Import receipt, confirm fare, and notify passengers." }
-  ],
-  history: [
-    { title: "Museum district ride", meta: "Careem • 4 passengers • Split completed", total: "$41.20" },
-    { title: "Airport arrival transfer", meta: "Private van • Receipt stored", total: "$96.00" },
-    { title: "Lunch shuttle", meta: "Marked paid outside app", total: "$28.50" }
-  ],
-  notifications: [
-    { title: "Driver arriving", meta: "Push and in-app alert are enabled for booked rides." },
-    { title: "Fare ready", meta: "Passengers receive payment notification after receipt import." },
-    { title: "Route changed", meta: "Group members are notified when pickup or drop-off changes." }
-  ]
-};
+const rideHubItems = { upcoming: [], recommendations: [], timeline: [], history: [], notifications: [] };
 
 const transportTypeLabels = {
   flights: "Flights",
@@ -378,224 +269,7 @@ const transportTypeLabels = {
   privateTransfers: "Private Transfers"
 };
 
-const transportRecords = [
-  {
-    id: "flight-dl241",
-    type: "flights",
-    provider: "Delta Air Lines",
-    title: "Delta DL 241",
-    route: "JFK to DXB",
-    confirmation: "TD9K42",
-    ticket: "006-4829137764",
-    departure: "JFK Terminal 4",
-    arrival: "DXB Terminal 3",
-    departureTime: "Jul 24, 2026 10:45 PM",
-    arrivalTime: "Jul 25, 2026 7:55 PM",
-    gate: "B18",
-    seat: "22A",
-    passenger: "Jordan Smith",
-    assignedTo: ["Jordan", "Sarah"],
-    status: "Check-in open",
-    passType: "Boarding pass",
-    accessCode: "QR TD-DL241",
-    documents: ["Boarding pass PDF", "Mobile boarding pass screenshot", "Email confirmation"],
-    wallet: { apple: true, google: true },
-    reminder: "Check-in open now. Boarding reminder 45 minutes before departure.",
-    details: ["Boarding group 3", "Baggage allowance: 1 checked bag, 1 carry-on", "Flight status: on time", "Check-in link ready"]
-  },
-  {
-    id: "train-eurostar-9024",
-    type: "trains",
-    provider: "Eurostar",
-    title: "Eurostar 9024",
-    route: "London St Pancras to Paris Gare du Nord",
-    confirmation: "RAIL-7H2Q",
-    ticket: "EU-449208",
-    departure: "Platform announced 20 minutes before boarding",
-    arrival: "Paris Gare du Nord",
-    departureTime: "Aug 3, 2026 9:01 AM",
-    arrivalTime: "Aug 3, 2026 12:20 PM",
-    gate: "Platform pending",
-    seat: "Coach 8, Seat 42",
-    passenger: "Alex Lee",
-    assignedTo: ["Alex"],
-    status: "Confirmed",
-    passType: "Mobile rail ticket",
-    accessCode: "Barcode EU9024",
-    documents: ["Rail ticket PDF", "Rail pass"],
-    wallet: { apple: true, google: false },
-    reminder: "Boarding instructions available. Platform notification enabled.",
-    details: ["Fare type: standard premier", "Coach 8", "Rail pass attached", "Passport check before boarding"]
-  },
-  {
-    id: "bus-flix-88",
-    type: "buses",
-    provider: "FlixBus",
-    title: "Route 88",
-    route: "Miami Central to Orlando Station",
-    confirmation: "BUS-1208",
-    ticket: "FB-88420",
-    departure: "Bay 4, Miami Central",
-    arrival: "Orlando Bus Terminal",
-    departureTime: "Sep 1, 2026 8:10 AM",
-    arrivalTime: "Sep 1, 2026 12:35 PM",
-    gate: "Bay 4",
-    seat: "12C",
-    passenger: "Mike Rivera",
-    assignedTo: ["Mike", "Priya"],
-    status: "Confirmed",
-    passType: "Mobile bus ticket",
-    accessCode: "QR FB88",
-    documents: ["Bus mobile ticket", "Baggage policy"],
-    wallet: { apple: false, google: false },
-    reminder: "Arrive 20 minutes early. Bay change alerts enabled.",
-    details: ["Baggage policy: one checked bag", "Boarding instructions attached", "Route number 88"]
-  },
-  {
-    id: "ferry-bluewater",
-    type: "ferries",
-    provider: "Bluewater Ferries",
-    title: "Bluewater Ferry",
-    route: "Santorini Port to Mykonos Port",
-    confirmation: "SEA-77A",
-    ticket: "BW-302944",
-    departure: "Athinios Port",
-    arrival: "Mykonos New Port",
-    departureTime: "Sep 8, 2026 11:30 AM",
-    arrivalTime: "Sep 8, 2026 2:05 PM",
-    gate: "Port Gate 2",
-    seat: "Deck lounge B",
-    passenger: "Sarah Kim",
-    assignedTo: ["Sarah", "Jordan", "Alex"],
-    status: "Boarding soon",
-    passType: "Ferry ticket",
-    accessCode: "QR SEA77A",
-    documents: ["Ferry ticket PDF", "Port instructions"],
-    wallet: { apple: false, google: true },
-    reminder: "Embarkation begins 45 minutes before departure.",
-    details: ["Vessel: Aegean Star", "Vehicle: none", "Boarding group B", "Port instructions attached"]
-  },
-  {
-    id: "cruise-oceanic",
-    type: "cruises",
-    provider: "Oceanic Cruise Line",
-    title: "Oceanic Vista",
-    route: "Miami embarkation to Caribbean sailing",
-    confirmation: "CRUISE-4829",
-    ticket: "OC-11234",
-    departure: "PortMiami Terminal A",
-    arrival: "PortMiami Terminal A",
-    departureTime: "Oct 10, 2026 12:00 PM",
-    arrivalTime: "Oct 17, 2026 7:00 AM",
-    gate: "Boarding Group C",
-    seat: "Cabin 11234, Deck 11",
-    passenger: "Jordan Smith",
-    assignedTo: ["Jordan", "Sarah"],
-    status: "Confirmed",
-    passType: "Cruise boarding pass",
-    accessCode: "QR OC4829",
-    documents: ["Cruise ticket", "Luggage tags", "Port documents", "Boarding pass"],
-    wallet: { apple: true, google: true },
-    reminder: "Cruise check-in opens 21 days before sailing.",
-    details: ["Ship: Oceanic Vista", "Cabin 11234", "Deck 11", "Luggage tags ready"]
-  },
-  {
-    id: "shuttle-dxb-zoneb",
-    type: "shuttles",
-    provider: "Marina Grand Shuttle",
-    title: "Airport shuttle Zone B",
-    route: "DXB Terminal 3 to Marina Grand Hotel",
-    confirmation: "SHUT-0912",
-    ticket: "MG-7781",
-    departure: "DXB Terminal 3 Zone B",
-    arrival: "Marina Grand Hotel",
-    departureTime: "Jul 25, 2026 8:35 PM",
-    arrivalTime: "Jul 25, 2026 9:15 PM",
-    gate: "Zone B",
-    seat: "Open seating",
-    passenger: "Corporate Team",
-    assignedTo: ["Corporate Team"],
-    status: "Confirmed",
-    passType: "Transfer voucher",
-    accessCode: "Voucher MG7781",
-    documents: ["Shuttle voucher", "Pickup map"],
-    wallet: { apple: false, google: false },
-    reminder: "Pickup reminder 30 minutes before arrival.",
-    details: ["Driver contact hidden until arrival", "Operator: hotel desk", "Runs every 20 minutes"]
-  },
-  {
-    id: "rideshare-careem-22",
-    type: "rideShare",
-    provider: "Careem",
-    title: "Careem reservation",
-    route: "JBR Hotel Lobby to Dubai Marina Dinner",
-    confirmation: "RIDE-2209",
-    ticket: "CAREEM-3301",
-    departure: "JBR Hotel Lobby",
-    arrival: "Dubai Marina Dinner",
-    departureTime: "Jul 26, 2026 7:15 PM",
-    arrivalTime: "Jul 26, 2026 7:35 PM",
-    gate: "Lobby pickup",
-    seat: "SUV reservation",
-    passenger: "Jordan Smith",
-    assignedTo: ["Jordan", "Sarah", "Mike", "Alex"],
-    status: "Confirmed",
-    passType: "Ride reservation",
-    accessCode: "Reservation RIDE-2209",
-    documents: ["Ride confirmation", "Receipt placeholder"],
-    wallet: { apple: false, google: false },
-    reminder: "Driver assignment notification enabled.",
-    details: ["Vehicle: SUV", "Split fare enabled", "Receipt import ready after ride"]
-  },
-  {
-    id: "rental-hertz-dubai",
-    type: "rentalCars",
-    provider: "Hertz",
-    title: "Hertz rental car",
-    route: "DXB pickup to DXB return",
-    confirmation: "CAR-73HD",
-    ticket: "HZ-882041",
-    departure: "DXB Rental Center",
-    arrival: "DXB Rental Center",
-    departureTime: "Jul 25, 2026 9:30 PM",
-    arrivalTime: "Jul 29, 2026 5:00 PM",
-    gate: "Counter 12",
-    seat: "SUV class",
-    passenger: "Jordan Smith",
-    assignedTo: ["Jordan"],
-    status: "Confirmed",
-    passType: "Rental voucher",
-    accessCode: "Voucher HZ882041",
-    documents: ["Rental voucher", "Insurance details", "Pickup instructions"],
-    wallet: { apple: false, google: true },
-    reminder: "Rental pickup reminder 2 hours before counter time.",
-    details: ["Vehicle class: SUV", "Driver: Jordan Smith", "Loyalty number attached", "Insurance details stored"]
-  },
-  {
-    id: "private-blacklane-dubai",
-    type: "privateTransfers",
-    provider: "Blacklane Dubai",
-    title: "Private transfer",
-    route: "Marina Grand Hotel to Desert Camp",
-    confirmation: "PRV-5542",
-    ticket: "BL-99201",
-    departure: "Marina Grand Hotel",
-    arrival: "Desert Camp Gate",
-    departureTime: "Jul 27, 2026 2:15 PM",
-    arrivalTime: "Jul 27, 2026 3:20 PM",
-    gate: "Hotel valet",
-    seat: "Luxury van",
-    passenger: "Sarah Kim",
-    assignedTo: ["Jordan", "Sarah", "Mike", "Alex", "Priya", "Noah"],
-    status: "Confirmed",
-    passType: "Private transfer voucher",
-    accessCode: "Voucher BL99201",
-    documents: ["Transfer voucher", "Driver contact card", "Special instructions"],
-    wallet: { apple: false, google: false },
-    reminder: "Driver/operator details release 30 minutes before pickup.",
-    details: ["Operator: Blacklane Dubai", "Vehicle: luxury van", "Contact number hidden until pickup", "Special instructions saved"]
-  }
-];
+const transportRecords = [];
 
 const featuredLivePlanDestinations = [
   {
@@ -1093,11 +767,11 @@ const eventTypeToApiType = {
 
 const eventSpecificFieldConfigs = {
   wedding: [["Ceremony date and time", "ceremony_at", "2026-09-12T16:00"], ["Reception date and time", "reception_at", "2026-09-12T19:00"], ["Venue", "venue", "Ocean View Garden"], ["Rehearsal dinner", "rehearsal_dinner", "Friday welcome dinner"], ["Wedding party", "wedding_party", "8 attendants"], ["Hotel block", "hotel_block", "Harbor Suites"], ["Dress code", "dress_code", "Formal beach"], ["Registry link", "registry_link", "https://example.com/registry"], ["Weekend schedule", "weekend_schedule", "Welcome dinner, ceremony, brunch"]],
-  birthday: [["Birthday person", "birthday_person", "Jordan"], ["Age or milestone", "milestone", "30th birthday"], ["Main celebration", "main_celebration", "Rooftop dinner"], ["Dinner", "dinner", "Ocean rooftop"], ["Activities", "activities", "Boat day, spa, nightlife"], ["Nightlife", "nightlife", "Lounge reservations"], ["Gift preferences", "gift_preferences", "Experiences over gifts"]],
+  birthday: [["Birthday person", "birthday_person", "Name"], ["Age or milestone", "milestone", "30th birthday"], ["Main celebration", "main_celebration", "Rooftop dinner"], ["Dinner", "dinner", "Ocean rooftop"], ["Activities", "activities", "Boat day, spa, nightlife"], ["Nightlife", "nightlife", "Lounge reservations"], ["Gift preferences", "gift_preferences", "Experiences over gifts"]],
   anniversary: [["Anniversary milestone", "milestone", "10 years"], ["Celebration dinner", "celebration_dinner", "Private chef dinner"], ["Hotel plan", "hotel_plan", "Ocean-view suite"], ["Activities", "activities", "Sunset cruise, photo walk"], ["Guest notes", "guest_notes", "Close family only"]],
   family_reunion: [["Family name", "family_name", "Johnson Family"], ["Relative import source", "import_source", "CSV"], ["Room assignment plan", "room_plan", "By household"], ["Family schedule", "family_schedule", "Picnic, dinner, games"], ["Meal plan", "meal_plan", "Potluck and catered dinner"], ["Announcements", "announcements", "Welcome message"]],
   conference: [["Sessions", "sessions", "Opening keynote, workshops"], ["Speakers", "speakers", "Keynote and panel speakers"], ["Tracks", "tracks", "Leadership, Sales, Product"], ["Sponsors", "sponsors", "Gold and community sponsors"], ["Registration details", "registration", "Badge pickup at lobby"], ["Venue rooms", "venue_rooms", "Palm Conference Room"], ["Badge information", "badge_info", "QR badge required"]],
-  graduation_trip: [["Graduate", "graduate", "Jordan"], ["School", "school", "State University"], ["Dinner", "dinner", "Family dinner"], ["Celebration schedule", "celebration_schedule", "Ceremony, dinner, beach day"], ["Contribution plan", "contribution_plan", "Shared activities only"]],
+  graduation_trip: [["Graduate", "graduate", "Name"], ["School", "school", "State University"], ["Dinner", "dinner", "Family dinner"], ["Celebration schedule", "celebration_schedule", "Ceremony, dinner, beach day"], ["Contribution plan", "contribution_plan", "Shared activities only"]],
   church_retreat: [["Retreat theme", "theme", "Renew and Restore"], ["Ministry group", "ministry_group", "Young Adults"], ["Worship schedule", "worship_schedule", "Morning and evening worship"], ["Sessions", "sessions", "Breakouts and prayer groups"], ["Transportation groups", "transportation_groups", "Bus A and Bus B"], ["Meal schedule", "meal_schedule", "Breakfast, lunch, dinner"], ["Emergency contacts", "emergency_contacts", "Retreat safety lead"]],
   bachelor_bachelorette: [["Guest of honor", "guest_of_honor", "Taylor"], ["Main celebration", "main_celebration", "Dinner and lounge"], ["Activities", "activities", "Boat day, brunch"], ["Nightlife", "nightlife", "VIP table"], ["Transportation plan", "transportation_plan", "Private driver"], ["Cost split plan", "cost_split", "Equal split for shared events"]],
   special_event: [["Event theme", "theme", "Custom celebration"], ["Primary venue", "venue", "Main venue"], ["Key activities", "activities", "Dinner, photos, group activity"], ["Special instructions", "instructions", "Bring ID and comfortable shoes"]]
@@ -1107,157 +781,157 @@ const invitationConfigs = {
   solo: {
     badge: "Solo itinerary share",
     modeCopy: "Solo travelers can share an itinerary with trusted contacts, emergency contacts, or invite someone to join later.",
-    title: "You're invited to my Tokyo solo food sprint",
-    message: "Follow my itinerary, see key travel updates, and stay connected while I explore Tokyo.",
+    title: "",
+    message: "",
     recipients: ["Trusted family", "Emergency contact", "Close friend", "Invite someone later"],
-    sent: 2,
-    opened: 1,
-    accepted: 1,
-    pending: 1,
+    sent: 0,
+    opened: 0,
+    accepted: 0,
+    pending: 0,
     companyLogo: false
   },
   group: {
     badge: "Group adventure invite",
     modeCopy: "Group organizers can invite friends, family, couples, clubs, sports teams, and travel groups.",
-    title: "You're invited to our Miami 2027 Adventure",
-    message: "Join us for an unforgettable weekend of beaches, great food, shared rides, and amazing memories.",
+    title: "",
+    message: "",
     recipients: ["Friends", "Family", "Couples", "Clubs", "Sports teams", "Travel groups"],
-    sent: 12,
-    opened: 9,
-    accepted: 7,
-    pending: 3,
+    sent: 0,
+    opened: 0,
+    accepted: 0,
+    pending: 0,
     companyLogo: false
   },
   corporate: {
     badge: "Corporate branded invite",
     modeCopy: "Corporate admins can invite employees, executives, managers, clients, speakers, vendors, and event coordinators while hiding confidential financial details.",
-    title: "You're invited to the 2027 Leadership Retreat",
-    message: "Please join the company retreat for workshops, team-building, assigned travel, event schedules, and important announcements.",
+    title: "",
+    message: "",
     recipients: ["Employees", "Executives", "Managers", "Clients", "Guest speakers", "Vendors", "Event coordinators", "CSV import", "Company directory"],
-    sent: 86,
-    opened: 74,
-    accepted: 61,
-    pending: 19,
+    sent: 0,
+    opened: 0,
+    accepted: 0,
+    pending: 0,
     companyLogo: true
   },
   wedding: {
     badge: "Wedding weekend invite",
     modeCopy: "Wedding hosts can invite guests, wedding party, family, vendors, and out-of-town travelers with hotel, shuttle, and schedule visibility.",
-    title: "You're invited to our wedding weekend",
-    message: "Join us for the ceremony, reception, hotel block, transportation updates, RSVP details, and shared memories.",
+    title: "",
+    message: "",
     recipients: ["Wedding party", "Family", "Friends", "Vendors", "Out-of-town guests"],
-    sent: 86,
-    opened: 72,
-    accepted: 61,
-    pending: 25,
+    sent: 0,
+    opened: 0,
+    accepted: 0,
+    pending: 0,
     companyLogo: false
   },
   birthday: {
     badge: "Birthday celebration invite",
     modeCopy: "Birthday organizers can invite friends, family, and groups while tracking dinner, activities, contributions, and nightlife plans.",
-    title: "You're invited to the birthday trip",
-    message: "Celebrate with dinner, activities, shared costs, reminders, and a group photo album.",
+    title: "",
+    message: "",
     recipients: ["Friends", "Family", "Dinner guests", "Activity group"],
-    sent: 18,
-    opened: 14,
-    accepted: 11,
-    pending: 7,
+    sent: 0,
+    opened: 0,
+    accepted: 0,
+    pending: 0,
     companyLogo: false
   },
   anniversary: {
     badge: "Anniversary invite",
     modeCopy: "Anniversary hosts can share celebration details, dinner plans, hotel information, activity schedules, and memories.",
-    title: "You're invited to our anniversary celebration",
-    message: "Join us for a special anniversary trip with dinner, activities, travel updates, and photos.",
+    title: "",
+    message: "",
     recipients: ["Close family", "Friends", "Dinner guests"],
-    sent: 10,
-    opened: 8,
-    accepted: 6,
-    pending: 4,
+    sent: 0,
+    opened: 0,
+    accepted: 0,
+    pending: 0,
     companyLogo: false
   },
   family_reunion: {
     badge: "Family reunion invite",
     modeCopy: "Family reunion organizers can import relatives, track households, assign rooms, and send family announcements.",
-    title: "You're invited to the family reunion",
-    message: "Join the family schedule, room planning, activities, meal updates, announcements, and shared album.",
+    title: "",
+    message: "",
     recipients: ["Relatives", "Households", "Elders", "Cousins", "Family coordinators"],
-    sent: 54,
-    opened: 42,
-    accepted: 35,
-    pending: 19,
+    sent: 0,
+    opened: 0,
+    accepted: 0,
+    pending: 0,
     companyLogo: false
   },
   conference: {
     badge: "Conference registration invite",
     modeCopy: "Conference organizers can invite attendees, speakers, sponsors, vendors, and staff with role-appropriate agenda access.",
-    title: "You're invited to the conference",
-    message: "View sessions, speakers, tracks, venue rooms, badge details, hotel blocks, transportation, and agenda updates.",
+    title: "",
+    message: "",
     recipients: ["Attendees", "Speakers", "Sponsors", "Staff", "Vendors"],
-    sent: 240,
-    opened: 198,
-    accepted: 166,
-    pending: 74,
+    sent: 0,
+    opened: 0,
+    accepted: 0,
+    pending: 0,
     companyLogo: true
   },
   graduation_trip: {
     badge: "Graduation trip invite",
     modeCopy: "Graduation organizers can invite family and friends, collect RSVPs, coordinate travel, and share celebration memories.",
-    title: "You're invited to the graduation trip",
-    message: "Join the travel plan, dinner, celebration schedule, contributions, reminders, and photo album.",
+    title: "",
+    message: "",
     recipients: ["Family", "Friends", "Classmates", "Dinner guests"],
-    sent: 22,
-    opened: 18,
-    accepted: 15,
-    pending: 7,
+    sent: 0,
+    opened: 0,
+    accepted: 0,
+    pending: 0,
     companyLogo: false
   },
   church_retreat: {
     badge: "Church retreat invite",
     modeCopy: "Retreat organizers can invite attendees, ministry leaders, volunteers, and drivers while tracking sessions and emergency contacts.",
-    title: "You're invited to the church retreat",
-    message: "View the worship schedule, sessions, meals, transportation groups, emergency contacts, and announcements.",
+    title: "",
+    message: "",
     recipients: ["Attendees", "Ministry leaders", "Volunteers", "Drivers", "Staff"],
-    sent: 64,
-    opened: 51,
-    accepted: 44,
-    pending: 20,
+    sent: 0,
+    opened: 0,
+    accepted: 0,
+    pending: 0,
     companyLogo: true
   },
   bachelor_bachelorette: {
     badge: "Celebration trip invite",
     modeCopy: "Bachelor and bachelorette organizers can invite the group, coordinate activities, vote, split costs, and send reminders.",
-    title: "You're invited to the celebration trip",
-    message: "Join the group plan for dinner, activities, nightlife, transportation, shared costs, polls, and photos.",
+    title: "",
+    message: "",
     recipients: ["Wedding party", "Friends", "Activity group"],
-    sent: 14,
-    opened: 13,
-    accepted: 12,
-    pending: 2,
+    sent: 0,
+    opened: 0,
+    accepted: 0,
+    pending: 0,
     companyLogo: false
   },
   special_event: {
     badge: "Special event invite",
     modeCopy: "Special event hosts can customize invitations, RSVPs, schedules, travel, wallet, media, and reminders for the event.",
-    title: "You're invited to this special event",
-    message: "Join the custom event plan with schedule, travel details, RSVP, reminders, media, and updates.",
+    title: "",
+    message: "",
     recipients: ["Guests", "Hosts", "Vendors", "Coordinators"],
-    sent: 20,
-    opened: 15,
-    accepted: 12,
-    pending: 8,
+    sent: 0,
+    opened: 0,
+    accepted: 0,
+    pending: 0,
     companyLogo: false
   },
   cruise: {
     badge: "Cruise vacation invite",
     modeCopy: "Cruise organizers can invite cabin mates, family, friends, corporate attendees, vendors, or travel agents while keeping cabin details private.",
-    title: "You're invited to our Caribbean cruise",
-    message: "Join the cruise plan to see ship details, cabin assignments, ports, excursions, onboard activities, dining, and memories.",
+    title: "",
+    message: "",
     recipients: ["Cabin mates", "Family", "Friends", "Travel agent", "Corporate attendees", "Vendors"],
-    sent: 8,
-    opened: 6,
-    accepted: 5,
-    pending: 3,
+    sent: 0,
+    opened: 0,
+    accepted: 0,
+    pending: 0,
     companyLogo: false
   }
 };
@@ -1309,130 +983,22 @@ const exploreCategories = {
   trending: {
     label: "Trending",
     filters: ["Rooftop", "Creator guides", "Tours", "Hotels", "Saved often", "Group-friendly"],
-    items: [
-      {
-        id: "miami-yacht",
-        title: "Miami Sunset Yacht Experience",
-        type: "Viral group experience",
-        price: "$180 starting",
-        rating: 4.8,
-        distance: 2.4,
-        status: "Available Aug 8-11",
-        image: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?q=80&w=900&auto=format&fit=crop",
-        description: "Private sunset cruise with skyline views, shareable photo stops, and group add-ons.",
-        details: ["Location: Biscayne Bay", "Best dates: Friday and Saturday sunset", "Saved by 2,430 Travel-Drip users"],
-        actions: ["Save", "Add to Trip", "Share", "Book"]
-      },
-      {
-        id: "nola-food-weekend",
-        title: "Three-Day New Orleans Food Weekend",
-        type: "Trending itinerary",
-        price: "$780 estimate",
-        rating: 4.7,
-        distance: 0.8,
-        status: "Best Sep-Nov",
-        image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=900&auto=format&fit=crop",
-        description: "Sample itinerary with brunch, jazz, seafood, local history, and creator food guides.",
-        details: ["Featured restaurants included", "Weekend dates recommended", "Popular for couples and small groups"],
-        actions: ["Save", "Add to Trip", "Share", "Customize Trip"]
-      }
-    ]
+    items: []
   },
   food: {
     label: "Food and Restaurants",
     filters: ["Under $25", "$25-$50", "$50-$100", "Fine Dining", "Rooftop", "Brunch", "Seafood", "Vegan", "Local Favorites", "Group-Friendly"],
-    items: [
-      {
-        id: "oceanview-sushi",
-        title: "Oceanview Rooftop Sushi",
-        type: "Japanese cuisine",
-        price: "$55 per person",
-        rating: 4.7,
-        distance: 1.1,
-        status: "Open now",
-        image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=900&auto=format&fit=crop",
-        description: "Rooftop seating, ocean views, group reservations, and omakase-style platters.",
-        details: ["Cuisine: Japanese", "Reservations supported", "Dietary notes available"],
-        actions: ["View Menu", "Get Directions", "Save", "Add to Itinerary", "Start Smart Bill Split", "Make Reservation"]
-      },
-      {
-        id: "local-cuban-cafe",
-        title: "Local Cuban Cafe",
-        type: "Cuban cuisine",
-        price: "$22 per person",
-        rating: 4.6,
-        distance: 0.7,
-        status: "Open now",
-        image: "https://images.unsplash.com/photo-1559305616-3f99cd43e353?q=80&w=900&auto=format&fit=crop",
-        description: "Casual brunch favorite with cafe con leche, sandwiches, and group-friendly tables.",
-        details: ["Popular brunch location", "Local favorite", "Under $25 per person"],
-        actions: ["View Menu", "Get Directions", "Save", "Add to Itinerary", "Start Smart Bill Split"]
-      }
-    ]
+    items: []
   },
   nightlife: {
     label: "Nightclubs and Nightlife",
     filters: ["Nightclubs", "Rooftop Bars", "Lounges", "Live Music", "Beach Clubs", "Cocktail Bars", "LGBTQ+ Friendly", "Under $50 Entry", "VIP Experiences"],
-    items: [
-      {
-        id: "skyline-lounge",
-        title: "Skyline Rooftop Lounge",
-        type: "Rooftop bar",
-        price: "$25 entry estimate",
-        rating: 4.6,
-        distance: 1.8,
-        status: "Open until 2:00 AM",
-        image: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=900&auto=format&fit=crop",
-        description: "R&B and hip-hop, upscale casual dress code, skyline photo spots, and safety notes.",
-        details: ["Age: 21+", "Dress code: upscale casual", "Music: R&B and hip-hop"],
-        actions: ["Get Directions", "Save", "Add to Itinerary", "Vote in Group Chat", "Book"]
-      },
-      {
-        id: "ocean-beach-club",
-        title: "Ocean Beach Club",
-        type: "Beachfront venue",
-        price: "$40 entry estimate",
-        rating: 4.5,
-        distance: 3.2,
-        status: "Open until 3:00 AM",
-        image: "https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=900&auto=format&fit=crop",
-        description: "House and electronic music, table reservations, beachfront access, and ride-share pickup tips.",
-        details: ["Age: 21+", "Tables supported", "Safety: use marked pickup zone"],
-        actions: ["Get Directions", "Save", "Add to Itinerary", "Vote in Group Chat", "Visit Website"]
-      }
-    ]
+    items: []
   },
   under900: {
     label: "Trips Under $900",
     filters: ["Flight included", "Hotel included", "Food estimate", "Activities", "2-4 days", "Customize budget"],
-    items: [
-      {
-        id: "miami-875",
-        title: "Three-Day Miami Getaway",
-        type: "Budget trip estimate",
-        price: "$875 per person",
-        rating: 4.7,
-        distance: 0,
-        status: "Estimate includes taxes and fees",
-        image: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?q=80&w=900&auto=format&fit=crop",
-        description: "Flight $245, two hotel nights $310, food $160, activities $95, transportation $65.",
-        details: ["Hotel: boutique beach stay", "Suggested dates: Aug weekends", "All pricing is estimated"],
-        actions: ["Save", "Customize Trip", "Create This Trip", "Share"]
-      },
-      {
-        id: "nashville-820",
-        title: "Four-Day Nashville Weekend",
-        type: "Budget trip estimate",
-        price: "$820 per person",
-        rating: 4.6,
-        distance: 0,
-        status: "Estimate includes local transport",
-        image: "https://images.unsplash.com/photo-1545419913-775e6e82e14a?q=80&w=900&auto=format&fit=crop",
-        description: "Flight $230, three hotel nights $285, food $155, activities $90, transportation $60.",
-        details: ["Music venues included", "Great for groups", "All pricing is estimated"],
-        actions: ["Save", "Customize Trip", "Create This Trip"]
-      }
-    ]
+    items: []
   }
 };
 
@@ -1450,34 +1016,7 @@ const exploreCategories = {
   exploreCategories[key] = {
     label,
     filters,
-    items: [
-      {
-        id: `${key}-top-pick`,
-        title: `${label} Top Pick`,
-        type,
-        price: key === "luxury" ? "$240+" : key === "family" ? "$35+" : "$65 estimate",
-        rating: 4.7,
-        distance: key === "weekend" ? 120 : 2.6,
-        status: key === "events" ? "Available this weekend" : "Recommended for selected dates",
-        image,
-        description: `Personalized ${label.toLowerCase()} recommendation based on destination, dates, budget, interests, and trip type.`,
-        details: ["Matches current destination", "Adapted to selected trip type", "Includes safety and planning notes"],
-        actions: ["Save", "Add to Trip", "Share", "Get Directions"]
-      },
-      {
-        id: `${key}-local-guide`,
-        title: `${label} Local Guide`,
-        type: "Creator guide",
-        price: "$18 guide",
-        rating: 4.5,
-        distance: 1.4,
-        status: "Saved often",
-        image,
-        description: "A curated guide with local timing tips, nearby stops, and Travel-Drip itinerary actions.",
-        details: ["Public travel guide", "Great for planning", "Includes nearby options"],
-        actions: ["Save", "Add to Trip", "Share", "Ask AI Trip Manager"]
-      }
-    ]
+    items: []
   };
 });
 
@@ -1486,7 +1025,7 @@ function hideLoader() {
 }
 
 function escapeHtml(text) {
-  return text.replace(/[<>&"']/g, (char) => ({
+  return String(text ?? "").replace(/[<>&"']/g, (char) => ({
     "<": "&lt;",
     ">": "&gt;",
     "&": "&amp;",
@@ -1499,7 +1038,7 @@ function renderPlan(index) {
   const itinerary = $("#itinerary");
   const builderCopy = $("#builderCopy");
   if (!itinerary) return;
-  itinerary.innerHTML = plans[index].map(([time, title, detail]) => `
+  itinerary.innerHTML = (plans[index] || []).map(([time, title, detail]) => `
     <div class="stop">
       <time>${time}</time>
       <div><strong>${title}</strong><span>${detail}</span></div>
@@ -1896,12 +1435,12 @@ const travelTileDestinations = {
   boarding: {
     title: "Boarding information",
     route: "/trips/dubai-weekend/transportation/boarding",
-    summary: "Boarding pass is ready. Gate B18, boarding group 3, seat 14A, and check-in reminders open on the Boarding Info page."
+    summary: "Imported boarding details appear only after a valid confirmation is saved."
   },
   weather: {
     title: "Weather",
     route: "/trips/dubai-weekend/transportation/weather",
-    summary: "Tokyo weather is 82°F with light rain on arrival evening. Forecast, packing guidance, travel alerts, and outdoor timing open on the Weather page."
+    summary: "No forecast is loaded. Current weather requires a connected forecast provider."
   },
   maps: {
     title: "Maps",
@@ -1948,20 +1487,7 @@ const travelSearchTargets = [
   ["alerts", ["alert", "notification", "reminder"]]
 ];
 
-const travelSmartSearchRecords = [
-  { group: "Transportation", section: "transportationPanel", icon: "✈️", title: "DL 241 Miami to Tokyo", meta: "MIA to HND • Jul 18 • 8:45 AM", status: "Confirmed" },
-  { group: "Transportation", section: "transportationPanel", icon: "🎫", title: "Boarding pass for Jordan Smith", meta: "Gate B18 • Seat 14A • Boarding 7:55 AM", status: "Checked In" },
-  { group: "Hotels", section: "hotels", icon: "🏨", title: "Tokyo Station Hotel", meta: "Aug 8 - Aug 13 • Queen Room", status: "Saved" },
-  { group: "Trips", section: "overview", icon: "🌍", title: "Miami to Tokyo Adventure", meta: "Tokyo, Japan • 4 travelers • 84% ready", status: "Active" },
-  { group: "Transportation", section: "transportationPanel", icon: "▦", title: "Travel-Drip digital boarding pass", meta: "QR code, barcode, gate, seat, group, and status", status: "Ready" },
-  { group: "Transportation", section: "transportationPanel", icon: "🚘", title: "Airport pickup to Tokyo Station Hotel", meta: "Driver assigned • 42 minute estimate", status: "Scheduled" },
-  { group: "Restaurants", section: "itinerary", icon: "🍽️", title: "Ocean Rooftop Sushi", meta: "Reservation • Smart bill split available", status: "Confirmed" },
-  { group: "Activities", section: "itinerary", icon: "🎟️", title: "Catamaran cruise and winery tour", meta: "Marina Dock B • smart route ready", status: "Booked" },
-  { group: "Travel Documents", section: "documents", icon: "📄", title: "Passport, insurance, and confirmations", meta: "12 saved files • 1 missing item", status: "Action needed" },
-  { group: "Weather Locations", section: "weather", icon: "🌦️", title: "Tokyo arrival weather", meta: "82°F • light rain • packing guidance", status: "Alert" },
-  { group: "Reservations", section: "documents", icon: "🧾", title: "Hotel, dining, and transfer confirmations", meta: "3 confirmed reservations", status: "Synced" },
-  { group: "Maps and Routes", section: "maps", icon: "🗺️", title: "Airport, hotel, and pickup maps", meta: "Saved locations and directions", status: "Ready" }
-];
+const travelSmartSearchRecords = [];
 
 function getTravelSmartSearchMatches(query = "") {
   const normalized = query.trim().toLowerCase();
@@ -2572,6 +2098,15 @@ function resetAccountData() {
   state.accountData = { loaded: false, loading: false, trips: [], activeTrip: null, moduleData: {}, counts: {}, showCreation: false, error: "" };
   state.chatData = { loaded: false, rooms: [], messages: [], polls: [], selectedRoomId: "" };
   state.activeTripId = "";
+  state.accountData.records = {};
+  state.accountData.moduleErrors = {};
+  transportRecords.splice(0);
+  travelSmartSearchRecords.splice(0);
+  sharedRideMembers.splice(0);
+  state.walletAccess = { status: "unknown", role: "member", tripId: "", canContribute: false, canTapToPay: false, canManageCard: false, providerRequired: true, contributions: [], recentNotifications: [] };
+  syncWalletSummary({ availableCents: 0, totalContributionsCents: 0 });
+  renderWalletAccess();
+  renderTripChatData();
   sessionStorage.removeItem("traveldripActiveTripId");
   document.body.classList.remove("account-empty", "account-data-ready");
   document.body.classList.add("account-data-pending");
@@ -2657,9 +2192,9 @@ function applyAccountRouteState(target) {
       && target === "tripsPanel"
       && state.accountData.showCreation
   );
-  const hasAuthenticatedData = isAuthenticated && (target === "tripsPanel"
+  const hasAuthenticatedData = isAuthenticated && state.accountData.loaded && !state.accountData.error && (target === "tripsPanel"
     ? state.accountData.trips.length > 0
-    : Boolean(state.accountData.moduleData?.[target]));
+    : Boolean(state.accountData.activeTrip));
   const shouldShowEmpty = Boolean(
     privateAccountTargets.has(target)
       && !hasAuthenticatedData
@@ -2667,12 +2202,14 @@ function applyAccountRouteState(target) {
   );
   const emptyState = ensureAccountRouteEmptyState(section, target);
   const liveState = ensureAccountRouteLiveState(section, target);
-  const shouldShowLive = Boolean(state.session?.user && privateAccountTargets.has(target) && !["splitBill", "socialHub"].includes(target) && hasAuthenticatedData && !state.accountData.showCreation);
+  const shouldShowLive = Boolean(target === "tripsPanel" && hasAuthenticatedData && !state.accountData.showCreation);
   section.classList.toggle("is-account-empty", shouldShowEmpty);
   section.classList.toggle("is-account-live", shouldShowLive);
   section.classList.toggle("is-account-creation", isTripCreation);
   if (emptyState) emptyState.hidden = !shouldShowEmpty;
   if (liveState) liveState.hidden = !shouldShowLive;
+  if (target === "tripsPanel" && shouldShowLive) renderSavedTripList(liveState);
+  if (hasAuthenticatedData && target !== "tripsPanel") renderSavedAccountRecords(section, target);
   if ($("#convertSoloTripButton")) $("#convertSoloTripButton").hidden = state.accountData.trips.length === 0;
 }
 
@@ -2686,7 +2223,7 @@ function renderAccountState(target = getTargetFromRoute()) {
   const status = $("#accountDataStatus");
   if (status) {
     status.textContent = state.accountData.error
-      ? "Your private account data could not be loaded. Travel-Drip is hiding sample content until the secure connection is restored."
+      ? "Your account data could not be loaded. Refresh to try the secure connection again."
       : "No private trips, conversations, bookings, wallet activity, memories, or company events are attached to this account yet.";
   }
   const homeEmpty = $("#accountEmptyDashboard");
@@ -2701,21 +2238,139 @@ function renderAccountState(target = getTargetFromRoute()) {
   applyAccountRouteState(target);
 }
 
+async function selectAccountTrip(tripId) {
+  if (state.accountData.loading || !state.accountData.trips.some((trip) => trip.id === tripId)) return;
+  resetAccountData();
+  state.activeTripId = tripId;
+  sessionStorage.setItem("traveldripActiveTripId", tripId);
+  await loadAccountData();
+  renderRoute(getTargetFromRoute());
+}
+
+async function generateSavedTripCopy(instruction) {
+  const trip = state.accountData.activeTrip;
+  if (!state.session?.user || !trip) throw new Error("Select a saved trip before generating copy.");
+  const itinerary = (state.accountData.records?.schedule_items || []).map((item) => ({ title: item.title, startsAt: item.starts_at, location: item.location_name }));
+  const result = await liveSearchApiRequest("/api/ai-planner", { method: "POST", body: JSON.stringify({ query: `${instruction}\n${JSON.stringify({ title: trip.title, destination: trip.destination, itinerary })}` }) });
+  if (!result.text) throw new Error("The AI provider returned no text.");
+  return result.text;
+}
+
+function renderSavedTripList(container) {
+  const list = document.createElement("ul");
+  list.className = "saved-record-list";
+  for (const trip of state.accountData.trips) {
+    const item = document.createElement("li");
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.selectAccountTrip = trip.id;
+    button.textContent = trip.title || "Untitled trip";
+    button.setAttribute("aria-pressed", String(trip.id === state.activeTripId));
+    const detail = document.createElement("span");
+    detail.textContent = [trip.destination, trip.starts_on, trip.ends_on, trip.status].filter(Boolean).join(" · ");
+    item.append(button, detail);
+    list.append(item);
+  }
+  container.append(list);
+}
+
+function getSavedModuleRecords(target) {
+  const tables = {
+    rideShareHub: ["flights", "hotels", "transportation_records"],
+    transportationPanel: ["flights", "transportation_records"],
+    itineraryAlerts: ["schedule_items"],
+    eventsPanel: ["events"],
+    cruisePanel: ["schedule_items"],
+    enterpriseRbac: ["events"]
+  }[target] || [];
+  return tables.flatMap((table) => (state.accountData.records?.[table] || []).map((record) => ({ table, record })));
+}
+
+function renderSavedAccountRecords(section, target) {
+  const supported = ["rideShareHub", "transportationPanel", "itineraryAlerts", "eventsPanel", "cruisePanel", "enterpriseRbac"];
+  if (!supported.includes(target)) return;
+  let container = section.querySelector(":scope > [data-saved-records]");
+  if (!container) {
+    container = document.createElement("section");
+    container.dataset.savedRecords = "";
+    container.setAttribute("aria-label", "Saved trip records");
+    section.prepend(container);
+  }
+  const entries = getSavedModuleRecords(target);
+  const heading = document.createElement("h3");
+  heading.textContent = "Saved records";
+  const list = document.createElement("ul");
+  list.className = "saved-record-list";
+  for (const { record } of entries) {
+    const item = document.createElement("li");
+    const title = document.createElement("strong");
+    title.textContent = record.title || record.hotel_name || [record.airline, record.flight_number].filter(Boolean).join(" ") || record.provider_name || "Saved record";
+    const detail = document.createElement("span");
+    detail.textContent = [record.destination, record.location_name, record.address, record.departure_airport, record.arrival_airport, record.pickup_location, record.dropoff_location, record.starts_at || record.departs_at || record.pickup_at || record.check_in_at || record.starts_on, record.status].filter(Boolean).join(" · ");
+    item.append(title, detail);
+    list.append(item);
+  }
+  if (!entries.length) {
+    const empty = document.createElement("li");
+    empty.textContent = "No saved records for this trip yet.";
+    list.append(empty);
+  }
+  container.replaceChildren(heading, list);
+  if (Object.keys(state.accountData.moduleErrors || {}).length) {
+    const warning = document.createElement("p");
+    warning.setAttribute("role", "status");
+    warning.textContent = "Some trip records could not be loaded. Refresh to retry.";
+    container.append(warning);
+  }
+  if (target === "itineraryAlerts" && !section.querySelector("[data-live-schedule-form]")) {
+    const form = document.createElement("form");
+    form.dataset.liveScheduleForm = "";
+    form.className = "live-schedule-form";
+    form.innerHTML = '<h3>Add itinerary item</h3><label>Title<input name="title" maxlength="160" required></label><label>Starts at<input name="startsAt" type="datetime-local" required></label><label>Location<input name="locationName" maxlength="180"></label><button class="primary-button" type="submit">Save itinerary item</button><p role="status"></p>';
+    container.after(form);
+  }
+}
+
+function syncSavedTravelRecords() {
+  const records = state.accountData.records || {};
+  transportRecords.splice(0);
+  travelSmartSearchRecords.splice(0);
+  for (const [table, type] of [["flights", "flights"], ["hotels", "hotels"], ["transportation_records", "rideShare"]]) {
+    for (const row of records[table] || []) {
+      const title = row.hotel_name || [row.airline, row.flight_number].filter(Boolean).join(" ") || row.provider_name || "Saved travel";
+      const route = [row.departure_airport || row.pickup_location, row.arrival_airport || row.dropoff_location].filter(Boolean).join(" to ") || row.address || "Location not added";
+      const saved = { id: row.id, type, provider: row.airline || row.provider_name || "", title, route, confirmation: row.confirmation_number || row.provider_ref || "", ticket: "", departure: row.departure_airport || row.pickup_location || "", arrival: row.arrival_airport || row.dropoff_location || "", departureTime: row.departs_at || row.pickup_at || row.check_in_at || "Time not added", arrivalTime: row.arrives_at || row.check_out_at || "", gate: row.details?.gate || "", seat: row.details?.seat || "", passenger: "", assignedTo: [], status: row.status || "Saved", passType: "Saved record", accessCode: "", documents: [], wallet: { apple: false, google: false }, reminder: "", details: [] };
+      if (type !== "hotels") transportRecords.push(saved);
+      travelSmartSearchRecords.push({ group: type === "hotels" ? "Hotels" : "Transportation", section: type === "hotels" ? "hotels" : "transportationPanel", icon: "", title, meta: route, status: saved.status });
+    }
+  }
+  const schedule = records.schedule_items || [];
+  plans[0] = schedule.map((item) => [item.starts_at ? new Date(item.starts_at).toLocaleString() : "Time not added", item.title || "Itinerary item", item.location_name || ""]);
+  renderPlan(0);
+  renderTransportationTable();
+  renderTransportHub();
+}
+
 async function loadAccountModuleData(tripId) {
-  const empty = { moduleData: {}, counts: {} };
+  const records = {};
+  const moduleErrors = {};
+  const empty = { moduleData: {}, counts: {}, records, moduleErrors };
   if (!state.supabase || !state.session?.user || !tripId) return empty;
   const countRows = async (table, filters = {}) => {
     try {
-      let query = state.supabase.from(table).select("id", { count: "exact", head: true });
+      let query = state.supabase.from(table).select("*", { count: "exact" }).limit(100);
       Object.entries(filters).forEach(([column, value]) => { query = query.eq(column, value); });
-      const { count, error } = await query;
+      const { data, count, error } = await query;
       if (error) throw error;
+      records[table] = data || [];
       return Number(count || 0);
-    } catch (_error) {
+    } catch (error) {
+      records[table] = [];
+      moduleErrors[table] = error.message || "Records could not be loaded.";
       return 0;
     }
   };
-  const [flights, hotels, transportation, schedule, rooms, messages, polls, documents, media, events, contributions] = await Promise.all([
+  const [flights, hotels, transportation, schedule, rooms, messages, polls, documents, media, events, contributions, members] = await Promise.all([
     countRows("flights", { trip_id: tripId }),
     countRows("hotels", { trip_id: tripId }),
     countRows("transportation_records", { trip_id: tripId }),
@@ -2726,12 +2381,15 @@ async function loadAccountModuleData(tripId) {
     countRows("documents", { trip_id: tripId }),
     countRows("media", { trip_id: tripId }),
     countRows("events", { id: tripId }),
-    countRows("trip_wallet_contributions", { trip_id: tripId })
+    countRows("trip_wallet_contributions", { trip_id: tripId }),
+    countRows("trip_members", { trip_id: tripId, status: "active" })
   ]);
   const travel = flights + hotels + transportation;
   const uploads = documents + media;
   return {
-    counts: { flights, hotels, transportation, travel, schedule, rooms, messages, polls, documents, media, uploads, events, contributions },
+    records,
+    moduleErrors,
+    counts: { flights, hotels, transportation, travel, schedule, rooms, messages, polls, documents, media, uploads, events, contributions, members },
     moduleData: {
       eventsPanel: events > 0,
       groupBank: contributions > 0,
@@ -2778,7 +2436,14 @@ function renderActiveTripAccountData() {
   const activeTrip = state.accountData.activeTrip;
   if (!activeTrip) return;
   const travelerMetric = $("#travelerMetric");
-  if (travelerMetric) travelerMetric.textContent = String(trips.length);
+  if (travelerMetric) travelerMetric.textContent = String(state.accountData.counts.members || 0);
+  if ($("#transportationMemberCount")) $("#transportationMemberCount").textContent = String(state.accountData.counts.members || 0);
+  if ($("#travelCurrentDestination")) $("#travelCurrentDestination").textContent = activeTrip.destination || "Destination not added";
+  const travelTripSelector = $("#travelTripSelector");
+  if (travelTripSelector) {
+    travelTripSelector.innerHTML = trips.map((trip) => `<option value="${escapeHtml(trip.id)}">${escapeHtml(trip.title || "Untitled trip")}</option>`).join("");
+    travelTripSelector.value = activeTrip.id;
+  }
   const upcomingTitle = $("[data-widget='upcoming'] h3");
   if (upcomingTitle) upcomingTitle.textContent = activeTrip.title || "Untitled trip";
   const upcomingCopy = $("[data-widget='upcoming'] p");
@@ -2830,15 +2495,24 @@ async function loadAccountData() {
     const moduleState = await loadAccountModuleData(state.activeTripId);
     state.accountData.moduleData = moduleState.moduleData;
     state.accountData.counts = moduleState.counts;
+    state.accountData.records = moduleState.records;
+    state.accountData.moduleErrors = moduleState.moduleErrors;
+    syncSavedTravelRecords();
     renderActiveTripAccountData();
     renderLiveAccountDashboard();
     await loadTripChatData();
     await loadSavedReceiptTotals();
+    await loadWalletAccess();
   } catch (error) {
     state.accountData.trips = [];
     state.accountData.activeTrip = null;
     state.accountData.loaded = true;
     state.accountData.error = error.message || "Account data unavailable";
+    state.accountData.records = {};
+    state.accountData.moduleErrors = {};
+    state.accountData.counts = {};
+    transportRecords.splice(0);
+    travelSmartSearchRecords.splice(0);
     state.activeTripId = "";
     sessionStorage.removeItem("traveldripActiveTripId");
   } finally {
@@ -2928,28 +2602,11 @@ async function submitCorporateEmployeeInvite(event) {
     if (message) message.textContent = "Enter the employee's name, employee ID, and work email.";
     return;
   }
-  if (!isFilePreview && !tripId) {
-    if (message) message.textContent = "Select a corporate trip before creating an employee invitation.";
-    return;
-  }
+  if (!isFilePreview && !tripId) { throw new Error("Sign in and select a saved company event before saving changes."); }
   if (message) message.textContent = "Creating protected employee invitation...";
   try {
     let invitation;
-    if (isFilePreview) {
-      invitation = {
-        id: `preview-corporate-access-${Date.now()}`,
-        attendee_id: `preview-attendee-${Date.now()}`,
-        invitee_name: payload.fullName,
-        invitee_email: payload.companyEmail,
-        employee_id_masked: `••••${payload.employeeId.slice(-4)}`,
-        role: payload.role,
-        status: "active",
-        expires_at: payload.expiresAt,
-        plain_code: `TD${crypto.getRandomValues(new Uint32Array(1))[0].toString(36).toUpperCase().padStart(8, "0").slice(0, 8)}`,
-        access_mode: accessMode,
-        account_type: "corporate_guest_only"
-      };
-    } else {
+    if (isFilePreview) { throw new Error("Sign in and select a saved company event before saving changes."); } else {
       const attendeeResult = await apiRequest("/api/guest-access", {
         method: "POST",
         body: JSON.stringify({
@@ -3015,32 +2672,7 @@ async function submitCorporateEmployeeInvite(event) {
   }
 }
 
-function getCorporatePreviewOperations() {
-  return {
-    role: "employee",
-    permissions: { canManageBookings: false, canApprove: false, canManageService: false, canManagePolicy: false },
-    policy: {
-      name: "Global business travel",
-      status: "active",
-      currency: "USD",
-      flight_cap_cents: 150000,
-      hotel_nightly_cap_cents: 32500,
-      ground_transport_cap_cents: 18000,
-      receipt_threshold_cents: 5000
-    },
-    bookings: [
-      { id: "preview-flight", title: "Delta DL 241", traveler_name: "Jordan Smith", booking_type: "flight", starts_at: "2026-07-24T22:45:00Z", policy_status: "compliant", status: "confirmed", provider_reference: "TD9K42" },
-      { id: "preview-hotel", title: "Marina Grand Hotel", traveler_name: "Sarah Lee", booking_type: "hotel", starts_at: "2026-07-24T15:00:00Z", policy_status: "exception", status: "requested", provider_reference: null }
-    ],
-    approvals: [
-      { id: "preview-approval", booking_id: "preview-hotel", status: "pending", reason: "Nightly hotel rate exceeds policy", metadata: { travelerName: "Sarah Lee" } }
-    ],
-    serviceCases: [
-      { id: "preview-service", case_type: "change", priority: "normal", status: "open", subject: "Airport pickup time", sla_due_at: new Date(Date.now() + 20 * 60 * 60 * 1000).toISOString() }
-    ],
-    readiness: { totalTravelers: 4, coveredTravelers: 4, documentsComplete: 3, emergencyContactsVerified: 4, activeDisruptions: 0 }
-  };
-}
+function getEmptyCorporateOperations() { return { role: "member", permissions: {}, policy: null, bookings: [], approvals: [], serviceCases: [], invitations: [], readiness: null }; }
 
 function corporateMoney(cents, currency = "USD") {
   return new Intl.NumberFormat(undefined, {
@@ -3257,8 +2889,8 @@ async function loadCorporateBookingOperations({ announce = false } = {}) {
   if (!$("#corporateBookingList")) return;
   const tripId = getCorporateOperationsTripId();
   if (isFilePreview || !state.session?.access_token || !tripId) {
-    renderCorporateOperations(state.corporateOperations.loaded ? state.corporateOperations : getCorporatePreviewOperations());
-    if (announce && $("#corporateBookingMessage")) $("#corporateBookingMessage").textContent = "Preview refreshed. Sign in to a deployed corporate event to load protected booking records.";
+    renderCorporateOperations(state.corporateOperations.loaded ? state.corporateOperations : getEmptyCorporateOperations());
+    if (announce && $("#corporateBookingMessage")) $("#corporateBookingMessage").textContent = "Sign in and select a saved company event to load protected booking records.";
     return;
   }
   if ($("#corporateOperationsConnection")) $("#corporateOperationsConnection").textContent = "Loading securely";
@@ -3307,27 +2939,7 @@ async function submitCorporateBooking(event) {
   }
   message.textContent = "Checking policy and saving the booking request...";
   try {
-    if (isFilePreview || !state.session?.access_token || !payload.tripId) {
-      const policyStatus = payload.totalCents > 150000 ? "exception" : "compliant";
-      const booking = {
-        id: `preview-${Date.now()}`,
-        title: payload.title,
-        traveler_name: payload.travelerName,
-        traveler_email: payload.travelerEmail,
-        booking_type: payload.bookingType,
-        starts_at: payload.startsAt,
-        total_cents: payload.totalCents,
-        provider_name: payload.providerName,
-        provider_reference: payload.providerReference || null,
-        policy_status: policyStatus,
-        approval_status: policyStatus === "compliant" ? "not_required" : "pending",
-        status: payload.providerConfirmed && payload.providerReference && policyStatus === "compliant" ? "confirmed" : "requested"
-      };
-      state.corporateOperations.bookings.unshift(booking);
-      if (policyStatus !== "compliant") state.corporateOperations.approvals.unshift({ id: `preview-approval-${Date.now()}`, booking_id: booking.id, status: "pending", reason: "Flight exceeds the approved fare cap" });
-      renderCorporateOperations(state.corporateOperations);
-      message.textContent = `${booking.title} saved as ${booking.status}. ${policyStatus === "compliant" ? "The request is within policy." : "Finance approval is required."}`;
-    } else {
+    if (isFilePreview || !state.session?.access_token || !payload.tripId) { throw new Error("Sign in and select a saved company event before saving changes."); } else {
       const result = await apiRequest("/api/corporate-bookings", { method: "POST", body: JSON.stringify(payload) });
       state.corporateOperations.bookings.unshift(result.booking);
       if (result.approval) state.corporateOperations.approvals.unshift(result.approval);
@@ -3478,10 +3090,7 @@ async function submitCorporateServiceCase(event) {
   message.textContent = "Opening a protected traveler-care case...";
   try {
     let serviceCase;
-    if (isFilePreview || !state.session?.access_token || !payload.tripId) {
-      const hours = payload.priority === "critical" ? 1 : payload.priority === "urgent" ? 4 : payload.priority === "high" ? 12 : 24;
-      serviceCase = { id: `preview-case-${Date.now()}`, ...payload, case_type: payload.caseType, status: "open", sla_due_at: new Date(Date.now() + hours * 60 * 60 * 1000).toISOString() };
-    } else {
+    if (isFilePreview || !state.session?.access_token || !payload.tripId) { throw new Error("Sign in and select a saved company event before saving changes."); } else {
       const result = await apiRequest("/api/corporate-bookings", { method: "POST", body: JSON.stringify(payload) });
       serviceCase = result.serviceCase;
     }
@@ -4653,18 +4262,14 @@ function getAiPlannerPlan() {
     window: dates,
     style: interests,
     mode: getAiPlannerTripMode(),
-    days: corporate
-      ? ["Arrival, policy briefing, hotel check-in", "Meeting blocks, team lunch, approved team-building", "Conference sessions, transport windows, expense closeout"]
-      : cruise
-        ? ["Embarkation, cabin setup, welcome dinner", "Port morning, shore excursion, onboard show", "Sea day wellness, specialty dining, packing reminders"]
-        : ["Add arrival details", "Add an anchor activity", "Add departure or final-day plans"]
+    days: []
   };
 }
 
 function renderAiPlanner() {
   if (!$("#aiPlannerQuestion")) return;
   const step = aiPlannerSteps[Math.min(state.aiPlanner.step, aiPlannerSteps.length - 1)];
-  $("#aiPlannerQuestion").textContent = step ? step.question : "Your personalized plan is ready. What would you like to adjust?";
+  $("#aiPlannerQuestion").textContent = step ? step.question : "Your preferences are collected. Use live research to request a plan.";
   $("#aiPlannerReplies").innerHTML = (step?.options || ["Regenerate itinerary", "Create Trip", "Share Trip"]).map((option) => (
     `<button type="button" data-ai-answer="${escapeHtml(option)}">${escapeHtml(option)}</button>`
   )).join("");
@@ -5035,7 +4640,7 @@ function getRideMode() {
 }
 
 function getRideSplits(ride, mode) {
-  const passengers = rideParticipants.slice(0, ride.passengers);
+  const passengers = getSplitParticipants(ride.passengers);
 
   if (mode === "percentage") {
     const percentTotal = passengers.reduce((sum, person) => sum + person.percent, 0) || 100;
@@ -5073,8 +4678,8 @@ function renderRideProviders() {
     return `<button class="${provider === state.selectedRideProvider ? "active" : ""}" type="button" data-ride-provider="${escapeHtml(provider)}"><strong>${escapeHtml(provider)}</strong><span>${status}</span></button>`;
   }).join("");
   $("#rideRecommended").textContent = state.selectedRideProvider;
-  $("#rideWait").textContent = state.selectedRideProvider === "Careem" || state.selectedRideProvider === "Grab" ? "8 min" : "12 min";
-  $("#rideEstimate").textContent = destination === "United Arab Emirates" ? "$18-$22" : "$16-$28";
+  $("#rideWait").textContent = "Check provider";
+  $("#rideEstimate").textContent = "Quote required";
   renderRideAccount();
   renderPrivateDrivers();
 }
@@ -5083,10 +4688,7 @@ function renderPrivateDrivers() {
   if (!$("#privateDriverList")) return;
   const destination = $("#rideDestination")?.value || "United Arab Emirates";
   const query = $("#privateDriverSearchInput")?.value.trim().toLowerCase() || "";
-  const companies = privateDriverCompaniesByDestination[destination] || [
-    { name: "Local Executive Transfers", type: "Private driver", estimate: "$60-$120", eta: "Advance booking", rating: "4.5", vehicles: "Sedan, SUV, van" },
-    { name: "Hotel Chauffeur Desk", type: "Hotel-arranged driver", estimate: "$75-$160", eta: "Concierge confirmation", rating: "4.6", vehicles: "Sedan, luxury van" }
-  ];
+  const companies = privateDriverCompaniesByDestination[destination] || [];
   const filtered = companies.filter((company) => {
     const text = `${company.name} ${company.type} ${company.vehicles}`.toLowerCase();
     return !query || text.includes(query);
@@ -5145,7 +4747,7 @@ function renderRideSplit() {
   const ride = getRideInputs();
   const mode = getRideMode();
   const splits = getRideSplits(ride, mode);
-  const paid = splits.slice(0, 1).reduce((sum, person) => sum + person.amount, 0);
+  const paid = 0;
 
   $("#rideFinalTotal").textContent = currency(ride.total);
   $("#rideEachTotal").textContent = currency(ride.total / ride.passengers);
@@ -5427,7 +5029,7 @@ function renderTransportDetail(record) {
         <strong>${escapeHtml(record.accessCode)}</strong>
         <small>Confirmation ${escapeHtml(record.confirmation)} • Ticket ${escapeHtml(record.ticket)}</small>
       </div>
-      <div class="mock-qr" aria-label="Mock secure QR code"><span></span><span></span><span></span><span></span></div>
+      <p class="small">Open the original provider document for a valid boarding code.</p>
     </div>
     <div class="transport-detail-grid">
       <div><span>Passenger</span><strong>${escapeHtml(record.passenger)}</strong></div>
@@ -6739,50 +6341,7 @@ async function verifyGuestAccess() {
     return;
   }
 
-  if (isFilePreview) {
-    state.guestSessionToken = "local-preview-guest-session";
-    sessionStorage.setItem("traveldripGuestSessionToken", state.guestSessionToken);
-    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 4).toISOString();
-    const previewPortal = {
-      session: { expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 4).toISOString() },
-      attendee: { fullName: "Taylor Employee", department: "Leadership", role: "employee", attendanceStatus: "attending", accountLinked: false },
-      event: { id: "leadership-summit-preview", title: "2027 Leadership Retreat", destination: "Dubai, United Arab Emirates", starts_on: "2027-07-24", ends_on: "2027-07-28", trip_type: "corporate_retreat" },
-      myTravel: {
-        flights: [{ airline: "Delta", flight_number: "DL 241", departure_airport: "MIA", arrival_airport: "DXB", departs_at: "2027-07-23T21:40:00-04:00", arrives_at: "2027-07-24T19:15:00+04:00", status: "confirmed", details: { departureGate: "D18", seat: "14A" } }],
-        hotels: [{ hotel_name: "Marina Grand Hotel", address: "Dubai Marina, Dubai", check_in_at: "2027-07-24T15:00:00+04:00", check_out_at: "2027-07-28T11:00:00+04:00", confirmation_number: "MGH-2088" }],
-        transportation: [{ provider_name: "Careem", pickup_location: "DXB Terminal 3", dropoff_location: "Marina Grand Hotel", pickup_at: "2027-07-24T20:35:00Z", status: "confirmed" }]
-      },
-      myEvent: { schedule: [
-        { title: "Welcome reception", item_type: "reception", starts_at: "2027-07-24T19:30:00+04:00", ends_at: "2027-07-24T21:00:00+04:00", location_name: "Skyline Terrace", location_address: "Dubai Marina", details: "Meet the retreat hosts and company leadership." },
-        { title: "Leadership keynote", item_type: "general_session", starts_at: "2027-07-25T09:00:00+04:00", ends_at: "2027-07-25T10:30:00+04:00", location_name: "Palm Ballroom", location_address: "Skyline Conference Center", details: "Company priorities and the year-ahead strategy." },
-        { title: "Department workshops", item_type: "workshop", starts_at: "2027-07-25T11:00:00+04:00", ends_at: "2027-07-25T13:00:00+04:00", location_name: "Breakout Rooms A-D", location_address: "Skyline Conference Center", details: "Check the room assignment provided by your department lead." },
-        { title: "Hosted marina dinner", item_type: "company_dinner", starts_at: "2027-07-25T19:00:00+04:00", ends_at: "2027-07-25T21:30:00+04:00", location_name: "Marina Promenade", location_address: "Dubai Marina", details: "Business casual attire. Transportation departs the hotel at 6:30 PM." }
-      ] },
-      wallet: { currency: "USD", status: "active", stipendCents: 43000, personalFundsCents: 0, canAddFunds: false, card: { status: "active", maskedLastFour: "4829" } },
-      eventHistory: [{ id: "preview-history", title: "New York Sales Summit", destination: "New York City", starts_on: "2026-04-10", ends_on: "2026-04-12", trip_type: "conference", attendanceStatus: "attended" }],
-      eventAttendees: [
-        { fullName: "Taylor Employee", department: "Leadership", role: "employee", attendanceStatus: "attending" },
-        { fullName: "Jordan Smith", department: "Operations", role: "organizer", attendanceStatus: "attending" },
-        { fullName: "Maya Chen", department: "Product", role: "employee", attendanceStatus: "attending" },
-        { fullName: "Andre Lewis", department: "Sales", role: "employee", attendanceStatus: "attending" }
-      ],
-      importantInformation: [
-        { section_type: "event_overview", title: "Welcome", body: "Meet the leadership team, review the year ahead, and finish the day with a hosted marina dinner." },
-        { section_type: "dress_code", title: "Dress code", body: "Smart resort attire for daytime sessions; business casual for the welcome dinner." }
-      ],
-      sharedPhotos: [{ caption: "Welcome dinner" }]
-    };
-    state.corporateAccess = { verified: true, eventId: previewPortal.event.id, role: "employee", expiresAt, accountLinked: false, pendingTarget: "dashboardHome" };
-    state.corporatePortal = previewPortal;
-    sessionStorage.setItem("traveldripCorporateAccessVerified", "true");
-    sessionStorage.setItem("traveldripCorporateEventId", previewPortal.event.id);
-    sessionStorage.setItem("traveldripCorporateRole", "employee");
-    sessionStorage.setItem("traveldripCorporateAccessExpiresAt", expiresAt);
-    renderGuestPortal(previewPortal);
-    $("#authMessage").textContent = "Guest portal preview opened. Production verification hashes the code and employee ID server-side.";
-    addAuditEntry("Guest portal preview opened", "Corporate event guest access flow verified locally with secure production API ready.");
-    return;
-  }
+
 
   try {
     const response = await fetch("/api/guest-access", {
@@ -7447,56 +7006,7 @@ async function verifyCorporateAccessGate() {
     $("#corporateAccessMessage").textContent = "Corporate verification requires the deployed Travel-Drip site. No sample event was loaded.";
     return;
   }
-  if (isFilePreview) {
-    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * (remember ? 8 : 4)).toISOString();
-    state.corporateAccess = {
-      verified: true,
-      eventId: "leadership-summit-preview",
-      role: "employee",
-      expiresAt,
-      accountLinked: Boolean(state.session?.user || state.hasEnteredApp),
-      pendingTarget: "dashboardHome"
-    };
-    sessionStorage.setItem("traveldripCorporateAccessVerified", "true");
-    sessionStorage.setItem("traveldripCorporateEventId", state.corporateAccess.eventId);
-    sessionStorage.setItem("traveldripCorporateRole", state.corporateAccess.role);
-    sessionStorage.setItem("traveldripCorporateAccessExpiresAt", expiresAt);
-    if (state.corporateAccess.accountLinked) sessionStorage.setItem("traveldripCorporateAccountLinked", "true");
-    state.corporatePortal = {
-      attendee: { fullName: "Taylor Employee", department: "Leadership", role: "employee", attendanceStatus: "attending", accountLinked: state.corporateAccess.accountLinked },
-      event: { id: "leadership-summit-preview", title: "2027 Leadership Retreat", destination: "Dubai, United Arab Emirates", starts_on: "2027-07-24", ends_on: "2027-07-28", trip_type: "corporate_retreat" },
-      myTravel: {
-        flights: [{ airline: "Delta", flight_number: "DL 241", departure_airport: "MIA", arrival_airport: "DXB", departs_at: "2027-07-23T21:40:00-04:00", arrives_at: "2027-07-24T19:15:00+04:00", status: "confirmed", details: { departureGate: "D18", seat: "14A" } }],
-        hotels: [{ hotel_name: "Marina Grand Hotel", address: "Dubai Marina, Dubai", check_in_at: "2027-07-24T15:00:00+04:00", check_out_at: "2027-07-28T11:00:00+04:00", confirmation_number: "MGH-2088" }],
-        transportation: [{ provider_name: "Careem", pickup_location: "DXB Terminal 3", dropoff_location: "Marina Grand Hotel", pickup_at: "2027-07-24T20:35:00Z", status: "confirmed" }]
-      },
-      myEvent: { schedule: [
-        { title: "Welcome reception", item_type: "reception", starts_at: "2027-07-24T19:30:00+04:00", ends_at: "2027-07-24T21:00:00+04:00", location_name: "Skyline Terrace", location_address: "Dubai Marina", details: "Meet the retreat hosts and company leadership." },
-        { title: "Leadership keynote", item_type: "general_session", starts_at: "2027-07-25T09:00:00+04:00", ends_at: "2027-07-25T10:30:00+04:00", location_name: "Palm Ballroom", location_address: "Skyline Conference Center", details: "Company priorities and the year-ahead strategy." },
-        { title: "Department workshops", item_type: "workshop", starts_at: "2027-07-25T11:00:00+04:00", ends_at: "2027-07-25T13:00:00+04:00", location_name: "Breakout Rooms A-D", location_address: "Skyline Conference Center", details: "Check the room assignment provided by your department lead." },
-        { title: "Hosted marina dinner", item_type: "company_dinner", starts_at: "2027-07-25T19:00:00+04:00", ends_at: "2027-07-25T21:30:00+04:00", location_name: "Marina Promenade", location_address: "Dubai Marina", details: "Business casual attire. Transportation departs the hotel at 6:30 PM." }
-      ] },
-      wallet: { currency: "USD", status: "active", stipendCents: 43000, personalFundsCents: 0, canAddFunds: state.corporateAccess.accountLinked, card: { status: "active", maskedLastFour: "4829" } },
-      eventHistory: [{ id: "preview-history", title: "New York Sales Summit", destination: "New York City", starts_on: "2026-04-10", ends_on: "2026-04-12", trip_type: "conference", attendanceStatus: "attended" }],
-      eventAttendees: [
-        { fullName: "Taylor Employee", department: "Leadership", role: "employee", attendanceStatus: "attending" },
-        { fullName: "Jordan Smith", department: "Operations", role: "organizer", attendanceStatus: "attending" },
-        { fullName: "Maya Chen", department: "Product", role: "employee", attendanceStatus: "attending" },
-        { fullName: "Andre Lewis", department: "Sales", role: "employee", attendanceStatus: "attending" }
-      ],
-      importantInformation: [
-        { section_type: "event_overview", title: "Welcome", body: "Meet the leadership team, review the year ahead, and finish the day with a hosted marina dinner." },
-        { section_type: "dress_code", title: "Dress code", body: "Smart resort attire for daytime sessions; business casual for the welcome dinner." }
-      ],
-      sharedPhotos: []
-    };
-    $("#corporateAccessDialog")?.close();
-    if ($("#dashboardTripType")) $("#dashboardTripType").value = "corporate";
-    renderCorporateEmployeeHome(state.corporatePortal);
-    renderRoute("dashboardHome", { updateHistory: true });
-    addAuditEntry("Corporate access verified", "Preview session created after code and employee identity check. Production validates hashed code and attendee record server-side.");
-    return;
-  }
+
 
   try {
     const response = await fetch("/api/guest-access", {
@@ -8669,7 +8179,7 @@ function wireLocalInteractions() {
           ? "food"
           : "activities",
       query,
-      destination: $("#travelCurrentDestination")?.textContent.trim() || "Tokyo",
+      destination: state.accountData.activeTrip?.destination || "",
       target: "travel"
     });
   });
@@ -9031,21 +8541,11 @@ function wireLocalInteractions() {
   });
 
   $("#connectRideAccountButton")?.addEventListener("click", async () => {
-    const provider = state.selectedRideProvider;
-    state.connectedRideAccounts[provider] = { connected: true, account: "Connected rider profile", status: "Account Connected" };
-    renderRideAccount();
-    $("#rideMessage").textContent = `${provider} account connected through secure provider authorization. Passwords are never requested or stored by Travel-Drip.`;
-    addAuditEntry("Ride share account connected", `${provider} account authorized for transportation launch and receipt import.`);
-    await saveSyncedEvent("ride_account_connected", { provider });
+    $("#rideMessage").textContent = "Direct provider authorization is not configured. Book through the provider's official app.";
   });
 
   $("#reconnectRideAccountButton")?.addEventListener("click", async () => {
-    const provider = state.selectedRideProvider;
-    state.connectedRideAccounts[provider] = { connected: true, account: "Connected rider profile", status: "Account Reconnected" };
-    renderRideAccount();
-    $("#rideMessage").textContent = `${provider} account reconnected. Access can be revoked from Travel-Drip or the provider account settings.`;
-    addAuditEntry("Ride share account reconnected", `${provider} authorization refreshed.`);
-    await saveSyncedEvent("ride_account_reconnected", { provider });
+    $("#rideMessage").textContent = "Direct provider authorization is not configured. No account was connected.";
   });
 
   $("#disconnectRideAccountButton")?.addEventListener("click", async () => {
@@ -9086,14 +8586,9 @@ function wireLocalInteractions() {
   });
 
   $("#importRideReceiptButton")?.addEventListener("click", () => {
-    $("#rideFare").value = "52.40";
-    $("#rideTax").value = "3.10";
-    $("#rideTolls").value = "5.25";
-    $("#rideFees").value = "3.50";
-    $("#rideTip").value = "6.00";
-    renderRideSplit();
-    $("#rideMessage").textContent = "Ride receipt imported. Fare, taxes, tolls, booking fees, tip, and final total are ready for review.";
-    addAuditEntry("Ride receipt imported", "Ride-share receipt populated fare split inputs.");
+    state.pendingDocumentType = "ride_receipt";
+    $("#tripDocumentInput")?.click();
+    $("#rideMessage").textContent = "Upload your receipt, then enter its verified totals. Automatic receipt extraction is not configured.";
   });
 
   $("#rideAdviceButton")?.addEventListener("click", () => {
@@ -9130,16 +8625,7 @@ function wireLocalInteractions() {
   });
 
   $("#simulateAlertButton")?.addEventListener("click", async () => {
-    const list = $("#alertPreviewList");
-    const entry = document.createElement("div");
-    entry.innerHTML = "<strong>Itinerary update</strong><span>Desert pickup moved to 8:10 AM. Push, email, and in-app alerts queued for selected travelers.</span>";
-    list?.prepend(entry);
-    $("#alertMessage").textContent = "Simulated itinerary change sent to enabled notification channels.";
-    addAuditEntry("Itinerary update alert", "Transportation pickup change notification queued for the trip group.");
-    await saveSyncedEvent("itinerary_notification", {
-      type: "transportation_pickup_change",
-      channels: $$("[data-alert-channel]").filter((input) => input.checked).map((input) => input.dataset.alertChannel)
-    });
+    $("#alertMessage").textContent = "No update was sent. Save an itinerary change or use the organizer's notification form to send an actual update.";
   });
 
   $("#itineraryDashboardAlertButton")?.addEventListener("click", () => {
@@ -9290,7 +8776,7 @@ function wireLocalInteractions() {
         body: JSON.stringify(payload)
       });
       if (result.skipped) {
-        $("#soloModeMessage").textContent = `${config.label} configured locally. Sign in on the deployed app to persist this event to Supabase.`;
+        throw new Error("Sign in on the deployed app before creating a trip.");
       } else {
         $("#soloModeMessage").textContent = `${config.label} created and saved to Supabase: ${tripName}. Event modules, permissions, audit log, and wallet setup were initialized.`;
         const createdTripId = result.event?.id || result.trip?.id || "";
@@ -9307,6 +8793,8 @@ function wireLocalInteractions() {
       $("#soloModeMessage").textContent = `Event setup could not be saved: ${error.message}. Your form data is still visible so you can retry.`;
       return;
     }
+    state.accountData.showCreation = true;
+    renderAccountState();
     $("#invitationSetupStep").hidden = false;
     renderInvitationSetup(type);
     addAuditEntry("Guided trip created", `${config.label} created with tailored feature set.`);
@@ -9391,24 +8879,22 @@ function wireLocalInteractions() {
 
   $$("[data-reminder-type]").forEach((button) => {
     button.addEventListener("click", async () => {
-      $("#invitationStatusMessage").textContent = `${button.dataset.reminderType} queued for pending invitees.`;
-      addAuditEntry("Invitation reminder queued", button.dataset.reminderType);
-      await saveSyncedEvent("trip_invitation_reminder", { type: button.dataset.reminderType });
+      $("#invitationStatusMessage").textContent = "Reminder delivery is not configured here. No reminder was sent.";
     });
   });
 
   $("#soloRecommendationButton")?.addEventListener("click", async () => {
-    const prompt = "AI suggestion: Spend morning at Tsukiji outer market, walk to teamLab Borderless in the afternoon, use the Ginza line before rush hour, and reserve a ramen counter within 10 minutes of the hotel.";
-    $("#soloAiPrompt").textContent = prompt;
-    addAuditEntry("Solo AI recommendation", "Generated personal itinerary, restaurant, transportation, and route safety suggestion.");
-    await saveSyncedEvent("solo_ai_recommendation", { destination: "Tokyo", budgetCap: 2000 });
+    $("#soloAiPrompt").textContent = "Requesting live recommendations...";
+    try {
+      $("#soloAiPrompt").textContent = await generateSavedTripCopy("Suggest solo travel activities for this saved trip. Do not claim any reservation is booked.");
+    } catch (error) {
+      $("#soloAiPrompt").textContent = error.message;
+    }
   });
 
   $("#soloCheckinButton")?.addEventListener("click", async () => {
-    $("#soloCheckinStatus").textContent = "Checked in";
-    $("#soloModeMessage").textContent = "Safety check-in recorded. Trusted contact notifications only send if the traveler enables missed-check-in alerts.";
-    addAuditEntry("Solo safety check-in", "Traveler marked solo trip safety check-in complete.");
-    await saveSyncedEvent("solo_safety_checkin", { status: "checked_in" });
+    $("#soloCheckinStatus").textContent = "Not sent";
+    $("#soloModeMessage").textContent = "Safety check-in delivery is not configured. Contact your trusted person directly.";
   });
 
   $("#convertSoloTripButton")?.addEventListener("click", async () => {
@@ -9505,7 +8991,7 @@ function wireLocalInteractions() {
     $("#dailyMemoryScreen")?.scrollIntoView({ behavior: "smooth", block: "center" });
     $("#dailyMemoryMessage").textContent = "Today's memory screen opened from the end-of-day reminder. Choose visibility before adding photos, videos, or notes.";
     addAuditEntry("Daily memory reminder opened", "Traveler opened end-of-day memory prompt after completed itinerary.");
-    await saveSyncedEvent("daily_memory_prompt_opened", { day: 3, destination: "Santorini" });
+    await saveSyncedEvent("daily_memory_prompt_opened", { destination: state.accountData.activeTrip?.destination || "" });
   });
 
   $$("[data-memory-action]").forEach((button) => {
@@ -9545,16 +9031,17 @@ function wireLocalInteractions() {
   });
 
   $("#generateJournalButton")?.addEventListener("click", async () => {
-    $("#memoryAiSummary").textContent = "AI journal: Day 3 in Santorini started with breakfast in Oia, moved into a bright catamaran cruise, slowed down at a winery tour, and ended with sunset dinner by the water.";
-    $("#dailyMemoryMessage").textContent = "AI daily journal generated. Review it before saving or sharing.";
-    addAuditEntry("AI daily memory journal generated", "Generated journal from completed itinerary context.");
-    await saveSyncedEvent("daily_memory_journal_generated", { day: 3 });
+    try {
+      const text = await generateSavedTripCopy("Write a short travel journal using only the saved itinerary. Do not invent completed activities or experiences.");
+      $("#memoryAiSummary").textContent = text;
+      $("#dailyMemoryMessage").textContent = "Journal generated. Review before saving or sharing.";
+    } catch (error) {
+      $("#dailyMemoryMessage").textContent = error.message;
+    }
   });
 
   $("#createHighlightReelButton")?.addEventListener("click", async () => {
-    $("#dailyMemoryMessage").textContent = "Highlight reel draft created from today's best moments. Review photos, captions, music, and privacy before sharing.";
-    addAuditEntry("Daily highlight reel created", "AI memory assistant prepared a short recap reel draft.");
-    await saveSyncedEvent("daily_memory_highlight_reel_created", { requiresUserApproval: true });
+    $("#dailyMemoryMessage").textContent = "Video generation is not configured. No reel was created.";
   });
 
   ["#memoryReminderTime", "#memoryDailyToggle", "#memoryFollowupToggle", "#memoryAutoOrganizeToggle", "#memoryAiCaptionToggle", "#memoryAiJournalToggle", "#memorySocialPromptToggle"].forEach((selector) => {
@@ -9641,7 +9128,10 @@ function wireLocalInteractions() {
         manage: `${platform} settings opened for username, permissions, posting format, and privacy.`,
         disconnect: `${platform} disconnected after confirmation. You can reconnect anytime.`
       };
-      if (card && ["connect", "reconnect"].includes(action)) setPlatformCardStatus(card, "connected");
+      if (card && ["connect", "reconnect", "manage"].includes(action)) {
+        updateSocialPreview(`${platform} authorization is not configured. No account was connected.`);
+        return;
+      }
       if (card && action === "disconnect") setPlatformCardStatus(card, "not-connected");
       updateConnectedAccountsSummary();
       updateSocialPreview(messages[action] || `${platform} action opened.`);
@@ -9669,21 +9159,22 @@ function wireLocalInteractions() {
     });
   });
 
-  $("#generateCaptionButton")?.addEventListener("click", () => {
-    $("#captionText").value = "Santorini sunsets, rooftop laughs, and the kind of trip stories we will be retelling for years.";
-    updateSocialPreview("AI caption generated. Review and edit before sharing.");
-  });
+  const generateCaption = async () => {
+    try {
+      $("#captionText").value = await generateSavedTripCopy("Write one short social caption from these saved trip details. Do not invent experiences.");
+      updateSocialPreview("Caption generated. Review before sharing.");
+    } catch (error) { updateSocialPreview(error.message); }
+  };
+  $("#generateCaptionButton")?.addEventListener("click", generateCaption);
 
   $("#generateHashtagsButton")?.addEventListener("click", () => {
-    $("#hashtagList").innerHTML = ["#Travel-Drip", "#Santorini", "#Vacation", "#TravelTogether", "#IslandViews", "#SharedMemories"].map((tag) => `<span>${tag}</span>`).join("");
-    updateSocialPreview("AI hashtags generated for this trip memory.");
+    const destination = state.accountData.activeTrip?.destination || "";
+    const tags = destination ? ["#TravelDrip", `#${destination.replace(/[^a-zA-Z0-9]/g, "")}`] : [];
+    $("#hashtagList").innerHTML = tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");
+    updateSocialPreview(tags.length ? "Hashtags prepared from your saved destination." : "Save a trip destination before preparing hashtags.");
   });
 
-  $("#regenerateCaptionButton")?.addEventListener("click", () => {
-    $("#captionText").value = "Blue water, golden light, and a day full of moments worth saving.";
-    $("#hashtagList").innerHTML = ["#Travel-Drip", "#TravelMemories", "#SantoriniSunset", "#ExploreMore"].map((tag) => `<span>${tag}</span>`).join("");
-    updateSocialPreview("Caption and hashtags regenerated.");
-  });
+  $("#regenerateCaptionButton")?.addEventListener("click", generateCaption);
 
   $("#editCaptionButton")?.addEventListener("click", () => {
     $("#captionText")?.focus();
@@ -9723,21 +9214,19 @@ function wireLocalInteractions() {
   });
 
   $("#shareNowButton")?.addEventListener("click", async () => {
-    updateSocialPreview("Share request queued. Travel-Drip will ask for final confirmation before publishing.");
+    updateSocialPreview("Direct social publishing is not configured. Copy your caption and share through the platform's official app.");
     addAuditEntry("Social share requested", `Platforms: ${getSelectedSharePlatforms().join(", ") || "none selected"}.`);
     await saveSyncedEvent("social_share_requested", { platforms: getSelectedSharePlatforms() });
   });
 
   $("#sharePreviewNowButton")?.addEventListener("click", async () => {
-    updateSocialPreview("Preview approved. Publishing flow is ready for final platform confirmation.");
+    updateSocialPreview("No post was published. Direct social publishing requires a configured platform connection.");
     addAuditEntry("Social share preview approved", `Platforms: ${getSelectedSharePlatforms().join(", ") || "none selected"}.`);
     await saveSyncedEvent("social_share_preview_approved", { platforms: getSelectedSharePlatforms() });
   });
 
   $("#saveDraftButton")?.addEventListener("click", async () => {
-    updateSocialPreview("Draft saved with caption, hashtags, selected platforms, and privacy settings.");
-    addAuditEntry("Social draft saved", "Travel memory draft saved from Social Media Hub.");
-    await saveSyncedEvent("social_draft_saved", { platforms: getSelectedSharePlatforms() });
+    updateSocialPreview("Draft persistence is not available here. Copy your caption before leaving this page.");
   });
 
   updateConnectedAccountsSummary();
@@ -9918,11 +9407,11 @@ function wireLocalInteractions() {
     try {
       const result = await ghlRequest({
         eventType: "admin_test_contact_sync",
-        fullName: "Jordan Smith",
-        username: "jordan",
+        fullName: state.session?.user?.user_metadata?.full_name || "",
+        username: state.session?.user?.user_metadata?.username || "",
         tripType: "Group Trip",
-        tripName: "Travel-Drip test trip",
-        destination: "Dubai",
+        tripName: state.accountData.activeTrip?.title || "",
+        destination: state.accountData.activeTrip?.destination || "",
         tripStatus: "planning",
         tags: ["Trip Planning"]
       });
@@ -10888,12 +10377,10 @@ function wireLocalInteractions() {
     await saveSyncedEvent("ai_planner_share_opened", { privacyControlled: true });
   });
   $("#aiExportButton")?.addEventListener("click", async () => {
-    $("#aiPlannerStatus").textContent = "PDF export queued for the generated itinerary, budget estimate, checklist, and day-by-day plan.";
-    await saveSyncedEvent("ai_planner_export_requested", { format: "pdf" });
+    $("#aiPlannerStatus").textContent = "PDF export is not configured. No export was created.";
   });
   $("#aiCalendarButton")?.addEventListener("click", async () => {
-    $("#aiPlannerStatus").textContent = "Calendar workflow opened. Confirmed reservations can sync to Apple, Google, or Outlook calendars when providers are connected.";
-    await saveSyncedEvent("ai_planner_calendar_opened", { providerRequired: true });
+    $("#aiPlannerStatus").textContent = "Calendar sync is not connected. No calendar event was created.";
   });
   $$("[data-oauth-provider]").forEach((button) => {
     button.addEventListener("click", () => signInWithOAuth(button.dataset.oauthProvider));
@@ -10913,6 +10400,11 @@ function wireLocalInteractions() {
   });
   $("#resendVerificationButton")?.addEventListener("click", resendVerificationEmail);
   document.addEventListener("click", (event) => {
+    const tripButton = event.target.closest("[data-select-account-trip]");
+    if (tripButton) {
+      selectAccountTrip(tripButton.dataset.selectAccountTrip);
+      return;
+    }
     const button = event.target.closest("[data-account-empty-action], [data-account-live-action]");
     if (!button) return;
     const action = button.dataset.accountEmptyAction || button.dataset.accountLiveAction;
@@ -10940,10 +10432,8 @@ function wireLocalInteractions() {
       return;
     }
     if (action === "open-wallet") {
-      const displayName = walletDisplayName();
-      showWorkflowMessage(displayName, state.walletAccess.canContribute
-        ? "Enter an amount in Wallet to begin secure hosted checkout. A balance changes only after provider confirmation."
-        : "No payment provider is active for this wallet. No funds or balances have been created.");
+      navigateSafely("walletPanel", { updateHistory: true });
+      $("#fundAmount")?.focus();
       return;
     }
     if (action === "start-chat") {
@@ -10957,6 +10447,27 @@ function wireLocalInteractions() {
     state.accountData.showCreation = true;
     const type = action === "create-event" ? "special_event" : action === "create-cruise" ? "cruise" : "group";
     openPlanningWorkflow(type);
+  });
+  $("#travelTripSelector")?.addEventListener("change", (event) => selectAccountTrip(event.target.value));
+  document.addEventListener("submit", async (event) => {
+    const form = event.target.closest("[data-live-schedule-form]");
+    if (!form) return;
+    event.preventDefault();
+    const status = form.querySelector('[role="status"]');
+    const submit = form.querySelector('[type="submit"]');
+    submit.disabled = true;
+    status.textContent = "Saving...";
+    try {
+      const values = new FormData(form);
+      await apiRequest("/api/schedule", { method: "POST", body: JSON.stringify({ tripId: state.activeTripId, title: values.get("title"), startsAt: new Date(values.get("startsAt")).toISOString(), locationName: values.get("locationName") }) });
+      await loadAccountData();
+      form.reset();
+      status.textContent = "Itinerary item saved.";
+    } catch (error) {
+      status.textContent = error.message;
+    } finally {
+      submit.disabled = false;
+    }
   });
   $$("[data-onboarding-choice]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -11807,10 +11318,7 @@ function subscribeToLiveData() {
           addAuditEntry("Message notification received", `${conversation}: incoming message notification displayed.`);
         }
         if (event.event_type === "wallet") {
-          const perPerson = Number(event.payload.perPerson);
-          $("#deposit").value = String(perPerson);
-          $("#depositValue").textContent = `$${perPerson.toLocaleString()}`;
-          $("#walletTotal").textContent = `$${(perPerson * 8).toLocaleString()}`;
+          loadWalletAccess();
         }
       })
       .subscribe((status) => setSyncStatus(status === "SUBSCRIBED" ? "Live" : "Connected"));

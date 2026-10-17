@@ -1,21 +1,21 @@
 {
-  "generatedAt": "2026-10-12T00:22:17.255Z",
+  "generatedAt": "2026-10-17T15:39:03.165Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
   },
   "totals": {
     "screenIds": 921,
-    "buttons": 771,
-    "hrefLinks": 15,
-    "dataTargets": 100,
+    "buttons": 716,
+    "hrefLinks": 8,
+    "dataTargets": 98,
     "uniqueDataTargets": 18,
     "mainNavigationControls": 37,
     "mainNavigationItems": 12,
     "routeDefinitions": 20,
     "dateInputs": 17,
     "searchInputs": 12,
-    "actionAttributeTypes": 98,
+    "actionAttributeTypes": 84,
     "apiRoutes": 25
   },
   "linkAndRouteVerification": {
@@ -23,11 +23,7 @@
     "targetIssues": [],
     "ariaIssues": [],
     "linkIssues": [],
-    "externalHrefs": [
-      "https://maps.google.com",
-      "https://maps.google.com",
-      "https://maps.google.com"
-    ],
+    "externalHrefs": [],
     "placeholderHrefs": []
   },
   "mainNavigationVerification": {
@@ -284,7 +280,7 @@
         "status": "PASS"
       },
       {
-        "label": "Itinerary reservation titles",
+        "label": "Itinerary reservations use saved records",
         "status": "PASS"
       },
       {

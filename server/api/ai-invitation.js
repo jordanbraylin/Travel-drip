@@ -5,7 +5,7 @@ import {
   requireAuthenticatedUser,
   sanitizeText
 } from "./_security.js";
-import { getResponseText } from "./_openai-response.js";
+import { getResponseText, getOpenAiFailure } from "./_openai-response.js";
 
 const templateFields = ["subject", "headline", "body", "meta", "rsvpLabel"];
 
@@ -91,12 +91,7 @@ export default async function handler(request, response) {
     });
     const payload = await upstream.json().catch(() => ({}));
     if (!upstream.ok) {
-      response.status(upstream.status === 429 ? 429 : 502).json({
-        error: "The AI invitation provider could not complete the request.",
-        code: "provider_error",
-        provider: "openai",
-        providerStatus: upstream.status
-      });
+      response.status(upstream.status === 429 ? 429 : 502).json(getOpenAiFailure(payload, upstream.status));
       return;
     }
 
