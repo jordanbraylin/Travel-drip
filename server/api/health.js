@@ -59,7 +59,7 @@ export default function handler(_request, response) {
   };
   const requiredFeatures = {
     walletFunding: capabilityChecks.stripeSecretConfigured && capabilityChecks.stripeWebhookConfigured && requiredChecks.appBaseUrlConfigured,
-    placesSearch: optionalChecks.googlePlacesConfigured,
+    placesSearch: optionalChecks.openAiConfigured && optionalChecks.openAiModelConfigured,
     flightTracking: optionalChecks.flightAwareConfigured,
     hotelAvailability: optionalChecks.amadeusHotelsConfigured,
     aiResearch: optionalChecks.openAiConfigured && optionalChecks.openAiModelConfigured
@@ -76,6 +76,7 @@ export default function handler(_request, response) {
     readinessStatus: !coreReady ? "blocked" : configurationReady ? "verification_required" : "limited",
     verificationScope: "configuration_only",
     providerConnectivityVerified: false,
+    primarySearchProvider: "openai",
     unavailableFeatures,
     missingRequired,
     missingRequiredEnv: missingRequired.map((name) => requiredEnvNames[name] || name),

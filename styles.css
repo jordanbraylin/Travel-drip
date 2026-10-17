@@ -1554,6 +1554,29 @@ body.auth-screen .auth-panel[hidden] {
   list-style: none;
 }
 
+.live-ai-search-answer {
+  grid-column: 1 / -1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.live-ai-search-answer h3 {
+  font-size: 1.125rem;
+  margin: 0 0 12px;
+}
+
+.live-ai-search-answer__text {
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+
+.live-ai-search-answer .ai-research-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
 .saved-record-list li {
   display: grid;
   gap: 6px;

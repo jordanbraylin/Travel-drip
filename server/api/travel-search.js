@@ -4,6 +4,7 @@ import {
   methodNotAllowed,
   sanitizeText
 } from "./_security.js";
+import aiPlanner from "./ai-planner.js";
 
 const googlePlacesUrl = "https://places.googleapis.com/v1/places:searchText";
 const requestWindow = new Map();
@@ -122,6 +123,17 @@ export default async function handler(request, response) {
   const category = normalizeCategory(body.category);
   const destination = sanitizeText(body.destination, "", 160);
   const query = sanitizeText(body.q || body.query, "", 180);
+  if (body.provider !== "google_places") {
+    await aiPlanner({
+      method: "POST",
+      headers: request.headers,
+      body: {
+        query: `Search current web sources for ${query || categoryQueries[category]}${destination ? ` in ${destination}` : ""}. Give concise practical guidance with citations. Do not claim a booking, current room inventory, or live flight status has been confirmed.`,
+        answers: { destination, interests: categoryQueries[category] }
+      }
+    }, response);
+    return;
+  }
   const maxResults = Math.min(Math.max(Number(body.limit || 8), 1), 12);
   const apiKey = process.env.GOOGLE_PLACES_API_KEY || process.env.GOOGLE_MAPS_API_KEY || "";
 

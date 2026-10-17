@@ -35,7 +35,9 @@ Public store-readiness pages are available at `/privacy.html` and `/terms.html`.
 4. Add the environment variables from `.env.example` in Vercel Project Settings. See `VERCEL_ENV_SETUP.md` for the exact values and commands.
 5. Run `npx vercel --prod` after the variables are set.
 6. Open `/api/health` on the deployed domain and review `coreReady`, `unavailableFeatures`, and `readinessStatus`. This endpoint checks configuration, not provider connectivity or payment completion.
-7. Run `npm run check:live -- --include-ai` for live page, authentication-service, access-control, and provider probes. The AI probe makes an API request. A zero exit code does not replace signed-in trip, upload, messaging, and payment journey tests.
+7. Run `npm run check:live -- --include-ai` for live page, authentication-service, access-control, and provider probes. Search probes make provider API requests; `--include-ai` also tests the AI planner. A zero exit code does not replace signed-in trip, upload, messaging, and payment journey tests.
+
+Travel, discovery, and global search use OpenAI web research with linked sources by default. The server uses the Responses API with a required `web_search` call. This requires funded OpenAI API access; a ChatGPT subscription does not provide website API credits. Google Places remains available only when explicitly requested with `provider: "google_places"`. AI research does not confirm hotel inventory, flight status, or bookings.
 
 Use [PRODUCTION_GO_LIVE_CHECKLIST.md](PRODUCTION_GO_LIVE_CHECKLIST.md) as the release gate. The Vercel build runs the PWA and route checks. Configuration flags alone do not certify the site as operational.
 

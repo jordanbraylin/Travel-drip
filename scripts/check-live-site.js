@@ -39,7 +39,8 @@ for (const path of ["/api/trips", "/api/wallet", "/api/chat", "/api/schedule", "
   record(`private-access:${path}`, result.status === 401, `Unauthenticated request: HTTP ${result.status}`);
 }
 const places = await post("/api/travel-search", { query: "restaurants", destination: "New York", category: "food", limit: 1 });
-record("places-search", places.ok && places.body.live === true && Array.isArray(places.body.results), `HTTP ${places.status}${places.body.code ? `; ${places.body.code}` : ""}`);
+const validAiSearch = places.body.provider === "openai" && Boolean(places.body.text?.trim()) && Array.isArray(places.body.citations) && places.body.citations.length > 0;
+record("primary-web-search", places.ok && places.body.live === true && (validAiSearch || Array.isArray(places.body.results)), `HTTP ${places.status}${places.body.code ? `; ${places.body.code}` : ""}`);
 const nextWeek = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
 const followingDay = new Date(Date.now() + 8 * 86400000).toISOString().slice(0, 10);
 const hotels = await post("/api/hotel-availability", { cityCode: "NYC", checkInDate: nextWeek, checkOutDate: followingDay, adults: 1 });

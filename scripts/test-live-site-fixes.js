@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import vm from "node:vm";
 import handler from "../server/api/ai-planner.js";
+import travelSearch from "../server/api/travel-search.js";
 import { getResponseText, getOpenAiFailure } from "../server/api/_openai-response.js";
 
 const citation = { type: "url_citation", title: "Travel source", url: "https://example.com/travel" };
@@ -27,7 +28,11 @@ const previousKey = process.env.OPENAI_API_KEY;
 try {
   process.env.OPENAI_API_KEY = "test-only";
   let upstream = payload;
-  globalThis.fetch = async () => ({ ok: true, json: async () => upstream });
+  let sentRequest;
+  globalThis.fetch = async (_url, options) => {
+    sentRequest = JSON.parse(options.body);
+    return { ok: true, json: async () => upstream };
+  };
   const response = () => ({
     setHeader() {},
     status(code) { this.statusCode = code; return this; },
@@ -38,11 +43,29 @@ try {
   assert.equal(success.statusCode, 200);
   assert.equal(success.body.text, getResponseText(payload));
   assert.deepEqual(success.body.citations, [{ title: citation.title, url: citation.url }]);
+  assert.equal(success.body.live, true);
+  assert.equal(sentRequest.tool_choice, "required");
+  assert.deepEqual(sentRequest.tools, [{ type: "web_search" }]);
+  const search = response();
+  await travelSearch({ method: "POST", headers: {}, body: { query: "Museums", destination: "New York" } }, search);
+  assert.equal(search.statusCode, 200);
+  assert.equal(search.body.provider, "openai");
+  assert.ok(sentRequest.input[1].content[0].text.includes("Museums in New York"));
+  upstream = { output: [{ type: "message", role: "assistant", content: [{ type: "output_text", text: "Unverified answer" }] }] };
+  const unsourced = response();
+  await handler({ method: "POST", headers: {}, body: { query: "Research" } }, unsourced);
+  assert.equal(unsourced.statusCode, 502);
+  assert.equal(unsourced.body.code, "provider_unverified_response");
   upstream = { output: [] };
   const empty = response();
   await handler({ method: "POST", headers: {}, body: {} }, empty);
   assert.equal(empty.statusCode, 502);
   assert.equal(empty.body.code, "provider_invalid_response");
+  globalThis.fetch = async () => ({ ok: false, status: 429, json: async () => ({ error: { code: "credit_balance_exhausted" } }) });
+  const exhausted = response();
+  await travelSearch({ method: "POST", headers: {}, body: { query: "Museums" } }, exhausted);
+  assert.equal(exhausted.statusCode, 429);
+  assert.equal(exhausted.body.code, "provider_quota_exhausted");
 } finally {
   globalThis.fetch = previousFetch;
   if (previousKey === undefined) delete process.env.OPENAI_API_KEY;
@@ -62,6 +85,9 @@ assert.ok(source.includes('await loadAccountData();'));
 assert.ok(!html.includes('Card ending 4829'));
 assert.ok(!html.includes('84% complete'));
 assert.ok(!html.includes('class="conversation-card active"'));
+assert.ok(!html.includes("Caribbean Cruise"));
+assert.ok(source.includes('renderLiveAiSearchResults(target, result)'));
+assert.ok(source.includes('link.rel = "noopener noreferrer"'));
 const moduleStart = source.indexOf("async function loadAccountModuleData(");
 const moduleEnd = source.indexOf("function renderLiveAccountDashboard(", moduleStart);
 const filters = [];

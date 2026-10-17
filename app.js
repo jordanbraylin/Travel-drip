@@ -2434,6 +2434,15 @@ function renderLiveAccountDashboard() {
 function renderActiveTripAccountData() {
   const trips = state.accountData.trips;
   const activeTrip = state.accountData.activeTrip;
+  for (const selector of ["#travelTripSelector", "#travelSettingsTripSelect"]) {
+    const select = $(selector);
+    if (!select) continue;
+    select.innerHTML = trips.length
+      ? trips.map((trip) => `<option value="${escapeHtml(trip.id)}">${escapeHtml(trip.title || "Untitled trip")}</option>`).join("")
+      : '<option value="">No saved trips</option>';
+    select.disabled = !trips.length;
+    select.value = activeTrip?.id || "";
+  }
   if (!activeTrip) return;
   const travelerMetric = $("#travelerMetric");
   if (travelerMetric) travelerMetric.textContent = String(state.accountData.counts.members || 0);
@@ -3554,8 +3563,41 @@ function liveSearchMessage(target, message, tone = "") {
   element.dataset.tone = tone;
 }
 
+function renderLiveAiSearchResults(target, result) {
+  const selector = { explore: "#exploreLiveResultsGrid", travel: "#travelLiveResults", privateDriver: "#privateDriverLiveList" }[target];
+  const container = $(selector);
+  if (!container) return;
+  container.hidden = false;
+  const article = document.createElement("article");
+  article.className = "ai-external-research live-ai-search-answer";
+  const heading = document.createElement("h3");
+  heading.textContent = "AI search";
+  const answer = document.createElement("p");
+  answer.className = "live-ai-search-answer__text";
+  answer.textContent = String(result.text || "").replace(/\uE200cite\uE202[^\uE201]*\uE201/g, "");
+  const sources = document.createElement("span");
+  sources.className = "ai-research-sources";
+  for (const [index, citation] of (result.citations || []).entries()) {
+    if (!/^https?:\/\//i.test(citation.url || "")) continue;
+    const link = document.createElement("a");
+    link.href = citation.url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = `[${index + 1}] ${citation.title || "Source"}`;
+    sources.append(link);
+  }
+  answer.append(sources);
+  const note = document.createElement("small");
+  note.textContent = "OpenAI web research. Verify prices and availability with the provider before booking.";
+  article.append(heading, answer, note);
+  container.replaceChildren(article);
+}
+
 async function searchLiveTravelPlaces({ category, query = "", destination = "", target }) {
-  liveSearchMessage(target, "Searching live travel sources...", "loading");
+  liveSearchMessage(target, "OpenAI is searching current web sources...", "loading");
+  if (target === "explore") renderLiveExploreResults([]);
+  if (target === "travel") renderLiveTravelResults([]);
+  if (target === "privateDriver") renderLivePrivateDriverResults([]);
   try {
     const result = await liveSearchApiRequest("/api/travel-search", {
       method: "POST",
@@ -3575,9 +3617,16 @@ async function searchLiveTravelPlaces({ category, query = "", destination = "", 
       state.liveSearch.privateDriverResults = results;
       renderLivePrivateDriverResults(results);
     }
-    liveSearchMessage(target, results.length
+    const isAiResearch = result.provider === "openai";
+    if (isAiResearch) {
+      state.liveSearch.aiResearch = result;
+      renderLiveAiSearchResults(target, result);
+    }
+    liveSearchMessage(target, isAiResearch
+      ? "OpenAI web research is ready. Sources are linked with the answer; verify availability before booking."
+      : results.length
       ? `${results.length} live result${results.length === 1 ? "" : "s"} from ${result.sourceLabel || "an outside source"}. Verify details before booking.`
-      : "No live results matched. Try a broader destination or search term.", results.length ? "success" : "empty");
+      : "No live results matched. Try a broader destination or search term.", isAiResearch || results.length ? "success" : "empty");
     await saveSyncedEvent("live_travel_search", {
       category,
       query,
@@ -3585,7 +3634,7 @@ async function searchLiveTravelPlaces({ category, query = "", destination = "", 
       target,
       provider: result.provider,
       sourceLabel: result.sourceLabel,
-      resultCount: results.length,
+      resultCount: isAiResearch ? result.citations.length : results.length,
       live: true
     });
     return result;
@@ -7459,9 +7508,6 @@ function wireLocalInteractions() {
   renderRideSplit();
   renderRideHubSections();
   setTravelFocus(localStorage.getItem("traveldripTravelFocus") || "overview", { updateHistory: false });
-  if ($("#travelSettingsTripSelect") && localStorage.getItem("traveldripSelectedTravelTrip")) {
-    $("#travelSettingsTripSelect").value = localStorage.getItem("traveldripSelectedTravelTrip");
-  }
   updateEnterpriseRole();
   updateDashboardWidgets();
   startLivePlanRotation();
@@ -8239,11 +8285,7 @@ function wireLocalInteractions() {
   });
 
   $("#travelSettingsTripSelect")?.addEventListener("change", async (event) => {
-    localStorage.setItem("traveldripSelectedTravelTrip", event.target.value);
-    if ($("#travelSettingsMessage")) {
-      $("#travelSettingsMessage").textContent = `${event.target.value} is now the active Travel trip. The selected Travel section remains open.`;
-    }
-    await saveSyncedEvent("travel_trip_selected", { trip: event.target.value });
+    await selectAccountTrip(event.target.value);
   });
 
   $("#travelFocusCountry")?.addEventListener("change", async (event) => {
@@ -10224,9 +10266,8 @@ function wireLocalInteractions() {
     const query = event.target.value.trim();
     if ($("#exploreSearchInput")) $("#exploreSearchInput").value = query;
     renderRoute("exploreDrops", { updateHistory: true });
-    $("#exploreStatusMessage").textContent = query
-      ? `Search results opened for "${query}" across destinations, trips, flights, hotels, activities, restaurants, messages, documents, and corporate events.`
-      : "Explore opened from global search.";
+    $("#exploreStatusMessage").textContent = query ? `Searching the web for "${query}"...` : "Explore opened from global search.";
+    if (query) searchLiveTravelPlaces({ category: "trending", query, destination: state.accountData.activeTrip?.destination || "", target: "explore" });
     addAuditEntry("Global search opened", query || "Explore opened without a search term.");
   });
   renderAiPlanner();
@@ -11135,7 +11176,6 @@ function applyGoLiveHealth(health) {
       && required.appBaseUrlConfigured
   );
   const missingExternal = [
-    ["Google Places", optional.googlePlacesConfigured],
     ["FlightAware", optional.flightAwareConfigured],
     ["Amadeus", optional.amadeusHotelsConfigured],
     ["OpenAI", optional.openAiConfigured && optional.openAiModelConfigured]

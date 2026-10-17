@@ -73,6 +73,7 @@ export default async function handler(request, response) {
         model: process.env.OPENAI_MODEL || "gpt-5",
         store: false,
         tools: [{ type: "web_search" }],
+        tool_choice: "required",
         input: [
           {
             role: "system",
@@ -103,11 +104,22 @@ export default async function handler(request, response) {
       });
       return;
     }
+    const citations = uniqueCitations(collectCitations(payload));
+    const searchedWeb = Array.isArray(payload.output) && payload.output.some((item) => item.type === "web_search_call" && item.status === "completed");
+    if (!searchedWeb || !citations.length) {
+      response.status(502).json({
+        error: "AI did not return verified web-search sources. Please retry.",
+        code: "provider_unverified_response",
+        provider: "openai"
+      });
+      return;
+    }
     response.status(200).json({
       provider: "openai",
-      sourceLabel: "AI research with live web sources",
+      live: true,
+      sourceLabel: "OpenAI research with live web sources",
       text: sanitizeText(text, "", 8_000),
-      citations: uniqueCitations(collectCitations(payload))
+      citations
     });
   } catch (error) {
     response.status(error.name === "AbortError" ? 504 : 502).json({
