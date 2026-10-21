@@ -46,7 +46,7 @@ assert.ok(globalHandler.indexOf('renderRoute("exploreDrops"') < globalHandler.in
 await import("./build-vercel.js");
 const deployedHtml = await readFile(new URL("../public/index.html", import.meta.url), "utf8");
 assert.ok(deployedHtml.includes('<base href="/">'));
-for (const asset of ["app.js?v=85", "navigation.css?v=91", "icons/icon.svg"]) {
+for (const asset of ["app.js", "navigation.css", "icons/icon.svg"]) {
   assert.equal(new URL(asset, new URL("/", "https://travel-drip.com/explore/food")).pathname, `/${asset.split("?")[0]}`);
 }
 console.log("User experience tests passed: responsive drawer, focus restoration, empty states, search preservation, and required trip fields.");
