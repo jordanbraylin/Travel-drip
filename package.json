@@ -21,6 +21,7 @@
     "test:corporate-booking": "node scripts/test-corporate-booking.js",
     "test:readiness": "node scripts/test-operational-readiness.js",
     "test:free-search": "node scripts/test-free-search.js",
+    "test:ux": "node scripts/test-user-experience.js",
     "audit:files": "grep -R \"SUPABASE_SERVICE_ROLE_KEY\\|VAPID_PRIVATE_KEY\\|sk-\\|password\" -n --exclude-dir=node_modules . || true"
   },
   "dependencies": {

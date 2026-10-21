@@ -14,7 +14,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Travel-Drip">
     <link rel="stylesheet" href="styles.css?v=124">
-  <link rel="stylesheet" href="navigation.css?v=90">
+  <link rel="stylesheet" href="navigation.css?v=91">
   <title>Travel-Drip</title>
 </head>
 <body>
@@ -28,7 +28,7 @@
   </div>
 
   <div class="shell">
-    <aside class="sidebar" aria-label="Primary">
+    <aside class="sidebar" id="siteSidebar" aria-label="Primary">
       <a class="brand" href="index.html" data-route-link="dashboardHome" aria-label="Travel-Drip home">
         <picture class="brand-logo-wrap">
           <source media="(max-width: 720px)" srcset="icons/traveldrip-logo-icon.svg">
@@ -135,10 +135,10 @@
 
     <main>
       <header class="topbar">
-        <button class="icon-button menu-button" type="button" id="sidebarMenuButton" aria-label="Open navigation" aria-expanded="false">Menu</button>
+        <button class="icon-button menu-button" type="button" id="sidebarMenuButton" aria-label="Open navigation" aria-controls="siteSidebar" aria-expanded="false">Menu</button>
         <label class="search">
           <span aria-hidden="true">Search</span>
-          <input id="globalSearchInput" type="search" placeholder="Destinations, trips, flights, hotels, messages">
+          <input id="globalSearchInput" type="search" aria-label="Search the web" placeholder="Search destinations, restaurants, activities">
         </label>
         <label class="account-workspace-control" id="accountWorkspaceControl" hidden>Workspace
           <select id="accountWorkspaceSwitch" aria-label="Switch between personal and corporate workspaces">
@@ -962,22 +962,23 @@
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Explore</p>
-                <h2>Personalized travel discovery</h2>
+                <h2>Explore</h2>
               </div>
               <button class="ghost-button" type="button" id="exploreBackButton" hidden>Back to results</button>
             </div>
             <div class="explore-context-grid">
-              <label>Destination<input id="exploreDestinationInput" type="text" placeholder="City or destination"></label>
-              <div class="explore-date-range" role="group" aria-label="Travel dates">
+              <label>Destination (optional)<input id="exploreDestinationInput" type="text" placeholder="City or destination"></label>
+              <div class="explore-date-range" role="group" aria-label="Travel dates" hidden inert>
                 <label>Start date<input id="exploreStartDateInput" type="date"></label>
                 <label>End date<input id="exploreEndDateInput" type="date"></label>
               </div>
-              <label>Budget<select id="exploreBudgetFilter"><option value="any">Any budget</option><option value="25">Under $25</option><option value="50">$25-$50</option><option value="100">$50-$100</option><option value="900">Under $900</option></select></label>
-              <label>Trip type<select id="exploreTripTypeFilter"><option value="group">Group Trip</option><option value="solo">Solo Trip</option><option value="corporate">Corporate Retreat</option></select></label>
+              <label hidden inert>Budget<select id="exploreBudgetFilter"><option value="any">Any budget</option><option value="25">Under $25</option><option value="50">$25-$50</option><option value="100">$50-$100</option><option value="900">Under $900</option></select></label>
+              <label hidden inert>Trip type<select id="exploreTripTypeFilter"><option value="group">Group Trip</option><option value="solo">Solo Trip</option><option value="corporate">Corporate Retreat</option></select></label>
             </div>
             <div class="explore-search-row">
-              <label class="explore-search">Search Explore<input id="exploreSearchInput" type="search" placeholder="Restaurants, events, hidden gems, guides"></label>
-              <div class="explore-filter-row">
+              <label class="explore-search">Search<input id="exploreSearchInput" type="search" placeholder="Restaurants, events, hidden gems, guides"></label>
+              <button class="primary-button" type="button" id="exploreLiveSearchButton" title="Open DuckDuckGo results in a new tab">Search DuckDuckGo</button>
+              <div class="explore-filter-row" hidden inert>
                 <label><input id="exploreOpenNowFilter" type="checkbox"> Open now</label>
                 <label><input id="exploreAccessibleFilter" type="checkbox"> Accessible</label>
                 <label>Rating<select id="exploreRatingFilter"><option value="0">Any</option><option value="4.5">4.5+</option><option value="4.7">4.7+</option></select></label>
@@ -999,11 +1000,10 @@
               <button type="button" data-explore-category="events">Local Events</button>
               <button type="button" data-explore-category="weekend">Weekend Getaways</button>
             </div>
-            <div class="explore-subfilters" id="exploreSubfilters" aria-label="Explore filters"></div>
+            <div class="explore-subfilters" id="exploreSubfilters" aria-label="Explore filters" hidden inert></div>
             <div class="explore-results-toolbar">
               <span id="exploreResultsSummary">Public travel inspiration</span>
               <div class="button-row no-margin">
-                <button class="primary-button" type="button" id="exploreLiveSearchButton">Search free web</button>
                 <button class="ghost-button" type="button" id="exploreRetryButton" hidden>Retry</button>
               </div>
             </div>
@@ -1025,7 +1025,7 @@
               </div>
             </section>
             <section class="explore-detail-panel" id="exploreDetailPanel" hidden></section>
-            <p class="small" id="exploreStatusMessage">Select a category to see matching recommendations. Every result card opens details and every action preserves Explore context.</p>
+            <p class="small" id="exploreStatusMessage" role="status"></p>
           </section>
 
           <section class="panel solo-mode-panel" id="tripsPanel">
@@ -1043,8 +1043,8 @@
               <div class="guided-step">
                 <span>Step 1</span>
                 <h3>What type of trip are you planning?</h3>
-                <p>Choose a trip type first so Travel-Drip can show the right tools, permissions, and workflows.</p>
-                <div class="trip-type-selector" aria-label="Choose trip type">
+                <label>Trip type<select id="tripTypeSelect"><option value="">Choose trip type</option></select></label>
+                <div class="trip-type-selector" aria-label="Choose trip type" hidden inert>
                   <button type="button" data-trip-type="solo" aria-pressed="false">
                     <strong>Solo Trip</strong><span>Private planning, personal budget, AI recommendations, documents, packing, journal, and memories.</span>
                   </button>
@@ -1090,17 +1090,18 @@
                 <span>Step 2</span>
                 <h3 id="tripDetailsTitle">Solo trip details</h3>
                 <form class="trip-creation-form" id="tripCreationForm">
-                  <label>Event name<input id="tripNameInput" type="text" placeholder="Name your trip or event"></label>
-                  <label class="wide">Event description<textarea id="eventDescriptionInput" placeholder="Describe the trip or event"></textarea></label>
-                  <label>Destination<input id="tripDestinationInput" type="text" placeholder="City or destination"></label>
-                  <label>Start date<input id="tripStartInput" type="date"></label>
-                  <label>End date<input id="tripEndInput" type="date"></label>
+                  <label>Trip name<input id="tripNameInput" type="text" placeholder="Name your trip or event" required maxlength="160"></label>
+                  <label>Destination<input id="tripDestinationInput" type="text" placeholder="City or destination" required maxlength="160"></label>
+                  <label>Start date<input id="tripStartInput" type="date" required></label>
+                  <label>End date<input id="tripEndInput" type="date" required></label>
+                  <details class="trip-optional-details wide"><summary>More details</summary><div class="trip-optional-fields">
+                  <label class="wide">Description<textarea id="eventDescriptionInput" placeholder="Describe the trip or event"></textarea></label>
                   <label>Host or organizer<input id="eventHostInput" type="text" placeholder="Organizer name"></label>
                   <label id="travelerCountField" hidden>Number of travelers<input id="tripTravelersInput" type="number" min="1" value="1"></label>
                   <label>Guest count<input id="eventGuestCountInput" type="number" min="1" value="1"></label>
                   <label>Budget<input id="tripBudgetInput" type="number" min="0" placeholder="0"></label>
                   <label>Currency<select id="eventCurrencyInput"><option value="USD">USD</option><option value="CAD">CAD</option><option value="EUR">EUR</option><option value="GBP">GBP</option></select></label>
-                  <label>Travel style<select id="tripStyleInput"><option>Food and culture</option><option>Relaxed luxury</option><option>Adventure</option><option>Business efficient</option></select></label>
+                  <label>Travel style<select id="tripStyleInput"><option value="">Choose a style</option><option>Food and culture</option><option>Relaxed luxury</option><option>Adventure</option><option>Business efficient</option></select></label>
                   <label>Interests<input id="tripInterestsInput" type="text" placeholder="Food, museums, outdoors"></label>
                   <label>Cover photo<input id="tripCoverInput" type="file" accept="image/*"></label>
                   <label>Privacy<select id="eventPrivacyInput"><option value="invite_only">Invite only</option><option value="approval_required">Approval required</option><option value="private">Private</option><option value="public_link">Public invite link</option></select></label>
@@ -1116,7 +1117,8 @@
                     <h4>Event-specific details</h4>
                     <div id="eventSpecificFieldGrid"></div>
                   </section>
-                  <button class="primary-button" type="submit">Create tailored trip</button>
+                  </div></details>
+                  <button class="primary-button" type="submit">Create trip</button>
                 </form>
               </div>
               <div class="guided-step" id="tripAiSetupStep" hidden>
@@ -4588,6 +4590,6 @@
   <script src="https://link.msgsndr.com/js/external-tracking.js" data-tracking-id="tk_684cd074f7154fbebd60d6f62b2d331b"></script>
   <script src="public-config.js?v=3"></script>
   <script src="vendor/qrcode.js?v=1"></script>
-  <script defer src="app.js?v=84"></script>
+  <script defer src="app.js?v=85"></script>
 </body>
 </html>

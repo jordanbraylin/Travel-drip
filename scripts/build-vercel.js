@@ -1,4 +1,4 @@
-import { cp, mkdir, rm } from "node:fs/promises";
+import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
@@ -27,7 +27,13 @@ await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
 
 for (const file of staticFiles) {
-  await cp(resolve(root, file), resolve(output, file));
+  if (file === "index.html") {
+    // Root-relative deployment assets also work when a nested route is refreshed.
+    const html = await readFile(resolve(root, file), "utf8");
+    await writeFile(resolve(output, file), html.replace("<head>", '<head>\n  <base href="/">'));
+  } else {
+    await cp(resolve(root, file), resolve(output, file));
+  }
 }
 
 for (const directory of staticDirectories) {

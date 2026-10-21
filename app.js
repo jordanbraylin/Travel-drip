@@ -1323,6 +1323,7 @@ async function openDestinationExplore(action = "destinations") {
 
 function renderTripType(type) {
   const config = tripTypeConfigs[type] || tripTypeConfigs.solo;
+  if ($("#tripTypeSelect")) $("#tripTypeSelect").value = type;
   $$("[data-trip-type]").forEach((typeButton) => {
     const isActive = typeButton.dataset.tripType === type;
     typeButton.classList.toggle("active", isActive);
@@ -1331,11 +1332,11 @@ function renderTripType(type) {
 
   $("#soloModeMessage").textContent = config.message;
   $("#tripDetailsStep").hidden = false;
-  $("#tripAiSetupStep").hidden = false;
+  $("#tripAiSetupStep").hidden = true;
   $("#tripDetailsTitle").textContent = config.detailsTitle;
   $("#tripAiSetupPrompt").textContent = config.aiPrompt;
   $("#travelerCountField").hidden = config.travelersHidden;
-  $("#tripTravelersInput").value = config.travelersHidden ? "1" : "6";
+  $("#tripTravelersInput").value = config.travelersHidden ? "1" : String(Math.max(1, Number($("#tripTravelersInput").value) || 1));
   $("#featuresEnabledList").innerHTML = config.enabled.map((feature) => `<span>${escapeHtml(feature)}</span>`).join("");
   $("#featuresHiddenList").innerHTML = config.hidden.map((feature) => `<span>${escapeHtml(feature)}</span>`).join("");
   renderEventSpecificFields(type);
@@ -1584,7 +1585,9 @@ function setTravelFocus(section = "overview", options = {}) {
   }
   const target = travelTileDestinations[section] ? section : "overview";
   $$(".travel-focus-panel").forEach((panel) => {
-    panel.classList.toggle("active", panel.dataset.travelPanel === target);
+    const active = panel.dataset.travelPanel === target;
+    panel.classList.toggle("active", active);
+    setVisibilityWithoutCssLeaks(panel, active);
   });
   $$("[data-travel-focus]").forEach((button) => {
     const active = button.dataset.travelFocus === target;
@@ -2142,7 +2145,7 @@ function ensureAccountRouteEmptyState(section, target) {
   emptyState = document.createElement("section");
   emptyState.className = "account-route-empty";
   emptyState.hidden = true;
-  emptyState.innerHTML = `<p class="eyebrow">Blank slate</p><h2>${escapeHtml(title)}</h2><p>${escapeHtml(copy)}</p><div class="account-empty-actions"><button class="primary-button" type="button" data-account-empty-action="${escapeHtml(action)}">${escapeHtml(actionLabel)}</button><button class="ghost-button" type="button" data-account-empty-action="explore">Browse inspiration</button></div>`;
+  emptyState.innerHTML = `<p class="eyebrow">Getting started</p><h2>${escapeHtml(title)}</h2><p>${escapeHtml(copy)}</p><div class="account-empty-actions"><button class="primary-button" type="button" data-account-empty-action="${escapeHtml(action)}">${escapeHtml(actionLabel)}</button><button class="ghost-button" type="button" data-account-empty-action="explore">Explore</button></div>`;
   section.append(emptyState);
   return emptyState;
 }
@@ -2207,6 +2210,13 @@ function applyAccountRouteState(target) {
   section.classList.toggle("is-account-live", shouldShowLive);
   section.classList.toggle("is-account-creation", isTripCreation);
   if (emptyState) emptyState.hidden = !shouldShowEmpty;
+  if (emptyState && shouldShowEmpty && !state.accountData.activeTrip && target !== "tripsPanel") {
+    const action = emptyState.querySelector(".primary-button");
+    if (action) {
+      action.dataset.accountEmptyAction = "create-trip";
+      action.textContent = "Create a trip";
+    }
+  }
   if (liveState) liveState.hidden = !shouldShowLive;
   if (target === "tripsPanel" && shouldShowLive) renderSavedTripList(liveState);
   if (hasAuthenticatedData && target !== "tripsPanel") renderSavedAccountRecords(section, target);
@@ -4192,7 +4202,6 @@ function renderExplore(categoryKey = getActiveExploreCategory()) {
   if (!$("#exploreResultsGrid")) return;
   const category = exploreCategories[categoryKey] || exploreCategories.trending;
   const destination = $("#exploreDestinationInput")?.value.trim() || "your destination";
-  const tripType = $("#exploreTripTypeFilter")?.selectedOptions?.[0]?.textContent || "selected trip";
   const items = getExploreItems(categoryKey);
   state.liveSearch.exploreResults = [];
   renderLiveExploreResults([]);
@@ -4200,6 +4209,9 @@ function renderExplore(categoryKey = getActiveExploreCategory()) {
   $$("#exploreTabs button").forEach((button) => {
     const active = button.dataset.exploreCategory === categoryKey;
     button.classList.toggle("active", active);
+    button.setAttribute("role", "tab");
+    button.setAttribute("aria-controls", "exploreResultsGrid");
+    button.tabIndex = active ? 0 : -1;
     button.setAttribute("aria-selected", String(active));
   });
 
@@ -4207,8 +4219,9 @@ function renderExplore(categoryKey = getActiveExploreCategory()) {
   $("#exploreBackButton").hidden = true;
   $("#exploreResultsGrid").hidden = false;
   $("#exploreSubfilters").innerHTML = category.filters.map((filter) => `<button type="button" data-explore-subfilter="${escapeHtml(filter)}">${escapeHtml(filter)}</button>`).join("");
-  $("#exploreResultsSummary").textContent = `${category.label} public inspiration for ${destination} ${tripType.toLowerCase()} (not live availability)`;
-  $("#exploreEmptyState").hidden = items.length > 0;
+  $("#exploreResultsSummary").textContent = category.label;
+  $("#exploreEmptyState").hidden = true;
+  if ($("#exploreStatusMessage")) $("#exploreStatusMessage").textContent = "";
   $("#exploreResultsGrid").innerHTML = items.map((item) => {
     const primaryActions = item.actions.filter((action) => ["Save", "Add to Trip", "Add to Itinerary", "Create This Trip"].includes(action)).slice(0, 2);
     return `
@@ -5607,6 +5620,7 @@ function setAuthenticatedShellVisible(visible) {
   document.body.classList.toggle("signed-in-shell", visible);
   if (!visible) document.body.classList.remove("sidebar-open");
   $("#sidebarMenuButton")?.setAttribute("aria-expanded", "false");
+  syncSidebarAccessibility();
 }
 
 function rememberProtectedTarget(target) {
@@ -6874,6 +6888,22 @@ function setVisibilityWithoutCssLeaks(element, visible) {
   else element.style.setProperty("display", "none", "important");
 }
 
+function syncSidebarAccessibility() {
+  const sidebar = $(".sidebar");
+  if (!sidebar) return;
+  const hidden = sidebar.hidden || (window.matchMedia("(max-width: 1080px)").matches && !document.body.classList.contains("sidebar-open"));
+  sidebar.inert = hidden;
+  sidebar.setAttribute("aria-hidden", String(hidden));
+}
+
+function setSidebarOpen(open, restoreFocus = false) {
+  document.body.classList.toggle("sidebar-open", open);
+  $("#sidebarMenuButton")?.setAttribute("aria-expanded", String(open));
+  syncSidebarAccessibility();
+  if (open) $(".sidebar summary")?.focus();
+  else if (restoreFocus) $("#sidebarMenuButton")?.focus();
+}
+
 function applyMainNavigationConfig() {
   $$("[data-main-nav-id]").forEach((control) => {
     const item = mainNavigationById[control.dataset.mainNavId];
@@ -7256,8 +7286,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   renderGlobalDestinationHeader(resolvedTarget);
   renderAccountState(resolvedTarget);
   document.title = `${routeDefinitions[resolvedTarget].label} - Travel-Drip`;
-  document.body.classList.remove("sidebar-open");
-  $("#sidebarMenuButton")?.setAttribute("aria-expanded", "false");
+  setSidebarOpen(false);
   window.scrollTo({ top: 0, behavior: "smooth" });
   if (resolvedTarget === "adminPanel" && activeSettingsFocus) {
     window.setTimeout(() => getRouteComponentById(activeSettingsFocus)?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
@@ -7266,6 +7295,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
 
 function openPlanningWorkflow(type = "group") {
   const config = tripTypeConfigs[type] || tripTypeConfigs.group;
+  state.accountData.showCreation = true;
   renderRoute("tripsPanel", { updateHistory: true });
   $("#guidedTripFlow")?.classList.add("is-open");
   renderTripType(type);
@@ -7628,17 +7658,22 @@ function wireLocalInteractions() {
   });
 
   renderExplore("trending");
+  $("#exploreTabs")?.addEventListener("keydown", (event) => {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    const tabs = $$("#exploreTabs button");
+    const index = tabs.indexOf(event.target);
+    if (index < 0) return;
+    event.preventDefault();
+    const next = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : (index + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+    tabs[next].click();
+    tabs[next].focus();
+  });
 
   $$("#exploreTabs button").forEach((button) => {
     button.addEventListener("click", () => {
       history.pushState({ target: "exploreDrops", category: button.dataset.exploreCategory }, "", getExploreRoute(button.dataset.exploreCategory));
       renderRoute("exploreDrops");
-      $("#exploreSkeleton").hidden = false;
-      $("#exploreResultsGrid").hidden = true;
-      window.setTimeout(() => {
-        $("#exploreSkeleton").hidden = true;
-        renderExplore(button.dataset.exploreCategory);
-      }, 220);
+      renderExplore(button.dataset.exploreCategory);
     });
   });
 
@@ -8791,6 +8826,13 @@ function wireLocalInteractions() {
     });
   });
 
+  const tripTypeSelect = $("#tripTypeSelect");
+  if (tripTypeSelect) {
+    tripTypeSelect.innerHTML = '<option value="">Choose trip type</option>' + Object.entries(tripTypeConfigs).map(([value, config]) => `<option value="${escapeHtml(value)}">${escapeHtml(config.label)}</option>`).join("");
+    tripTypeSelect.addEventListener("change", (event) => {
+      if (tripTypeConfigs[event.target.value]) renderTripType(event.target.value);
+    });
+  }
   $$("[data-trip-type]").forEach((button) => {
     button.addEventListener("click", async () => {
       const type = button.dataset.tripType;
@@ -8801,6 +8843,7 @@ function wireLocalInteractions() {
   });
 
   $("#startTripCreationButton")?.addEventListener("click", () => {
+    if ($("#tripTypeSelect")) $("#tripTypeSelect").value = "";
     $("#guidedTripFlow")?.classList.add("is-open");
     $("#guidedTripFlow")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     $("#tripDetailsStep").hidden = true;
@@ -9508,9 +9551,29 @@ function wireLocalInteractions() {
     }
   });
   $("#sidebarMenuButton")?.addEventListener("click", () => {
-    const open = !document.body.classList.contains("sidebar-open");
-    document.body.classList.toggle("sidebar-open", open);
-    $("#sidebarMenuButton").setAttribute("aria-expanded", String(open));
+    setSidebarOpen(!document.body.classList.contains("sidebar-open"));
+  });
+  window.matchMedia("(max-width: 1080px)").addEventListener("change", syncSidebarAccessibility);
+  syncSidebarAccessibility();
+  document.addEventListener("keydown", (event) => {
+    if (!document.body.classList.contains("sidebar-open") || !window.matchMedia("(max-width: 1080px)").matches) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setSidebarOpen(false, true);
+      return;
+    }
+    if (event.key !== "Tab") return;
+    const focusable = $$(".sidebar a[href], .sidebar button:not([disabled]), .sidebar summary").filter((element) => element.getClientRects().length);
+    const first = focusable[0];
+    const last = focusable.at(-1);
+    if (!first || !last) return;
+    if (event.shiftKey && (document.activeElement === first || !$(".sidebar").contains(document.activeElement))) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   });
   const navGroups = $$(".grouped-nav .nav-group");
   const storedNavSummary = localStorage.getItem("traveldripExpandedNavGroup");
@@ -9535,14 +9598,12 @@ function wireLocalInteractions() {
   });
   $(".sidebar")?.addEventListener("click", (event) => {
     if (!event.target.closest("[data-target], a")) return;
-    document.body.classList.remove("sidebar-open");
-    $("#sidebarMenuButton")?.setAttribute("aria-expanded", "false");
+    setSidebarOpen(false);
   });
   $("[data-target]")?.ownerDocument?.addEventListener("click", (event) => {
     if (!document.body.classList.contains("sidebar-open")) return;
     if (event.target.closest(".sidebar, #sidebarMenuButton")) return;
-    document.body.classList.remove("sidebar-open");
-    $("#sidebarMenuButton")?.setAttribute("aria-expanded", "false");
+    setSidebarOpen(false);
   });
   $$("[data-widget-hide]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -10307,8 +10368,8 @@ function wireLocalInteractions() {
     if (event.key !== "Enter") return;
     event.preventDefault();
     const query = event.target.value.trim();
-    if ($("#exploreSearchInput")) $("#exploreSearchInput").value = query;
     renderRoute("exploreDrops", { updateHistory: true });
+    if ($("#exploreSearchInput")) $("#exploreSearchInput").value = query;
     $("#exploreStatusMessage").textContent = query ? `DuckDuckGo search: ${query}` : "Explore opened from global search.";
     if (query) searchLiveTravelPlaces({ category: "trending", query, destination: state.accountData.activeTrip?.destination || "", target: "explore" });
     addAuditEntry("Global search opened", query || "Explore opened without a search term.");

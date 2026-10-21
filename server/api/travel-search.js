@@ -50,6 +50,7 @@ function allowRequest(request) {
 
 function normalizeCategory(value) {
   const category = sanitizeText(value, "trending", 60).toLowerCase().replace(/[^a-z0-9]+/g, "_");
+  if (category === "hidden") return "hidden_gems";
   return categoryQueries[category] ? category : "trending";
 }
 
