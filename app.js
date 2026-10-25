@@ -1983,6 +1983,9 @@ function openTripInviteDialog() {
     return;
   }
   $("#tripInviteForm").reset();
+  $("#tripInviteTitle").textContent = state.accountData.activeTrip?.title
+    ? `Invite to ${state.accountData.activeTrip.title}`
+    : "Invite someone";
   updateTripInviteRecipientType();
   $("#tripInviteStatus").textContent = !state.activeTripId
     ? "Create or open a trip before creating an invitation."
@@ -2031,7 +2034,7 @@ async function createTripInvitation() {
         deliveryMethods: methods,
         expiresAt: $("#inviteDeadlineInput")?.value ? new Date(`${$("#inviteDeadlineInput").value}T23:59:59`).toISOString() : undefined,
         customization: {
-          title: $("#inviteTitleInput")?.value.trim() || $("#tripNameInput")?.value.trim() || "Travel-Drip invitation",
+          title: state.accountData.activeTrip?.title || $("#inviteTitleInput")?.value.trim() || $("#tripNameInput")?.value.trim() || "Travel-Drip invitation",
           message: $("#inviteMessageInput")?.value.trim() || "",
           note: $("#inviteNoteInput")?.value.trim() || ""
         }
@@ -2361,6 +2364,12 @@ async function generateSavedTripCopy(instruction) {
 }
 
 function renderSavedTripList(container) {
+  const inviteButton = document.createElement("button");
+  inviteButton.type = "button";
+  inviteButton.className = "primary-button";
+  inviteButton.textContent = "Invite people";
+  inviteButton.addEventListener("click", openTripInviteDialog);
+  container.querySelector(".account-empty-actions")?.append(inviteButton);
   const list = document.createElement("ul");
   list.className = "saved-record-list";
   for (const trip of state.accountData.trips) {

@@ -47,6 +47,16 @@ for (const id of ["inviteRecipientEmail", "inviteRecipientUsername", "inviteReci
 }
 assert.ok(source.includes('addEventListener("click", openTripInviteDialog)'));
 assert.ok(!source.includes('$("#inviteRecipientList").innerHTML'));
+const savedActions = [];
+const savedContext = {
+  state: { accountData: { trips: [] } },
+  document: { createElement: () => ({ append() {}, addEventListener(type, handler) { this.handler = handler; } }) },
+  openTripInviteDialog() {},
+  container: { append() {}, querySelector: () => ({ append: (button) => savedActions.push(button) }) }
+};
+vm.runInNewContext(source.slice(source.indexOf("function renderSavedTripList("), source.indexOf("function getSavedModuleRecords(")) + "\nrenderSavedTripList(container);", savedContext);
+assert.equal(savedActions[0].textContent, "Invite people");
+assert.equal(savedActions[0].handler, savedContext.openTripInviteDialog);
 
 let rows, profile, allowed, operations;
 const supabase = { from(table) {
