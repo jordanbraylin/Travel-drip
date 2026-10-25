@@ -1958,9 +1958,42 @@ function renderInviteQrCode(url) {
   }
 }
 
+function resetTripInviteResult() {
+  setVisibilityWithoutCssLeaks($("#tripInviteResult"), false);
+  $("#tripInviteLink").value = "";
+  $("#tripInviteComposeLink").removeAttribute("href");
+  $("#tripInviteStatus").textContent = "";
+  $("#createTripInviteButton").disabled = false;
+}
+
+function updateTripInviteRecipientType() {
+  const type = $("#inviteRecipientType").value;
+  for (const [mode, suffix] of [["username", "Username"], ["email", "Email"], ["mobile", "Mobile"]]) {
+    const input = $(`#inviteRecipient${suffix}`);
+    setVisibilityWithoutCssLeaks($(`#invite${suffix}Field`), mode === type);
+    input.disabled = mode !== type;
+    input.required = mode === type;
+  }
+  resetTripInviteResult();
+}
+
+function openTripInviteDialog() {
+  if ($("#inviteRecipientType").disabled) {
+    if (!$("#tripInviteDialog").open) $("#tripInviteDialog").showModal();
+    return;
+  }
+  $("#tripInviteForm").reset();
+  updateTripInviteRecipientType();
+  $("#tripInviteStatus").textContent = !state.activeTripId
+    ? "Create or open a trip before creating an invitation."
+    : "";
+  $("#tripInviteDialog").showModal();
+}
+
 async function createTripInvitation() {
-  const status = $("#invitationStatusMessage");
-  const button = $("#sendInvitesNowButton");
+  const status = $("#tripInviteStatus");
+  const button = $("#createTripInviteButton");
+  if (button.disabled) return;
   if (!state.session?.access_token) {
     if (status) status.textContent = "Sign in before sending invitations.";
     return;
@@ -1969,15 +2002,22 @@ async function createTripInvitation() {
     if (status) status.textContent = "Create or open a trip before inviting travelers.";
     return;
   }
-  const email = $("#inviteRecipientEmail")?.value.trim() || "";
-  const username = normalizeUsername($("#inviteRecipientUsername")?.value || "");
-  if (!email && !username) {
-    if (status) status.textContent = "Enter an email address or Travel-Drip username.";
-    $("#inviteRecipientEmail")?.focus();
+  const type = $("#inviteRecipientType").value;
+  const email = type === "email" ? $("#inviteRecipientEmail").value.trim() : "";
+  const username = type === "username" ? normalizeUsername($("#inviteRecipientUsername").value) : "";
+  const mobile = type === "mobile" ? $("#inviteRecipientMobile").value.replace(/[\s().-]/g, "") : "";
+  if (type === "mobile" && !/^\+[1-9]\d{7,14}$/.test(mobile)) {
+    status.textContent = "Enter a mobile number with country code, such as +1 555 123 4567.";
+    $("#inviteRecipientMobile").focus();
     return;
   }
-  const methods = $$('[data-invite-method]').filter((input) => input.checked).map((input) => input.dataset.inviteMethod);
+  if (!email && !username && !mobile) return;
+  const methods = [type === "username" ? "In-app" : type === "mobile" ? "SMS" : "Email"];
+  const userId = state.session.user.id;
+  resetTripInviteResult();
   if (button) button.disabled = true;
+  $("#inviteRecipientType").disabled = true;
+  ["Username", "Email", "Mobile"].forEach((suffix) => { $(`#inviteRecipient${suffix}`).disabled = true; });
   if (status) status.textContent = "Creating a secure invitation...";
   try {
     const result = await apiRequest("/api/invitations", {
@@ -1986,6 +2026,7 @@ async function createTripInvitation() {
         tripId: state.activeTripId,
         inviteeEmail: email || null,
         inviteeUsername: username || null,
+        inviteeMobile: mobile || null,
         role: "traveler",
         deliveryMethods: methods,
         expiresAt: $("#inviteDeadlineInput")?.value ? new Date(`${$("#inviteDeadlineInput").value}T23:59:59`).toISOString() : undefined,
@@ -1996,22 +2037,50 @@ async function createTripInvitation() {
         }
       })
     });
+    if (state.session?.user?.id !== userId) return;
+    if (result.skipped || !result.shareUrl) throw new Error("The invitation service did not return a secure link.");
     $("#inviteShareLink").value = result.shareUrl || "";
     setVisibilityWithoutCssLeaks($("#inviteShareOutput"), Boolean(result.shareUrl));
     renderInviteQrCode(result.shareUrl || "");
-    const emailStatus = result.delivery?.email === "provider_required"
-      ? " The secure link is ready; email delivery still requires a configured transactional email provider."
-      : "";
-    if (status) status.textContent = `Invitation created for ${username ? `@${username}` : email}.${emailStatus}`;
-    $("#rsvpSentCount").textContent = String(Number($("#rsvpSentCount").textContent || 0) + 1);
-    $("#rsvpPendingCount").textContent = String(Number($("#rsvpPendingCount").textContent || 0) + 1);
-    addAuditEntry("Invitation created", `Secure invitation created for ${username ? `@${username}` : email}.`);
-    await saveSyncedEvent("trip_invitations_sent", { methods, invitationId: result.invitation?.id });
+    $("#tripInviteLink").value = result.shareUrl;
+    setVisibilityWithoutCssLeaks($("#tripInviteResult"), true);
+    const compose = $("#tripInviteComposeLink");
+    setVisibilityWithoutCssLeaks(compose, type !== "username");
+    const text = `You are invited to a Travel-Drip trip: ${result.shareUrl}`;
+    if (type === "email") {
+      compose.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent("Travel-Drip trip invitation")}&body=${encodeURIComponent(text)}`;
+      compose.textContent = "Open email";
+    } else if (type === "mobile") {
+      compose.href = `sms:${mobile}?body=${encodeURIComponent(text)}`;
+      compose.textContent = "Open text message";
+    }
+    const recipient = username ? `@${username}` : email || mobile;
+    status.textContent = type === "username"
+      ? `Invitation added to ${recipient}'s Travel-Drip invitations.`
+      : `Invitation link created for ${recipient}. Not sent yet. Open ${type === "email" ? "email" : "text message"} to review and send it, or copy the link.`;
+    $("#invitationStatusMessage").textContent = status.textContent;
+    loadTripInvitationCounts();
+    addAuditEntry("Invitation created", "Secure trip invitation created.");
+    await saveSyncedEvent("trip_invitation_created", { methods, invitationId: result.invitation?.id });
   } catch (error) {
     if (status) status.textContent = `Invitation could not be created: ${error.message}`;
   } finally {
-    if (button) button.disabled = false;
+    if (button) button.disabled = Boolean($("#tripInviteLink").value);
+    $("#inviteRecipientType").disabled = false;
+    ["Username", "Email", "Mobile"].forEach((suffix) => { $(`#inviteRecipient${suffix}`).disabled = suffix.toLowerCase() !== type; });
   }
+}
+
+async function loadTripInvitationCounts() {
+  if (!state.activeTripId || !state.session?.access_token) return;
+  const tripId = state.activeTripId;
+  try {
+    const result = await apiRequest(`/api/invitations?tripId=${encodeURIComponent(tripId)}`);
+    if (state.activeTripId !== tripId) return;
+    for (const [id, statuses] of Object.entries({ rsvpSentCount: ["sent", "delivered", "opened", "accepted"], rsvpOpenedCount: ["opened", "accepted"], rsvpAcceptedCount: ["accepted"], rsvpPendingCount: ["pending", "sent", "delivered", "opened", "maybe"] })) {
+      $(`#${id}`).textContent = String((result.invitations || []).filter((invite) => statuses.includes(invite.status)).length);
+    }
+  } catch (_error) { /* Keep counts unconfirmed if this account cannot manage invitations. */ }
 }
 
 async function handlePendingInvitation() {
@@ -2026,6 +2095,28 @@ async function handlePendingInvitation() {
   }
   const dialog = $("#invitationResponseDialog");
   if (dialog && !dialog.open) dialog.showModal();
+}
+
+async function loadIncomingTripInvitations() {
+  const list = $("#incomingTripInvitationList");
+  if (!list) return;
+  list.innerHTML = "";
+  if (!state.session?.access_token || isFilePreview) return;
+  const userId = state.session.user.id;
+  try {
+    const result = await apiRequest("/api/invitations?scope=incoming");
+    if (state.session?.user?.id !== userId) return;
+    list.innerHTML = (result.invitations || []).map((invite) => `<div class="incoming-trip-invite"><strong>${escapeHtml(invite.customization?.title || "Trip invitation")}</strong><button type="button" class="ghost-button" data-review-trip-invite="${escapeHtml(invite.id)}">Review invitation</button></div>`).join("");
+    list.onclick = (event) => {
+      const button = event.target.closest("[data-review-trip-invite]");
+      const invite = result.invitations.find((item) => item.id === button?.dataset.reviewTripInvite);
+      if (!invite) return;
+      state.pendingInvitation = { tripId: invite.trip_id, token: invite.token };
+      handlePendingInvitation();
+    };
+  } catch (_error) {
+    list.textContent = "Trip invitations could not be loaded. Refresh to try again.";
+  }
 }
 
 async function respondToPendingInvitation(status) {
@@ -2050,6 +2141,7 @@ async function respondToPendingInvitation(status) {
       await loadAccountData();
       renderRoute("dashboardHome", { updateHistory: true });
     }
+    await loadIncomingTripInvitations();
     showWorkflowMessage("Trip invitation", status === "accepted" ? "Invitation accepted. The trip is now available on your dashboard." : `Invitation marked ${status}.`);
   } catch (error) {
     if (message) message.textContent = error.message;
@@ -2098,6 +2190,8 @@ function dashboardShouldShowBlankState() {
 }
 
 function resetAccountData() {
+  if ($("#incomingTripInvitationList")) $("#incomingTripInvitationList").innerHTML = "";
+  $("#tripInviteDialog")?.close();
   state.accountData = { loaded: false, loading: false, trips: [], activeTrip: null, moduleData: {}, counts: {}, showCreation: false, error: "" };
   state.chatData = { loaded: false, rooms: [], messages: [], polls: [], selectedRoomId: "" };
   state.activeTripId = "";
@@ -2475,6 +2569,7 @@ function renderActiveTripAccountData() {
 
 async function loadAccountData() {
   if (!state.session?.access_token || state.accountData.loading) return state.accountData;
+  loadIncomingTripInvitations();
   if (isFilePreview) {
     state.accountData = {
       loaded: true,
@@ -4373,11 +4468,24 @@ function getAiPlannerPlan() {
 
 function renderAiPlanner() {
   if (!$("#aiPlannerQuestion")) return;
-  const step = aiPlannerSteps[Math.min(state.aiPlanner.step, aiPlannerSteps.length - 1)];
+  state.aiPlanner.step = Math.max(0, Math.min(Number(state.aiPlanner.step) || 0, aiPlannerSteps.length));
+  const editing = Number.isInteger(state.aiPlanner.editingStep);
+  const step = aiPlannerSteps[editing ? state.aiPlanner.editingStep : state.aiPlanner.step];
   $("#aiPlannerQuestion").textContent = step ? step.question : "Your preferences are collected. Use live research to request a plan.";
-  $("#aiPlannerReplies").innerHTML = (step?.options || ["Regenerate itinerary", "Create Trip", "Share Trip"]).map((option) => (
+  $("#aiPlannerReplies").innerHTML = (step?.options || []).map((option) => (
     `<button type="button" data-ai-answer="${escapeHtml(option)}">${escapeHtml(option)}</button>`
   )).join("");
+  $("#aiPlannerSendButton").textContent = editing ? "Save answer" : "Send";
+  $("#aiPlannerSendButton").disabled = !step;
+  $("#aiPlannerFreeformInput").disabled = !step;
+  $("#aiPlannerFreeformInput").placeholder = "Type your answer";
+  $("#aiPlannerFreeformInput").setAttribute("aria-label", "Planning answer");
+  setVisibilityWithoutCssLeaks($("#aiPlannerSkipButton"), Boolean(step));
+  setVisibilityWithoutCssLeaks($("#aiPlannerCancelEditButton"), editing);
+  $("#aiPlannerTranscript").innerHTML = aiPlannerSteps.map((item, index) => {
+    if (!(item.key in state.aiPlanner.answers)) return "";
+    return `<div class="planner-answer"><strong>${escapeHtml(item.question)}</strong><span>${escapeHtml(state.aiPlanner.answers[item.key] || "Skipped")}</span><button class="ghost-button" type="button" data-ai-edit="${index}" aria-label="Edit answer: ${escapeHtml(item.question)}">Edit</button></div>`;
+  }).join("");
 
   const answers = state.aiPlanner.answers;
   const memory = [
@@ -4403,19 +4511,28 @@ function renderAiPlanner() {
   )).join("");
 }
 
-async function answerAiPlanner(value) {
+function editAiPlannerAnswer(index) {
+  if (!Number.isInteger(index) || !aiPlannerSteps[index]) return;
+  state.aiPlanner.editingStep = index;
+  renderAiPlanner();
+  $("#aiPlannerFreeformInput").value = state.aiPlanner.answers[aiPlannerSteps[index].key] || "";
+  $("#aiPlannerFreeformInput").focus();
+}
+
+async function answerAiPlanner(value, skip = false) {
   const answer = String(value || "").trim();
-  if (!answer) return;
-  const step = aiPlannerSteps[Math.min(state.aiPlanner.step, aiPlannerSteps.length - 1)];
-  if (step) state.aiPlanner.answers[step.key] = answer;
-  $("#aiPlannerTranscript")?.insertAdjacentHTML("beforeend", `<div><strong>You</strong><span>${escapeHtml(answer)}</span></div>`);
-  state.aiPlanner.step = Math.min(state.aiPlanner.step + 1, aiPlannerSteps.length);
+  if (!skip && !answer) return;
+  const editing = Number.isInteger(state.aiPlanner.editingStep);
+  const step = aiPlannerSteps[editing ? state.aiPlanner.editingStep : state.aiPlanner.step];
+  if (!step) return;
+  state.aiPlanner.answers[step.key] = skip ? null : answer.slice(0, 1000);
+  if (!editing) state.aiPlanner.step = Math.min(state.aiPlanner.step + 1, aiPlannerSteps.length);
+  delete state.aiPlanner.editingStep;
+  $("#aiPlannerFreeformInput").value = "";
   saveAiPlannerState();
   renderAiPlanner();
-  const nextStep = aiPlannerSteps[Math.min(state.aiPlanner.step, aiPlannerSteps.length - 1)];
-  $("#aiPlannerTranscript")?.insertAdjacentHTML("beforeend", `<div class="assistant"><strong>Travel-Drip AI</strong><span>${escapeHtml(nextStep ? nextStep.question : "Your draft is ready. You can save, share, regenerate, or create a trip now.")}</span></div>`);
-  $("#aiPlannerStatus").textContent = `Saved ${Object.keys(state.aiPlanner.answers).length} planning answer(s) in this session.`;
-  await saveSyncedEvent("ai_planner_answered", { step: step?.key || "complete", answer, tripMode: getAiPlannerTripMode() });
+  $("#aiPlannerStatus").textContent = skip ? "Question skipped." : editing ? "Answer updated. Your other answers are unchanged." : "Answer saved.";
+  // Do not include potentially sensitive answers in automatic activity events.
 }
 
 async function handleExploreAction(action, itemId) {
@@ -4468,12 +4585,12 @@ function renderInvitationSetup(type) {
   $("#invitePreviewType").textContent = typeLabel;
   $("#inviteTitleInput").value = config.title;
   $("#inviteMessageInput").value = config.message;
-  $("#inviteRecipientList").innerHTML = config.recipients.map((recipient) => `<span>${escapeHtml(recipient)}</span>`).join("");
   $("#companyLogoField").hidden = !config.companyLogo;
   $("#rsvpSentCount").textContent = "0";
   $("#rsvpOpenedCount").textContent = "0";
   $("#rsvpAcceptedCount").textContent = "0";
   $("#rsvpPendingCount").textContent = "0";
+  loadTripInvitationCounts();
 }
 
 function startAuthCarousel() {
@@ -8975,7 +9092,25 @@ function wireLocalInteractions() {
     await saveSyncedEvent("ai_invitation_copy_generated", { type });
   });
 
-  $("#sendInvitesNowButton")?.addEventListener("click", createTripInvitation);
+  $("#sendInvitesNowButton")?.addEventListener("click", openTripInviteDialog);
+  $$("[data-open-trip-invite]").forEach((button) => button.addEventListener("click", openTripInviteDialog));
+  $("#closeTripInviteButton")?.addEventListener("click", () => $("#tripInviteDialog").close());
+  $("#inviteRecipientType")?.addEventListener("change", updateTripInviteRecipientType);
+  ["#inviteRecipientUsername", "#inviteRecipientEmail", "#inviteRecipientMobile"].forEach((selector) => {
+    $(selector)?.addEventListener("input", resetTripInviteResult);
+  });
+  $("#tripInviteForm")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    createTripInvitation();
+  });
+  $("#copyTripInviteButton")?.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText($("#tripInviteLink").value);
+      $("#tripInviteStatus").textContent = "Invitation link copied.";
+    } catch (_error) {
+      $("#tripInviteStatus").textContent = "Select and copy the invitation link above.";
+    }
+  });
   $("#copyInviteLinkButton")?.addEventListener("click", async () => {
     const link = $("#inviteShareLink")?.value || "";
     if (!link) return;
@@ -10382,6 +10517,16 @@ function wireLocalInteractions() {
   $("#aiPlannerReplies")?.addEventListener("click", (event) => {
     const button = event.target.closest("[data-ai-answer]");
     if (button) answerAiPlanner(button.dataset.aiAnswer);
+  });
+  $("#aiPlannerSkipButton")?.addEventListener("click", () => answerAiPlanner("", true));
+  $("#aiPlannerTranscript")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-ai-edit]");
+    if (button) editAiPlannerAnswer(Number(button.dataset.aiEdit));
+  });
+  $("#aiPlannerCancelEditButton")?.addEventListener("click", () => {
+    delete state.aiPlanner.editingStep;
+    $("#aiPlannerFreeformInput").value = "";
+    renderAiPlanner();
   });
   $("#aiPlannerSendButton")?.addEventListener("click", () => {
     const input = $("#aiPlannerFreeformInput");

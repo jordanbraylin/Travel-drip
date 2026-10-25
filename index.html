@@ -14,7 +14,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Travel-Drip">
     <link rel="stylesheet" href="styles.css?v=124">
-  <link rel="stylesheet" href="navigation.css?v=92">
+  <link rel="stylesheet" href="navigation.css?v=93">
   <title>Travel-Drip</title>
 </head>
 <body>
@@ -557,6 +557,7 @@
       </section>
 
       <section class="dashboard-widgets" id="dashboardWidgets" data-dashboard-only aria-label="Customizable dashboard widgets">
+        <div id="incomingTripInvitationList" aria-label="Incoming trip invitations" aria-live="polite"></div>
         <div class="section-heading compact">
           <div>
             <p class="eyebrow">Smart Dashboard</p>
@@ -885,6 +886,7 @@
             </div>
             <div class="ai-planner-shell">
               <section class="ai-planner-chat" aria-live="polite">
+                <div class="ai-planner-transcript" id="aiPlannerTranscript" aria-label="AI planning conversation"></div>
                 <div class="ai-planner-message assistant">
                   <strong>Travel-Drip AI</strong>
                   <p id="aiPlannerQuestion">What type of trip are you planning?</p>
@@ -898,8 +900,9 @@
                 <div class="ai-planner-input-row">
                   <input id="aiPlannerFreeformInput" type="text" placeholder="Or type an answer, like: Miami group trip under $900">
                   <button class="ghost-button" type="button" id="aiPlannerSendButton">Send</button>
+                  <button class="ghost-button" type="button" id="aiPlannerSkipButton">Skip</button>
+                  <button class="ghost-button" type="button" id="aiPlannerCancelEditButton" hidden>Cancel edit</button>
                 </div>
-                <div class="ai-planner-transcript" id="aiPlannerTranscript" aria-label="AI planning conversation"></div>
               </section>
 
               <aside class="ai-planner-summary">
@@ -1134,7 +1137,7 @@
                     <p id="invitationModeCopy">Solo travelers can share an itinerary with trusted contacts or invite someone to join later.</p>
                   </div>
                   <div class="button-row no-margin">
-                    <button class="primary-button" type="button" id="sendInvitesNowButton">Send Invitations Now</button>
+                    <button class="primary-button" type="button" id="sendInvitesNowButton">Invite people</button>
                     <button class="ghost-button" type="button" id="saveInvitesLaterButton">Save & Invite Later</button>
                     <button class="ghost-button" type="button" id="skipInvitesButton">Skip for Now</button>
                   </div>
@@ -1165,18 +1168,15 @@
                 </div>
                 <div class="invitation-options-grid">
                   <section>
-                    <h3>Recipients</h3>
-                    <div class="invitation-form-grid invitation-recipient-fields">
-                      <label>Email address<input id="inviteRecipientEmail" type="email" autocomplete="email" placeholder="traveler@example.com"></label>
-                      <label>Or Travel-Drip username<input id="inviteRecipientUsername" type="text" autocomplete="off" placeholder="@username"></label>
-                    </div>
+                    <h3>Invite people</h3>
+                    <button class="ghost-button" type="button" data-open-trip-invite>Choose recipient</button>
                     <div class="invite-share-output" id="inviteShareOutput" hidden>
                       <label>Shareable invitation link<input id="inviteShareLink" type="url" readonly></label>
                       <div id="inviteQrCode" aria-label="Invitation QR code"></div>
                       <button class="ghost-button" type="button" id="copyInviteLinkButton">Copy link</button>
                     </div>
                   </section>
-                  <section>
+                  <section hidden inert>
                     <h3>Delivery methods</h3>
                     <div class="invite-checkbox-grid">
                       <label><input type="checkbox" data-invite-method="Email" checked> Email</label>
@@ -4546,6 +4546,26 @@
     </form>
   </dialog>
 
+  <dialog class="pin-dialog trip-invite-dialog" id="tripInviteDialog" aria-labelledby="tripInviteTitle">
+    <form id="tripInviteForm" class="pin-card">
+      <div class="dialog-heading">
+        <h2 id="tripInviteTitle">Invite someone</h2>
+        <button class="ghost-button" type="button" id="closeTripInviteButton" aria-label="Close invitation">Close</button>
+      </div>
+      <label>Invite by<select id="inviteRecipientType"><option value="username">Travel-Drip username</option><option value="email">Email</option><option value="mobile">Mobile number</option></select></label>
+      <label id="inviteUsernameField">Username<input id="inviteRecipientUsername" type="text" autocomplete="off" maxlength="80" placeholder="@username" required></label>
+      <label id="inviteEmailField" hidden>Email address<input id="inviteRecipientEmail" type="email" autocomplete="email" maxlength="180" placeholder="name@example.com" disabled></label>
+      <label id="inviteMobileField" hidden>Mobile number<input id="inviteRecipientMobile" type="tel" autocomplete="tel" maxlength="25" placeholder="+1 555 123 4567" disabled></label>
+      <p class="small" id="tripInviteStatus" role="status"></p>
+      <div id="tripInviteResult" hidden>
+        <label>Invitation link<input id="tripInviteLink" type="url" readonly></label>
+        <a class="primary-button" id="tripInviteComposeLink" hidden>Open email</a>
+        <button class="ghost-button" type="button" id="copyTripInviteButton">Copy link</button>
+      </div>
+      <div class="dialog-actions"><button class="primary-button" id="createTripInviteButton" type="submit">Create invitation</button></div>
+    </form>
+  </dialog>
+
   <dialog class="pin-dialog" id="invitationResponseDialog" aria-labelledby="invitationResponseTitle">
     <form method="dialog" class="pin-card" id="invitationResponseForm">
       <p class="eyebrow">Trip invitation</p>
@@ -4590,6 +4610,6 @@
   <script src="https://link.msgsndr.com/js/external-tracking.js" data-tracking-id="tk_684cd074f7154fbebd60d6f62b2d331b"></script>
   <script src="public-config.js?v=3"></script>
   <script src="vendor/qrcode.js?v=1"></script>
-  <script defer src="app.js?v=85"></script>
+  <script defer src="app.js?v=86"></script>
 </body>
 </html>

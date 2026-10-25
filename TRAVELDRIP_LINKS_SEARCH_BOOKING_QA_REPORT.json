@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-10-21T21:12:24.123Z",
+  "generatedAt": "2026-10-25T18:14:43.335Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
   },
   "totals": {
-    "screenIds": 923,
-    "buttons": 716,
+    "screenIds": 941,
+    "buttons": 722,
     "hrefLinks": 8,
     "dataTargets": 98,
     "uniqueDataTargets": 18,
