@@ -4,7 +4,7 @@ html[data-text-size="extra-large"] { --reading-size: 22px; }
 
 html body.signed-in-shell {
   color: #193238;
-  background: #f5f7f8;
+  background: #eef9fb;
   font-size: var(--reading-size);
   line-height: 1.6;
 }
@@ -33,19 +33,19 @@ html body.signed-in-shell :focus-visible { outline: 3px solid #076b65 !important
 html body.signed-in-shell [hidden] { display: none !important; }
 
 html body.signed-in-shell .sidebar {
-  background: #fff !important;
-  color: #193238 !important;
+  background: #073e49 !important;
+  color: #fff !important;
   border-right: 1px solid #ccd8dc;
 }
 
-html body.signed-in-shell .sidebar .brand { background: #173d44; padding: 12px; border-radius: 6px; }
+html body.signed-in-shell .sidebar .brand { background: #006779; padding: 12px; border-radius: 6px; }
 html body.signed-in-shell .simple-main-menu { display: grid !important; gap: 6px; margin-top: 20px; }
 html body.signed-in-shell .simple-main-menu > button {
   display: block !important;
   width: 100%;
   padding: 12px 16px !important;
   text-align: left;
-  color: #193238 !important;
+  color: #fff !important;
   background: transparent !important;
   border: 1px solid transparent !important;
   border-radius: 6px !important;
@@ -53,9 +53,9 @@ html body.signed-in-shell .simple-main-menu > button {
   font-weight: 600;
 }
 html body.signed-in-shell .simple-main-menu > button.active {
-  color: #07544f !important;
-  background: #e3f3ee !important;
-  border-color: #8bbeb0 !important;
+  color: #073e49 !important;
+  background: #59e1d5 !important;
+  border-color: #59e1d5 !important;
 }
 html body.signed-in-shell .simple-main-menu [hidden],
 html body.signed-in-shell #adminPanel [hidden] { display: none !important; }
@@ -64,10 +64,34 @@ html body.signed-in-shell .trip-tab-bar { display: none !important; }
 html body.signed-in-shell .topbar { background: #fff !important; padding: 12px 0 !important; min-height: 72px; box-shadow: none !important; border-bottom: 1px solid #ccd8dc; }
 html body.signed-in-shell .topbar > .search { display: none !important; }
 html body.signed-in-shell .topbar { display: flex !important; justify-content: flex-end; gap: 16px; }
-html body.signed-in-shell #letsPlanButton { flex: 0 0 auto !important; width: auto !important; padding: 10px 20px !important; background: #076b65 !important; color: #fff !important; border-radius: 6px !important; box-shadow: none !important; }
+html body.signed-in-shell #letsPlanButton { flex: 0 0 auto !important; width: auto !important; padding: 10px 20px !important; background: #00788a !important; color: #fff !important; border-radius: 6px !important; box-shadow: none !important; }
 html body.signed-in-shell .topbar .profile-avatar-button { display: flex; gap: 10px; width: auto !important; height: auto !important; padding: 6px 12px !important; background: #fff !important; color: #193238 !important; border: 1px solid #aebfc5; border-radius: 6px; }
 html body.signed-in-shell .topbar .profile-photo-avatar { width: 32px; height: 32px; font-size: 14px; }
 html body.signed-in-shell #globalDestinationHeader { display: none !important; }
+html body.signed-in-shell:is([data-active-route="dashboardHome"], [data-active-route="exploreDrops"]) #globalDestinationHeader:not([hidden]) {
+  display: grid !important;
+  position: relative !important;
+  top: auto;
+  grid-template-columns: 128px minmax(0, 1fr) auto !important;
+  gap: 16px;
+  padding: 16px;
+  min-height: 120px;
+  border: 0;
+  border-left: 6px solid #ed755f;
+  border-radius: 6px;
+  background: #d5f6f2;
+  box-shadow: none;
+  opacity: 1;
+  transform: none;
+}
+html body.signed-in-shell #globalDestinationHeader img { width: 128px; height: 88px; border-radius: 6px; object-fit: cover; }
+html body.signed-in-shell #globalDestinationHeader .global-destination-copy { color: #193238; }
+html body.signed-in-shell #globalDestinationHeader .global-destination-copy :is(span, strong, p) { color: inherit; }
+html body.signed-in-shell #globalDestinationHeader .global-destination-copy p { margin: 4px 0 0; }
+html body.signed-in-shell #globalDestinationHeader .global-destination-actions button { background: #fff; color: #07544f; border: 1px solid #00788a; border-radius: 6px; white-space: normal; overflow-wrap: anywhere; height: auto; padding: 10px 14px; }
+html body.signed-in-shell .travel-widget[data-widget="upcoming"] { border-top: 4px solid #00a5b5 !important; }
+html body.signed-in-shell .travel-widget[data-widget="budget"] { border-top: 4px solid #ed755f !important; }
+html body.signed-in-shell .travel-widget[data-widget="weather"] { border-top: 4px solid #e6b92e !important; }
 
 html body.signed-in-shell :is(.section-heading, .account-live-dashboard, .account-empty-dashboard) { background: transparent !important; box-shadow: none !important; }
 html body.signed-in-shell .section-heading { border: 0 !important; border-radius: 0 !important; }
@@ -124,6 +148,14 @@ html[data-reduce-motion="true"] *, html[data-reduce-motion="true"] *::before, ht
 html[data-high-contrast="true"] body.signed-in-shell { color: #111 !important; background: #fff !important; }
 html[data-high-contrast="true"] body.signed-in-shell :is(p, span, label, button, input, select, strong, h1, h2, h3) { color: #111 !important; }
 html[data-high-contrast="true"] body.signed-in-shell :is(button, input, select, textarea) { background: #fff !important; border: 2px solid #111 !important; }
+html[data-high-contrast="true"] body.signed-in-shell :is(.sidebar, #globalDestinationHeader:not([hidden])) { background: #fff !important; color: #111 !important; border: 2px solid #111 !important; }
+
+@media (max-width: 760px) {
+  html body.signed-in-shell:is([data-active-route="dashboardHome"], [data-active-route="exploreDrops"]) #globalDestinationHeader:not([hidden]) { grid-template-columns: 80px minmax(0, 1fr) !important; gap: 12px; padding: 12px; }
+  html body.signed-in-shell #globalDestinationHeader img { width: 80px; height: 80px; }
+  html body.signed-in-shell #globalDestinationHeader .global-destination-actions { grid-column: 1 / -1; justify-content: flex-start; }
+  html body.signed-in-shell #globalDestinationHeader .global-destination-actions button { flex: 1 1 120px; }
+}
 
 @media (max-width: 1080px) {
   html body.signed-in-shell .topbar { display: grid !important; grid-template-columns: 64px minmax(0, 1fr) auto !important; grid-template-rows: auto !important; padding: 10px 0 !important; min-height: 64px; }

@@ -1241,7 +1241,10 @@ function startGlobalDestinationHeader() {
   };
   const resume = () => {
     if (state.globalDestinationPaused || state.globalDestinationTimer || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    state.globalDestinationTimer = window.setInterval(() => renderGlobalDestinationHeader(getTargetFromRoute(), state.globalDestinationIndex + 1), 8000);
+    state.globalDestinationTimer = window.setInterval(() => {
+      if (document.hidden || document.documentElement.dataset.reduceMotion === "true" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      renderGlobalDestinationHeader(getTargetFromRoute(), state.globalDestinationIndex + 1);
+    }, 8000);
   };
   header.addEventListener("mouseenter", stop);
   header.addEventListener("mouseleave", resume);
