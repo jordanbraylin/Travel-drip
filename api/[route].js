@@ -23,6 +23,7 @@ import travelSearch from "../server/api/travel-search.js";
 import trips from "../server/api/trips.js";
 import walletReminders from "../server/api/wallet-reminders.js";
 import wallet from "../server/api/wallet.js";
+import weather from "../server/api/weather.js";
 import { applySecurityHeaders } from "../server/api/_security.js";
 
 const routes = Object.freeze({
@@ -51,6 +52,7 @@ const routes = Object.freeze({
   trips,
   "wallet-reminders": walletReminders,
   wallet,
+  weather,
 });
 
 export default async function handler(request, response) {

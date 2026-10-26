@@ -51,7 +51,7 @@ const requiredToolbarRoutes = {
   chat: "/chat",
   "important-info": "/important-info",
   memories: "/memories",
-  settings: "/settings"
+  settings: "/account"
 };
 const sidebarBlock = html.match(/<aside\b[^>]*class=["'][^"']*\bsidebar\b[^"']*["'][\s\S]*?<\/aside>/)?.[0] || "";
 const sidebarMainNavigationIds = unique(matchAll(sidebarBlock, /\bdata-main-nav-id=["']([^"']+)["']/g));

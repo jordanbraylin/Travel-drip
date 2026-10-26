@@ -52,6 +52,7 @@ const savedContext = {
   state: { accountData: { trips: [] } },
   document: { createElement: () => ({ append() {}, addEventListener(type, handler) { this.handler = handler; } }) },
   openTripInviteDialog() {},
+  appendRemovedTripsControl() {},
   container: { append() {}, querySelector: () => ({ append: (button) => savedActions.push(button) }) }
 };
 vm.runInNewContext(source.slice(source.indexOf("function renderSavedTripList("), source.indexOf("function getSavedModuleRecords(")) + "\nrenderSavedTripList(container);", savedContext);

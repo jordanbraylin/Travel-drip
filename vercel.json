@@ -105,6 +105,8 @@
     { "source": "/corporate/:path*", "destination": "/index.html" },
     { "source": "/profile", "destination": "/index.html" },
     { "source": "/profile/:path*", "destination": "/index.html" },
+    { "source": "/account", "destination": "/index.html" },
+    { "source": "/account/:path*", "destination": "/index.html" },
     { "source": "/settings", "destination": "/index.html" },
     { "source": "/settings/:path*", "destination": "/index.html" }
   ]

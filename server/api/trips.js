@@ -123,11 +123,12 @@ function makeWalletIdentifier(tripId) {
 }
 
 async function listTrips(request, response, supabase, user) {
+  const removed = new URL(request.url, "https://traveldrip.local").searchParams.get("scope") === "removed";
   const query = supabase
     .from("trip_members")
     .select("role, status, trips(*)")
     .eq("user_id", user.id)
-    .eq("status", "active")
+    .in("status", removed ? ["active", "left"] : ["active"])
     .order("created_at", { ascending: false });
 
   const { data, error } = await query;
@@ -139,6 +140,7 @@ async function listTrips(request, response, supabase, user) {
   response.status(200).json({
     trips: (data || [])
       .filter((row) => row?.trips?.id)
+      .filter((row) => removed ? row.trips.status === "archived" || row.status === "left" : row.trips.status !== "archived")
       .map((row) => ({
         ...row.trips,
         myRole: row.role,
@@ -319,6 +321,31 @@ async function createTrip(response, supabase, user, body) {
   response.status(201).json({ trip, modules, featureFlags, tripWallet, tripWalletCard });
 }
 
+export async function changeTripVisibility(response, supabase, user, body) {
+  const tripId = body.tripId;
+  if (!tripId) return response.status(400).json({ error: "tripId is required" });
+  const { data: trip, error } = await supabase.from("trips").select("id, owner_user_id, status, settings").eq("id", tripId).maybeSingle();
+  if (error || !trip) return response.status(404).json({ error: "Trip not found" });
+  const owner = trip.owner_user_id === user.id;
+  if (body.action === "restore") {
+    if (!owner) return response.status(403).json({ error: "Only the trip owner can restore a removed trip" });
+    if (trip.status !== "archived") return response.status(409).json({ error: "This trip is not removed" });
+  } else if (!await requireTripRole(supabase, tripId, user.id)) {
+    return response.status(403).json({ error: "Active trip membership required" });
+  }
+  let result;
+  if (owner) {
+    const previous = ["draft", "active", "cancelled"].includes(trip.settings?.previousStatus) ? trip.settings.previousStatus : "draft";
+    const status = body.action === "restore" ? previous : "archived";
+    result = await supabase.from("trips").update({ status, settings: { ...trip.settings, previousStatus: trip.status === "archived" ? trip.settings?.previousStatus : trip.status }, updated_at: new Date().toISOString() }).eq("id", tripId).eq("owner_user_id", user.id).eq("status", trip.status).select("id").single();
+  } else {
+    result = await supabase.from("trip_members").update({ status: "left" }).eq("trip_id", tripId).eq("user_id", user.id).eq("status", "active").select("id").single();
+  }
+  if (result.error) return response.status(500).json({ error: "The trip could not be updated. Please retry." });
+  await writeAuditLog(supabase, { actorUserId: user.id, tripId, action: body.action === "restore" ? "trip.restored" : owner ? "trip.archived" : "trip.left", entityType: "trip", entityId: tripId });
+  response.status(200).json({ tripId, action: body.action, restorable: owner });
+}
+
 async function updateTrip(response, supabase, user, body) {
   const tripId = body.tripId || body.trip_id;
   if (!tripId) {
@@ -381,6 +408,10 @@ export default async function handler(request, response) {
   }
 
   const body = getRequestBody(request);
+  if (request.method === "PATCH" && ["remove", "restore"].includes(body.action)) {
+    await changeTripVisibility(response, supabase, user, body);
+    return;
+  }
   if (request.method === "POST") {
     await createTrip(response, supabase, user, body);
     return;

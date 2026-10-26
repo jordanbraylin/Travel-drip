@@ -1441,7 +1441,7 @@ const travelTileDestinations = {
   weather: {
     title: "Weather",
     route: "/trips/dubai-weekend/transportation/weather",
-    summary: "No forecast is loaded. Current weather requires a connected forecast provider."
+    summary: "Current forecast for your trip destination or approximate location."
   },
   maps: {
     title: "Maps",
@@ -1645,6 +1645,7 @@ function showTravelTileDestination(section, options = {}) {
   if ($("#travelSelectedSummary")) $("#travelSelectedSummary").textContent = destination.summary;
   if ($("#travelSelectedRoute")) $("#travelSelectedRoute").textContent = destination.route;
   syncTravelSectionControls(section);
+  showTravelWeather(section);
   return destination;
 }
 
@@ -2193,6 +2194,7 @@ function dashboardShouldShowBlankState() {
 }
 
 function resetAccountData() {
+  clearTripWeather();
   if ($("#incomingTripInvitationList")) $("#incomingTripInvitationList").innerHTML = "";
   $("#tripInviteDialog")?.close();
   state.accountData = { loaded: false, loading: false, trips: [], activeTrip: null, moduleData: {}, counts: {}, showCreation: false, error: "" };
@@ -2244,6 +2246,7 @@ function ensureAccountRouteEmptyState(section, target) {
   emptyState.hidden = true;
   emptyState.innerHTML = `<p class="eyebrow">Getting started</p><h2>${escapeHtml(title)}</h2><p>${escapeHtml(copy)}</p><div class="account-empty-actions"><button class="primary-button" type="button" data-account-empty-action="${escapeHtml(action)}">${escapeHtml(actionLabel)}</button><button class="ghost-button" type="button" data-account-empty-action="explore">Explore</button></div>`;
   section.append(emptyState);
+  if (target === "tripsPanel") appendRemovedTripsControl(emptyState);
   return emptyState;
 }
 
@@ -2382,9 +2385,16 @@ function renderSavedTripList(container) {
     const detail = document.createElement("span");
     detail.textContent = [trip.destination, trip.starts_on, trip.ends_on, trip.status].filter(Boolean).join(" · ");
     item.append(button, detail);
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "ghost-button remove-trip-button";
+    remove.textContent = trip.owner_user_id === state.session?.user?.id ? "Remove trip" : "Leave trip";
+    remove.addEventListener("click", () => openTripRemoval(trip));
+    item.append(remove);
     list.append(item);
   }
   container.append(list);
+  appendRemovedTripsControl(container);
 }
 
 function getSavedModuleRecords(target) {
@@ -2649,6 +2659,7 @@ async function loadAccountData() {
     loadMemoryFiles().catch(() => {});
     loadTripDocuments().catch(() => {});
     subscribeToLiveData();
+    refreshTripWeather();
   }
   return state.accountData;
 }
@@ -4152,7 +4163,8 @@ function syncCorporateEmployeeRouteVisibility(employeeMode) {
 }
 
 function updateDashboardWidgets() {
-  const tripType = $("#dashboardTripType")?.value || "group";
+  const tripType = $("#dashboardTripType")?.value || state.dashboardTripType || "group";
+  state.dashboardTripType = tripType;
   const role = tripType === "corporate" && hasValidCorporateAccess()
     ? state.corporateAccess.role || "employee"
     : $("#rolePreview")?.value || "employee";
@@ -6672,7 +6684,7 @@ const mainNavigation = Object.freeze([
   { id: "chat", label: "Chat", target: "socialHub", path: "/chat" },
   { id: "important-info", label: "Important Info", target: "importantInfo", path: "/important-info" },
   { id: "memories", label: "Memories", target: "memoriesPanel", path: "/memories" },
-  { id: "settings", label: "Settings", target: "adminPanel", path: "/settings" }
+  { id: "settings", label: "Account", target: "adminPanel", path: "/account" }
 ]);
 
 const mainNavigationById = Object.fromEntries(mainNavigation.map((item) => [item.id, item]));
@@ -6789,7 +6801,7 @@ const routeDefinitions = {
   memoriesPanel: { path: "/memories", label: "Memories" },
   enterpriseRbac: { path: "/corporate", label: "Corporate" },
   myProfile: { path: "/profile/my-profile", label: "My Profile" },
-  adminPanel: { path: mainNavigationByTarget.adminPanel.path, label: "Settings" },
+  adminPanel: { path: mainNavigationByTarget.adminPanel.path, label: "Account" },
   copyrightPolicy: { path: "/settings/help", label: "Help & Copyright" }
 };
 
@@ -6840,7 +6852,7 @@ const routeAliases = {
   "/trips/dubai-weekend/transportation/routes": "transportationPanel",
   "/trips/dubai-weekend/transportation/tickets": "transportationPanel",
   "/trips/dubai-weekend/transportation/boarding": "transportationPanel",
-  "/trips/dubai-weekend/transportation/weather": "transportationPanel",
+  "/trips/dubai-weekend/transportation/weather": "rideShareHub",
   "/trips/dubai-weekend/transportation/maps": "transportationPanel",
   "/trips/dubai-weekend/transportation/documents": "transportationPanel",
   "/trips/dubai-weekend/transportation/itinerary": "transportationPanel",
@@ -6890,10 +6902,10 @@ const routeAliases = {
   "/profile/edit": "myProfile",
   "/profile/privacy": "adminPanel",
   "/profile/notifications": "adminPanel",
-  "/profile/connected-accounts": "socialHub",
-  "/profile/ride-share-connections": "transportationPanel",
-  "/profile/social-media-connections": "socialHub",
-  "/profile/wallet-settings": "walletPanel",
+  "/profile/connected-accounts": "adminPanel",
+  "/profile/ride-share-connections": "adminPanel",
+  "/profile/social-media-connections": "adminPanel",
+  "/profile/wallet-settings": "adminPanel",
   "/profile/security": "adminPanel",
   "/profile/travel-statistics": "tripsPanel",
   "/settings": "adminPanel",
@@ -7026,7 +7038,7 @@ function setSidebarOpen(open, restoreFocus = false) {
   document.body.classList.toggle("sidebar-open", open);
   $("#sidebarMenuButton")?.setAttribute("aria-expanded", String(open));
   syncSidebarAccessibility();
-  if (open) $(".sidebar summary")?.focus();
+  if (open) $(".sidebar .nav button, .sidebar summary")?.focus();
   else if (restoreFocus) $("#sidebarMenuButton")?.focus();
 }
 
@@ -7083,6 +7095,7 @@ function normalizeAppPath(pathname = location.pathname) {
 }
 
 function getTargetFromRoute(pathname = location.pathname) {
+  if (/^\/account(?:\/|$)/.test(normalizeAppPath(pathname))) return "adminPanel";
   const hashTarget = location.hash.startsWith("#") ? decodeURIComponent(location.hash.slice(1)) : "";
   const hashRouteTarget = hashTarget.split("/")[0];
   const hashSection = hashTarget.startsWith("rideShareHub/") ? hashTarget.slice("rideShareHub/".length) : "";
@@ -7301,6 +7314,10 @@ async function verifyCorporateAccessGate() {
 }
 
 function renderRoute(target = getTargetFromRoute(), { updateHistory = false, replace = false, travelSection = "", settingsFocus = "" } = {}) {
+  if (target === "myProfile") {
+    target = "adminPanel";
+    settingsFocus = "profile";
+  }
   let resolvedTarget = routeDefinitions[target] ? target : "dashboardHome";
   if (isCorporateEmployeeMode() && corporateEmployeeBlockedTargets.has(resolvedTarget)) {
     resolvedTarget = "dashboardHome";
@@ -7313,7 +7330,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
       : getTravelSectionFromRoute(location.pathname, history.state)
     : "";
   const activeSettingsFocus = resolvedTarget === "adminPanel"
-    ? settingsFocus || history.state?.settingsFocus || ""
+    ? settingsFocus || location.pathname.match(/^\/(?:account|settings|admin|profile)\/([^/]+)$/)?.[1] || history.state?.settingsFocus || "account"
     : "";
   if (!state.session?.user && location.pathname !== "/admin.html") {
     rememberProtectedTarget(resolvedTarget);
@@ -7414,9 +7431,7 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   document.title = `${routeDefinitions[resolvedTarget].label} - Travel-Drip`;
   setSidebarOpen(false);
   window.scrollTo({ top: 0, behavior: "smooth" });
-  if (resolvedTarget === "adminPanel" && activeSettingsFocus) {
-    window.setTimeout(() => getRouteComponentById(activeSettingsFocus)?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
-  }
+  if (resolvedTarget === "adminPanel") selectAccountSettings(activeSettingsFocus);
 }
 
 function openPlanningWorkflow(type = "group") {
@@ -7693,6 +7708,9 @@ async function uploadMemoryFiles(files, action) {
 
 function wireLocalInteractions() {
   moveTransportationWorkspace();
+  initializeSimpleExperience();
+  initializeTripManagement();
+  initializeLiveWeather();
   applyMainNavigationConfig();
   applySmartDashboardLayout();
   ["#eventDateInput", "#eventRsvpInput", "#flightDepartureDateInput"].forEach((selector) => {
@@ -9629,12 +9647,10 @@ function wireLocalInteractions() {
     });
   });
   $$("[data-settings-section]").forEach((button) => {
-    button.addEventListener("click", async () => {
+    button.addEventListener("click", () => {
       const section = button.dataset.settingsSection;
-      $$("[data-settings-section]").forEach((entry) => entry.classList.toggle("active", entry === button));
-      $$(".settings-section").forEach((panel) => panel.classList.toggle("active", panel.dataset.settingsPanel === section));
-      if ($("#settingsStatusMessage")) $("#settingsStatusMessage").textContent = `${button.textContent.trim()} settings opened. Rows stay separated with no overlapping controls.`;
-      await saveSyncedEvent("settings_section_opened", { section });
+      if (document.body.dataset.activeRoute !== "adminPanel") renderRoute("adminPanel", { updateHistory: true, settingsFocus: section });
+      else selectAccountSettings(section);
     });
   });
   $("#settingsSearchInput")?.addEventListener("input", (event) => {
@@ -9994,7 +10010,7 @@ function wireLocalInteractions() {
   });
   $("#saveProfilePhotoButton")?.addEventListener("click", saveProfileMedia);
   $("#profileHeroSaveButton")?.addEventListener("click", () => {
-    $("#myProfile .profile-personal-grid")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    $("#adminPanel .profile-personal-grid")?.scrollIntoView({ behavior: "smooth", block: "start" });
     window.setTimeout(() => $("#profileFullNameInput")?.focus(), 350);
     if ($("#profileDetailsMessage")) $("#profileDetailsMessage").textContent = "Edit the fields below, then choose Save profile details.";
   });
@@ -10264,6 +10280,8 @@ function wireLocalInteractions() {
   });
 
   $("#walletPreviewCardButton")?.addEventListener("click", () => {
+    const details = $("#virtualCard")?.closest("details.simple-disclosure");
+    if (details) details.open = true;
     $("#virtualCard")?.scrollIntoView({ behavior: "smooth", block: "start" });
     $("#cardMessage").textContent = "Virtual Card opened from Wallet overview. Wallet PIN is still required for sensitive card actions.";
   });
@@ -10318,6 +10336,8 @@ function wireLocalInteractions() {
       $$("[data-wallet-section]").forEach((sectionButton) => sectionButton.classList.toggle("active", sectionButton.dataset.walletSection === section));
       const target = $(walletSectionTargets[section]);
       if (target) {
+        const disclosure = target.closest("details.simple-disclosure");
+        if (disclosure) disclosure.open = true;
         document.querySelectorAll(".wallet-focus").forEach((element) => element.classList.remove("wallet-focus"));
         target.classList.add("wallet-focus");
         window.setTimeout(() => target.classList.remove("wallet-focus"), 900);
@@ -10650,6 +10670,17 @@ function wireLocalInteractions() {
   $$("[data-wallet-action]").forEach((button) => {
     button.addEventListener("click", async () => {
       const action = button.dataset.walletAction;
+      if (action === "Add Funds") {
+        const form = $("#fundsForm");
+        const details = form?.closest("details.simple-disclosure");
+        if (details) details.open = true;
+        $("#fundAmount")?.focus();
+        return;
+      }
+      if (action === "Add Payment Method") {
+        renderRoute("adminPanel", { updateHistory: true, settingsFocus: "payments" });
+        return;
+      }
       if ($("#walletMessage")) {
         $("#walletMessage").textContent = `${action} opened from Wallet. Split bills, payment requests, pending payments, completed payments, and trip contributions remain one click away.`;
       }

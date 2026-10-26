@@ -23,6 +23,8 @@
     "test:free-search": "node scripts/test-free-search.js",
     "test:ux": "node scripts/test-user-experience.js",
     "test:invite-planner": "node scripts/test-invite-planner.js",
+    "test:simple": "node scripts/test-simple-experience.js",
+    "test:trip-weather": "node scripts/test-trip-weather.js",
     "audit:files": "grep -R \"SUPABASE_SERVICE_ROLE_KEY\\|VAPID_PRIVATE_KEY\\|sk-\\|password\" -n --exclude-dir=node_modules . || true"
   },
   "dependencies": {

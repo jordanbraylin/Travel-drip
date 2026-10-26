@@ -15,7 +15,7 @@ for (const narrow of [true, false]) {
   const context = {
     window: { matchMedia: () => ({ matches: narrow }) },
     document: { body: { classList: { contains: (name) => classes.has(name), toggle(name, enabled) { if (enabled) classes.add(name); else classes.delete(name); } } } },
-    $: (selector) => ({ ".sidebar": sidebar, "#sidebarMenuButton": menu, ".sidebar summary": summary })[selector]
+    $: (selector) => ({ ".sidebar": sidebar, "#sidebarMenuButton": menu, ".sidebar .nav button, .sidebar summary": summary })[selector]
   };
   vm.runInNewContext(`${source.slice(start, end)}\nsyncSidebarAccessibility();`, context);
   assert.equal(sidebar.inert, narrow);

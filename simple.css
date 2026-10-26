@@ -1,0 +1,145 @@
+:root { --reading-size: 18px; }
+html[data-text-size="large"] { --reading-size: 20px; }
+html[data-text-size="extra-large"] { --reading-size: 22px; }
+
+html body.signed-in-shell {
+  color: #193238;
+  background: #f5f7f8;
+  font-size: var(--reading-size);
+  line-height: 1.6;
+}
+
+html body.signed-in-shell :is(button, input, select, textarea, label, p, li, summary, .settings-row strong, .settings-row span) {
+  font-size: var(--reading-size) !important;
+  letter-spacing: 0 !important;
+  line-height: 1.5 !important;
+}
+
+html body.signed-in-shell :is(button, select, input:not([type="checkbox"]):not([type="radio"]), summary) {
+  min-height: 48px;
+}
+
+html body.signed-in-shell :is(input[type="checkbox"], input[type="radio"]) {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  accent-color: #076b65;
+}
+
+html body.signed-in-shell :is(h1, h2) { font-size: 28px !important; line-height: 1.3 !important; }
+html body.signed-in-shell h3 { font-size: 22px !important; line-height: 1.4 !important; }
+html body.signed-in-shell :is(h1, h2, h3, h4, p, strong, label) { overflow-wrap: anywhere; }
+html body.signed-in-shell :focus-visible { outline: 3px solid #076b65 !important; outline-offset: 3px; }
+html body.signed-in-shell [hidden] { display: none !important; }
+
+html body.signed-in-shell .sidebar {
+  background: #fff !important;
+  color: #193238 !important;
+  border-right: 1px solid #ccd8dc;
+}
+
+html body.signed-in-shell .sidebar .brand { background: #173d44; padding: 12px; border-radius: 6px; }
+html body.signed-in-shell .simple-main-menu { display: grid !important; gap: 6px; margin-top: 20px; }
+html body.signed-in-shell .simple-main-menu > button {
+  display: block !important;
+  width: 100%;
+  padding: 12px 16px !important;
+  text-align: left;
+  color: #193238 !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  font-weight: 600;
+}
+html body.signed-in-shell .simple-main-menu > button.active {
+  color: #07544f !important;
+  background: #e3f3ee !important;
+  border-color: #8bbeb0 !important;
+}
+html body.signed-in-shell .simple-main-menu [hidden],
+html body.signed-in-shell #adminPanel [hidden] { display: none !important; }
+html body.signed-in-shell .simple-main-menu .corporate-entry-nav { margin-top: 16px; border-top: 1px solid #ccd8dc; }
+html body.signed-in-shell .trip-tab-bar { display: none !important; }
+html body.signed-in-shell .topbar { background: #fff !important; padding: 12px 0 !important; min-height: 72px; box-shadow: none !important; border-bottom: 1px solid #ccd8dc; }
+html body.signed-in-shell .topbar > .search { display: none !important; }
+html body.signed-in-shell .topbar { display: flex !important; justify-content: flex-end; gap: 16px; }
+html body.signed-in-shell #letsPlanButton { flex: 0 0 auto !important; width: auto !important; padding: 10px 20px !important; background: #076b65 !important; color: #fff !important; border-radius: 6px !important; box-shadow: none !important; }
+html body.signed-in-shell .topbar .profile-avatar-button { display: flex; gap: 10px; width: auto !important; height: auto !important; padding: 6px 12px !important; background: #fff !important; color: #193238 !important; border: 1px solid #aebfc5; border-radius: 6px; }
+html body.signed-in-shell .topbar .profile-photo-avatar { width: 32px; height: 32px; font-size: 14px; }
+html body.signed-in-shell #globalDestinationHeader { display: none !important; }
+
+html body.signed-in-shell :is(.section-heading, .account-live-dashboard, .account-empty-dashboard) { background: transparent !important; box-shadow: none !important; }
+html body.signed-in-shell .section-heading { border: 0 !important; border-radius: 0 !important; }
+html body.signed-in-shell .section-heading > div > p:not(.eyebrow) { max-width: 62ch; }
+html body.signed-in-shell :is(.section-heading .eyebrow, #widgetStatusMessage, #settingsStatusMessage, .widget-toolbar button) { display: none !important; }
+html body.signed-in-shell :is(.widget-grid, #widgetGrid) { grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)) !important; }
+html body.signed-in-shell .travel-widget { grid-column: auto !important; grid-row: auto !important; min-height: 0 !important; padding: 20px !important; background: #fff !important; border: 1px solid #d3dfe2 !important; border-radius: 6px !important; box-shadow: none !important; }
+html body.signed-in-shell .widget-toolbar { font-size: var(--reading-size); color: #3e5962; }
+
+html body.signed-in-shell .simple-disclosure { display: block; width: 100%; min-width: 0; margin: 20px 0; padding: 0; border: 0; border-top: 1px solid #bacbd1; border-radius: 0; background: transparent; box-shadow: none; }
+html body.signed-in-shell .simple-disclosure > summary { padding: 18px 4px; color: #164d50; font-weight: 650; cursor: pointer; }
+html body.signed-in-shell .simple-disclosure:not([open]) > :not(summary) { display: none !important; }
+html body.signed-in-shell .simple-disclosure > :not(summary) { margin-top: 14px; }
+html body.signed-in-shell #tripsPanel.is-account-live > :not(.account-route-live),
+html body.signed-in-shell #tripsPanel.is-account-creation > :is(.feature-toggle-grid, .solo-dashboard-grid, .solo-feature-grid, .solo-support-grid) { display: none !important; }
+html body.signed-in-shell #aiTravelPlanner .ai-planner-shell { display: block !important; }
+html body.signed-in-shell .wallet-dashboard-sections { display: block !important; }
+html body.signed-in-shell .current-weather-view { padding: 20px; background: #fff; scroll-margin-top: 90px; }
+html body.signed-in-shell .current-weather-output { min-height: 96px; margin: 16px 0; }
+html body.signed-in-shell .current-weather-output strong { display: block; }
+html body.signed-in-shell .current-weather-output small,
+html body.signed-in-shell [data-widget="weather"] > small { display: block; color: #52676d; line-height: 1.5; }
+html body.signed-in-shell .removed-trip-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 0; border-bottom: 1px solid #ccd8dc; }
+html body.signed-in-shell .saved-record-list .remove-trip-button { width: auto !important; color: #96392e; }
+html body.signed-in-shell #internalServiceDiagnostics { display: none !important; }
+html body.signed-in-shell #aiTravelPlanner > .section-heading p { display: none !important; }
+html body.signed-in-shell #aiTravelPlanner .ai-planner-chat { background: #fff !important; border-radius: 6px; box-shadow: none; padding: 20px; }
+
+html body.signed-in-shell #adminPanel { padding: 24px !important; background: #fff !important; scroll-margin-top: 92px; }
+html body.signed-in-shell #adminPanel .settings-shell { display: grid !important; grid-template-columns: 230px minmax(0, 1fr) !important; gap: 32px; }
+html body.signed-in-shell #adminPanel .settings-nav-panel { display: flex !important; flex-direction: column; gap: 4px; padding: 0 !important; background: transparent !important; box-shadow: none !important; border: 0 !important; }
+html body.signed-in-shell #adminPanel .settings-shell > .settings-nav-panel { grid-column: 1 !important; grid-row: 1 !important; width: 100% !important; }
+html body.signed-in-shell #adminPanel .settings-shell > .settings-main-panel { grid-column: 2 !important; grid-row: 1 !important; display: block !important; width: 100% !important; }
+html body.signed-in-shell #adminPanel .settings-nav-panel > label { display: none !important; }
+html body.signed-in-shell #adminPanel .settings-nav-panel button { width: 100%; min-height: 48px; padding: 10px 12px !important; border: 0 !important; border-radius: 6px !important; text-align: left; background: transparent !important; color: #193238 !important; box-shadow: none !important; }
+html body.signed-in-shell #adminPanel .settings-nav-panel button.active { background: #e3f3ee !important; color: #07544f !important; font-weight: 700; }
+html body.signed-in-shell #adminPanel .settings-main-panel { min-width: 0; padding: 0 !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
+html body.signed-in-shell #adminPanel .settings-section { padding: 0 !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
+html body.signed-in-shell #adminPanel .settings-section[hidden] { display: none !important; }
+html body.signed-in-shell #adminPanel [data-settings-panel] > div:first-child > p { display: none !important; }
+html body.signed-in-shell #adminPanel .settings-row { padding: 18px 0 !important; border: 0 !important; border-bottom: 1px solid #d3dfe2 !important; background: transparent !important; border-radius: 0 !important; box-shadow: none !important; }
+html body.signed-in-shell #adminPanel .settings-row strong { text-transform: none !important; }
+html body.signed-in-shell #adminPanel .settings-row > div { min-width: 0; }
+html body.signed-in-shell #adminPanel .settings-row span { color: #52676d; }
+html body.signed-in-shell #adminPanel .settings-row :is(button, select) { max-width: 100%; min-width: 96px; }
+html body.signed-in-shell #adminPanel .profile-personal-grid { display: grid !important; grid-template-columns: 1fr !important; gap: 20px; }
+html body.signed-in-shell #adminPanel .profile-personal-grid article { background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
+html body.signed-in-shell #adminPanel .profile-personal-grid label { display: grid; gap: 8px; margin-bottom: 16px; }
+html body.signed-in-shell #adminPanel .profile-personal-grid input { width: 100%; min-width: 0; }
+html body.signed-in-shell .account-section-picker { display: none; }
+
+html[data-reduce-motion="true"] *, html[data-reduce-motion="true"] *::before, html[data-reduce-motion="true"] *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+html[data-high-contrast="true"] body.signed-in-shell { color: #111 !important; background: #fff !important; }
+html[data-high-contrast="true"] body.signed-in-shell :is(p, span, label, button, input, select, strong, h1, h2, h3) { color: #111 !important; }
+html[data-high-contrast="true"] body.signed-in-shell :is(button, input, select, textarea) { background: #fff !important; border: 2px solid #111 !important; }
+
+@media (max-width: 1080px) {
+  html body.signed-in-shell .topbar { display: grid !important; grid-template-columns: 64px minmax(0, 1fr) auto !important; grid-template-rows: auto !important; padding: 10px 0 !important; min-height: 64px; }
+  html body.signed-in-shell .topbar .profile-avatar-button { font-size: 16px !important; }
+  html body.signed-in-shell .topbar .profile-photo-avatar { display: none !important; }
+  html body.signed-in-shell #letsPlanButton { font-size: 16px !important; padding: 8px 12px !important; }
+  html body.signed-in-shell .mobile-nav > button { font-size: 14px !important; }
+}
+
+@media (max-width: 760px) {
+  html body.signed-in-shell #adminPanel { padding: 18px !important; }
+  html body.signed-in-shell #adminPanel .settings-shell { display: block !important; }
+  html body.signed-in-shell #adminPanel .settings-nav-panel { display: none !important; }
+  html body.signed-in-shell .account-section-picker { display: grid; gap: 8px; margin-bottom: 24px; font-weight: 600; }
+  html body.signed-in-shell .account-section-picker select { width: 100%; }
+  html body.signed-in-shell #adminPanel .settings-row { grid-template-columns: minmax(0, 1fr) !important; gap: 12px; }
+  html body.signed-in-shell #adminPanel .settings-row > :is(button, select, input) { justify-self: start; }
+  html body.signed-in-shell #adminPanel .settings-row > select { width: 100%; }
+  html body.signed-in-shell .simple-disclosure { margin-top: 18px; }
+}

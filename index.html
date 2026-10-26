@@ -15,6 +15,7 @@
   <meta name="application-name" content="Travel-Drip">
     <link rel="stylesheet" href="styles.css?v=124">
   <link rel="stylesheet" href="navigation.css?v=93">
+  <link rel="stylesheet" href="simple.css?v=1">
   <title>Travel-Drip</title>
 </head>
 <body>
@@ -146,7 +147,7 @@
             <option value="corporate">Company event</option>
           </select>
         </label>
-        <button class="lets-plan-button" type="button" id="letsPlanButton" aria-haspopup="dialog" aria-controls="letsPlanDialog"><span aria-hidden="true">✨</span><strong>Let's Plan</strong></button>
+        <button class="lets-plan-button" type="button" id="letsPlanButton" aria-haspopup="dialog" aria-controls="letsPlanDialog">New trip</button>
         <div class="top-actions">
           <button class="profile-avatar-button" type="button" data-target="myProfile" aria-label="Open My Profile"><span class="profile-photo-avatar" data-profile-initials>JS</span></button>
           <button class="icon-button" type="button" id="notifyButton" aria-label="Enable notifications">Notify</button>
@@ -416,8 +417,8 @@
       <section class="account-empty-dashboard" id="accountEmptyDashboard" data-dashboard-only hidden aria-labelledby="accountEmptyDashboardTitle">
         <div>
           <p class="eyebrow">Welcome to Travel-Drip</p>
-          <h2 id="accountEmptyDashboardTitle">Your travel story starts here</h2>
-          <p>Your private dashboard is empty. Create your first trip, search live destinations, or browse public travel inspiration. Nothing is added to your account until you save it.</p>
+          <h2 id="accountEmptyDashboardTitle">Your trips</h2>
+          <p>Create a trip to get started.</p>
         </div>
         <div class="account-empty-actions">
           <button class="primary-button" type="button" data-account-empty-action="create-trip">Create your first trip</button>
@@ -4115,18 +4116,17 @@
           <section class="panel admin-panel" id="adminPanel">
             <div class="section-heading compact">
               <div>
-                <p class="eyebrow">Admin</p>
-                <h2>Settings, security, permissions, and system controls</h2>
-                <p>Administrative controls are separated from My Profile. Regular users see personal account controls; organizers and admins see role-appropriate trip, event, wallet, and platform controls.</p>
+                <h2>Account</h2>
               </div>
               <button class="ghost-button" type="button" id="runSecurityAuditButton">Run security audit</button>
             </div>
             <section class="settings-shell admin-settings-shell" aria-label="Admin settings workspace">
               <aside class="settings-nav-panel">
-                <label>Search admin settings
+                <label>Find a setting
                   <input id="settingsSearchInput" type="search" placeholder="Security, roles, Wallet PIN, integrations">
                 </label>
-                <button class="active" type="button" data-settings-section="account">Account Management</button>
+                <button class="active" type="button" data-settings-section="account">Account</button>
+                <button type="button" data-settings-section="profile">My profile</button>
                 <button type="button" data-settings-section="security">Password & Security</button>
                 <button type="button" data-settings-section="roles">Roles & Permissions</button>
                 <button type="button" data-settings-section="notifications">Notifications</button>
@@ -4138,17 +4138,17 @@
                 <button type="button" data-settings-section="data">Data Management</button>
               </aside>
               <div class="settings-main-panel">
+                <section class="settings-section" data-settings-panel="profile"></section>
+                <section class="settings-section" data-settings-panel="system"><h3>Service status</h3></section>
                 <section class="settings-section active" data-settings-panel="account">
                   <div><p class="eyebrow">Account Management</p><h3>Credentials and account status</h3><p>Email, password, connected accounts, recovery, and account lifecycle controls live here instead of My Profile.</p></div>
                   <div class="settings-row"><div><strong>Account email</strong><span id="settingsAccountEmail">Sign in to view</span></div><button type="button" data-auth-workflow="Verify Email">Verify</button></div>
-                  <div class="settings-row"><div><strong>Password management</strong><span>Reset password, change password, and enforce strong credentials.</span></div><button type="button" data-auth-workflow="Reset Password">Manage</button></div>
-                  <div class="settings-row"><div><strong>Connected accounts</strong><span>Google, Apple, Microsoft, and social sign-in connections.</span></div><button type="button" data-target="adminPanel" data-settings-focus="socialMediaHub">Manage</button></div>
-                  <div class="settings-row"><div><strong>Account status</strong><span>Active account with recovery configured.</span></div><span class="status-pill">Active</span></div>
+                  <div class="settings-row"><div><strong>Account status</strong><span>Signed in</span></div></div>
                 </section>
                 <section class="settings-section" data-settings-panel="security">
                   <div><p class="eyebrow">Password & Security</p><h3>Authentication and trusted access</h3><p>Password changes, two-factor authentication, Wallet PIN, login activity, trusted devices, active sessions, recovery methods, and security alerts.</p></div>
                   <div class="settings-row"><div><strong>Change Password</strong><span>Update the account password after identity verification.</span></div><button type="button" data-auth-workflow="Reset Password">Change</button></div>
-                  <div class="settings-row"><div><strong>Two-factor authentication</strong><span>Optional second step for sensitive account access.</span></div><label class="settings-toggle"><input type="checkbox"><span></span></label></div>
+                  <div class="settings-row"><div><strong>Two-factor authentication</strong><span>Additional sign-in protection.</span></div><button type="button" data-auth-workflow="Two-Factor Authentication">Manage</button></div>
                   <div class="settings-row"><div><strong>Wallet PIN</strong><span>Required for adding funds, refunds, transfers, trip payments, and card details.</span></div><button type="button" data-wallet-section="security">Manage</button></div>
                   <div class="settings-row"><div><strong>Login activity</strong><span>Review recent sign-ins, locations, and authentication events.</span></div><button type="button" data-profile-photo-action="Review Login Activity">Review</button></div>
                   <div class="settings-row"><div><strong>Trusted devices</strong><span>Review active sessions for this account.</span></div><button type="button" data-profile-photo-action="Review Devices">Review</button></div>
@@ -4193,9 +4193,9 @@
                 </section>
                 <section class="settings-section" data-settings-panel="accessibility">
                   <div><p class="eyebrow">Accessibility</p><h3>Motion, text, contrast, captions, and keyboard support</h3><p>Controls stay row-based with full-width mobile behavior.</p></div>
-                  <div class="settings-row"><div><strong>Reduced motion</strong><span>Respect device preference for animations.</span></div><label class="settings-toggle"><input type="checkbox"><span></span></label></div>
-                  <div class="settings-row"><div><strong>Text size</strong><span>Default</span></div><select aria-label="Text size"><option>Default</option><option>Large</option><option>Extra Large</option></select></div>
-                  <div class="settings-row"><div><strong>High contrast</strong><span>Increase contrast for text and controls.</span></div><label class="settings-toggle"><input type="checkbox"><span></span></label></div>
+                  <div class="settings-row"><div><strong>Reduced motion</strong></div><input id="readingReduceMotion" type="checkbox" aria-label="Reduced motion"></div>
+                  <div class="settings-row"><div><strong>Text size</strong></div><select id="readingTextSize" aria-label="Text size"><option value="default">Standard</option><option value="large">Large</option><option value="extra-large">Extra large</option></select></div>
+                  <div class="settings-row"><div><strong>High contrast</strong></div><input id="readingHighContrast" type="checkbox" aria-label="High contrast"></div>
                   <div class="settings-row"><div><strong>Keyboard navigation</strong><span>Visible focus indicators and accessible controls.</span></div><span class="status-pill">Enabled</span></div>
                 </section>
                 <section class="settings-section" data-settings-panel="integrations">
@@ -4546,6 +4546,15 @@
     </form>
   </dialog>
 
+  <dialog class="pin-dialog trip-invite-dialog" id="tripRemovalDialog" aria-labelledby="tripRemovalTitle">
+    <form class="pin-card" id="tripRemovalForm">
+      <h2 id="tripRemovalTitle">Remove trip?</h2>
+      <p id="tripRemovalCopy"></p>
+      <p id="tripRemovalStatus" role="status"></p>
+      <div class="dialog-actions"><button class="ghost-button" id="cancelTripRemovalButton" type="button">Keep trip</button><button class="primary-button" id="confirmTripRemovalButton" type="submit">Remove trip</button></div>
+    </form>
+  </dialog>
+
   <dialog class="pin-dialog trip-invite-dialog" id="tripInviteDialog" aria-labelledby="tripInviteTitle">
     <form id="tripInviteForm" class="pin-card">
       <div class="dialog-heading">
@@ -4610,6 +4619,9 @@
   <script src="https://link.msgsndr.com/js/external-tracking.js" data-tracking-id="tk_684cd074f7154fbebd60d6f62b2d331b"></script>
   <script src="public-config.js?v=3"></script>
   <script src="vendor/qrcode.js?v=1"></script>
-  <script defer src="app.js?v=87"></script>
+  <script defer src="usability.js?v=1"></script>
+  <script defer src="trip-management.js?v=1"></script>
+  <script defer src="live-weather.js?v=1"></script>
+  <script defer src="app.js?v=88"></script>
 </body>
 </html>

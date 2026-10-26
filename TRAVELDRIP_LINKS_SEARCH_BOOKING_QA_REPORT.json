@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-10-25T18:16:14.309Z",
+  "generatedAt": "2026-10-26T03:06:35.661Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
   },
   "totals": {
-    "screenIds": 941,
-    "buttons": 722,
-    "hrefLinks": 8,
-    "dataTargets": 98,
+    "screenIds": 951,
+    "buttons": 724,
+    "hrefLinks": 9,
+    "dataTargets": 97,
     "uniqueDataTargets": 18,
     "mainNavigationControls": 37,
     "mainNavigationItems": 12,
@@ -16,7 +16,7 @@
     "dateInputs": 17,
     "searchInputs": 12,
     "actionAttributeTypes": 84,
-    "apiRoutes": 25
+    "apiRoutes": 26
   },
   "linkAndRouteVerification": {
     "workingLocalTargets": 18,
@@ -56,6 +56,7 @@
       "wallet"
     ],
     "configuredPaths": [
+      "/account",
       "/chat",
       "/dashboard",
       "/events",
@@ -64,7 +65,6 @@
       "/memories",
       "/planning",
       "/profile/my-profile",
-      "/settings",
       "/transportation",
       "/travel",
       "/wallet"
@@ -122,7 +122,7 @@
       "chat": "/chat",
       "important-info": "/important-info",
       "memories": "/memories",
-      "settings": "/settings"
+      "settings": "/account"
     },
     "sidebarItems": [
       "chat",
@@ -724,7 +724,8 @@
       "travel-search.js",
       "trips.js",
       "wallet-reminders.js",
-      "wallet.js"
+      "wallet.js",
+      "weather.js"
     ]
   },
   "productionTesting": {
