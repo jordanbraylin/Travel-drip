@@ -4,7 +4,7 @@ html[data-text-size="extra-large"] { --reading-size: 22px; }
 
 html body.signed-in-shell {
   color: #193238;
-  background: #eef9fb;
+  background: #fff7fb;
   font-size: var(--reading-size);
   line-height: 1.6;
 }
@@ -33,29 +33,30 @@ html body.signed-in-shell :focus-visible { outline: 3px solid #076b65 !important
 html body.signed-in-shell [hidden] { display: none !important; }
 
 html body.signed-in-shell .sidebar {
-  background: #073e49 !important;
-  color: #fff !important;
-  border-right: 1px solid #ccd8dc;
+  background: #fff !important;
+  color: #292432 !important;
+  border-right: 1px solid #ecd8e7;
 }
 
-html body.signed-in-shell .sidebar .brand { background: #006779; padding: 12px; border-radius: 6px; }
+html body.signed-in-shell .sidebar .brand { background: linear-gradient(115deg, #b81d78, #d43b37 65%, #b64b10); padding: 12px; border-radius: 6px; }
 html body.signed-in-shell .simple-main-menu { display: grid !important; gap: 6px; margin-top: 20px; }
 html body.signed-in-shell .simple-main-menu > button {
   display: block !important;
   width: 100%;
   padding: 12px 16px !important;
   text-align: left;
-  color: #fff !important;
+  color: #292432 !important;
   background: transparent !important;
   border: 1px solid transparent !important;
+  border-left: 4px solid var(--nav-accent, #cb247d) !important;
   border-radius: 6px !important;
   box-shadow: none !important;
   font-weight: 600;
 }
 html body.signed-in-shell .simple-main-menu > button.active {
-  color: #073e49 !important;
-  background: #59e1d5 !important;
-  border-color: #59e1d5 !important;
+  color: #fff !important;
+  background: linear-gradient(110deg, #ac197e, #c83252 65%, #ae4714) !important;
+  border-color: transparent !important;
 }
 html body.signed-in-shell .simple-main-menu [hidden],
 html body.signed-in-shell #adminPanel [hidden] { display: none !important; }
@@ -64,7 +65,7 @@ html body.signed-in-shell .trip-tab-bar { display: none !important; }
 html body.signed-in-shell .topbar { background: #fff !important; padding: 12px 0 !important; min-height: 72px; box-shadow: none !important; border-bottom: 1px solid #ccd8dc; }
 html body.signed-in-shell .topbar > .search { display: none !important; }
 html body.signed-in-shell .topbar { display: flex !important; justify-content: flex-end; gap: 16px; }
-html body.signed-in-shell #letsPlanButton { flex: 0 0 auto !important; width: auto !important; padding: 10px 20px !important; background: #00788a !important; color: #fff !important; border-radius: 6px !important; box-shadow: none !important; }
+html body.signed-in-shell #letsPlanButton { flex: 0 0 auto !important; width: auto !important; padding: 10px 20px !important; background: linear-gradient(110deg, #ac197e, #c83252 65%, #ae4714) !important; color: #fff !important; border-radius: 6px !important; box-shadow: none !important; }
 html body.signed-in-shell .topbar .profile-avatar-button { display: flex; gap: 10px; width: auto !important; height: auto !important; padding: 6px 12px !important; background: #fff !important; color: #193238 !important; border: 1px solid #aebfc5; border-radius: 6px; }
 html body.signed-in-shell .topbar .profile-photo-avatar { width: 32px; height: 32px; font-size: 14px; }
 html body.signed-in-shell #globalDestinationHeader { display: none !important; }
@@ -77,9 +78,9 @@ html body.signed-in-shell:is([data-active-route="dashboardHome"], [data-active-r
   padding: 16px;
   min-height: 120px;
   border: 0;
-  border-left: 6px solid #ed755f;
+  border-left: 6px solid #e72b86;
   border-radius: 6px;
-  background: #d5f6f2;
+  background: linear-gradient(110deg, #ffe2ee, #fff0d6 60%, #d7f7f2);
   box-shadow: none;
   opacity: 1;
   transform: none;
@@ -89,9 +90,9 @@ html body.signed-in-shell #globalDestinationHeader .global-destination-copy { co
 html body.signed-in-shell #globalDestinationHeader .global-destination-copy :is(span, strong, p) { color: inherit; }
 html body.signed-in-shell #globalDestinationHeader .global-destination-copy p { margin: 4px 0 0; }
 html body.signed-in-shell #globalDestinationHeader .global-destination-actions button { background: #fff; color: #07544f; border: 1px solid #00788a; border-radius: 6px; white-space: normal; overflow-wrap: anywhere; height: auto; padding: 10px 14px; }
-html body.signed-in-shell .travel-widget[data-widget="upcoming"] { border-top: 4px solid #00a5b5 !important; }
-html body.signed-in-shell .travel-widget[data-widget="budget"] { border-top: 4px solid #ed755f !important; }
-html body.signed-in-shell .travel-widget[data-widget="weather"] { border-top: 4px solid #e6b92e !important; }
+html body.signed-in-shell #widgetGrid .travel-widget[data-widget="upcoming"] { border-top: 4px solid #e72b86 !important; background: #fff0f7 !important; }
+html body.signed-in-shell #widgetGrid .travel-widget[data-widget="budget"] { border-top: 4px solid #f17b25 !important; background: #fff5e7 !important; }
+html body.signed-in-shell #widgetGrid .travel-widget[data-widget="weather"] { border-top: 4px solid #00a9b2 !important; background: #e9fbf9 !important; }
 
 html body.signed-in-shell :is(.section-heading, .account-live-dashboard, .account-empty-dashboard) { background: transparent !important; box-shadow: none !important; }
 html body.signed-in-shell .section-heading { border: 0 !important; border-radius: 0 !important; }
@@ -128,7 +129,7 @@ html body.signed-in-shell #adminPanel .settings-shell > .settings-nav-panel { gr
 html body.signed-in-shell #adminPanel .settings-shell > .settings-main-panel { grid-column: 2 !important; grid-row: 1 !important; display: block !important; width: 100% !important; }
 html body.signed-in-shell #adminPanel .settings-nav-panel > label { display: none !important; }
 html body.signed-in-shell #adminPanel .settings-nav-panel button { width: 100%; min-height: 48px; padding: 10px 12px !important; border: 0 !important; border-radius: 6px !important; text-align: left; background: transparent !important; color: #193238 !important; box-shadow: none !important; }
-html body.signed-in-shell #adminPanel .settings-nav-panel button.active { background: #e3f3ee !important; color: #07544f !important; font-weight: 700; }
+html body.signed-in-shell #adminPanel .settings-nav-panel button.active { background: #ffe3f0 !important; color: #9c155f !important; font-weight: 700; }
 html body.signed-in-shell #adminPanel .settings-main-panel { min-width: 0; padding: 0 !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
 html body.signed-in-shell #adminPanel .settings-section { padding: 0 !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
 html body.signed-in-shell #adminPanel .settings-section[hidden] { display: none !important; }
@@ -144,11 +145,30 @@ html body.signed-in-shell #adminPanel .profile-personal-grid label { display: gr
 html body.signed-in-shell #adminPanel .profile-personal-grid input { width: 100%; min-width: 0; }
 html body.signed-in-shell .account-section-picker { display: none; }
 
+/* Saturated accents frame the content; long-form text stays on quiet surfaces. */
+html body.signed-in-shell .simple-main-menu > button:nth-child(4n + 2) { --nav-accent: #ef7626; }
+html body.signed-in-shell .simple-main-menu > button:nth-child(4n + 3) { --nav-accent: #008e9d; }
+html body.signed-in-shell .simple-main-menu > button:nth-child(4n + 4) { --nav-accent: #8656c9; }
+html body.signed-in-shell .simple-main-menu > button:not(.active):hover { background: #fff0f7 !important; }
+html body.signed-in-shell .sidebar :is(.status-card, .corporate-entry-nav) { background: #fff5fa !important; color: #4b3546 !important; }
+html body.signed-in-shell .sidebar :is(.status-card span, .status-card strong, .corporate-entry-nav summary) { color: #4b3546 !important; }
+html body.signed-in-shell .topbar { border-bottom: 3px solid #ea4592; }
+html body.signed-in-shell .primary-button { background: linear-gradient(110deg, #ac197e, #c83252 65%, #ae4714) !important; color: #fff !important; border-color: transparent !important; }
+html body.signed-in-shell .primary-button:hover,
+html body.signed-in-shell #letsPlanButton:hover { filter: brightness(0.92); }
+html body.signed-in-shell .primary-button:disabled { filter: grayscale(1); opacity: 0.65; }
+html body.signed-in-shell .topbar .profile-photo-avatar { border-radius: 50%; background: linear-gradient(135deg, #ac197e, #c83252, #ae4714); color: #fff; outline: 3px solid #ee7a32; outline-offset: 2px; }
+html body.signed-in-shell :is(.account-live-dashboard, .account-empty-dashboard) { border-left: 6px solid #e72b86 !important; }
+html body.signed-in-shell .simple-disclosure > summary { color: #9c155f; }
+html body.signed-in-shell .mobile-nav { background: #fff !important; border-top: 3px solid #ea4592 !important; }
+html body.signed-in-shell .mobile-nav > button.active { background: #ffe3f0 !important; color: #9c155f !important; }
+
 html[data-reduce-motion="true"] *, html[data-reduce-motion="true"] *::before, html[data-reduce-motion="true"] *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 html[data-high-contrast="true"] body.signed-in-shell { color: #111 !important; background: #fff !important; }
 html[data-high-contrast="true"] body.signed-in-shell :is(p, span, label, button, input, select, strong, h1, h2, h3) { color: #111 !important; }
 html[data-high-contrast="true"] body.signed-in-shell :is(button, input, select, textarea) { background: #fff !important; border: 2px solid #111 !important; }
 html[data-high-contrast="true"] body.signed-in-shell :is(.sidebar, #globalDestinationHeader:not([hidden])) { background: #fff !important; color: #111 !important; border: 2px solid #111 !important; }
+html[data-high-contrast="true"] body.signed-in-shell :is(.primary-button, #letsPlanButton, .simple-main-menu > button.active, #widgetGrid .travel-widget[data-widget], .mobile-nav > button.active, #adminPanel .settings-nav-panel button.active, .topbar .profile-photo-avatar) { background: #fff !important; color: #111 !important; border-color: #111 !important; }
 
 @media (max-width: 760px) {
   html body.signed-in-shell:is([data-active-route="dashboardHome"], [data-active-route="exploreDrops"]) #globalDestinationHeader:not([hidden]) { grid-template-columns: 80px minmax(0, 1fr) !important; gap: 12px; padding: 12px; }
