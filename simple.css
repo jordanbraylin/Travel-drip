@@ -93,6 +93,7 @@ html body.signed-in-shell [data-widget="weather"] > small { display: block; colo
 html body.signed-in-shell .removed-trip-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 0; border-bottom: 1px solid #ccd8dc; }
 html body.signed-in-shell .saved-record-list .remove-trip-button { width: auto !important; color: #96392e; }
 html body.signed-in-shell #internalServiceDiagnostics { display: none !important; }
+html body.signed-in-shell :is(.security-status-grid, .security-control-grid, .fraud-signal-list, #securityAuditMessage, #backendReadiness, #goLiveReadiness, .navigation-audit-panel) { display: none !important; }
 html body.signed-in-shell #aiTravelPlanner > .section-heading p { display: none !important; }
 html body.signed-in-shell #aiTravelPlanner .ai-planner-chat { background: #fff !important; border-radius: 6px; box-shadow: none; padding: 20px; }
 

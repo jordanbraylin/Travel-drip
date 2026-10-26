@@ -2194,6 +2194,7 @@ function dashboardShouldShowBlankState() {
 }
 
 function resetAccountData() {
+  state.profileFormUserId = "";
   clearTripWeather();
   if ($("#incomingTripInvitationList")) $("#incomingTripInvitationList").innerHTML = "";
   $("#tripInviteDialog")?.close();
@@ -2580,7 +2581,7 @@ function renderActiveTripAccountData() {
   if (upcomingTitle) upcomingTitle.textContent = activeTrip.title || "Untitled trip";
   const upcomingCopy = $("[data-widget='upcoming'] p");
   if (upcomingCopy) upcomingCopy.textContent = activeTrip.starts_on
-    ? `Starts ${new Date(activeTrip.starts_on).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" })}`
+    ? `Starts ${new Date(`${activeTrip.starts_on}T12:00:00`).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" })}`
     : "Dates not added yet";
   const upcomingMeta = $("[data-widget='upcoming'] .widget-meta");
   if (upcomingMeta) upcomingMeta.innerHTML = `<span>${escapeHtml(activeTrip.destination || "Destination not added")}</span><span>${escapeHtml(String(activeTrip.status || "draft").replaceAll("_", " "))}</span>`;
@@ -5428,6 +5429,7 @@ async function deleteTrustedContact(contactId) {
 
 async function loadProfileDetails() {
   if (!state.supabase || !state.session?.user) return;
+  const profileUserId = state.session.user.id;
   [
     "profileFullNameInput", "profileUsernameInput", "profileDisplayNameInput", "profileBioInput",
     "profileInterestsInput", "profileLanguagesInput", "profileLinksInput", "profileLocationInput",
@@ -5449,6 +5451,11 @@ async function loadProfileDetails() {
     .select("full_name, username, bio, avatar_storage_path, avatar_visibility, avatar_metadata")
     .eq("id", state.session.user.id)
     .maybeSingle();
+  if (state.session?.user?.id !== profileUserId) return false;
+  if (error) {
+    if ($("#profileDetailsMessage")) $("#profileDetailsMessage").textContent = "Your profile could not be loaded. Refresh before making changes.";
+    return false;
+  }
   if (error || !data) {
     state.profilePhoto.initials = initialsFromName(state.session.user.user_metadata?.full_name || state.session.user.email || "Travel Drip");
     renderProfileSummary({
@@ -7431,7 +7438,25 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
   document.title = `${routeDefinitions[resolvedTarget].label} - Travel-Drip`;
   setSidebarOpen(false);
   window.scrollTo({ top: 0, behavior: "smooth" });
-  if (resolvedTarget === "adminPanel") selectAccountSettings(activeSettingsFocus);
+  if (resolvedTarget === "adminPanel") {
+    selectAccountSettings(activeSettingsFocus);
+    setVisibilityWithoutCssLeaks($("#signOutButton"), Boolean(state.session?.user));
+    const userId = state.session?.user?.id;
+    if (state.supabase && userId && state.profileFormUserId !== userId && !state.profileFormLoading) {
+      state.profileFormLoading = true;
+      if ($("#saveProfileDetailsButton")) $("#saveProfileDetailsButton").disabled = true;
+      let profileLoaded = false;
+      loadProfileDetails().then((result) => {
+        profileLoaded = result !== false;
+        if (profileLoaded && state.session?.user?.id === userId && getRouteComponentById("adminPanel")?.isConnected) state.profileFormUserId = userId;
+      }).catch(() => {
+        if ($("#profileDetailsMessage")) $("#profileDetailsMessage").textContent = "Your profile could not be loaded. Refresh before making changes.";
+      }).finally(() => {
+        state.profileFormLoading = false;
+        if ($("#saveProfileDetailsButton")) $("#saveProfileDetailsButton").disabled = !profileLoaded;
+      });
+    }
+  }
 }
 
 function openPlanningWorkflow(type = "group") {
