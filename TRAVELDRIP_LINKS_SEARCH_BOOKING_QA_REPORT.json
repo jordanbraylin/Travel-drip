@@ -1,22 +1,22 @@
 {
-  "generatedAt": "2026-10-26T03:09:43.127Z",
+  "generatedAt": "2026-10-26T23:59:37.494Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
   },
   "totals": {
-    "screenIds": 951,
-    "buttons": 724,
-    "hrefLinks": 9,
+    "screenIds": 958,
+    "buttons": 727,
+    "hrefLinks": 10,
     "dataTargets": 97,
     "uniqueDataTargets": 18,
     "mainNavigationControls": 37,
     "mainNavigationItems": 12,
     "routeDefinitions": 20,
     "dateInputs": 17,
-    "searchInputs": 12,
-    "actionAttributeTypes": 84,
-    "apiRoutes": 26
+    "searchInputs": 13,
+    "actionAttributeTypes": 85,
+    "apiRoutes": 27
   },
   "linkAndRouteVerification": {
     "workingLocalTargets": 18,
@@ -633,6 +633,11 @@
         "hasLabelOrPlaceholder": true
       },
       {
+        "id": "messagingContactSearch",
+        "referencedInApp": true,
+        "hasLabelOrPlaceholder": true
+      },
+      {
         "id": "infoSearch",
         "referencedInApp": true,
         "hasLabelOrPlaceholder": true
@@ -707,6 +712,7 @@
       "auth-login.js",
       "chat.js",
       "config.js",
+      "contacts.js",
       "corporate-bookings.js",
       "events.js",
       "explore.js",

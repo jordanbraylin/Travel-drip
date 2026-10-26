@@ -6,6 +6,10 @@ const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
 
 const html = read("index.html");
 const app = read("app.js");
+const clientSources = [...html.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/g)]
+  .map((match) => match[1].split("?")[0])
+  .filter((file) => !/^https?:\/\//.test(file) && file.endsWith(".js") && fs.existsSync(path.join(root, file)))
+  .map(read).join("\n");
 const navigationCss = read("navigation.css");
 const pkg = JSON.parse(read("package.json"));
 const travelSearchApi = read("server/api/travel-search.js");
@@ -281,7 +285,7 @@ const searchResults = searchInputs.map((input) => {
   const id = input.match(/\bid=["']([^"']+)["']/)?.[1] || "";
   return {
     id,
-    referencedInApp: id ? app.includes(`#${id}`) || app.includes(`"${id}"`) || app.includes(`'${id}'`) : false,
+    referencedInApp: id ? clientSources.includes(`#${id}`) || clientSources.includes(`"${id}"`) || clientSources.includes(`'${id}'`) : false,
     hasLabelOrPlaceholder: /placeholder=["'][^"']+["']/.test(input)
   };
 });
