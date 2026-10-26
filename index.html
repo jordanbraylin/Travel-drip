@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="styles.css?v=124">
   <link rel="stylesheet" href="navigation.css?v=93">
   <link rel="stylesheet" href="simple.css?v=4">
+  <link rel="stylesheet" href="messaging.css?v=1">
   <title>Travel-Drip</title>
 </head>
 <body>
@@ -1395,19 +1396,13 @@
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Your trip feed</p>
-                <h2>Chat, share, and make the next plan</h2>
-                <p>Keep the trip feeling alive with quick updates, photo drops, polls, pins, and little moments the whole crew can jump into.</p>
+                <h2>Messages</h2>
               </div>
-              <button class="primary-button" type="button" id="newConversationButton">New message</button>
+              <div class="mini-action-row"><button class="ghost-button" type="button" id="refreshMessagingButton">Refresh</button><button class="primary-button" type="button" id="newConversationButton">New trip chat</button></div>
             </div>
 
-            <section class="messages-hub" aria-label="Travel-Drip messaging dashboard">
-              <div class="message-search-row">
-                <label>Search messages
-                  <input id="messageSearchInput" type="search" placeholder="Search chats, people, polls, photos, files, and links">
-                </label>
-                <button class="ghost-button" type="button" id="messageAiButton">Ask AI in chat</button>
-              </div>
+            <section class="messages-hub" aria-label="Travel-Drip messaging dashboard" data-mobile-view="chats">
+              <div class="messaging-mobile-views" role="group" aria-label="Message view"><button type="button" data-messaging-view="chats" aria-pressed="true">Chats</button><button type="button" data-messaging-view="contacts" aria-pressed="false">Contacts</button></div>
               <div class="chat-vibe-strip" aria-label="Trip chat shortcuts">
                 <div class="chat-vibe-copy">
                   <p class="eyebrow">Trip energy</p>
@@ -1421,12 +1416,13 @@
                   <button type="button" data-chat-tool="Itinerary Card"><span aria-hidden="true">🗺️</span> Plan the next stop</button>
                 </div>
               </div>
-              <div class="message-tabs" role="tablist" aria-label="Messages tabs">
-                <button class="active" type="button" data-message-tab="group">Group Chats</button>
-                <button type="button" data-message-tab="private">Private Messages</button>
-              </div>
               <div class="messages-layout">
-                <aside class="conversation-list" id="conversationList" aria-label="Conversation list"></aside>
+                <aside class="inbox-conversations" aria-label="Conversations">
+                  <h3>Conversations</h3>
+                  <p class="small" id="messagingTripLabel">Trip chats</p>
+                  <label>Find a conversation<input id="messageSearchInput" type="search" placeholder="Search names or messages"></label>
+                  <div class="conversation-list" id="conversationList" aria-label="Conversation list"></div>
+                </aside>
                 <section class="chat-workspace" aria-label="Selected conversation">
                   <div class="chat-header">
                     <div>
@@ -1453,7 +1449,7 @@
                     <button type="button" data-chat-tool="Voice Message">Voice</button>
                   </div>
                   <form class="chat-form" id="chatForm">
-                    <input id="chatInput" placeholder="Message the group" aria-label="Message the group">
+                    <input id="chatInput" placeholder="Write a trip message" aria-label="Message to trip members" maxlength="4000">
                     <button type="submit" aria-label="Send">Send</button>
                   </form>
                   <form class="chat-poll-form" id="chatPollForm" hidden>
@@ -1463,7 +1459,15 @@
                   </form>
                   <div class="typing-indicator" id="typingIndicator"></div>
                 </section>
-                <aside class="conversation-details-panel" aria-label="Conversation details">
+                <aside class="messaging-address-book" aria-label="Friends and contacts">
+                  <div class="address-book-heading"><h3>Friends & contacts</h3><button class="ghost-button" type="button" id="addMessagingContactButton">Add contact</button></div>
+                  <label>Find a contact<input id="messagingContactSearch" type="search" placeholder="Name, phone, or email"></label>
+                  <p class="small" id="messagingContactsStatus" role="status">Your saved contacts appear here.</p>
+                  <div id="messagingContactList" aria-label="Address book"></div>
+                  <button class="ghost-button" type="button" id="moreMessagingContactsButton" hidden>Load more contacts</button>
+                  <button class="ghost-button" type="button" id="retryMessagingContactsButton" hidden>Try again</button>
+                </aside>
+                <aside class="conversation-details-panel" aria-label="Conversation details" hidden>
                   <div class="chat-detail-card">
                     <span class="message-avatar">TD</span>
                     <div>
@@ -1525,7 +1529,7 @@
                 </div>
                 <button class="ghost-button" type="button" id="closeMessageUtilityButton" aria-label="Close conversation tools">Close</button>
               </section>
-              <p class="small" id="messageStatus">Messages sync with the selected trip or private conversation. AI replies respect user permissions.</p>
+              <p class="small" id="messageStatus" role="status">Trip conversations are shared with active trip members.</p>
             </section>
 
             <section class="daily-memory-panel" id="dailyMemoryPanel" data-route-support="memoriesPanel" data-route-extract>
@@ -4622,6 +4626,7 @@
   <script defer src="usability.js?v=1"></script>
   <script defer src="trip-management.js?v=1"></script>
   <script defer src="live-weather.js?v=1"></script>
-  <script defer src="app.js?v=90"></script>
+  <script defer src="messaging-contacts.js?v=1"></script>
+  <script defer src="app.js?v=91"></script>
 </body>
 </html>

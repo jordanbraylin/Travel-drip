@@ -10,6 +10,8 @@ const staticFiles = [
   "usability.js",
   "trip-management.js",
   "live-weather.js",
+  "messaging-contacts.js",
+  "messaging.css",
   "simple.css",
   "index.html",
   "login.html",

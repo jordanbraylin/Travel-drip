@@ -2198,6 +2198,7 @@ function dashboardShouldShowBlankState() {
 
 function resetAccountData() {
   state.profileFormUserId = "";
+  resetMessagingContacts();
   clearTripWeather();
   if ($("#incomingTripInvitationList")) $("#incomingTripInvitationList").innerHTML = "";
   $("#tripInviteDialog")?.close();
@@ -2303,7 +2304,7 @@ function applyAccountRouteState(target) {
     ? state.accountData.trips.length > 0
     : Boolean(state.accountData.activeTrip));
   const shouldShowEmpty = Boolean(
-    privateAccountTargets.has(target)
+    privateAccountTargets.has(target) && target !== "socialHub"
       && !hasAuthenticatedData
       && !(target === "tripsPanel" && state.accountData.showCreation)
   );
@@ -2350,6 +2351,10 @@ function renderAccountState(target = getTargetFromRoute()) {
   });
   if ($("#dashboardWidgets")) setVisibilityWithoutCssLeaks($("#dashboardWidgets"), target === "dashboardHome");
   applyAccountRouteState(target);
+  if (target === "socialHub") {
+    renderTripChatData();
+    void loadMessagingContacts();
+  }
 }
 
 async function selectAccountTrip(tripId) {
@@ -5370,14 +5375,14 @@ async function loadTrustedContacts() {
   }
   const { data, error } = await state.supabase
     .from("trusted_contacts")
-    .select("id, name, relationship, phone, email, is_primary, created_at")
+    .select("id, name, relationship, phone, email, is_primary, created_at, metadata")
     .order("is_primary", { ascending: false })
     .order("created_at", { ascending: true });
   if (error) {
     $("#trustedContactsStatus") && ($("#trustedContactsStatus").textContent = "Trusted contacts are unavailable until the Supabase migration is applied.");
     return;
   }
-  state.trustedContacts = data || [];
+  state.trustedContacts = (data || []).filter((contact) => contact.metadata?.contactKind !== "address_book");
   renderTrustedContacts();
 }
 
@@ -7739,6 +7744,7 @@ function wireLocalInteractions() {
   initializeSimpleExperience();
   initializeTripManagement();
   initializeLiveWeather();
+  initializeMessagingContacts();
   applyMainNavigationConfig();
   applySmartDashboardLayout();
   ["#eventDateInput", "#eventRsvpInput", "#flightDepartureDateInput"].forEach((selector) => {
@@ -10090,6 +10096,7 @@ function wireLocalInteractions() {
     if (!button) return;
     state.chatData.selectedRoomId = button.dataset.chatRoomId;
     renderTripChatData();
+    $("#chatInput")?.focus();
   });
 
   $$("[data-message-tab]").forEach((button) => {
@@ -10126,15 +10133,7 @@ function wireLocalInteractions() {
   });
 
   $("#messageSearchInput")?.addEventListener("input", (event) => {
-    const query = event.target.value.trim().toLowerCase();
-    $$("[data-conversation-name]").forEach((card) => {
-      const matches = card.dataset.conversationName.toLowerCase().includes(query) || card.textContent.toLowerCase().includes(query);
-      const tab = $(".message-tabs .active")?.dataset.messageTab || "group";
-      card.hidden = card.dataset.conversationType !== tab || (query && !matches);
-    });
-    $("#messageStatus").textContent = query
-      ? `Searching messages, users, photos, documents, polls, and shared links for "${event.target.value.trim()}".`
-      : "Search cleared. Conversations restored for the active tab.";
+    renderTripChatData();
   });
 
   $$("[data-message-action]").forEach((button) => {
@@ -10924,26 +10923,30 @@ function updateEnterpriseRole() {
   updateDashboardWidgets();
 }
 
-function appendMessage(author, text) {
+function appendMessage(author, text, scroll = true) {
   const message = document.createElement("div");
   message.className = "msg";
   message.innerHTML = `<strong>${escapeHtml(author)}:</strong> ${escapeHtml(text)}`;
   $("#messages")?.appendChild(message);
-  message.scrollIntoView({ block: "nearest" });
+  const container = $("#messages");
+  if (scroll && container) container.scrollTop = container.scrollHeight;
 }
 
 function renderTripChatData() {
   const rooms = state.chatData.rooms || [];
+  const query = ($("#messageSearchInput")?.value || "").trim().toLowerCase();
+  const visibleRooms = rooms.filter((room) => !query || `${room.title || ""} ${(state.chatData.messages || []).filter((message) => message.room_id === room.id).map((message) => message.body).join(" ")}`.toLowerCase().includes(query));
   const selectedRoom = rooms.find((room) => room.id === state.chatData.selectedRoomId) || rooms[0] || null;
   state.chatData.selectedRoomId = selectedRoom?.id || "";
   const conversationList = $("#conversationList");
   if (conversationList) {
     conversationList.replaceChildren();
-    rooms.forEach((room) => {
+    visibleRooms.forEach((room) => {
       const button = document.createElement("button");
       button.className = `conversation-card${room.id === state.chatData.selectedRoomId ? " active" : ""}`;
       button.type = "button";
       button.dataset.chatRoomId = room.id;
+      button.setAttribute("aria-pressed", String(room.id === state.chatData.selectedRoomId));
       const avatar = document.createElement("span");
       avatar.className = "message-avatar";
       avatar.textContent = initialsFromName(room.title);
@@ -10959,10 +10962,10 @@ function renderTripChatData() {
       button.append(avatar, copy, status);
       conversationList.append(button);
     });
-    if (!rooms.length) {
+    if (!visibleRooms.length) {
       const empty = document.createElement("p");
       empty.className = "small";
-      empty.textContent = "No conversations have been created for this trip.";
+      empty.textContent = query ? "No matching conversations." : state.activeTripId ? "No trip chats yet. Choose New trip chat to begin." : "Create or select a trip to start a group chat.";
       conversationList.append(empty);
     }
   }
@@ -10970,10 +10973,16 @@ function renderTripChatData() {
   if ($("#conversationTypeLabel")) $("#conversationTypeLabel").textContent = selectedRoom ? "Trip chat" : "Messages";
   if ($("#conversationMeta")) $("#conversationMeta").textContent = selectedRoom ? "Private to active trip members" : "Create a conversation to begin";
   if ($("#chatInput")) $("#chatInput").disabled = !selectedRoom;
+  if ($("#chatForm button[type='submit']")) $("#chatForm button[type='submit']").disabled = !selectedRoom;
+  if ($("#messagingTripLabel")) $("#messagingTripLabel").textContent = state.accountData.activeTrip?.title || "No trip selected";
   const messages = $("#messages");
   if (messages) {
+    const previousScroll = messages.scrollTop;
+    const nearBottom = messages.scrollHeight - messages.clientHeight - messages.scrollTop < 64;
+    const changedRoom = messages.dataset.roomId !== (selectedRoom?.id || "");
+    messages.dataset.roomId = selectedRoom?.id || "";
     messages.replaceChildren();
-    (state.chatData.messages || []).filter((message) => message.room_id === selectedRoom?.id).forEach((message) => appendMessage(message.senderName || "Trip member", message.body || ""));
+    (state.chatData.messages || []).filter((message) => message.room_id === selectedRoom?.id).forEach((message) => appendMessage(message.senderName || "Trip member", message.body || "", false));
     (state.chatData.polls || []).forEach((poll) => {
       const card = document.createElement("article");
       card.className = "chat-poll-card";
@@ -11004,6 +11013,7 @@ function renderTripChatData() {
       empty.textContent = selectedRoom ? "No messages yet. Send the first message." : "Create a conversation to begin.";
       messages.append(empty);
     }
+    messages.scrollTop = changedRoom || nearBottom ? messages.scrollHeight : previousScroll;
   }
   if ($("#typingIndicator")) $("#typingIndicator").textContent = "Messages persist to this trip after they are sent.";
   setVisibilityWithoutCssLeaks($(".pinned-message"), false);
@@ -11016,13 +11026,17 @@ function renderTripChatData() {
 }
 
 async function loadTripChatData() {
+  void loadMessagingContacts();
   if (!state.session?.access_token || !state.activeTripId || isFilePreview) {
     state.chatData = { loaded: true, rooms: [], messages: [], polls: [], selectedRoomId: "" };
     renderTripChatData();
     return state.chatData;
   }
+  const tripId = state.activeTripId;
+  const userId = state.session.user.id;
   try {
-    const result = await apiRequest(`/api/chat?tripId=${encodeURIComponent(state.activeTripId)}`);
+    const result = await apiRequest(`/api/chat?tripId=${encodeURIComponent(tripId)}`);
+    if (userId !== state.session?.user?.id || tripId !== state.activeTripId) return state.chatData;
     state.chatData = {
       loaded: true,
       rooms: result.rooms || [],
@@ -11038,6 +11052,7 @@ async function loadTripChatData() {
     renderLiveAccountDashboard();
     return state.chatData;
   } catch (error) {
+    if (userId !== state.session?.user?.id || tripId !== state.activeTripId) return state.chatData;
     state.chatData = { loaded: true, rooms: [], messages: [], polls: [], selectedRoomId: "" };
     renderTripChatData();
     if ($("#messageStatus")) $("#messageStatus").textContent = error.message || "Messages could not be loaded.";
