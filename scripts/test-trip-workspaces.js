@@ -30,4 +30,15 @@ for (const route of ["itineraryAlerts", "walletPanel"]) {
   vm.runInContext(`renderTripWorkspaces('${route}')`, context);
   assert.equal(emptyClass.has("is-account-empty"), false, `${route} must remain usable without a saved trip`);
 }
+const balance = {}, copy = {};
+const walletContext = vm.createContext({ state: { accountData: { activeTrip: null }, walletAccess: { status: "ready", tripId: "other-trip", wallet: { availableCents: 1000 } } }, document: { querySelector: (selector) => selector === "#tripAvailableBalance" ? balance : copy }, formatWalletMoney: () => "$10.00" });
+vm.runInContext(source.slice(source.indexOf("function renderWalletWorkspaceStatus(")), walletContext);
+vm.runInContext("renderWalletWorkspaceStatus()", walletContext);
+assert.equal(balance.textContent, "Not connected");
+walletContext.state.accountData.activeTrip = { id: "selected-trip" };
+vm.runInContext("renderWalletWorkspaceStatus()", walletContext);
+assert.equal(balance.textContent, "Not connected", "Never display a different trip's balance");
+walletContext.state.walletAccess.tripId = "selected-trip";
+vm.runInContext("renderWalletWorkspaceStatus()", walletContext);
+assert.equal(balance.textContent, "$10.00");
 console.log("Trip workspaces passed: exact-cent splitting, validation, saved-activity confirmation, and account guards.");

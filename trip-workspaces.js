@@ -216,6 +216,6 @@ function renderWalletWorkspaceStatus() {
   const copy = document.querySelector("#tripAvailableBalanceCopy");
   if (!balance || !copy) return;
   if (access.status === "loading") { balance.textContent = "Loading..."; copy.textContent = "Checking your trip wallet."; }
-  else if (!access.wallet) { balance.textContent = "Not connected"; copy.textContent = "Select a trip and set up its wallet to see confirmed funds."; }
+  else if (!access.wallet || !state.accountData.activeTrip || (access.tripId && access.tripId !== state.accountData.activeTrip.id)) { balance.textContent = "Not connected"; copy.textContent = "Select a trip and set up its wallet to see confirmed funds."; }
   else { balance.textContent = formatWalletMoney(access.wallet.availableCents || 0, access.wallet.currency); copy.textContent = "Provider-confirmed funds available for this trip."; }
 }
