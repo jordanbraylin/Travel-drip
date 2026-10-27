@@ -2204,6 +2204,8 @@ function dashboardShouldShowBlankState() {
 function resetAccountData() {
   state.profileFormUserId = "";
   resetQuickPlanningSession();
+  document.querySelector("#walletSplitForm")?.reset();
+  document.querySelector("#walletSplitResult")?.replaceChildren();
   resetMessagingContacts();
   clearTripWeather();
   if ($("#incomingTripInvitationList")) $("#incomingTripInvitationList").innerHTML = "";
@@ -2356,6 +2358,7 @@ function renderAccountState(target = getTargetFromRoute()) {
   });
   if ($("#dashboardWidgets")) setVisibilityWithoutCssLeaks($("#dashboardWidgets"), target === "dashboardHome");
   applyAccountRouteState(target);
+  renderTripWorkspaces(target);
   if (target === "letsPlan") renderPlanningStudio();
   if (target === "socialHub") {
     renderTripChatData();
@@ -3499,6 +3502,7 @@ function renderWalletAccess() {
   }
   renderWalletContributions(access);
   renderWalletNotifications(access);
+  renderWalletWorkspaceStatus();
 }
 
 function syncWalletSummary(wallet) {
@@ -7750,6 +7754,7 @@ async function uploadMemoryFiles(files, action) {
 function wireLocalInteractions() {
   moveTransportationWorkspace();
   initializeSimpleExperience();
+  initializeWalletSplitter();
   initializeTripManagement();
   initializeLiveWeather();
   initializeMessagingContacts();
@@ -10337,6 +10342,8 @@ function wireLocalInteractions() {
   });
 
   $("#walletHeaderVirtualCardButton")?.addEventListener("click", () => {
+    const details = $("#virtualCard")?.closest("details.simple-disclosure");
+    if (details) details.open = true;
     $("#virtualCard")?.scrollIntoView({ behavior: "smooth", block: "start" });
     if ($("#cardMessage")) {
       $("#cardMessage").textContent = "Virtual Card opened. Wallet PIN is still required for sensitive card actions.";
@@ -10721,6 +10728,14 @@ function wireLocalInteractions() {
       }
       if (action === "Add Payment Method") {
         renderRoute("adminPanel", { updateHistory: true, settingsFocus: "payments" });
+        return;
+      }
+      if (action === "Request Payment") {
+        const form = $("#paymentRequestForm");
+        const details = form?.closest("details.simple-disclosure");
+        if (details) details.open = true;
+        if (form && !form.hidden) $("#paymentRequestTitle")?.focus();
+        else if ($("#walletMessage")) $("#walletMessage").textContent = "Only a trip wallet administrator can create payment reminders. Select a trip with an active wallet first.";
         return;
       }
       if ($("#walletMessage")) {
@@ -11588,6 +11603,7 @@ async function renderGoLiveAudit() {
 
 function wireNavigationFallbacks() {
   const handledSelector = [
+    "[data-workspace-action]",
     "[data-target]",
     "[data-day]",
     "[data-admin-action]",
