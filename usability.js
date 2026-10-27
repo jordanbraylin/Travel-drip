@@ -92,7 +92,7 @@ function initializeSimpleExperience() {
   tripPicker.type = "button";
   tripPicker.className = "ghost-button";
   tripPicker.textContent = "Plan a trip";
-  tripPicker.dataset.target = "aiTravelPlanner";
+  tripPicker.dataset.target = "letsPlan";
   tripPicker.dataset.consumerNav = "";
   menu.querySelector('[data-target="tripsPanel"]').after(tripPicker);
   const panel = (key) => account.querySelector(`[data-settings-panel="${key}"]`);

@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-26T23:59:37.494Z",
+  "generatedAt": "2026-10-27T16:19:57.900Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
   },
   "totals": {
-    "screenIds": 958,
-    "buttons": 727,
-    "hrefLinks": 10,
+    "screenIds": 962,
+    "buttons": 729,
+    "hrefLinks": 11,
     "dataTargets": 97,
     "uniqueDataTargets": 18,
     "mainNavigationControls": 37,
@@ -15,7 +15,7 @@
     "routeDefinitions": 20,
     "dateInputs": 17,
     "searchInputs": 13,
-    "actionAttributeTypes": 85,
+    "actionAttributeTypes": 87,
     "apiRoutes": 27
   },
   "linkAndRouteVerification": {

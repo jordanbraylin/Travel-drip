@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="navigation.css?v=93">
   <link rel="stylesheet" href="simple.css?v=4">
   <link rel="stylesheet" href="messaging.css?v=1">
+  <link rel="stylesheet" href="planning-studio.css?v=1">
   <title>Travel-Drip</title>
 </head>
 <body>
@@ -148,7 +149,7 @@
             <option value="corporate">Company event</option>
           </select>
         </label>
-        <button class="lets-plan-button" type="button" id="letsPlanButton" aria-haspopup="dialog" aria-controls="letsPlanDialog">New trip</button>
+        <button class="lets-plan-button" type="button" id="letsPlanButton" aria-haspopup="dialog" aria-controls="letsPlanDialog">Let's plan</button>
         <div class="top-actions">
           <button class="profile-avatar-button" type="button" data-target="myProfile" aria-label="Open My Profile"><span class="profile-photo-avatar" data-profile-initials>JS</span></button>
           <button class="icon-button" type="button" id="notifyButton" aria-label="Enable notifications">Notify</button>
@@ -4486,22 +4487,51 @@
   </section>
 
   <dialog class="pin-dialog planning-dialog" id="letsPlanDialog" aria-labelledby="letsPlanDialogTitle">
-    <form method="dialog" id="letsPlanForm">
+    <form method="dialog" id="letsPlanForm" novalidate>
+      <div class="planning-photo-banner"><img src="icons/planning-coast.jpg" alt="Whitewashed coastal buildings overlooking the sea"><p>Your next adventure starts here.</p></div>
+      <div class="planning-dialog-content">
       <div class="dialog-heading">
-        <div><p class="eyebrow">Start a trip</p><h2 id="letsPlanDialogTitle">Where are you going?</h2></div>
+        <div><p class="eyebrow">Let's plan</p><h2 id="letsPlanDialogTitle">Where shall we go?</h2></div>
         <button class="ghost-button" type="button" id="closeLetsPlanDialogButton" aria-label="Close trip planner">Close</button>
       </div>
-      <div class="dialog-form-grid">
-        <label>Destination<input id="letsPlanDestinationInput" type="text" placeholder="City or destination" required></label>
+      <ol class="planning-step-indicator" aria-label="Planning progress"><li data-quick-plan-indicator="0" aria-current="step">1. The idea</li><li data-quick-plan-indicator="1">2. The details</li><li data-quick-plan-indicator="2">3. The fun</li></ol>
+      <section data-quick-plan-step="0" aria-label="Destination and trip style">
+        <label>Destination<input id="letsPlanDestinationInput" type="text" maxlength="160" placeholder="Which city is calling your name?" required></label>
+        <fieldset class="planning-style-options"><legend>Who's coming along?</legend>
+          <label><input type="radio" name="quickPlanType" value="solo"><span>Just me</span></label>
+          <label><input type="radio" name="quickPlanType" value="group"><span>Friends & family</span></label>
+          <label><input type="radio" name="quickPlanType" value="special_event"><span>A celebration</span></label>
+          <label><input type="radio" name="quickPlanType" value="corporate"><span>My team</span></label>
+          <label><input type="radio" name="quickPlanType" value="cruise"><span>A cruise crew</span></label>
+        </fieldset>
+        <input id="letsPlanTypeInput" type="hidden" value="">
+      </section>
+      <section data-quick-plan-step="1" aria-label="Dates and travelers" hidden>
+        <div class="dialog-form-grid">
         <label>Start date<input id="letsPlanStartDateInput" type="date" required></label>
         <label>End date<input id="letsPlanEndDateInput" type="date" required></label>
         <label>Travelers<input id="letsPlanTravelersInput" type="number" min="1" max="50" value="1" required></label>
-        <label>Trip type<select id="letsPlanTypeInput"><option value="solo">Solo trip</option><option value="group">Group trip</option><option value="special_event">Event</option><option value="corporate">Corporate retreat</option><option value="cruise">Cruise</option></select></label>
-        <label>Budget<input id="letsPlanBudgetInput" type="number" min="0" step="50" placeholder="Optional"></label>
+        </div>
+      </section>
+      <section data-quick-plan-step="2" aria-label="Interests and budget" hidden>
+        <fieldset class="planning-vibe-options"><legend>Make room for what you love</legend>
+          <label><input type="checkbox" name="quickPlanVibe" value="Food"><span>Food finds</span></label>
+          <label><input type="checkbox" name="quickPlanVibe" value="Beaches"><span>Beaches</span></label>
+          <label><input type="checkbox" name="quickPlanVibe" value="Nature"><span>Outdoors</span></label>
+          <label><input type="checkbox" name="quickPlanVibe" value="Culture"><span>Culture</span></label>
+          <label><input type="checkbox" name="quickPlanVibe" value="Relaxation"><span>Unwind</span></label>
+          <label><input type="checkbox" name="quickPlanVibe" value="Nightlife"><span>Nights out</span></label>
+        </fieldset>
+        <output id="quickPlanSummary" class="quick-plan-summary" aria-live="polite"></output>
+        <details class="planning-extras"><summary>Budget & special requests (optional)</summary>
+        <label>Trip budget in USD (optional)<input id="letsPlanBudgetInput" type="number" min="0" max="100000000" step="1" placeholder="Your total budget"></label>
+        <label>Anything else that matters? (optional)<textarea id="letsPlanInterestsInput" maxlength="2000" rows="2" placeholder="A must-see spot, accessibility needs, or your perfect travel day"></textarea></label>
+        </details>
+      </section>
+      <p class="small" id="letsPlanDialogMessage" role="status"></p>
+      <div class="planning-dialog-actions"><button class="ghost-button" type="button" id="quickPlanBackButton" hidden>Back</button><button class="ghost-button" type="button" id="saveQuickPlanDraftButton">Save for later</button><button class="primary-button" type="submit" id="quickPlanNextButton">Next: the details</button></div>
+      <button class="planning-cancel-button" type="button" id="cancelLetsPlanDialogButton">Cancel</button>
       </div>
-      <label>What would make this trip great?<textarea id="letsPlanInterestsInput" rows="3" placeholder="Food, museums, beaches, accessibility needs, or anything else"></textarea></label>
-      <p class="small" id="letsPlanDialogMessage">Add the basics now. You can edit every detail before saving the trip.</p>
-      <div class="button-row"><button class="primary-button" type="submit">Continue planning</button><button class="ghost-button" type="button" id="cancelLetsPlanDialogButton">Cancel</button></div>
     </form>
   </dialog>
 
@@ -4623,10 +4653,11 @@
   <script src="https://link.msgsndr.com/js/external-tracking.js" data-tracking-id="tk_684cd074f7154fbebd60d6f62b2d331b"></script>
   <script src="public-config.js?v=3"></script>
   <script src="vendor/qrcode.js?v=1"></script>
-  <script defer src="usability.js?v=1"></script>
+  <script defer src="usability.js?v=2"></script>
   <script defer src="trip-management.js?v=1"></script>
   <script defer src="live-weather.js?v=1"></script>
   <script defer src="messaging-contacts.js?v=1"></script>
-  <script defer src="app.js?v=91"></script>
+  <script defer src="planning-studio.js?v=1"></script>
+  <script defer src="app.js?v=92"></script>
 </body>
 </html>

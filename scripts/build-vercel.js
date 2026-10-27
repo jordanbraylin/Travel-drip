@@ -12,6 +12,8 @@ const staticFiles = [
   "live-weather.js",
   "messaging-contacts.js",
   "messaging.css",
+  "planning-studio.js",
+  "planning-studio.css",
   "simple.css",
   "index.html",
   "login.html",

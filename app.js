@@ -2198,6 +2198,7 @@ function dashboardShouldShowBlankState() {
 
 function resetAccountData() {
   state.profileFormUserId = "";
+  resetQuickPlanningSession();
   resetMessagingContacts();
   clearTripWeather();
   if ($("#incomingTripInvitationList")) $("#incomingTripInvitationList").innerHTML = "";
@@ -2351,6 +2352,7 @@ function renderAccountState(target = getTargetFromRoute()) {
   });
   if ($("#dashboardWidgets")) setVisibilityWithoutCssLeaks($("#dashboardWidgets"), target === "dashboardHome");
   applyAccountRouteState(target);
+  if (target === "letsPlan") renderPlanningStudio();
   if (target === "socialHub") {
     renderTripChatData();
     void loadMessagingContacts();
@@ -6690,7 +6692,7 @@ async function signOut() {
 const mainNavigation = Object.freeze([
   { id: "dashboard", label: "Dashboard", target: "dashboardHome", path: "/dashboard" },
   { id: "profile", label: "My Profile", target: "myProfile", path: "/profile/my-profile" },
-  { id: "planning", label: "Planning", target: "aiTravelPlanner", path: "/planning" },
+  { id: "planning", label: "Planning", target: "letsPlan", path: "/planning" },
   { id: "itinerary", label: "Itinerary", target: "itineraryAlerts", path: "/itinerary" },
   { id: "events", label: "Events", target: "eventsPanel", path: "/events" },
   { id: "transportation", label: "Transportation", target: "transportationPanel", path: "/transportation" },
@@ -6799,9 +6801,9 @@ function applySmartDashboardLayout() {
 
 const routeDefinitions = {
   dashboardHome: { path: mainNavigationByTarget.dashboardHome.path, label: "Dashboard" },
-  letsPlan: { path: "/lets-plan", label: "Let's Plan" },
+  letsPlan: { path: mainNavigationByTarget.letsPlan.path, label: "Let's Plan" },
   eventsPanel: { path: "/events", label: "Events" },
-  aiTravelPlanner: { path: mainNavigationByTarget.aiTravelPlanner.path, label: "AI Travel Planner" },
+  aiTravelPlanner: { path: "/planner", label: "AI Travel Planner" },
   exploreDrops: { path: "/explore", label: "Explore" },
   tripsPanel: { path: "/trips", label: "My Trips" },
   groupBank: { path: "/trips/dubai-weekend/group-bank", label: "Group Bank" },
@@ -6828,7 +6830,7 @@ const routeAliases = {
   "/profile": "myProfile",
   "/profile/my-profile": "myProfile",
   "/lets-plan": "letsPlan",
-  "/planning": "aiTravelPlanner",
+  "/planning": "letsPlan",
   "/itinerary": "itineraryAlerts",
   "/events": "eventsPanel",
   "/events/upcoming": "eventsPanel",
@@ -7745,6 +7747,7 @@ function wireLocalInteractions() {
   initializeTripManagement();
   initializeLiveWeather();
   initializeMessagingContacts();
+  initializePlanningStudio();
   applyMainNavigationConfig();
   applySmartDashboardLayout();
   ["#eventDateInput", "#eventRsvpInput", "#flightDepartureDateInput"].forEach((selector) => {
@@ -7767,8 +7770,9 @@ function wireLocalInteractions() {
   const closeDialog = (selector) => $(selector)?.close();
   $("#letsPlanButton")?.addEventListener("click", () => {
     const dialog = $("#letsPlanDialog");
+    prepareQuickPlanning();
     if (dialog && !dialog.open) dialog.showModal();
-    $("#letsPlanDestinationInput")?.focus();
+    renderQuickPlanningStep({ focus: true });
   });
   ["#closeLetsPlanDialogButton", "#cancelLetsPlanDialogButton"].forEach((selector) => {
     $(selector)?.addEventListener("click", () => closeDialog("#letsPlanDialog"));
@@ -7799,7 +7803,7 @@ function wireLocalInteractions() {
     if ($("#tripTravelersInput")) $("#tripTravelersInput").value = $("#letsPlanTravelersInput")?.value || "1";
     if ($("#eventGuestCountInput")) $("#eventGuestCountInput").value = $("#letsPlanTravelersInput")?.value || "1";
     if ($("#tripBudgetInput")) $("#tripBudgetInput").value = $("#letsPlanBudgetInput")?.value || "";
-    if ($("#tripInterestsInput")) $("#tripInterestsInput").value = $("#letsPlanInterestsInput")?.value.trim() || "";
+    if ($("#tripInterestsInput")) $("#tripInterestsInput").value = getQuickPlanningInterests();
     renderInvitationSetup(type);
   });
 
@@ -9085,6 +9089,7 @@ function wireLocalInteractions() {
         throw new Error("Sign in on the deployed app before creating a trip.");
       } else {
         $("#soloModeMessage").textContent = `${config.label} created and saved to Supabase: ${tripName}. Event modules, permissions, audit log, and wallet setup were initialized.`;
+        clearQuickPlanningDraft();
         const createdTripId = result.event?.id || result.trip?.id || "";
         if (createdTripId) {
           state.activeTripId = createdTripId;
