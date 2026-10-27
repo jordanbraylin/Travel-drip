@@ -21,4 +21,13 @@ assert.ok(source.includes('state.session?.user?.id !== userId'));
 assert.ok(source.includes('!result.scheduleItem?.id'));
 assert.ok(source.includes('trip.owner_user_id === state.session?.user?.id'));
 assert.ok(source.includes('No money is moved or payment request sent.'));
+const emptyClass = new Set(["is-account-empty"]);
+context.document = { body: { classList: { contains: () => false } }, getElementById: () => ({ classList: { remove: (value) => emptyClass.delete(value) } }), querySelector: () => ({}) };
+context.renderTripItinerary = () => {};
+context.renderWalletWorkspaceStatus = () => {};
+for (const route of ["itineraryAlerts", "walletPanel"]) {
+  emptyClass.add("is-account-empty");
+  vm.runInContext(`renderTripWorkspaces('${route}')`, context);
+  assert.equal(emptyClass.has("is-account-empty"), false, `${route} must remain usable without a saved trip`);
+}
 console.log("Trip workspaces passed: exact-cent splitting, validation, saved-activity confirmation, and account guards.");

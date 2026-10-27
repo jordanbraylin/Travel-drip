@@ -197,6 +197,9 @@ function initializeWalletSplitter() {
 
 function renderTripWorkspaces(target) {
   if (document.body.classList.contains("corporate-employee-mode")) return;
+  if (["itineraryAlerts", "walletPanel"].includes(target)) {
+    document.getElementById(target)?.classList.remove("is-account-empty");
+  }
   if (target === "tripsPanel" && !state.accountData.showCreation) {
     const panel = document.querySelector("#tripsPanel");
     let workspace = panel.querySelector(".visual-trips-workspace");
