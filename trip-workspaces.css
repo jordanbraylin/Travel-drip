@@ -6,7 +6,7 @@ html body.signed-in-shell #tripsPanel.is-account-creation > .visual-trips-worksp
 html body.signed-in-shell:not(.corporate-employee-mode)[data-active-route="itineraryAlerts"] [data-route-support~="itineraryAlerts"] { display: none !important; }
 html body.signed-in-shell :is(#tripsPanel, #itineraryAlerts, #walletPanel) { min-width: 0; }
 html body.app-routed.signed-in-shell:not(.corporate-employee-mode):is([data-active-route="tripsPanel"],[data-active-route="itineraryAlerts"],[data-active-route="walletPanel"]) .right-stack { display: block !important; }
-html body.app-routed.signed-in-shell:not(.corporate-employee-mode) :is(#tripsPanel,#itineraryAlerts,#walletPanel) { grid-column: 1/-1 !important; width: 100% !important; max-width: none !important; margin: 0 !important; box-sizing: border-box !important; }
+html body.app-routed.signed-in-shell:not(.corporate-employee-mode) :is(#tripsPanel,#itineraryAlerts,#walletPanel) { grid-column: 1/-1 !important; width: 100% !important; max-width: none !important; margin: 0 !important; box-sizing: border-box !important; background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
 .trip-workspace-heading { padding: 12px 0 20px; }
 html body.app-routed.signed-in-shell #tripsPanel .visual-trips-workspace { padding: 24px !important; }
 html body.app-routed.signed-in-shell :is(.visual-trips-workspace,.trip-itinerary-workspace) button { width: auto !important; min-height: 48px !important; padding: 10px 16px !important; border-radius: 6px !important; }
