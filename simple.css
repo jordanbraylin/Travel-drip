@@ -69,7 +69,7 @@ html body.signed-in-shell #letsPlanButton { flex: 0 0 auto !important; width: au
 html body.signed-in-shell .topbar .profile-avatar-button { display: flex; gap: 10px; width: auto !important; height: auto !important; padding: 6px 12px !important; background: #fff !important; color: #193238 !important; border: 1px solid #aebfc5; border-radius: 6px; }
 html body.signed-in-shell .topbar .profile-photo-avatar { width: 32px; height: 32px; font-size: 14px; }
 html body.signed-in-shell #globalDestinationHeader { display: none !important; }
-html body.signed-in-shell:is([data-active-route="dashboardHome"], [data-active-route="exploreDrops"]) #globalDestinationHeader:not([hidden]) {
+html body.signed-in-shell[data-active-route="exploreDrops"] #globalDestinationHeader:not([hidden]) {
   display: grid !important;
   position: relative !important;
   top: auto;
@@ -84,6 +84,61 @@ html body.signed-in-shell:is([data-active-route="dashboardHome"], [data-active-r
   box-shadow: none;
   opacity: 1;
   transform: none;
+}
+html body.signed-in-shell #dashboardHome.destination-banner:not([hidden]) {
+  display: block !important;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px !important;
+  margin-bottom: 24px;
+}
+html body.signed-in-shell #dashboardHome.destination-banner .hero-copy {
+  width: min(780px, 85%) !important;
+  padding: 36px 32px 92px !important;
+  color: #fff !important;
+}
+html body.signed-in-shell #dashboardHome.destination-banner :is(h1, p, .destination-banner-meta span) { color: #fff !important; }
+html body.signed-in-shell #dashboardHome.destination-banner h1 { font-size: 40px !important; }
+html body.signed-in-shell #dashboardHome.destination-banner::after {
+  background: linear-gradient(90deg, rgb(0 0 0 / 78%), rgb(0 0 0 / 46%) 65%, rgb(0 0 0 / 12%));
+}
+html body.signed-in-shell #dashboardHome.destination-banner .destination-banner-meta {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  background: transparent;
+  backdrop-filter: none;
+  max-height: none !important;
+  overflow: visible !important;
+}
+html body.app-routed.signed-in-shell #dashboardHome.destination-banner .destination-banner-meta span,
+html body.app-routed.signed-in-shell #dashboardHome.destination-banner .destination-banner-meta span:nth-child(even) {
+  display: block !important;
+  font-size: 16px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  line-height: 1.5 !important;
+}
+html body.signed-in-shell #dashboardHome.destination-banner .hero-actions { display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; gap: 10px !important; justify-content: flex-start !important; }
+html body.signed-in-shell #dashboardHome.destination-banner .hero-actions button { min-height: 48px !important; font-size: 18px !important; border-radius: 6px !important; width: auto !important; }
+html body.signed-in-shell #dashboardHome.destination-banner .icon-button {
+  width: 48px; height: 48px; min-width: 48px;
+  color: #fff; background: #193238; border: 1px solid #fff;
+}
+html body.signed-in-shell #destinationDots { display: none !important; }
+html body.signed-in-shell #dashboardHome.is-transitioning :is(img, .hero-copy) {
+  opacity: 1; filter: none; transform: none; animation: none;
+}
+@media (max-width: 760px) {
+  html body.signed-in-shell #dashboardHome.destination-banner .hero-copy {
+    width: 100% !important; padding: 80px 20px 88px !important;
+  }
+  html body.signed-in-shell #dashboardHome.destination-banner h1 { font-size: 32px !important; }
+  html body.app-routed.signed-in-shell #dashboardHome :is(#livePlanDescription, #livePlanSeason, #livePlanGreeting) { display: none !important; }
+  html body.signed-in-shell #dashboardHome.destination-banner::after { background: rgb(0 0 0 / 65%); }
 }
 html body.signed-in-shell #globalDestinationHeader img { width: 128px; height: 88px; border-radius: 6px; object-fit: cover; }
 html body.signed-in-shell #globalDestinationHeader .global-destination-copy { color: #193238; }

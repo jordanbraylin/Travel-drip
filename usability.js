@@ -80,6 +80,11 @@ function initializeSimpleExperience() {
     if (label !== "Home" && button.closest("[data-consumer-nav]")) button.dataset.consumerNav = "";
     button.textContent = label;
     button.setAttribute("aria-label", label);
+    if (label === "Find travel") {
+      button.removeAttribute("data-main-nav-id");
+      button.removeAttribute("data-travel-section");
+      button.dataset.target = "exploreDrops";
+    }
     return button;
   });
   menu.replaceChildren(...destinations, ...[company, admin].filter(Boolean));

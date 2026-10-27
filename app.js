@@ -1095,7 +1095,12 @@ function startLivePlanRotation() {
 
   const resumeRotation = () => {
     if (state.liveDestinationPaused || state.liveDestinationTimer) return;
-    state.liveDestinationTimer = window.setInterval(() => renderDestination(), 6500);
+    state.liveDestinationTimer = window.setInterval(() => {
+      if (document.hidden || hero.hidden || hero.contains(document.activeElement)
+        || document.documentElement.dataset.reduceMotion === "true"
+        || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      renderDestination();
+    }, 8000);
   };
   const stopRotation = () => {
     if (!state.liveDestinationTimer) return;
@@ -2331,7 +2336,6 @@ function applyAccountRouteState(target) {
 
 function renderAccountState(target = getTargetFromRoute()) {
   const empty = accountIsEmpty();
-  const dashboardBlank = dashboardShouldShowBlankState();
   const accountReady = Boolean(state.session?.user && state.accountData.loaded && !state.accountData.loading);
   document.body.classList.toggle("account-data-ready", accountReady);
   document.body.classList.toggle("account-data-pending", Boolean(state.session?.user && !accountReady));
@@ -2343,7 +2347,7 @@ function renderAccountState(target = getTargetFromRoute()) {
       : "No private trips, conversations, bookings, wallet activity, memories, or company events are attached to this account yet.";
   }
   const homeEmpty = $("#accountEmptyDashboard");
-  if (homeEmpty) setVisibilityWithoutCssLeaks(homeEmpty, target === "dashboardHome" && dashboardBlank);
+  if (homeEmpty) setVisibilityWithoutCssLeaks(homeEmpty, false);
   const homeLive = $("#accountLiveDashboard");
   if (homeLive) setVisibilityWithoutCssLeaks(homeLive, target === "dashboardHome" && Boolean(state.session?.user) && state.accountData.loaded && !empty);
   [$(".metrics"), $(".travel-social-strip"), $(".destination-insights")].forEach((element) => {
@@ -4153,7 +4157,9 @@ function syncCorporateEmployeeDashboardVisibility(employeeMode) {
   const showEmployeeDashboard = employeeMode && dashboardIsActive;
   const showPublicInspiration = !state.session?.user && !employeeMode && dashboardIsActive;
 
-  ["#dashboardHome", ".destination-insights", ".travel-social-strip", ".metrics"].forEach((selector) => {
+  setVisibilityWithoutCssLeaks($("#dashboardHome"), !employeeMode && dashboardIsActive);
+
+  [".destination-insights", ".travel-social-strip", ".metrics"].forEach((selector) => {
     $$(selector).forEach((section) => setVisibilityWithoutCssLeaks(section, showPublicInspiration));
   });
   setVisibilityWithoutCssLeaks($("#dashboardWidgets"), !employeeMode && dashboardIsActive);
@@ -10362,6 +10368,10 @@ function wireLocalInteractions() {
       };
       if (section === "security") {
         navigateSafely("adminPanel", { updateHistory: true, settingsFocus: "security" });
+      } else if (section === "splitBills") {
+        navigateSafely("splitBill", { updateHistory: true });
+      } else if (section === "virtualCard") {
+        navigateSafely("walletPanel", { updateHistory: true });
       } else if (!["splitBills", "virtualCard"].includes(section) && $("#walletPanel")?.hidden) {
         navigateSafely("walletPanel", { updateHistory: true });
       }
