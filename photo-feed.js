@@ -16,6 +16,7 @@ function resetPhotoFeed() {
 }
 
 function photoFeedKey() { return `${state.session?.user?.id || ''}:${state.activeTripId || ''}`; }
+function photoCanPublish(){return Boolean(state.session?.user&&state.accountData?.loaded&&state.accountData.activeTrip?.id===state.activeTripId&&state.activeTripId);}
 function photoIcons(root = document) { window.lucide?.createIcons({ root }); }
 function photoStatus(message) { const el = document.querySelector('#photoFeedStatus'); if (el) el.textContent = message; }
 
@@ -24,7 +25,7 @@ function setPhotoComposerKind(kind) {
   form.dataset.kind = kind;
   document.querySelectorAll('[data-photo-kind]').forEach(button => { button.setAttribute('aria-pressed',String(button.dataset.photoKind === kind)); button.disabled = false; });
   const files = document.querySelector('#photoFiles');
-  files.value = ''; files.required = kind !== 'blog'; files.disabled = kind === 'blog' || !state.activeTripId;
+  files.value = ''; files.required = kind !== 'blog'; files.disabled = kind === 'blog' || !photoCanPublish();
   files.accept = kind === 'vlog' ? 'video/mp4,video/quicktime,video/webm' : 'image/jpeg,image/png,image/webp,image/heic,video/mp4,video/quicktime,video/webm';
   files.multiple = kind === 'photo';
   document.querySelector('#photoFileField').hidden = kind === 'blog';
@@ -88,7 +89,7 @@ function initializePhotoFeed() {
         if (key === photoFeedKey() && generation === photoFeedState.generation && result?.savedCount) document.querySelector('#photoFiles').value = '';
       }
     } catch (error) { if (key === photoFeedKey() && generation === photoFeedState.generation) photoStatus(error.message); }
-    finally { if (key === photoFeedKey() && generation === photoFeedState.generation) { button.disabled = !state.activeTripId; document.querySelectorAll('[data-photo-kind]').forEach(b=>{b.disabled=false;}); } }
+    finally { if (key === photoFeedKey() && generation === photoFeedState.generation) { button.disabled = !photoCanPublish(); document.querySelectorAll('[data-photo-kind]').forEach(b=>{b.disabled=false;}); } }
   });
   panel.querySelectorAll('[data-photo-kind]').forEach(button => button.addEventListener('click',()=>setPhotoComposerKind(button.dataset.photoKind)));
   document.querySelector('#photoFeedRefresh').addEventListener('click', () => loadPhotoFeed());
@@ -119,7 +120,7 @@ function renderPhotoFeed(target) {
   const panel = document.querySelector('#memoriesPanel');
   panel.classList.remove('is-account-empty','is-account-live');
   panel.querySelectorAll('.account-route-empty,.account-route-live,.account-saved-records').forEach(el => { el.hidden = true; });
-  const eligible = Boolean(state.session?.user && state.activeTripId && state.accountData.loaded);
+  const eligible = photoCanPublish();
   document.querySelector('#photoCreateTrip').hidden = eligible || !state.accountData.loaded;
   document.querySelectorAll('#photoComposer input,#photoComposer textarea,#photoComposer select,#photoPublish').forEach(el => { el.disabled = !eligible; });
   if (document.querySelector('#photoComposer').dataset.kind === 'blog') document.querySelector('#photoFiles').disabled = true;
@@ -170,7 +171,7 @@ function drawPhotoPosts() {
   if (!photoFeedState.posts.length && photoFeedState.loaded) {
     const empty = document.createElement('section'); empty.className = 'photo-feed-empty';
     empty.innerHTML = '<span class="photo-empty-icon" aria-hidden="true"><i data-lucide="camera"></i></span><h3>The best moments are still ahead</h3><p>The view. The friends. That unforgettable meal.</p><button type="button" class="primary-button"><i data-lucide="image-plus"></i>Share your first moment</button>';
-    empty.querySelector('button').addEventListener('click',()=> { if(!state.activeTripId){document.querySelector('#photoCreateTrip')?.click();return;}document.querySelector('.photo-composer-toggle').open = true; document.querySelector('#photoCaption').focus(); });
+    empty.querySelector('button').addEventListener('click',()=> { if(!photoCanPublish()){document.querySelector('#photoCreateTrip')?.click();return;}document.querySelector('.photo-composer-toggle').open = true; document.querySelector('#photoCaption').focus(); });
     list.append(empty);
   }
   for (const post of posts) {
