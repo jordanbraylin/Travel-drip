@@ -1183,7 +1183,7 @@ create policy "Members read documents" on public.documents
 
 drop policy if exists "Members read media" on public.media;
 create policy "Members read media" on public.media
-  for select to authenticated using (public.is_trip_member(trip_id));
+  for select to authenticated using (public.is_trip_member(trip_id) and (user_id = auth.uid() or visibility = 'members'));
 
 drop policy if exists "Users create own media" on public.media;
 create policy "Users create own media" on public.media

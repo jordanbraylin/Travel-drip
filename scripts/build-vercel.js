@@ -18,6 +18,8 @@ const staticFiles = [
   "trip-workspaces.css",
   "journey-dashboard.js",
   "journey-dashboard.css",
+  "photo-feed.js",
+  "photo-feed.css",
   "simple.css",
   "index.html",
   "login.html",

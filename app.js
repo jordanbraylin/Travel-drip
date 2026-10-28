@@ -2203,6 +2203,7 @@ function dashboardShouldShowBlankState() {
 }
 
 function resetAccountData() {
+  resetPhotoFeed();
   state.profileFormUserId = "";
   resetQuickPlanningSession();
   resetJourneyWorkspace();
@@ -2361,6 +2362,7 @@ function renderAccountState(target = getTargetFromRoute()) {
   if ($("#dashboardWidgets")) setVisibilityWithoutCssLeaks($("#dashboardWidgets"), target === "dashboardHome");
   applyAccountRouteState(target);
   renderTripWorkspaces(target);
+  renderPhotoFeed(target);
   if (target === "letsPlan") renderPlanningStudio();
   if (target === "socialHub") {
     renderTripChatData();
@@ -7536,6 +7538,7 @@ function addMemoryPreview(file, sourceUrl, visibility, saved) {
 }
 
 async function loadMemoryFiles() {
+  if (document.querySelector('#photoFeedList')) return loadPhotoFeed();
   const gallery = $("#memoriesPanel .memory-gallery-grid");
   if (!gallery) return;
   gallery.innerHTML = "";
@@ -7687,8 +7690,15 @@ async function detectTicketCode(file) {
 async function uploadMemoryFiles(files, action) {
   const selectedFiles = Array.from(files || []);
   if (!selectedFiles.length) return;
-  const visibility = $("#memoryVisibility")?.value || "Private (Only Me)";
-  const message = $("#dailyMemoryMessage");
+  const isFeed = action === 'photo-feed';
+  const visibility = isFeed ? $("#photoVisibility").value : $("#memoryVisibility")?.value || "Private (Only Me)";
+  const caption = isFeed ? $("#photoCaption").value.trim().slice(0,2000) : '';
+  const tags = isFeed ? $("#photoTags").value.trim().slice(0,330) : '';
+  const message = isFeed ? $("#photoFeedStatus") : $("#dailyMemoryMessage");
+  const uploadUserId = state.session?.user?.id;
+  const uploadTripId = state.activeTripId;
+  const uploadClient = state.supabase;
+  const stillCurrent = () => uploadUserId === state.session?.user?.id && uploadTripId === state.activeTripId;
   const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/heic", "image/webp"]);
   const allowedVideoTypes = new Set(["video/mp4", "video/quicktime", "video/webm"]);
   const validFiles = selectedFiles.filter((file) => {
@@ -7717,38 +7727,43 @@ async function uploadMemoryFiles(files, action) {
   let savedCount = 0;
   const failures = [];
   for (const file of validFiles) {
+    if (!stillCurrent()) return;
     try {
       const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/-+/g, "-");
       const uniqueId = typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-      const storagePath = `${state.session.user.id}/${uniqueId}-${safeName}`;
-      const { error } = await state.supabase.storage
+      const storagePath = `${uploadUserId}/${uniqueId}-${safeName}`;
+      const { error } = await uploadClient.storage
         .from("travel-memories")
         .upload(storagePath, file, { cacheControl: "3600", contentType: file.type, upsert: false });
       if (error) throw error;
       const visibilityValue = visibility.toLowerCase().startsWith("private") ? "private"
         : visibility.toLowerCase().includes("selected") ? "selected"
           : visibility.toLowerCase().includes("public") ? "public" : "members";
-      const { error: metadataError } = await state.supabase.from("media").insert({
-        trip_id: state.activeTripId,
-        user_id: state.session.user.id,
+      const { error: metadataError } = await uploadClient.from("media").insert({
+        trip_id: uploadTripId,
+        user_id: uploadUserId,
         storage_path: storagePath,
         media_type: file.type,
-        caption: file.name,
+        caption: isFeed ? caption : file.name,
         visibility: visibilityValue,
-        metadata: { filename: file.name, mimeType: file.type, size: file.size, uploadAction: action }
+        metadata: { filename: file.name, mimeType: file.type, size: file.size, uploadAction: action, tags }
       });
       if (metadataError) {
-        await state.supabase.storage.from("travel-memories").remove([storagePath]);
+        await uploadClient.storage.from("travel-memories").remove([storagePath]);
         throw metadataError;
       }
-      const { data: signedData } = await state.supabase.storage.from("travel-memories").createSignedUrl(storagePath, 3600);
-      addMemoryPreview(file, signedData?.signedUrl || URL.createObjectURL(file), visibility, true);
+      if (!stillCurrent()) return;
+      if (!isFeed) {
+        const { data: signedData } = await uploadClient.storage.from("travel-memories").createSignedUrl(storagePath, 3600);
+        if (stillCurrent()) addMemoryPreview(file, signedData?.signedUrl || URL.createObjectURL(file), visibility, true);
+      }
       savedCount += 1;
     } catch (_error) {
       failures.push(file.name);
     }
   }
 
+  if (!stillCurrent()) return;
   if (savedCount) {
     message.textContent = `${savedCount} ${savedCount === 1 ? "memory was" : "memories were"} uploaded securely with ${visibility} visibility.${failures.length ? ` ${failures.length} file(s) could not be saved.` : ""}`;
     addAuditEntry("Memories uploaded", `${savedCount} file(s) saved from ${action} with ${visibility} visibility.`);

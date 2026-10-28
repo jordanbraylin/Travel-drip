@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-28T19:25:20.490Z",
+  "generatedAt": "2026-10-28T19:42:31.078Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
@@ -7,7 +7,7 @@
   "totals": {
     "screenIds": 959,
     "buttons": 725,
-    "hrefLinks": 13,
+    "hrefLinks": 14,
     "dataTargets": 97,
     "uniqueDataTargets": 19,
     "mainNavigationControls": 37,
@@ -16,7 +16,7 @@
     "dateInputs": 17,
     "searchInputs": 13,
     "actionAttributeTypes": 85,
-    "apiRoutes": 27
+    "apiRoutes": 28
   },
   "linkAndRouteVerification": {
     "workingLocalTargets": 19,
@@ -723,6 +723,7 @@
       "invitations.js",
       "notify.js",
       "ownership-transfer.js",
+      "photo-feed.js",
       "rsvp.js",
       "schedule.js",
       "subscribe.js",
