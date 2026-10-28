@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-27T21:43:09.284Z",
+  "generatedAt": "2026-10-28T14:47:32.740Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
@@ -7,7 +7,7 @@
   "totals": {
     "screenIds": 959,
     "buttons": 725,
-    "hrefLinks": 12,
+    "hrefLinks": 13,
     "dataTargets": 97,
     "uniqueDataTargets": 19,
     "mainNavigationControls": 37,

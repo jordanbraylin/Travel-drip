@@ -25,13 +25,14 @@ const emptyClass = new Set(["is-account-empty"]);
 context.document = { body: { classList: { contains: () => false } }, getElementById: () => ({ classList: { remove: (value) => emptyClass.delete(value) } }), querySelector: () => ({}) };
 context.renderTripItinerary = () => {};
 context.renderWalletWorkspaceStatus = () => {};
+context.renderJourneyDashboard = () => {};
 for (const route of ["itineraryAlerts", "walletPanel"]) {
   emptyClass.add("is-account-empty");
   vm.runInContext(`renderTripWorkspaces('${route}')`, context);
   assert.equal(emptyClass.has("is-account-empty"), false, `${route} must remain usable without a saved trip`);
 }
 const balance = {}, copy = {};
-const walletContext = vm.createContext({ state: { accountData: { activeTrip: null }, walletAccess: { status: "ready", tripId: "other-trip", wallet: { availableCents: 1000 } } }, document: { querySelector: (selector) => selector === "#tripAvailableBalance" ? balance : selector === "#tripAvailableBalanceCopy" ? copy : null }, formatWalletMoney: () => "$10.00" });
+const walletContext = vm.createContext({ renderJourneyWallet: () => {}, state: { accountData: { activeTrip: null }, walletAccess: { status: "ready", tripId: "other-trip", wallet: { availableCents: 1000 } } }, document: { querySelector: (selector) => selector === "#tripAvailableBalance" ? balance : selector === "#tripAvailableBalanceCopy" ? copy : null }, formatWalletMoney: () => "$10.00" });
 vm.runInContext(source.slice(source.indexOf("function renderWalletWorkspaceStatus(")), walletContext);
 vm.runInContext("renderWalletWorkspaceStatus()", walletContext);
 assert.equal(balance.textContent, "Not connected");

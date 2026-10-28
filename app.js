@@ -2205,6 +2205,7 @@ function dashboardShouldShowBlankState() {
 function resetAccountData() {
   state.profileFormUserId = "";
   resetQuickPlanningSession();
+  resetJourneyWorkspace();
   document.querySelector("#walletSplitForm")?.reset();
   document.querySelector("#walletSplitResult")?.replaceChildren();
   resetMessagingContacts();
@@ -3768,24 +3769,23 @@ function renderLiveAiSearchResults(target, result) {
 }
 
 async function searchLiveTravelPlaces({ category, query = "", destination = "", target }) {
-  liveSearchMessage(target, "Preparing free DuckDuckGo search...", "loading");
-  if (!isFilePreview) {
-    const params = new URLSearchParams({ category: category || "trending", q: query, destination });
-    try {
-      window.open(`/api/travel-search?${params}`, "_blank", "noopener,noreferrer");
-    } catch {
-      // The result link below also works when the browser blocks a new tab.
-    }
-  }
+  const requestId = beginInAppSearch(target);
+  liveSearchMessage(target, "Finding destination and transport guides...", "loading");
   if (target === "explore") renderLiveExploreResults([]);
   if (target === "travel") renderLiveTravelResults([]);
   if (target === "privateDriver") renderLivePrivateDriverResults([]);
   try {
     const result = await liveSearchApiRequest("/api/travel-search", {
       method: "POST",
-      body: JSON.stringify({ category, q: query, destination, limit: 8 })
+      body: JSON.stringify({ category, q: query, destination, limit: 8, provider: "in_app" })
     });
+    if (!isCurrentInAppSearch(target, requestId)) return result;
     if (result.skipped) throw new Error(result.reason || "Open the deployed app to use live provider search.");
+    if (result.provider === "in_app") {
+      renderInAppTravelResults(target, result);
+      liveSearchMessage(target, result.results?.length ? "Destination guides updated. These are reference information, not live fares or bookings." : "No guides found. Try a city and country.", result.results?.length ? "success" : "empty");
+      return result;
+    }
     if (result.provider === "duckduckgo") {
       renderFreeWebSearchResults(target, result);
       liveSearchMessage(target, "DuckDuckGo search ready.", "success");
@@ -3827,6 +3827,7 @@ async function searchLiveTravelPlaces({ category, query = "", destination = "", 
     });
     return result;
   } catch (error) {
+    if (!isCurrentInAppSearch(target, requestId)) return { error: error.message };
     liveSearchMessage(target, `${error.message} Public inspiration below is not live availability.`, "error");
     if (target === "explore") renderLiveExploreResults([]);
     if (target === "travel") renderLiveTravelResults([]);
@@ -7757,6 +7758,7 @@ function wireLocalInteractions() {
   moveTransportationWorkspace();
   initializeSimpleExperience();
   initializeWalletSplitter();
+  initializeJourneyWallet();
   initializeTripManagement();
   initializeLiveWeather();
   initializeMessagingContacts();

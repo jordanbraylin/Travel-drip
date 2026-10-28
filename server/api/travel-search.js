@@ -5,6 +5,7 @@ import {
   sanitizeText
 } from "./_security.js";
 import aiPlanner from "./ai-planner.js";
+import { searchTravelGuides } from "./_travel-guides.js";
 
 const googlePlacesUrl = "https://places.googleapis.com/v1/places:searchText";
 const requestWindow = new Map();
@@ -28,6 +29,9 @@ const categoryQueries = {
   hotels: "hotels and places to stay",
   transport: "transportation, private drivers, and airport transfers",
   rideshare: "rideshare services, taxis, and airport rides",
+  flights: "airports",
+  trains: "railway stations",
+  shuttle: "public transport",
   trips: "tourist attractions and travel destinations"
 };
 
@@ -126,6 +130,11 @@ export default async function handler(request, response) {
   const destination = sanitizeText(body.destination, "", 160);
   const query = sanitizeText(body.q || body.query, "", 180);
   const provider = sanitizeText(body.provider, "duckduckgo", 32);
+  if (provider === "in_app") {
+    try { response.status(200).json(await searchTravelGuides({ query, destination, category })); }
+    catch (error) { response.status(error.status || 502).json({ error: error.message || "Travel guides are unavailable." }); }
+    return;
+  }
   if (request.method === "GET" || provider === "duckduckgo") {
     const textQuery = [query || categoryQueries[category], destination].filter(Boolean).join(" in ");
     const searchUrl = new URL("https://duckduckgo.com/");

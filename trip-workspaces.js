@@ -110,6 +110,11 @@ function renderTripItinerary(section) {
   const credit = document.createElement("small"); credit.textContent = "Destination inspiration"; copy.append(credit);
   banner.append(image, copy);
   workspace.append(banner);
+  const steps = document.createElement("div"); steps.className = "journey-planning-steps";
+  for (const [name, value] of [["Destination", trip?.destination], ["Dates", trip?.starts_on && trip?.ends_on], ["Activities", state.accountData.records?.schedule_items?.length]]) {
+    const step = document.createElement("span"); step.textContent = name; step.classList.toggle("complete", Boolean(value)); step.setAttribute("aria-label", `${name}: ${value ? "added" : "not added"}`); steps.append(step);
+  }
+  workspace.append(steps);
   if (!trip) return;
   const actions = document.createElement("div"); actions.className = "trip-workspace-actions";
   actions.append(workspaceButton("Find something fun", () => navigateSafely("exploreDrops", { updateHistory: true })), workspaceButton("Invite people", openTripInviteDialog), workspaceButton("Trip funds", () => navigateSafely("walletPanel", { updateHistory: true })));
@@ -215,6 +220,7 @@ function renderTripWorkspaces(target) {
   }
   if (target === "itineraryAlerts") renderTripItinerary(document.querySelector("#itineraryAlerts"));
   if (target === "walletPanel") renderWalletWorkspaceStatus();
+  renderJourneyDashboard(target);
 }
 
 function renderWalletWorkspaceStatus() {
@@ -231,35 +237,36 @@ function renderWalletWorkspaceStatus() {
   if (access.status === "loading") { balance.textContent = "Loading..."; copy.textContent = "Checking your trip wallet."; }
   else if (!access.wallet || !state.accountData.activeTrip || (access.tripId && access.tripId !== state.accountData.activeTrip.id)) { balance.textContent = "Not connected"; copy.textContent = "Select a trip and set up its wallet to see confirmed funds."; }
   else { balance.textContent = formatWalletMoney(access.wallet.availableCents || 0, access.wallet.currency); copy.textContent = "Provider-confirmed funds available for this trip."; }
+  renderJourneyWallet();
 }
 
-function renderFindTravelRideshare(category) {
+function renderFindTravelRideshare(category, targetContainer = null, onProvider = null) {
   if (category !== "rideshare") return;
-  const results = document.querySelector("#exploreResultsGrid");
+  const results = targetContainer || document.querySelector("#exploreResultsGrid");
   if (!results) return;
   const section = document.createElement("section"); section.className = "rideshare-options";
   const destination = document.querySelector("#exploreDestinationInput")?.value.trim();
   section.append(workspaceHeading("Find your ride", destination ? `Rideshare options to check for ${destination}` : "City rides, airport pickups, and getting everyone there together."));
   const note = document.createElement("p"); note.className = "small";
-  note.textContent = "Availability, pickup times, accessibility, and final fares are confirmed by each provider. Booking opens on their site.";
+  note.textContent = "Read service guides here. Live fares, pickup times, and booking are not connected.";
   section.append(note);
   const table = document.createElement("table");
-  table.innerHTML = '<caption>Rideshare providers</caption><thead><tr><th scope="col">Provider</th><th scope="col">Options</th><th scope="col">Check rides</th></tr></thead>';
+  table.innerHTML = '<caption>Rideshare providers</caption><thead><tr><th scope="col">Provider</th><th scope="col">Options</th><th scope="col">Details</th></tr></thead>';
   const body = document.createElement("tbody");
-  for (const [name, description, url] of [
-    ["Uber", "City and airport rides", "https://www.uber.com/global/en/ride/"],
-    ["Lyft", "City and airport rides", "https://www.lyft.com/rider"],
-    ["Bolt", "City and airport rides", "https://bolt.eu/en/rides/"],
-    ["Grab", "Car and taxi services", "https://www.grab.com/sg/transport/"]
+  for (const [name, description] of [
+    ["Uber", "City and airport rides"],
+    ["Lyft", "City and airport rides"],
+    ["Bolt", "City and airport rides"],
+    ["Grab", "Car and taxi services"]
   ]) {
     const row = document.createElement("tr");
     const provider = document.createElement("th"); provider.scope = "row"; provider.textContent = name;
     const options = document.createElement("td"); options.textContent = description;
-    const action = document.createElement("td"); const link = document.createElement("a");
-    link.href = url; link.target = "_blank"; link.rel = "noopener noreferrer"; link.textContent = `Open ${name}`;
-    action.append(link); row.append(provider, options, action); body.append(row);
+    const action = document.createElement("td");
+    const details = workspaceButton(`About ${name}`, () => onProvider ? onProvider(name) : searchLiveTravelPlaces({ category: "rideshare", query: `${name} ridesharing`, destination: "", target: "explore" }));
+    action.append(details); row.append(provider, options, action); body.append(row);
   }
   table.append(body); section.append(table);
-  section.append(workspaceButton("Search local rides and taxis", () => searchLiveTravelPlaces({ category: "rideshare", query: "", destination: document.querySelector("#exploreDestinationInput")?.value.trim() || "", target: "explore" }), true));
+  section.append(workspaceButton("Search local rides and taxis", () => onProvider ? onProvider("local taxis") : searchLiveTravelPlaces({ category: "rideshare", query: "", destination: document.querySelector("#exploreDestinationInput")?.value.trim() || "", target: "explore" }), true));
   results.replaceChildren(section);
 }

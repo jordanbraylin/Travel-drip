@@ -16,6 +16,8 @@ const staticFiles = [
   "planning-studio.css",
   "trip-workspaces.js",
   "trip-workspaces.css",
+  "journey-dashboard.js",
+  "journey-dashboard.css",
   "simple.css",
   "index.html",
   "login.html",
