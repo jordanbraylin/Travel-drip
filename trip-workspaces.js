@@ -171,10 +171,17 @@ function calculateWalletSplit(total, people) {
 function initializeWalletSplitter() {
   const panel = document.querySelector("#walletPanel");
   if (!panel || panel.querySelector("#walletInlineSplitter")) return;
+  const balanceHero = panel.querySelector(".wallet-balance-hero");
+  const photo = document.createElement("img"); photo.id = "walletDestinationPhoto";
+  photo.src = "icons/planning-coast.jpg"; photo.alt = "Coastal travel inspiration";
+  photo.onerror = () => { photo.onerror = null; photo.src = "icons/planning-coast.jpg"; };
+  const credit = document.createElement("small"); credit.className = "wallet-photo-credit"; credit.textContent = "Destination inspiration";
+  balanceHero.prepend(photo); balanceHero.append(credit);
+  panel.querySelector(".wallet-redesign-shell").after(panel.querySelector(".wallet-smart-actions"));
   const splitter = document.createElement("section"); splitter.id = "walletInlineSplitter";
   splitter.setAttribute("aria-label", "Split a bill");
   splitter.innerHTML = '<h3>Split a bill</h3><form id="walletSplitForm"><label>Total bill<input name="total" type="number" min="0.01" max="9999999.99" step="0.01" inputmode="decimal" placeholder="0.00" required></label><label>People<input name="people" type="number" min="1" max="50" step="1" value="2" required></label><label>Currency<select name="currency"><option>USD</option><option>EUR</option><option>GBP</option><option>CAD</option></select></label><button class="primary-button" type="submit">Calculate split</button></form><p class="small">Calculation only. No money is moved or payment request sent.</p><div id="walletSplitResult" role="status" aria-live="polite"></div>';
-  panel.querySelector(".wallet-redesign-shell").after(splitter);
+  panel.querySelector(".wallet-smart-actions").after(splitter);
   const form = splitter.querySelector("form");
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -215,7 +222,44 @@ function renderWalletWorkspaceStatus() {
   const balance = document.querySelector("#tripAvailableBalance");
   const copy = document.querySelector("#tripAvailableBalanceCopy");
   if (!balance || !copy) return;
+  const image = document.querySelector("#walletDestinationPhoto");
+  if (image) {
+    const photo = tripWorkspacePhoto(state.accountData.activeTrip);
+    if (image.getAttribute("src") !== photo.src) image.src = photo.src;
+    image.alt = photo.alt;
+  }
   if (access.status === "loading") { balance.textContent = "Loading..."; copy.textContent = "Checking your trip wallet."; }
   else if (!access.wallet || !state.accountData.activeTrip || (access.tripId && access.tripId !== state.accountData.activeTrip.id)) { balance.textContent = "Not connected"; copy.textContent = "Select a trip and set up its wallet to see confirmed funds."; }
   else { balance.textContent = formatWalletMoney(access.wallet.availableCents || 0, access.wallet.currency); copy.textContent = "Provider-confirmed funds available for this trip."; }
+}
+
+function renderFindTravelRideshare(category) {
+  if (category !== "rideshare") return;
+  const results = document.querySelector("#exploreResultsGrid");
+  if (!results) return;
+  const section = document.createElement("section"); section.className = "rideshare-options";
+  const destination = document.querySelector("#exploreDestinationInput")?.value.trim();
+  section.append(workspaceHeading("Find your ride", destination ? `Rideshare options to check for ${destination}` : "City rides, airport pickups, and getting everyone there together."));
+  const note = document.createElement("p"); note.className = "small";
+  note.textContent = "Availability, pickup times, accessibility, and final fares are confirmed by each provider. Booking opens on their site.";
+  section.append(note);
+  const table = document.createElement("table");
+  table.innerHTML = '<caption>Rideshare providers</caption><thead><tr><th scope="col">Provider</th><th scope="col">Options</th><th scope="col">Check rides</th></tr></thead>';
+  const body = document.createElement("tbody");
+  for (const [name, description, url] of [
+    ["Uber", "City and airport rides", "https://www.uber.com/global/en/ride/"],
+    ["Lyft", "City and airport rides", "https://www.lyft.com/rider"],
+    ["Bolt", "City and airport rides", "https://bolt.eu/en/rides/"],
+    ["Grab", "Car and taxi services", "https://www.grab.com/sg/transport/"]
+  ]) {
+    const row = document.createElement("tr");
+    const provider = document.createElement("th"); provider.scope = "row"; provider.textContent = name;
+    const options = document.createElement("td"); options.textContent = description;
+    const action = document.createElement("td"); const link = document.createElement("a");
+    link.href = url; link.target = "_blank"; link.rel = "noopener noreferrer"; link.textContent = `Open ${name}`;
+    action.append(link); row.append(provider, options, action); body.append(row);
+  }
+  table.append(body); section.append(table);
+  section.append(workspaceButton("Search local rides and taxis", () => searchLiveTravelPlaces({ category: "rideshare", query: "", destination: document.querySelector("#exploreDestinationInput")?.value.trim() || "", target: "explore" }), true));
+  results.replaceChildren(section);
 }

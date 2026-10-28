@@ -980,6 +980,7 @@ const authCarouselSlides = [
 ];
 
 const exploreCategories = {
+  rideshare: { label: "Rideshare", filters: [], items: [] },
   trending: {
     label: "Trending",
     filters: ["Rooftop", "Creator guides", "Tours", "Hotels", "Saved often", "Group-friendly"],
@@ -4389,6 +4390,7 @@ function renderExplore(categoryKey = getActiveExploreCategory()) {
     </article>
   `;
   }).join("");
+  renderFindTravelRideshare(categoryKey);
 }
 
 function findExploreItem(itemId) {

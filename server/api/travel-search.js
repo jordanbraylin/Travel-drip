@@ -27,6 +27,7 @@ const categoryQueries = {
   weekend: "weekend getaway attractions",
   hotels: "hotels and places to stay",
   transport: "transportation, private drivers, and airport transfers",
+  rideshare: "rideshare services, taxis, and airport rides",
   trips: "tourist attractions and travel destinations"
 };
 

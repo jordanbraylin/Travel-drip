@@ -45,6 +45,10 @@ try {
   assert.equal(new URL(category.body.searchUrl).searchParams.get("q"), "restaurants and dining in Paris");
 
   const unsupported = response();
+  const rideshare = response();
+  await handler({ method: "POST", headers: {}, body: { category: "rideshare", destination: "Charlotte" } }, rideshare);
+  assert.equal(new URL(rideshare.body.searchUrl).searchParams.get("q"), "rideshare services, taxis, and airport rides in Charlotte");
+
   await handler({ method: "POST", headers: {}, body: { provider: "unknown" } }, unsupported);
   assert.equal(unsupported.statusCode, 400);
   assert.equal(unsupported.body.code, "invalid_provider");
