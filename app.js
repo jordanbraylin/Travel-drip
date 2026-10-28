@@ -3770,17 +3770,22 @@ function renderLiveAiSearchResults(target, result) {
 
 async function searchLiveTravelPlaces({ category, query = "", destination = "", target }) {
   const requestId = beginInAppSearch(target);
-  liveSearchMessage(target, "Finding destination and transport guides...", "loading");
+  liveSearchMessage(target, "Checking live search...", "loading");
   if (target === "explore") renderLiveExploreResults([]);
   if (target === "travel") renderLiveTravelResults([]);
   if (target === "privateDriver") renderLivePrivateDriverResults([]);
   try {
     const result = await liveSearchApiRequest("/api/travel-search", {
       method: "POST",
-      body: JSON.stringify({ category, q: query, destination, limit: 8, provider: "in_app" })
+      body: JSON.stringify({ category, q: query, destination, limit: 8, provider: "live" })
     });
     if (!isCurrentInAppSearch(target, requestId)) return result;
     if (result.skipped) throw new Error(result.reason || "Open the deployed app to use live provider search.");
+    if (result.provider === "google_places") {
+      renderInAppTravelResults(target, result);
+      liveSearchMessage(target, `${result.results?.length || 0} current place results. Booking availability is not included.`, "success");
+      return result;
+    }
     if (result.provider === "in_app") {
       renderInAppTravelResults(target, result);
       liveSearchMessage(target, result.results?.length ? "Destination guides updated. These are reference information, not live fares or bookings." : "No guides found. Try a city and country.", result.results?.length ? "success" : "empty");

@@ -135,6 +135,14 @@ export default async function handler(request, response) {
     catch (error) { response.status(error.status || 502).json({ error: error.message || "Travel guides are unavailable." }); }
     return;
   }
+  if (provider === "live" && !query && !destination) {
+    response.status(400).json({ error: "Enter a destination or search term.", code: "missing_query" });
+    return;
+  }
+  if (provider === "live" && ["flights", "trains", "rideshare", "shuttle"].includes(category)) {
+    response.status(503).json({ error: "Live fares, ride quotes, and departure times are not connected yet. Browse destination guides for reference information instead.", code: "live_transport_not_connected", provider: "live" });
+    return;
+  }
   if (request.method === "GET" || provider === "duckduckgo") {
     const textQuery = [query || categoryQueries[category], destination].filter(Boolean).join(" in ");
     const searchUrl = new URL("https://duckduckgo.com/");
@@ -167,7 +175,7 @@ export default async function handler(request, response) {
     }, response);
     return;
   }
-  if (provider !== "google_places") {
+  if (!["google_places", "live"].includes(provider)) {
     response.status(400).json({ error: "Unsupported search provider.", code: "invalid_provider" });
     return;
   }
@@ -176,7 +184,7 @@ export default async function handler(request, response) {
 
   if (!apiKey) {
     response.status(503).json({
-      error: "Live travel search is not configured.",
+      error: "Live places search is not connected yet. The site owner must connect Google Places. Destination guides remain available separately.",
       code: "provider_not_configured",
       provider: "google_places"
     });
@@ -229,6 +237,9 @@ export default async function handler(request, response) {
       provider: "google_places",
       sourceLabel: "Live Google Places results",
       live: true,
+      liveAvailability: false,
+      searchMode: "live_places",
+      fetchedAt: new Date().toISOString(),
       query: textQuery,
       category,
       destination: destination || null,
