@@ -19,13 +19,13 @@ function initializePhotoFeed() {
   const panel = document.querySelector('#memoriesPanel');
   if (!panel || document.querySelector('#photoFeedList')) return;
   panel.replaceChildren();
-  panel.innerHTML = `<div class="photo-feed-heading"><div><p class="eyebrow">Your people. Your adventures.</p><h2>Trip moments</h2></div><button type="button" id="photoFeedRefresh" title="Refresh posts" aria-label="Refresh posts"><i data-lucide="refresh-cw"></i></button></div>
+  panel.innerHTML = `<div class="photo-feed-heading"><img class="photo-cover-image" src="icons/planning-coast.jpg" alt=""><div class="photo-cover-copy"><p class="eyebrow">Your people. Your adventures.</p><h2>Trip moments</h2><p>Big adventures. Little moments. All yours.</p></div><span class="photo-cover-label">A little Santorini inspiration</span><button type="button" id="photoFeedRefresh" title="Refresh posts" aria-label="Refresh posts"><i data-lucide="refresh-cw"></i></button></div>
     <div class="photo-feed-layout"><div class="photo-feed-column">
     <details class="photo-composer-toggle"><summary><i data-lucide="image-plus"></i>Share a moment<i data-lucide="chevron-down"></i></summary><form id="photoComposer" class="photo-composer"><label for="photoCaption">Caption</label><textarea id="photoCaption" maxlength="2000" rows="2" placeholder="What made today memorable?"></textarea>
     <label for="photoTags">Hashtags</label><input id="photoTags" maxlength="330" placeholder="#BeachDay #TripTogether">
     <div class="photo-compose-options"><label>Who can see this?<select id="photoVisibility"><option value="private">Only me</option><option value="members">Trip friends</option></select></label><label>Photos or videos<input id="photoFiles" type="file" accept="image/jpeg,image/png,image/webp,image/heic,video/mp4,video/quicktime,video/webm" multiple required></label></div>
     <div class="photo-compose-footer"><span id="photoTripName"></span><button type="submit" class="primary-button" id="photoPublish"><i data-lucide="image-plus"></i>Post moment</button></div></form></details>
-    <div class="photo-feed-tabs" role="group" aria-label="Filter posts"><button type="button" data-photo-filter="all" aria-pressed="true">Trip feed</button><button type="button" data-photo-filter="mine" aria-pressed="false">My posts</button></div>
+    <div class="photo-feed-tabs" role="group" aria-label="Filter posts"><button type="button" data-photo-filter="all" aria-pressed="true"><i data-lucide="images"></i>Trip feed</button><button type="button" data-photo-filter="mine" aria-pressed="false"><i data-lucide="camera"></i>My posts</button></div>
     <p id="photoFeedStatus" role="status" aria-live="polite"></p><button type="button" class="primary-button" id="photoCreateTrip" data-account-empty-action="create-trip" hidden>Create a trip</button><div id="photoFeedList"></div><button type="button" id="photoFeedMore" hidden>Load more posts</button>
     </div><aside class="photo-feed-aside"><i data-lucide="users-round"></i><h3>Better together</h3><p>Share photos with friends in this trip. Like a favorite, leave a comment, or find moments by hashtag.</p><label for="photoTagSearch">Find a moment</label><input id="photoTagSearch" type="search" placeholder="Search captions or #tags"><p class="photo-privacy-note"><i data-lucide="lock-keyhole"></i>Only me posts stay private. Trip friends means active members of this trip, not everyone in your address book.</p></aside></div>
     <dialog id="photoReportDialog" aria-labelledby="photoReportTitle"><form method="dialog" id="photoReportForm"><h3 id="photoReportTitle">Report post</h3><p>Your report is private and saved for review. For urgent concerns, contact support.</p><label>Reason<select name="reason" required><option value="">Choose a reason</option><option>Harassment</option><option>Privacy concern</option><option>Inappropriate content</option><option>Spam</option><option>Other</option></select></label><p id="photoReportStatus" role="status"></p><div class="photo-dialog-actions"><button type="button" id="photoReportCancel">Cancel</button><button class="primary-button" type="submit">Submit report</button></div></form></dialog>`;
@@ -83,7 +83,7 @@ async function loadPhotoFeed({ more = false } = {}) {
     photoFeedState.posts = [...new Map([...(more ? photoFeedState.posts : []), ...(data.posts || [])].map(p => [p.id,p])).values()];
     photoFeedState.nextOffset = data.nextOffset ?? null; photoFeedState.ready = data.engagementReady === true; photoFeedState.loaded = true;
     drawPhotoPosts();
-    photoStatus(!data.engagementReady ? 'Photos are available. Likes, comments, and reports are awaiting database setup.' : photoFeedState.posts.length ? '' : 'No moments yet. Your first adventure starts here.');
+    photoStatus(!data.engagementReady ? 'Photos are available. Likes, comments, and reports are awaiting database setup.' : '');
   } catch (error) { if (key === photoFeedKey() && generation === photoFeedState.generation) photoStatus(error.message || 'Could not load photos. Select refresh to retry.'); }
   finally { if (key === photoFeedKey() && generation === photoFeedState.generation) { photoFeedState.loading = false; document.querySelector('#photoFeedMore').disabled = false; } }
 }
@@ -106,6 +106,12 @@ function drawPhotoPosts() {
   list.replaceChildren();
   const query = document.querySelector('#photoTagSearch').value.trim().toLowerCase();
   const posts = photoFeedState.posts.filter(p => (photoFeedState.filter !== 'mine' || p.own) && `${p.caption} ${(p.tags || []).join(' ')}`.toLowerCase().includes(query));
+  if (!photoFeedState.posts.length && photoFeedState.loaded) {
+    const empty = document.createElement('section'); empty.className = 'photo-feed-empty';
+    empty.innerHTML = '<span class="photo-empty-icon" aria-hidden="true"><i data-lucide="camera"></i></span><h3>The best moments are still ahead</h3><p>The view. The friends. That unforgettable meal.</p><button type="button" class="primary-button"><i data-lucide="image-plus"></i>Share your first moment</button>';
+    empty.querySelector('button').addEventListener('click',()=> { document.querySelector('.photo-composer-toggle').open = true; document.querySelector('#photoCaption').focus(); });
+    list.append(empty);
+  }
   for (const post of posts) {
     const article = document.createElement('article'); article.className = 'photo-post';
     const header = document.createElement('header');

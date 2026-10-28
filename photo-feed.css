@@ -9,3 +9,38 @@
 #memoriesPanel>.photo-feed-layout,#memoriesPanel>.photo-feed-heading{border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important}
 #memoriesPanel .photo-composer-toggle{border:0;background:none;box-shadow:none;padding:0}#memoriesPanel .photo-composer-toggle>summary{display:flex;align-items:center;gap:12px;padding:16px;background:#fff;border:1px solid #dbcdd5;border-left:4px solid #dc2680;border-radius:6px;cursor:pointer;list-style:none;font-weight:700;font-size:18px;color:#91305e;min-height:52px;box-sizing:border-box}#memoriesPanel .photo-composer-toggle>summary::-webkit-details-marker{display:none}#memoriesPanel .photo-composer-toggle>summary svg:last-child{margin-left:auto}#memoriesPanel .photo-composer-toggle[open]>summary svg:last-child{transform:rotate(180deg)}#memoriesPanel .photo-composer-toggle[open] .photo-composer{margin-top:8px}
 @media(max-width:1000px){#memoriesPanel .photo-feed-aside>h3,#memoriesPanel .photo-feed-aside>svg,#memoriesPanel .photo-feed-aside>p:not(.photo-privacy-note){display:none!important}}
+/* Photo-first cover and warm accents keep the feed playful without sample posts. */
+#memoriesPanel>.photo-feed-heading{position:relative;isolation:isolate;min-height:220px;box-sizing:border-box;padding:28px!important;overflow:hidden;margin-bottom:24px;background:#135e6c!important;align-items:flex-end}
+#memoriesPanel .photo-cover-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 48%;z-index:-2}
+#memoriesPanel>.photo-feed-heading::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,32,40,.84),rgba(8,32,40,.3) 65%,rgba(8,32,40,.1));z-index:-1}
+#memoriesPanel .photo-cover-copy{max-width:calc(100% - 58px);color:#fff}
+#memoriesPanel .photo-cover-copy h2{font-size:34px;color:#fff!important;line-height:1.15;margin:8px 0}
+#memoriesPanel .photo-cover-copy .eyebrow{color:#ffdf79!important;font-size:12px;font-weight:800;line-height:1.5}
+#memoriesPanel .photo-cover-copy>p:last-child{color:#fff;font-size:16px;line-height:1.5;margin:10px 0 14px}
+#memoriesPanel .photo-cover-label{position:absolute;right:14px;bottom:10px;color:#fff;font-size:11px;line-height:1.4;text-shadow:0 1px 4px #152f38;background:#193b468c;padding:3px 6px}
+#memoriesPanel .photo-feed-heading #photoFeedRefresh{position:absolute;right:20px;top:20px;background:#fff;color:#00777f;border:0;border-radius:50%;box-shadow:0 3px 12px #15363d26}
+#memoriesPanel .photo-composer-toggle>summary{background:#fff4db;border-color:#efd6a4;border-left:5px solid #ef8e1c;color:#744410;transition:background .16s ease,transform .16s ease}
+#memoriesPanel .photo-composer-toggle>summary:hover{background:#ffedc1;transform:translateY(-1px)}
+#memoriesPanel .photo-composer-toggle>summary>svg:first-child{color:#c95116}
+#memoriesPanel .photo-feed-tabs{gap:12px;border-bottom:2px solid #eddde8}
+#memoriesPanel .photo-feed-tabs button{display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;flex:1;max-width:220px;border-bottom-width:4px;transition:color .15s ease,background .15s ease}
+#memoriesPanel .photo-feed-tabs button[aria-pressed=true]{background:#fce6f0;color:#a5115d;border-color:#df2789}
+#memoriesPanel .photo-feed-tabs button[data-photo-filter=mine][aria-pressed=true]{background:#dff5ef;color:#00685b;border-color:#009b85}
+#memoriesPanel .photo-post{border-color:#ecdde5;box-shadow:0 4px 16px #8a385909}
+#memoriesPanel .photo-post:nth-child(3n+2) .photo-avatar{background:#dbf5f0;border-color:#1fa794;color:#00695c}
+#memoriesPanel .photo-post:nth-child(3n) .photo-avatar{background:#fff0cb;border-color:#e9a029;color:#82520a}
+#memoriesPanel .photo-post-actions button{border-radius:6px;transition:background .15s ease,color .15s ease}
+#memoriesPanel .photo-post-actions button:hover{background:#fff0f6;color:#ab125d}
+#memoriesPanel .photo-post-actions button[aria-pressed=true] svg{fill:#f7bad2;animation:photo-heart-pop .22s ease-out}
+#memoriesPanel .photo-tags button{font-weight:600;color:#007a78}
+#memoriesPanel .photo-feed-aside{border-top:4px solid #04a592}
+#memoriesPanel .photo-feed-aside>svg{color:#b0136b;background:#fce5ef;padding:10px;box-sizing:content-box;border-radius:8px}
+#memoriesPanel .photo-feed-empty{padding:32px 18px;text-align:center;border:0;background:none;box-shadow:none;display:flex;flex-direction:column;align-items:center;gap:12px}
+#memoriesPanel .photo-empty-icon{display:grid;place-items:center;width:72px;height:72px;border:3px solid #f3b3cf;border-radius:8px;background:#fff;box-shadow:8px 8px 0 #fce4a8;transform:rotate(-6deg);margin-bottom:10px}
+#memoriesPanel .photo-empty-icon svg{width:34px;height:34px;color:#c71d75}
+#memoriesPanel .photo-feed-empty h3{font-size:22px;color:#253c41;line-height:1.35;max-width:100%;margin:0}
+#memoriesPanel .photo-feed-empty p{font-size:16px;line-height:1.6;color:#596571;margin:0 0 6px}
+#memoriesPanel .photo-feed-empty button{display:flex;align-items:center;justify-content:center;gap:8px;max-width:100%;padding:12px 16px;white-space:normal}
+@keyframes photo-heart-pop{50%{transform:scale(1.18)}}
+@media(max-width:560px){#memoriesPanel>.photo-feed-heading{min-height:204px;padding:20px!important}#memoriesPanel .photo-cover-copy h2{font-size:30px}#memoriesPanel .photo-cover-copy>p:last-child{font-size:15px}#memoriesPanel .photo-cover-label{font-size:10px}#memoriesPanel .photo-feed-empty{padding:24px 10px}#memoriesPanel .photo-feed-empty h3{font-size:20px}}
+@media(prefers-reduced-motion:reduce){#memoriesPanel .photo-post-actions button svg{animation:none!important}#memoriesPanel .photo-composer-toggle>summary{transition:none;transform:none!important}}
