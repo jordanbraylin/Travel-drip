@@ -10,7 +10,7 @@ function tripWorkspaceDates(trip) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(value || "")) return "";
     return new Date(`${value}T12:00:00`).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
   };
-  return [format(trip?.starts_on), format(trip?.ends_on)].filter(Boolean).join(" to ") || "Dates to dream about";
+  return [...new Set([format(trip?.starts_on), format(trip?.ends_on)].filter(Boolean))].join(" to ") || "Dates to dream about";
 }
 
 function workspaceButton(label, action, primary = false) {
@@ -37,60 +37,7 @@ function workspaceHeading(title, copy) {
 function openWorkspacePlanning() { document.querySelector("#letsPlanButton")?.click(); }
 
 function renderVisualTripList(container) {
-  const trips = state.session?.user ? state.accountData.trips || [] : [];
-  const header = workspaceHeading("My trips", "Big adventures. Little escapes. All your plans, together.");
-  const create = workspaceButton("Let's plan a trip", openWorkspacePlanning, true);
-  container.replaceChildren();
-  if (!trips.length) {
-    const banner = document.createElement("div"); banner.className = "trip-plan-banner";
-    const image = document.createElement("img"); image.src = "icons/planning-coast.jpg"; image.alt = "Coastal travel inspiration";
-    header.append(create); banner.append(image, header); container.append(banner);
-  } else container.append(header, create);
-  const grid = document.createElement("div");
-  grid.className = "visual-trip-grid";
-  for (const trip of trips) {
-    const card = document.createElement("article");
-    card.className = "visual-trip-card";
-    const photo = tripWorkspacePhoto(trip);
-    const image = document.createElement("img");
-    image.src = photo.src;
-    image.alt = photo.alt;
-    image.loading = "lazy";
-    image.onerror = () => { image.onerror = null; image.src = "icons/planning-coast.jpg"; image.alt = "Travel inspiration"; };
-    const content = document.createElement("div");
-    const title = document.createElement("h3");
-    title.textContent = trip.title || "Untitled trip";
-    const detail = document.createElement("p");
-    detail.textContent = [trip.destination || "Destination to come", tripWorkspaceDates(trip)].join(" · ");
-    const status = document.createElement("span");
-    status.className = "trip-workspace-status";
-    status.textContent = `${String(trip.status || "draft").replaceAll("_", " ")} · Destination inspiration`;
-    const actions = document.createElement("div");
-    actions.className = "trip-workspace-actions";
-    const open = workspaceButton("Open itinerary", async () => {
-      open.disabled = true;
-      try { await selectAccountTrip(trip.id); navigateSafely("itineraryAlerts", { updateHistory: true }); }
-      catch (error) { detail.textContent = error.message; }
-      finally { open.disabled = false; }
-    }, true);
-    actions.append(open, workspaceButton(trip.owner_user_id === state.session?.user?.id ? "Remove trip" : "Leave trip", () => openTripRemoval(trip)));
-    content.append(status, title, detail, actions);
-    if (trip.id === state.accountData.activeTrip?.id) {
-      const next = [...(state.accountData.records?.schedule_items || [])].filter((item) => item.starts_at && new Date(item.starts_at).getTime() >= Date.now()).sort((a, b) => String(a.starts_at).localeCompare(String(b.starts_at)))[0];
-      const agenda = document.createElement("p");
-      agenda.textContent = next ? `Coming up: ${next.title} · ${new Date(next.starts_at).toLocaleString()}` : "Open your itinerary to make room for the good stuff.";
-      content.insertBefore(agenda, actions);
-    }
-    card.append(image, content);
-    grid.append(card);
-  }
-  if (!grid.children.length) {
-    const empty = document.createElement("p");
-    empty.textContent = state.accountData.error ? "Your trips couldn't load. Refresh to try again." : "Your next adventure starts with an idea. Where would you love to go?";
-    grid.append(empty);
-  }
-  container.append(grid);
-  appendRemovedTripsControl(container);
+  renderTripJoy(container);
 }
 
 function renderTripItinerary(section) {

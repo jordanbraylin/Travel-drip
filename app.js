@@ -1741,6 +1741,7 @@ function getEventInviteContext() {
 
 function formatEventInviteDate(value) {
   if (!value) return "Date and time coming soon";
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return new Date(`${value}T12:00:00`).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value.replace("T", " • ");
   return date.toLocaleString([], { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
@@ -1749,7 +1750,7 @@ function formatEventInviteDate(value) {
 function createLocalInviteTemplate(context) {
   const tone = eventInviteToneCopy[context.tone] || eventInviteToneCopy.warm;
   const dateText = formatEventInviteDate(context.startsOn);
-  const location = [context.venue, context.address].filter(Boolean).join(" • ");
+  const location = [...new Set([context.venue, context.address].filter(Boolean))].join(" • ");
   const detailText = context.details || `Bring your best energy and get ready for a ${tone} event.`;
   const audienceText = context.audience || "your guests";
   return {
@@ -2203,6 +2204,7 @@ function dashboardShouldShowBlankState() {
 }
 
 function resetAccountData() {
+  resetTripJoy();
   resetPhotoFeed();
   state.profileFormUserId = "";
   resetQuickPlanningSession();
@@ -2363,6 +2365,7 @@ function renderAccountState(target = getTargetFromRoute()) {
   applyAccountRouteState(target);
   renderTripWorkspaces(target);
   renderPhotoFeed(target);
+  renderJoyEvents(target);
   if (target === "letsPlan") renderPlanningStudio();
   if (target === "socialHub") {
     renderTripChatData();
@@ -2527,7 +2530,9 @@ async function loadAccountModuleData(tripId) {
     countRows("media", { trip_id: tripId }),
     countRows("events", { id: tripId }),
     countRows("trip_wallet_contributions", { trip_id: tripId }),
-    countRows("trip_members", { trip_id: tripId, status: "active" })
+    countRows("trip_members", { trip_id: tripId, status: "active" }),
+    countRows("cruise_bookings", {trip_id:tripId}),
+    countRows("cruise_excursions", {trip_id:tripId})
   ]);
   const travel = flights + hotels + transportation;
   const uploads = documents + media;
@@ -7687,10 +7692,10 @@ async function detectTicketCode(file) {
   }
 }
 
-async function uploadMemoryFiles(files, action) {
+async function uploadMemoryFiles(files, action, postDetails = {}) {
   const selectedFiles = Array.from(files || []);
   if (!selectedFiles.length) return;
-  const isFeed = action === 'photo-feed';
+  const isFeed = action === 'photo-feed' || action === 'photo-feed-vlog';
   const visibility = isFeed ? $("#photoVisibility").value : $("#memoryVisibility")?.value || "Private (Only Me)";
   const caption = isFeed ? $("#photoCaption").value.trim().slice(0,2000) : '';
   const tags = isFeed ? $("#photoTags").value.trim().slice(0,330) : '';
@@ -7738,7 +7743,7 @@ async function uploadMemoryFiles(files, action) {
       if (error) throw error;
       if (!stillCurrent()) return;
       const visibilityValue = visibility.toLowerCase().startsWith("private") ? "private"
-        : visibility.toLowerCase().includes("selected") ? "selected"
+        : visibility === 'friends' ? 'friends' : visibility.toLowerCase().includes("selected") ? "selected"
           : visibility.toLowerCase().includes("public") ? "public" : "members";
       const { error: metadataError } = await uploadClient.from("media").insert({
         trip_id: uploadTripId,
@@ -7747,7 +7752,7 @@ async function uploadMemoryFiles(files, action) {
         media_type: file.type,
         caption: isFeed ? caption : file.name,
         visibility: visibilityValue,
-        metadata: { filename: file.name, mimeType: file.type, size: file.size, uploadAction: action, tags }
+        metadata: { filename: file.name, mimeType: file.type, size: file.size, uploadAction: action, tags, title: isFeed ? String(postDetails.title || '').slice(0,120) : '', postKind: action === 'photo-feed-vlog' ? 'vlog' : 'photo' }
       });
       if (metadataError) {
         await uploadClient.storage.from("travel-memories").remove([storagePath]);
@@ -7770,6 +7775,7 @@ async function uploadMemoryFiles(files, action) {
     addAuditEntry("Memories uploaded", `${savedCount} file(s) saved from ${action} with ${visibility} visibility.`);
     await saveSyncedEvent("memory_media_uploaded", { action, visibility, count: savedCount });
     await loadMemoryFiles();
+    return {savedCount, failedCount:failures.length};
   } else {
     message.textContent = "The selected memories could not be uploaded. Please retry after confirming your account is signed in.";
   }

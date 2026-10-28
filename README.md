@@ -224,3 +224,17 @@ iPhone Safari: open Travel-Drip, tap Share, choose Add to Home Screen, then tap 
 - Admin allowlist is checked server-side at `/api/admin-status`; the allowlist is not exposed in browser config.
 - Launch health can be checked at `/api/health` without exposing secret values.
 - Private values stay in Vercel environment variables and are not committed.
+
+### Photo Feed And App Friends
+
+For a fresh database, apply `supabase-photo-feed.sql` and then
+`supabase-app-friends.sql` after the base schema. The memories bucket stays private.
+Friend requests require recipient acceptance before `friends` posts become readable.
+Private posts remain author-only; `members` posts require active trip membership.
+Written journals use `media_type = text/plain` and store their body in the caption;
+their reserved journal path is an identifier, not a storage object.
+Reports are stored in `photo_reports` for operator review; no automatic moderation
+or support notification is implied.
+
+Focused checks: `node scripts/test-photo-feed.js`,
+`node scripts/test-app-friends.js`, and `node scripts/test-trip-joy.js`.

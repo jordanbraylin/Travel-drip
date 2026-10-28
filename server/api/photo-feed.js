@@ -1,7 +1,9 @@
 import { applySecurityHeaders, getRequestBody, methodNotAllowed, requireAuthenticatedUser, requireTripRole } from './_security.js';
+import { randomUUID } from 'node:crypto';
+import {appFriendIds} from './_friends.js';
 
-export function canReadPhoto(post, userId) {
-  return post.user_id === userId || post.visibility === 'members';
+export function canReadPhoto(post, userId, friends = [], isMember = true) {
+  return post.user_id === userId || (post.visibility === 'members' && isMember) || (post.visibility === 'friends' && friends.includes(post.user_id));
 }
 
 export function photoTags(value) {
@@ -27,14 +29,24 @@ export async function handlePhotoFeed(request, response, db, user) {
   const url = new URL(request.url, 'https://traveldrip.local');
   const body = getRequestBody(request);
   const tripId = request.method === 'GET' ? url.searchParams.get('tripId') : body.tripId;
-  if (!tripId || !await requireTripRole(db, tripId, user.id)) {
+  if (body.action === 'create_blog' && (!tripId || !await requireTripRole(db, tripId, user.id))) {
     response.status(403).json({ error: 'Active trip membership is required.' }); return;
   }
+  if (request.method === 'POST' && body.action === 'create_blog') {
+    const title = typeof body.title === 'string' ? body.title.trim() : '';
+    const text = typeof body.text === 'string' ? body.text.trim() : '';
+    if (!title || title.length > 120 || !text || text.length > 4000 || !['private','members','friends'].includes(body.visibility)) {
+      response.status(400).json({error:'Add a title (up to 120 characters), a story (up to 4,000 characters), and a sharing choice.'}); return;
+    }
+    const saved = checked(await db.from('media').insert({trip_id:tripId,user_id:user.id,storage_path:`${user.id}/journal/${randomUUID()}`,media_type:'text/plain',caption:text,visibility:body.visibility,metadata:{postKind:'blog',title,tags:photoTags(String(body.tags || '').slice(0,330)).join(' ')}}).select('id').single());
+    response.status(201).json({saved:true,id:saved.id}); return;
+  }
+  const friends = await appFriendIds(db,user.id);
   const postId = request.method === 'GET' ? url.searchParams.get('postId') : body.postId;
   let post;
   if (postId) {
-    post = checked(await db.from('media').select('id, trip_id, user_id, visibility, storage_path').eq('id', postId).eq('trip_id', tripId).maybeSingle());
-    if (!post || !canReadPhoto(post, user.id)) { response.status(404).json({ error: 'Post not found.' }); return; }
+    post = checked(await db.from('media').select('id, trip_id, user_id, visibility, storage_path, media_type').eq('id', postId).maybeSingle());
+    if (!post || !canReadPhoto(post, user.id, friends, await requireTripRole(db,post.trip_id,user.id))) { response.status(404).json({ error: 'Post not found.' }); return; }
   }
   if (request.method === 'GET' && post) {
     const before = url.searchParams.get('before');
@@ -49,14 +61,20 @@ export async function handlePhotoFeed(request, response, db, user) {
   if (request.method === 'GET') {
     const offset = Math.floor(Math.max(0, Math.min(10000, Number(url.searchParams.get('offset')) || 0)));
     // Only member-shared posts and the viewer's own private uploads are eligible.
-    const rows = checked(await db.from('media').select('id, user_id, storage_path, media_type, caption, visibility, metadata, created_at').eq('trip_id', tripId).or(`user_id.eq.${user.id},visibility.eq.members`).order('created_at', { ascending: false }).order('id', { ascending: false }).range(offset, offset + 12));
-    const visible = rows.slice(0,12).filter(p => canReadPhoto(p, user.id));
+    const memberships = checked(await db.from('trip_members').select('trip_id').eq('user_id',user.id).eq('status','active')) || [];
+    const memberTrips = memberships.map(m=>m.trip_id);
+    const filters = [`user_id.eq.${user.id}`];
+    if(memberTrips.length) filters.push(`and(visibility.eq.members,trip_id.in.(${memberTrips.join(',')}))`);
+    if(friends.length) filters.push(`and(visibility.eq.friends,user_id.in.(${friends.join(',')}))`);
+    const rows = checked(await db.from('media').select('id, trip_id, user_id, storage_path, media_type, caption, visibility, metadata, created_at').or(filters.join(',')).order('created_at', { ascending: false }).order('id', { ascending: false }).range(offset, offset + 12));
+    const visible = rows.slice(0,12).filter(p => canReadPhoto(p, user.id, friends, memberTrips.includes(p.trip_id)));
     const names = await namesFor(db, visible.map(p => p.user_id).filter(Boolean));
     const probe = await db.from('photo_likes').select('media_id').limit(0);
     const engagementReady = !probe.error;
     if (probe.error && !['42P01', 'PGRST205'].includes(probe.error.code)) throw probe.error;
     const posts = await Promise.all(visible.map(async p => {
-      const signed = validPhotoStorage(p) ? await db.storage.from('travel-memories').createSignedUrl(p.storage_path, 300) : {data:null};
+      const isBlog = p.media_type === 'text/plain';
+      const signed = !isBlog && validPhotoStorage(p) ? await db.storage.from('travel-memories').createSignedUrl(p.storage_path, 300) : {data:null};
       let likeCount = 0, commentCount = 0, liked = false;
       if (engagementReady) {
         const [likes, comments, mine] = await Promise.all([
@@ -67,7 +85,7 @@ export async function handlePhotoFeed(request, response, db, user) {
         checked(likes); checked(comments); checked(mine);
         likeCount = likes.count || 0; commentCount = comments.count || 0; liked = Boolean(mine.data);
       }
-      return { id:p.id, author:names.get(p.user_id) || 'Trip friend', own:p.user_id === user.id, caption:p.caption || '', tags:photoTags(p.metadata?.tags), visibility:p.visibility === 'members' ? 'members' : 'private', createdAt:p.created_at, mediaType:p.media_type, mediaUrl:signed.data?.signedUrl || null, likeCount, commentCount, liked };
+      return { id:p.id, author:names.get(p.user_id) || 'Trip friend', own:p.user_id === user.id, postKind:isBlog ? 'blog' : p.media_type?.startsWith('video/') ? 'vlog' : 'photo', title:String(p.metadata?.title || '').slice(0,120), caption:p.caption || '', tags:photoTags(p.metadata?.tags), visibility:['members','friends'].includes(p.visibility) ? p.visibility : 'private', createdAt:p.created_at, mediaType:p.media_type, mediaUrl:signed.data?.signedUrl || null, likeCount, commentCount, liked };
     }));
     response.status(200).json({ posts, engagementReady, nextOffset:rows.length > 12 ? offset + 12 : null }); return;
   }
@@ -91,7 +109,7 @@ export async function handlePhotoFeed(request, response, db, user) {
   }
   if (body.action === 'remove' && post.user_id === user.id) {
     checked(await db.from('media').delete().eq('id',post.id).eq('user_id',user.id));
-    if (validPhotoStorage(post)) await db.storage.from('travel-memories').remove([post.storage_path]);
+    if (post.media_type !== 'text/plain' && validPhotoStorage(post)) await db.storage.from('travel-memories').remove([post.storage_path]);
     response.status(200).json({saved:true}); return;
   }
   response.status(400).json({error:'Unsupported photo action.'});

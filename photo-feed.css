@@ -44,3 +44,14 @@
 @keyframes photo-heart-pop{50%{transform:scale(1.18)}}
 @media(max-width:560px){#memoriesPanel>.photo-feed-heading{min-height:204px;padding:20px!important}#memoriesPanel .photo-cover-copy h2{font-size:30px}#memoriesPanel .photo-cover-copy>p:last-child{font-size:15px}#memoriesPanel .photo-cover-label{font-size:10px}#memoriesPanel .photo-feed-empty{padding:24px 10px}#memoriesPanel .photo-feed-empty h3{font-size:20px}}
 @media(prefers-reduced-motion:reduce){#memoriesPanel .photo-post-actions button svg{animation:none!important}#memoriesPanel .photo-composer-toggle>summary{transition:none;transform:none!important}}
+#memoriesPanel .photo-kind-picker{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:6px;border-bottom:1px solid #eadce4;padding-bottom:12px;margin-bottom:4px}
+#memoriesPanel .photo-kind-picker button{display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 6px;min-width:0;border:1px solid #cdd9dc;background:#fff;border-radius:6px;font:inherit;font-size:15px;color:#40525d;white-space:normal}
+#memoriesPanel .photo-kind-picker button[aria-pressed=true]{background:#fce6f0;border-color:#d73a86;color:#a11360;font-weight:700}
+#memoriesPanel .photo-kind-picker button[data-photo-kind=blog][aria-pressed=true]{background:#dff5ee;border-color:#1a9e87;color:#006958}
+#memoriesPanel .photo-kind-picker button[data-photo-kind=vlog][aria-pressed=true]{background:#fff0cf;border-color:#d99528;color:#80500b}
+#memoriesPanel .photo-post-kind{padding:0 16px;margin:4px 0 8px;color:#007868;font-size:13px;font-weight:700}
+#memoriesPanel .photo-post-title{padding:0 16px;margin:0 0 12px;font-size:22px;line-height:1.4;overflow-wrap:anywhere}
+#memoriesPanel .photo-story-more{padding:0 16px 12px;border:0;background:none;box-shadow:none}
+#memoriesPanel .photo-story-more summary{color:#a11360;font-weight:600;cursor:pointer;min-height:44px;display:flex;align-items:center}
+#memoriesPanel .photo-story-more p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;font-size:16px;color:#21373c}
+@media(max-width:560px){#memoriesPanel .photo-kind-picker button{flex-direction:column;gap:5px;font-size:14px}#memoriesPanel .photo-post-title{font-size:20px}}
