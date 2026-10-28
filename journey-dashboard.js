@@ -68,6 +68,7 @@ function getJourneyRecords(mode) {
 }
 
 function renderJourneyDashboard(target) {
+  if(target==='exploreDrops'){renderDestinationDiscovery();return;}
   if (!["exploreDrops", "transportationPanel", "rideShareHub"].includes(target) || document.body.classList.contains("corporate-employee-mode")) return;
   const panel = document.getElementById(target);
   if (!panel) return;

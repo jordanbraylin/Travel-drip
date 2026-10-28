@@ -2204,6 +2204,7 @@ function dashboardShouldShowBlankState() {
 }
 
 function resetAccountData() {
+  resetDiscoveryStudio();
   resetTripJoy();
   resetPhotoFeed();
   state.profileFormUserId = "";
@@ -2367,6 +2368,7 @@ function renderAccountState(target = getTargetFromRoute()) {
   renderPhotoFeed(target);
   renderJoyEvents(target);
   if (target === "letsPlan") renderPlanningStudio();
+  renderPlanningPlay(target);
   if (target === "socialHub") {
     renderTripChatData();
     void loadMessagingContacts();
@@ -7790,6 +7792,7 @@ function wireLocalInteractions() {
   initializeLiveWeather();
   initializeMessagingContacts();
   initializePlanningStudio();
+  initializeDiscoveryLocationInputs();
   applyMainNavigationConfig();
   applySmartDashboardLayout();
   ["#eventDateInput", "#eventRsvpInput", "#flightDepartureDateInput"].forEach((selector) => {

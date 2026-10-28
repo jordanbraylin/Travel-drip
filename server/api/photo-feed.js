@@ -90,6 +90,12 @@ export async function handlePhotoFeed(request, response, db, user) {
     response.status(200).json({ posts, engagementReady, nextOffset:rows.length > 12 ? offset + 12 : null }); return;
   }
   if (!post) { response.status(400).json({ error:'Choose a post.' }); return; }
+  if(body.action==='share'){
+    if(post.user_id!==user.id){response.status(403).json({error:'Only the author can change who sees this post.'});return;}
+    if(!['private','members','friends'].includes(body.visibility)){response.status(400).json({error:'Choose a sharing audience.'});return;}
+    if(body.visibility==='members'&&!await requireTripRole(db,post.trip_id,user.id)){response.status(403).json({error:'Active trip membership is required to share with this trip.'});return;}
+    checked(await db.from('media').update({visibility:body.visibility}).eq('id',post.id).eq('user_id',user.id));response.status(200).json({saved:true,visibility:body.visibility});return;
+  }
   if (body.action === 'like' && typeof body.liked === 'boolean') {
     checked(body.liked
       ? await db.from('photo_likes').upsert({media_id:post.id,user_id:user.id},{onConflict:'media_id,user_id'})

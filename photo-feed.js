@@ -214,6 +214,7 @@ function drawPhotoPosts() {
     const comment = photoAction('message-circle','Show comments', () => { comments.hidden = !comments.hidden; comment.setAttribute('aria-expanded',String(!comments.hidden)); if (!comments.hidden) loadPhotoComments(post,comments); });
     comment.querySelector('span').textContent = `${post.commentCount} comment${post.commentCount === 1 ? '' : 's'}`; comment.setAttribute('aria-expanded','false'); comment.disabled = !photoFeedState.ready;
     actions.append(like,comment); article.append(actions);
+    const share=photoAction('share-2',post.own?'Share post':'Sharing details',()=>openPhotoShare(post));share.querySelector('span').textContent='Share';actions.append(share);
     if (post.caption) {
       const caption = document.createElement('p'); caption.className = 'photo-caption'; caption.textContent = post.postKind === 'blog' ? post.caption.slice(0,400) : post.caption;
       if (post.postKind === 'blog') article.insertBefore(caption,actions); else article.append(caption);
@@ -280,3 +281,9 @@ async function openAppFriends() {
   }catch(error){if(key===photoFeedKey()&&generation===photoFeedState.generation)status.textContent=error.message;}
 }
 async function changeAppFriend(payload){const key=photoFeedKey(),generation=photoFeedState.generation;try{const result=await apiRequest('/api/friends',{method:'POST',body:JSON.stringify(payload)});if(key!==photoFeedKey()||generation!==photoFeedState.generation)return;if(!result.saved)throw new Error('The change was not saved.');await openAppFriends();await loadPhotoFeed();}catch(error){if(key===photoFeedKey()&&generation===photoFeedState.generation)document.querySelector('#appFriendsStatus').textContent=error.message;}}
+function openPhotoShare(post){
+  if(!post.own){joyDialog('Shared with you',[post.visibility==='friends'?'The author shared this post with accepted app friends.':'The author shared this post with trip members.','Only the author can change its audience. You can comment and share your own photos in the feed.']);return;}
+  document.querySelector('#photoShareDialog')?.remove();const dialog=document.createElement('dialog');dialog.id='photoShareDialog';dialog.className='joy-dialog';dialog.setAttribute('aria-labelledby','photoShareTitle');dialog.innerHTML='<h2 id="photoShareTitle">Share your moment</h2><form class="photo-share-controls"><label>Who can see this post?<select name="visibility"><option value="private">Only me</option><option value="members">Friends in this trip</option><option value="friends">App friends</option></select></label><p>App friends includes accepted friend connections only.</p><p role="status"></p><div class="joy-form-actions"><button type="button">Cancel</button><button type="submit" class="primary-button">Save sharing</button></div></form>';dialog.querySelector('select').value=post.visibility;dialog.querySelector('[type=button]').addEventListener('click',()=>dialog.close());
+  dialog.querySelector('form').addEventListener('submit',async event=>{event.preventDefault();const form=event.currentTarget,button=form.querySelector('[type=submit]');button.disabled=true;try{const visibility=new FormData(form).get('visibility');if(await savePhotoAction(post,'share',{visibility})){dialog.close();await loadPhotoFeed();photoStatus('Sharing updated.');}}catch(error){if(dialog.isConnected)form.querySelector('[role=status]').textContent=error.message;}finally{button.disabled=false;}});
+  document.body.append(dialog);dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.showModal();
+}

@@ -19,11 +19,12 @@ const db = {from(table) {
   let filters=[], op='read',payload,single=false,range=[0,Infinity];
   const q={select(){return q;},order(){return q;},limit(n){range=[0,n-1];return q;},range(a,b){range=[a,b];return q;},in(k,v){filters.push(r=>v.includes(r[k]));return q;},or(){filters.push(r=>r.user_id==='friend'||r.visibility==='members');return q;},eq(k,v){filters.push(r=>r[k]===v);return q;},maybeSingle(){single=true;return q;},single(){single=true;return q;},upsert(v){op='upsert';payload=v;return q;},insert(v){op='insert';payload=v;return q;},delete(){op='delete';return q;},then(resolve){
     let selected=rows[table].filter(r=>filters.every(f=>f(r))).slice(range[0],range[1]+1);
+    if(op==='update')selected.forEach(row=>Object.assign(row,payload));
     if(op==='upsert'){const old=rows[table].find(r=>r.media_id===payload.media_id&&r.user_id===payload.user_id);if(old)Object.assign(old,payload);else rows[table].push(payload);}
     if(op==='insert'){payload={id:'new-comment',...payload};rows[table].push(payload);selected=[payload];}
     if(op==='delete')rows[table]=rows[table].filter(r=>!selected.includes(r));
     return Promise.resolve(resolve({data:single?selected[0]||null:selected,error:null,count:selected.length}));
-  }}; return q;
+  }}; q.update=v=>{op='update';payload=v;return q;};return q;
 }};
 async function request(body,user='friend') { const response={code:200,status(c){this.code=c;return this;},json(v){this.body=v;}}; await handlePhotoFeed({method:'POST',url:'/api/photo-feed',body:{tripId:'trip',postId:'shared',...body}},response,db,{id:user});return response; }
 assert.equal((await request({action:'like',liked:true},'outsider')).code,404);
@@ -38,6 +39,14 @@ assert.equal(rows.photo_comments[0].user_id,'friend');
 assert.equal((await request({action:'report',reason:'invalid'})).code,400);
 await request({action:'report',reason:'Privacy concern'});assert.equal(rows.photo_reports.length,1);
 assert.equal((await request({action:'remove'})).code,400,'Friends cannot delete another author\'s post');
+assert.equal((await request({action:'share',visibility:'friends'})).code,403,'Only the author can widen an audience');
+assert.equal((await request({action:'share',visibility:'public'},'owner')).code,400);
+assert.equal((await request({action:'share',visibility:'private'},'owner')).body.saved,true);
+assert.equal(rows.media[0].visibility,'private');
+assert.equal((await request({action:'like',liked:true})).code,404,'Changing to private must revoke trip access');
+assert.equal((await request({action:'share',visibility:'members'},'owner')).code,403,'Sharing to a trip requires active membership');
+rows.trip_members.push({trip_id:'trip',user_id:'owner',role:'owner',status:'active'});
+assert.equal((await request({action:'share',visibility:'members'},'owner')).body.saved,true);
 rows.profiles=[{id:'owner',full_name:'Trip friend'}];
 const signedPaths=[];
 db.storage={from:()=>({createSignedUrl:async path=>{signedPaths.push(path);return {data:{signedUrl:'https://example.test/signed'}};}})};

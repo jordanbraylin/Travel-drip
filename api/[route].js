@@ -7,6 +7,7 @@ import chat from "../server/api/chat.js";
 import contacts from "../server/api/contacts.js";
 import photoFeed from "../server/api/photo-feed.js";
 import friends from "../server/api/friends.js";
+import destinationDiscovery from "../server/api/destination-discovery.js";
 import config from "../server/api/config.js";
 import corporateBookings from "../server/api/corporate-bookings.js";
 import events from "../server/api/events.js";
@@ -39,6 +40,7 @@ const routes = Object.freeze({
   contacts,
   "photo-feed": photoFeed,
   friends,
+  "destination-discovery":destinationDiscovery,
   config,
   "corporate-bookings": corporateBookings,
   events,

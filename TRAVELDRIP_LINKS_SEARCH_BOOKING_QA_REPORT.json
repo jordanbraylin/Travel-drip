@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-28T20:28:53.377Z",
+  "generatedAt": "2026-10-28T21:37:04.102Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
@@ -7,7 +7,7 @@
   "totals": {
     "screenIds": 959,
     "buttons": 725,
-    "hrefLinks": 15,
+    "hrefLinks": 16,
     "dataTargets": 97,
     "uniqueDataTargets": 19,
     "mainNavigationControls": 37,
@@ -16,7 +16,7 @@
     "dateInputs": 17,
     "searchInputs": 13,
     "actionAttributeTypes": 85,
-    "apiRoutes": 29
+    "apiRoutes": 30
   },
   "linkAndRouteVerification": {
     "workingLocalTargets": 19,
@@ -713,6 +713,7 @@
       "config.js",
       "contacts.js",
       "corporate-bookings.js",
+      "destination-discovery.js",
       "events.js",
       "explore.js",
       "flight-tracking.js",
