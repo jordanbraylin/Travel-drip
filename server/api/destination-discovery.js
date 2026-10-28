@@ -14,13 +14,14 @@ export async function suggestDestinations(query){
 export async function discoverDestination(query){
   const q=String(query||'').trim().slice(0,160);if(q.length<2)throw Object.assign(new Error('Enter a city and country.'),{status:400});
   const key=`discover:${q.toLowerCase()}`,saved=cache.get(key);if(saved?.until>Date.now())return saved.value;
+  const city=q.split(',')[0].replace(/["\\]/g,'').trim();
   const results=await Promise.allSettled([
     searchTravelGuides({query:q,category:'trending'}),
-    searchTravelGuides({destination:q,category:'activities'}),
-    searchTravelGuides({destination:q,category:'food'})
+    searchTravelGuides({query:`intitle:"${city}" tourist attractions`,category:'activities'}),
+    searchTravelGuides({query:`"${city}" cuisine`,category:'food'})
   ]);
   const sections=['about','activities','food'];const payload={destination:q,fetchedAt:new Date().toISOString(),source:'Wikipedia contributors',livePrices:false};
-  results.forEach((result,i)=>{payload[sections[i]]=result.status==='fulfilled'?result.value.results.slice(0,4):[];});
+  results.forEach((result,i)=>{let rows=result.status==='fulfilled'?result.value.results:[];rows=rows.filter(row=>! /disambiguation/i.test(row.title));if(i===0)rows=rows.filter(row=>row.title.toLowerCase()===city.toLowerCase()||row.title.toLowerCase().startsWith(`${city.toLowerCase()},`));if(i===1)rows=rows.filter(row=>/touris|museum|attraction|scenic|neighborhood|district|temple|park|palace|garden|building complex/i.test(`${row.title} ${row.description}`));payload[sections[i]]=rows.slice(0,4);});
   if(!sections.some(key=>payload[key].length))throw new Error('Destination guides are temporarily unavailable. Please try again.');
   return remember(key,payload,600000);
 }
