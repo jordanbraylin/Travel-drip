@@ -7736,6 +7736,7 @@ async function uploadMemoryFiles(files, action) {
         .from("travel-memories")
         .upload(storagePath, file, { cacheControl: "3600", contentType: file.type, upsert: false });
       if (error) throw error;
+      if (!stillCurrent()) return;
       const visibilityValue = visibility.toLowerCase().startsWith("private") ? "private"
         : visibility.toLowerCase().includes("selected") ? "selected"
           : visibility.toLowerCase().includes("public") ? "public" : "members";

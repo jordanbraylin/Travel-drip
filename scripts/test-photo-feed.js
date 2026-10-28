@@ -52,7 +52,7 @@ const source=await readFile(new URL('../photo-feed.js',import.meta.url),'utf8');
 let resolveRequest, status='';
 const list={replaceChildren(){}};
 const statusEl={replaceChildren(){},set textContent(v){status=v;}};
-const context=vm.createContext({state:{session:{user:{id:'a'}},activeTripId:'trip'}, document:{querySelector:s=>s==='#photoFeedList'?list:s==='#photoFeedStatus'?statusEl:s==='#photoFeedMore'?{}:null},apiRequest:()=>new Promise(r=>{resolveRequest=r;})});
+const context=vm.createContext({state:{session:{user:{id:'a'}},activeTripId:'trip'}, document:{querySelectorAll:()=>[],querySelector:s=>s==='#photoFeedList'?list:s==='#photoFeedStatus'?statusEl:s==='#photoFeedMore'?{}:null},apiRequest:()=>new Promise(r=>{resolveRequest=r;})});
 vm.runInContext(source,context);
 const pending=vm.runInContext('loadPhotoFeed()',context);
 context.state.session.user.id='b';resolveRequest({posts:[{id:'private-a'}],engagementReady:true});await pending;

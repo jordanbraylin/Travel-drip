@@ -6,6 +6,9 @@ function resetPhotoFeed() {
   document.querySelector('#photoComposer')?.reset();
   document.querySelector('#photoReportDialog')?.close();
   document.querySelector('#photoFeedStatus')?.replaceChildren();
+  const more = document.querySelector('#photoFeedMore'); if (more) more.hidden = true;
+  const search = document.querySelector('#photoTagSearch'); if (search) search.value = '';
+  document.querySelectorAll('[data-photo-filter]').forEach(button => button.setAttribute('aria-pressed',String(button.dataset.photoFilter === 'all')));
 }
 
 function photoFeedKey() { return `${state.session?.user?.id || ''}:${state.activeTripId || ''}`; }
