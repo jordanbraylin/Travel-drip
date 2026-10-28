@@ -30,15 +30,17 @@ function renderTripJoy(container){
   const bar=document.createElement('div');bar.className='joy-trip-bar';
   if(trips.length){const label=joyText('label','Choose a trip');const select=document.createElement('select');for(const t of trips){const option=joyText('option',t.title||'Untitled trip');option.value=t.id;option.selected=t.id===trip?.id;select.append(option);}if(!trip)select.value='';label.append(select);select.addEventListener('change',async()=>{select.disabled=true;try{await selectAccountTrip(select.value);}finally{select.disabled=false;}});bar.append(label);}
   if(trip){bar.append(workspaceButton('Invite friends',openTripInviteDialog),workspaceButton('Trip documents',()=>navigateSafely('importantInfo',{updateHistory:true})),workspaceButton(trip.owner_user_id===state.session?.user?.id?'Remove trip':'Leave trip',()=>openTripRemoval(trip)));}container.append(bar);
-  if(!trip){container.append(joyText('p',trips.length?'Choose a saved trip to see its details.':'Create or join a trip to start your travel dashboard.'));appendRemovedTripsControl(container);return;}
+  if(!trip)container.append(joyText('p',trips.length?'Choose a saved trip to see its details.':'Create or join a trip to start your travel dashboard.'));
   const grid=document.createElement('div');grid.className='joy-widget-grid';grid.setAttribute('aria-label','Trip information');
-  const records=trip.id===state.activeTripId?state.accountData.records||{}:{};
-  for(const model of tripJoyModels(trip,records)){
+  const records=trip?.id===state.activeTripId?state.accountData.records||{}:{};
+  const models=tripJoyModels(trip||{title:'No trip selected',destination:'',status:'not started'},records);
+  if(!trip){models[0].summary='Your adventure starts here';models[0].lines=['Create or join a trip, then choose it to see its dates, travelers, and destination.'];}
+  for(const model of models){
     const button=document.createElement('button');button.type='button';button.className=`joy-flip-widget joy-tone-${model.tone}`;button.setAttribute('aria-label',`${model.title}: ${model.summary}. Open details`);
     const inner=document.createElement('span');inner.className='joy-flip-inner';
     const front=document.createElement('span');front.className='joy-widget-front';front.setAttribute('aria-hidden','true');front.innerHTML=`<i data-lucide="${model.icon}"></i>`;front.append(joyText('strong',model.title),joyText('span',model.summary),joyText('small','View details'));
     const back=document.createElement('span');back.className='joy-widget-back';back.setAttribute('aria-hidden','true');back.append(joyText('strong',model.title),joyText('span',model.lines.slice(0,3).join(' · ')),joyText('small','Open full details'));
-    inner.append(front,back);button.append(inner);button.addEventListener('click',()=>joyDialog(model.title,model.lines,{label:model.route==='importantInfo'?'Open trip documents':'Open workspace',run:()=>navigateSafely(model.route,{updateHistory:true})}));grid.append(button);
+    inner.append(front,back);button.append(inner);button.addEventListener('click',()=>joyDialog(model.title,model.lines,{label:!trip?'Plan a trip':model.route==='importantInfo'?'Open trip documents':'Open workspace',run:()=>trip?navigateSafely(model.route,{updateHistory:true}):openWorkspacePlanning()}));grid.append(button);
   }
   container.append(grid);appendRemovedTripsControl(container);window.lucide?.createIcons();
 }
