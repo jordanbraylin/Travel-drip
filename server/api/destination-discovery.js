@@ -8,7 +8,7 @@ export async function suggestDestinations(query){
   const url=new URL('https://photon.komoot.io/api/');url.search=new URLSearchParams({q,limit:'7',lang:'en'}).toString();
   const response=await fetch(url,{headers:{'User-Agent':'Travel-Drip/1.0 (https://travel-drip.com)',Accept:'application/json'},signal:AbortSignal.timeout(8000)});
   if(!response.ok)throw new Error('Location suggestions are temporarily unavailable.');
-  const data=await response.json();const results=(data.features||[]).filter(f=>['city','town','village','municipality','country','state','county','island'].includes(f.properties?.osm_value)).map(f=>{const p=f.properties;return {name:p.name,country:p.country||'',label:[...new Set([p.name,p.state,p.country].filter(Boolean))].join(', ')};}).filter(p=>p.name);
+  const data=await response.json();const results=(data.features||[]).filter(f=>['city','town','village','municipality','country','state','county','province','island'].includes(f.properties?.osm_value)&&!['house','street'].includes(f.properties?.type)&&! /\bairport\b/i.test(f.properties?.name||'')).map(f=>{const p=f.properties;return {name:p.name,country:p.country||'',label:[...new Set([p.name,p.state,p.country].filter(Boolean))].join(', ')};}).filter(p=>p.name);
   return remember(key,[...new Map(results.map(p=>[p.label,p])).values()].slice(0,5),300000);
 }
 export async function discoverDestination(query){

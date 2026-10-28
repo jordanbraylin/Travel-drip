@@ -12,6 +12,8 @@ try{
   globalThis.fetch=async()=>{calls++;return {ok:true,json:async()=>({features:[{properties:{name:'Test City',state:'Test State',country:'Test Country',osm_value:'city'}},{properties:{name:'Cafe',osm_value:'restaurant'}},{properties:{name:'Test City',state:'Test State',country:'Test Country',osm_value:'city'}}]})};};
   assert.deepEqual(await suggestDestinations('test-city-unique'),[{name:'Test City',country:'Test Country',label:'Test City, Test State, Test Country'}]);
   await suggestDestinations('test-city-unique');assert.equal(calls,1,'Repeated suggestions use the bounded cache');
+  globalThis.fetch=async()=>({ok:true,json:async()=>({features:[{properties:{name:'Tokyo',country:'Japan',osm_value:'province',type:'city'}},{properties:{name:'Tokyo International Airport',osm_value:'island',type:'other'}}]})});
+  assert.deepEqual(await suggestDestinations('Tokyo'),[{name:'Tokyo',country:'Japan',label:'Tokyo, Japan'}],'Metropolitan provinces must appear without airport noise');
   globalThis.fetch=async()=>({ok:false});
   const res={code:200,setHeader(){},status(code){this.code=code;return this;},json(value){this.body=value;}};
   await handler({method:'GET',url:'/api/destination-discovery?q=unavailable-city',headers:{}},res);
