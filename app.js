@@ -4543,7 +4543,7 @@ function renderAiPlanner() {
   setVisibilityWithoutCssLeaks($("#aiPlannerCancelEditButton"), editing);
   $("#aiPlannerTranscript").innerHTML = aiPlannerSteps.map((item, index) => {
     if (!(item.key in state.aiPlanner.answers)) return "";
-    return `<div class="planner-answer"><strong>${escapeHtml(item.question)}</strong><span>${escapeHtml(state.aiPlanner.answers[item.key] || "Skipped")}</span><button class="ghost-button" type="button" data-ai-edit="${index}" aria-label="Edit answer: ${escapeHtml(item.question)}">Edit</button></div>`;
+    return `<div class="planner-answer"><div class="concierge-bubble concierge-question"><small>Travel-Drip concierge</small><strong>${escapeHtml(item.question)}</strong></div><div class="concierge-bubble concierge-answer"><small>You</small><span>${escapeHtml(state.aiPlanner.answers[item.key] || "Skipped")}</span><button class="ghost-button" type="button" data-ai-edit="${index}" aria-label="Edit answer: ${escapeHtml(item.question)}">Edit</button></div></div>`;
   }).join("");
 
   const answers = state.aiPlanner.answers;
@@ -4568,6 +4568,7 @@ function renderAiPlanner() {
   $("#aiItineraryPreview").innerHTML = plan.days.map((day, index) => (
     `<div><span>Day ${index + 1}</span><strong>${escapeHtml(day)}</strong><small>${index === 0 ? "Estimated until flights, lodging, and reservations are confirmed." : "Editable, removable, and regeneratable before saving."}</small></div>`
   )).join("");
+  if (typeof renderConciergeConversation === "function") renderConciergeConversation();
 }
 
 function editAiPlannerAnswer(index) {
@@ -7786,6 +7787,7 @@ async function uploadMemoryFiles(files, action, postDetails = {}) {
 function wireLocalInteractions() {
   moveTransportationWorkspace();
   initializeSimpleExperience();
+  initializeConciergeLayout();
   initializeWalletSplitter();
   initializeJourneyWallet();
   initializeTripManagement();

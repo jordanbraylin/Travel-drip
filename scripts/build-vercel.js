@@ -25,6 +25,8 @@ const staticFiles = [
   "trip-joy.css",
   "discovery-studio.js",
   "discovery-studio.css",
+  "planner-conversation.js",
+  "planner-conversation.css",
   "simple.css",
   "index.html",
   "login.html",
