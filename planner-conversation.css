@@ -35,7 +35,7 @@ html body.signed-in-shell #aiTravelPlanner .ai-planner-input-row { display:flex!
 html body.signed-in-shell #aiTravelPlanner .ai-planner-input-row input { flex:1 1 180px; min-width:0; width:auto; min-height:48px; font-size:16px; }
 html body.signed-in-shell #aiTravelPlanner .ai-planner-input-row button { flex:0 0 auto; min-height:44px; padding:8px 12px; font-size:14px; }
 html body.signed-in-shell #aiTravelPlanner #aiPlannerSendButton { background:#a91d75; color:#fff; border:1px solid #a91d75; }
-html body.signed-in-shell #aiTravelPlanner #aiPlannerStatus { font-size:12px; line-height:1.5; color:#655762; margin:10px 0 0; }
+html body.signed-in-shell #aiTravelPlanner #aiPlannerStatus { font-size:12px!important; line-height:1.5!important; color:#655762; margin:10px 0 0; }
 html body.signed-in-shell #aiTravelPlanner .ai-planner-summary { padding:0; border:0; border-radius:0; box-shadow:none; background:none; }
 html body.signed-in-shell #aiTravelPlanner .ai-planner-memory { display:grid; gap:0; margin:0; }
 html body.signed-in-shell #aiTravelPlanner .ai-planner-memory>div { display:grid; gap:6px; background:none; border:0; border-bottom:1px solid #eadde5; border-radius:0; padding:14px 0; }
@@ -69,6 +69,8 @@ html body.signed-in-shell #aiTravelPlanner :is(.ai-trip-output-grid strong,.ai-t
   html body.signed-in-shell #aiTravelPlanner .concierge-thread { padding:16px; }
   html body.signed-in-shell #aiTravelPlanner .concierge-chat-header { padding:16px; }
   html body.signed-in-shell #aiTravelPlanner .concierge-bubble { max-width:96%; }
+  html body.signed-in-shell #aiTravelPlanner .ai-planner-replies { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+  html body.signed-in-shell #aiTravelPlanner .ai-planner-replies button { width:100%; min-width:0; font-size:14px!important; overflow-wrap:anywhere; }
   html body.signed-in-shell #aiTravelPlanner .ai-planner-input-row input { flex-basis:100%; }
 }
 html[data-high-contrast="true"] body.signed-in-shell #aiTravelPlanner :is(.concierge-bubble,.concierge-question-link[aria-current],.ai-planner-replies button,.concierge-avatar) { background:#fff!important; color:#111!important; border-color:#111!important; }

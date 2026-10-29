@@ -36,5 +36,5 @@ function renderConciergeConversation() {
     const number=document.createElement('span');number.className='concierge-question-number';number.textContent=String(index+1);const text=document.createElement('span');text.textContent=labels[index];const status=document.createElement('small');status.textContent=answered?state.aiPlanner.answers[step.key]?'Answered':'Skipped':index===current?'Current':'Next';button.append(number,text,status);button.addEventListener('click',()=>{setConciergeView('conversation');if(answered)editAiPlannerAnswer(index);else document.getElementById('aiPlannerFreeformInput').focus();});nav.append(button);
   });
   // Keep the current prompt visible without moving the page or the composer.
-  const thread=document.getElementById('conciergeThread');if(thread)thread.scrollTop=thread.scrollHeight;
+  const thread=document.getElementById('conciergeThread');if(thread){const prompt=thread.querySelector?.('.ai-planner-message.assistant');thread.scrollTop=prompt?thread.scrollTop+prompt.getBoundingClientRect().top-thread.getBoundingClientRect().top:thread.scrollHeight;}
 }
