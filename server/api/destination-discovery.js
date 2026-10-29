@@ -1,6 +1,7 @@
 import {applySecurityHeaders,getRequestBody,methodNotAllowed} from './_security.js';
 import {searchTravelGuides} from './_travel-guides.js';
 import {destinationExcursions,destinationFacts,guideMatchesDestination} from './_destination-experiences.js';
+import {destinationPhotos} from './_destination-photos.js';
 const cache=new Map(),rates=new Map();
 function remember(key,value,ttl){if(cache.size>=200)cache.delete(cache.keys().next().value);cache.set(key,{value,until:Date.now()+ttl});return value;}
 export async function suggestDestinations(query){
@@ -30,6 +31,7 @@ export async function discoverDestination(query){
   payload.activities=payload.activities.filter(guide=>guideMatchesDestination(q,guide));
   payload.excursions=destinationExcursions(q,[1,3,4].flatMap(index=>results[index].status==='fulfilled'?results[index].value.results:[]));
   payload.facts=destinationFacts(payload.about,payload.excursions);
+  payload.excursions=await destinationPhotos(payload.excursions.map(item=>({...item,fact:destinationFacts([],[item])[0]?.text||null})));
   payload.excursionsUnavailable=results.slice(3).every(result=>result.status==='rejected');
   if(results.every(result=>result.status==='rejected'))throw new Error('Destination guides are temporarily unavailable. Please try again.');
   return remember(key,payload,600000);
