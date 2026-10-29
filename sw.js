@@ -1,4 +1,4 @@
-const CACHE_NAME = "traveldrip-v224";
+const CACHE_NAME = "traveldrip-v225";
 const APP_SHELL = [
   "/",
   "/index.html",
@@ -15,13 +15,14 @@ const APP_SHELL = [
   "/photo-feed.css?v=3",
   "/trip-joy.js?v=2",
   "/trip-joy.css?v=1",
-  "/trip-workspaces.js?v=6",
+  "/trip-itinerary.js?v=1",
+  "/trip-workspaces.js?v=7",
   "/journey-dashboard.js?v=3",
-  "/discovery-studio.js?v=1",
+  "/discovery-studio.js?v=2",
   "/discovery-studio.css?v=1",
   "/journey-dashboard.css?v=3",
   "/vendor/lucide.min.js?v=1",
-  "/trip-workspaces.css?v=3",
+  "/trip-workspaces.css?v=4",
   "/planning-studio.js?v=1",
   "/planning-studio.css?v=2",
   "/icons/planning-coast.jpg",

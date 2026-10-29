@@ -62,7 +62,7 @@ function renderTripItinerary(section) {
     const step = document.createElement("span"); step.textContent = name; step.classList.toggle("complete", Boolean(value)); step.setAttribute("aria-label", `${name}: ${value ? "added" : "not added"}`); steps.append(step);
   }
   workspace.append(steps);
-  if (!trip) return;
+  if (!trip) { renderDetailedTripItinerary(workspace,null); return; }
   const actions = document.createElement("div"); actions.className = "trip-workspace-actions";
   actions.append(workspaceButton("Find something fun", () => navigateSafely("exploreDrops", { updateHistory: true })), workspaceButton("Invite people", openTripInviteDialog), workspaceButton("Trip funds", () => navigateSafely("walletPanel", { updateHistory: true })));
   workspace.append(actions);
@@ -74,20 +74,7 @@ function renderTripItinerary(section) {
   }
   picker.addEventListener("change", async () => { picker.disabled = true; try { await selectAccountTrip(picker.value); } finally { picker.disabled = false; } });
   selector.append(picker); workspace.append(selector);
-  const schedule = [...(state.accountData.records?.schedule_items || [])].sort((a, b) => String(a.starts_at || "").localeCompare(String(b.starts_at || "")));
-  const heading = document.createElement("h3"); heading.textContent = "Your itinerary"; workspace.append(heading);
-  const list = document.createElement("div"); list.className = "trip-agenda";
-  for (const item of schedule) {
-    const row = document.createElement("article");
-    const time = document.createElement("time");
-    const date = new Date(item.starts_at);
-    time.textContent = item.starts_at && !Number.isNaN(date.getTime()) ? date.toLocaleString([], { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "Time to be decided";
-    const title = document.createElement("h4"); title.textContent = item.title || "Planned activity";
-    const location = document.createElement("p"); location.textContent = item.location_name || "Location to come";
-    row.append(time, title, location); list.append(row);
-  }
-  if (!schedule.length) { const empty = document.createElement("p"); empty.textContent = state.accountData.moduleErrors?.schedule_items ? "Your itinerary couldn't load. Refresh to try again." : "Room for something wonderful. Add your first activity."; list.append(empty); }
-  workspace.append(list);
+  renderDetailedTripItinerary(workspace,trip);
   const manager = trip.owner_user_id === state.session?.user?.id || ["owner", "admin", "organizer", "team_lead"].includes(trip.myRole);
   if (!manager) return;
   const details = document.createElement("details"); details.className = "simple-disclosure";
