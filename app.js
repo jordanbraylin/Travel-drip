@@ -7787,6 +7787,7 @@ async function uploadMemoryFiles(files, action, postDetails = {}) {
 function wireLocalInteractions() {
   moveTransportationWorkspace();
   initializeSimpleExperience();
+  $("#destinationInfoButton")?.addEventListener("click", () => joyDialog($("#livePlanTitle").textContent, ["#livePlanDescription", "#livePlanFunFact", "#livePlanTip", "#livePlanSeason", "#livePlanGreeting"].map(selector => $(selector)?.textContent).filter(Boolean)));
   initializeConciergeLayout();
   initializeWalletSplitter();
   initializeJourneyWallet();

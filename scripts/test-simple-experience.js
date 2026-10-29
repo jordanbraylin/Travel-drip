@@ -62,4 +62,9 @@ assert.ok(source.includes('move(".itinerary-preferences-widget", "notifications"
 assert.ok(source.includes('move(".ride-account-panel", "integrations"'));
 assert.ok(source.includes('diagnostics.removeAttribute("data-settings-panel")'));
 assert.ok(!html.includes('data-settings-section="system"'));
+assert.equal((html.match(/id="destinationInfoButton"/g)||[]).length,1);
+assert.ok(app.includes('$("#destinationInfoButton")?.addEventListener("click"'));
+assert.match(css,/#dashboardHome\.destination-banner:not\(\[hidden\]\).*min-height:240px/);
+assert.match(css,/#dashboardHome\.destination-banner \.hero-copy h1.*font-size:32px/);
+assert.match(css,/#destinationInfoButton.*min-height:44px/);
 console.log("Simplified experience passed: one active account tab, keyboard state, legacy aliases, readable preferences, and settings ownership.");

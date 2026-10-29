@@ -251,3 +251,25 @@ html[data-high-contrast="true"] body.signed-in-shell :is(.primary-button, #letsP
   html body.signed-in-shell #adminPanel .settings-row > select { width: 100%; }
   html body.signed-in-shell .simple-disclosure { margin-top: 18px; }
 }
+
+html body.app-routed.signed-in-shell[data-active-route="dashboardHome"] main>#dashboardHome.destination-banner:not([hidden]) { height:auto!important; min-height:240px!important; margin-bottom:18px!important; border-radius:6px!important; box-shadow:none!important; }
+html body.app-routed.signed-in-shell #dashboardHome.destination-banner .hero-copy { width:min(680px,85%)!important; min-height:0!important; padding:24px!important; justify-content:center!important; gap:0!important; }
+html body.app-routed.signed-in-shell #dashboardHome.destination-banner .hero-copy h1 { font-size:32px!important; line-height:1.2!important; max-width:100%!important; margin:6px 0!important; }
+html body.app-routed.signed-in-shell #dashboardHome .hero-copy>.eyebrow { font-size:12px!important; line-height:1.5!important; margin:0!important; }
+html body.app-routed.signed-in-shell #dashboardHome :is(#livePlanDescription,#livePlanTip,#livePlanGreeting,.destination-banner-dots) { display:none!important; }
+html body.app-routed.signed-in-shell #dashboardHome .destination-banner-meta { display:grid!important; gap:8px!important; margin:8px 0 16px!important; max-width:580px!important; }
+html body.app-routed.signed-in-shell #dashboardHome .destination-banner-meta span { display:block!important; width:auto!important; min-height:0!important; padding:0!important; border:0!important; border-radius:0!important; background:none!important; backdrop-filter:none!important; font-size:14px!important; line-height:1.5!important; font-weight:500!important; }
+html body.app-routed.signed-in-shell #dashboardHome #livePlanSeason { font-size:12px!important; }
+html body.app-routed.signed-in-shell #dashboardHome .hero-actions { display:flex!important; flex-wrap:wrap!important; gap:8px!important; margin:0!important; }
+html body.app-routed.signed-in-shell #dashboardHome .hero-actions button { min-height:44px!important; padding:8px 14px!important; font-size:15px!important; border-radius:6px!important; }
+html body.app-routed.signed-in-shell #dashboardHome .auth-confirmation-banner { position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:0!important; border:0!important; overflow:hidden!important; clip-path:inset(50%)!important; white-space:nowrap!important; }
+html body.app-routed.signed-in-shell #dashboardHome .destination-banner-controls { position:absolute!important; inset:auto 14px 14px auto!important; display:flex!important; gap:6px!important; }
+html body.app-routed.signed-in-shell #dashboardHome :is(.destination-banner-controls button,#destinationPauseButton,#destinationInfoButton) { width:44px!important; height:44px!important; min-width:44px!important; min-height:44px!important; padding:8px!important; border-radius:6px!important; }
+html body.app-routed.signed-in-shell #dashboardHome :is(#destinationPauseButton,#destinationInfoButton) { position:absolute!important; top:auto!important; bottom:14px!important; z-index:3!important; }
+html body.app-routed.signed-in-shell #dashboardHome #destinationPauseButton { right:114px!important; }
+html body.app-routed.signed-in-shell #dashboardHome #destinationInfoButton { right:164px!important; }
+#destinationInfoButton svg { width:22px; height:22px; }
+@media(max-width:900px) {
+  html body.app-routed.signed-in-shell #dashboardHome.destination-banner .hero-copy { width:100%!important; padding:20px 20px 76px!important; }
+  html body.app-routed.signed-in-shell #dashboardHome.destination-banner .hero-copy h1 { font-size:26px!important; }
+}
