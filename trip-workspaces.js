@@ -74,6 +74,7 @@ function renderTripItinerary(section) {
   }
   picker.addEventListener("change", async () => { picker.disabled = true; try { await selectAccountTrip(picker.value); } finally { picker.disabled = false; } });
   selector.append(picker); workspace.append(selector);
+  renderTripTravelTools(workspace,trip);
   renderDetailedTripItinerary(workspace,trip);
   const manager = trip.owner_user_id === state.session?.user?.id || ["owner", "admin", "organizer", "team_lead"].includes(trip.myRole);
   if (!manager) return;

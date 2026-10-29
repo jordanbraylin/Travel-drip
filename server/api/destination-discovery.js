@@ -1,6 +1,6 @@
 import {applySecurityHeaders,getRequestBody,methodNotAllowed} from './_security.js';
 import {searchTravelGuides} from './_travel-guides.js';
-import {destinationExcursions,destinationFacts,guideMatchesDestination} from './_destination-experiences.js';
+import {destinationExcursions,destinationFacts,destinationRestaurants,guideMatchesDestination} from './_destination-experiences.js';
 import {destinationPhotos} from './_destination-photos.js';
 const cache=new Map(),rates=new Map();
 function remember(key,value,ttl){if(cache.size>=200)cache.delete(cache.keys().next().value);cache.set(key,{value,until:Date.now()+ttl});return value;}
@@ -23,7 +23,8 @@ export async function discoverDestination(query){
     searchTravelGuides({query:`intitle:"${city}" tourist attractions`,category:'activities'}),
     searchTravelGuides({query:`"${city}" ${locationTerms} cuisine`,category:'food'}),
     searchTravelGuides({query:`"${city}" ${locationTerms} museums landmarks`,category:'activities'}),
-    searchTravelGuides({query:`"${city}" ${locationTerms} parks gardens`,category:'activities'})
+    searchTravelGuides({query:`"${city}" ${locationTerms} parks gardens`,category:'activities'}),
+    searchTravelGuides({query:`"${city}" ${locationTerms} restaurant`,category:'food'})
   ]);
   const sections=['about','activities','food'];const payload={destination:q,fetchedAt:new Date().toISOString(),source:'Wikipedia contributors',livePrices:false};
   results.slice(0,3).forEach((result,i)=>{let rows=result.status==='fulfilled'?result.value.results:[];rows=rows.filter(row=>! /disambiguation/i.test(row.title));if(i===0)rows=rows.filter(row=>row.title.toLowerCase()===city.toLowerCase()||row.title.toLowerCase().startsWith(`${city.toLowerCase()},`));if(i===1)rows=rows.filter(row=>/touris|museum|attraction|scenic|neighborhood|district|temple|park|palace|garden|building complex/i.test(`${row.title} ${row.description}`));payload[sections[i]]=rows.slice(0,4);});
@@ -31,8 +32,12 @@ export async function discoverDestination(query){
   payload.activities=payload.activities.filter(guide=>guideMatchesDestination(q,guide));
   payload.excursions=destinationExcursions(q,[1,3,4].flatMap(index=>results[index].status==='fulfilled'?results[index].value.results:[]));
   payload.facts=destinationFacts(payload.about,payload.excursions);
-  payload.excursions=await destinationPhotos(payload.excursions.map(item=>({...item,fact:destinationFacts([],[item])[0]?.text||null})));
-  payload.excursionsUnavailable=results.slice(3).every(result=>result.status==='rejected');
+  const restaurants=destinationRestaurants(q,results[5].status==='fulfilled'?results[5].value.results:[]);
+  const illustrated=await destinationPhotos([...payload.excursions,...restaurants].map(item=>({...item,fact:destinationFacts([],[item])[0]?.text||null})));
+  payload.restaurants=illustrated.filter(item=>item.kind==='restaurant_idea');
+  payload.excursions=illustrated.filter(item=>item.kind==='excursion_idea');
+  payload.restaurantsUnavailable=results[5].status==='rejected';
+  payload.excursionsUnavailable=[1,3,4].every(index=>results[index].status==='rejected');
   if(results.every(result=>result.status==='rejected'))throw new Error('Destination guides are temporarily unavailable. Please try again.');
   return remember(key,payload,600000);
 }

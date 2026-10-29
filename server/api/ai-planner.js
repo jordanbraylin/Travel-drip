@@ -5,6 +5,8 @@ import {
   sanitizeText
 } from "./_security.js";
 import { getResponseText, getOpenAiFailure } from "./_openai-response.js";
+import { freePlanner } from './_free-planner.js';
+const rates = new Map();
 
 function collectCitations(value, citations = []) {
   if (!value || typeof value !== "object") return citations;
@@ -33,6 +35,14 @@ export default async function handler(request, response) {
     return;
   }
 
+  const body = getRequestBody(request);
+  if (process.env.ALLOW_PAID_AI !== 'true') {
+    const ip=String(request.headers?.['x-forwarded-for']||'unknown').split(',')[0],now=Date.now();let rate=rates.get(ip);
+    if(!rate||rate.until<now){rate={count:0,until:now+60000};if(rates.size>=500)rates.delete(rates.keys().next().value);rates.set(ip,rate);}
+    if(++rate.count>20)return response.status(429).json({error:'Please pause briefly before researching another destination.',code:'research_rate_limited'});
+    try { return response.status(200).json(await freePlanner(body)); }
+    catch { return response.status(503).json({error:'Free destination guides are temporarily unavailable. Guided planning is still available.',provider:'free_guides',code:'guide_source_unavailable'}); }
+  }
   const apiKey = process.env.OPENAI_API_KEY || "";
   if (!apiKey) {
     response.status(503).json({
@@ -43,7 +53,6 @@ export default async function handler(request, response) {
     return;
   }
 
-  const body = getRequestBody(request);
   const answers = body.answers && typeof body.answers === "object" ? body.answers : {};
   const query = sanitizeText(body.query, "", 800);
   const tripType = sanitizeText(answers.tripType, "Group Vacation", 100);

@@ -50,6 +50,8 @@ export default async function handler(request, response) {
   const { user } = await requireAuthenticatedUser(request, response);
   if (!user) return;
 
+  if (process.env.ALLOW_PAID_AI !== 'true') return response.status(503).json({error:'Paid AI is disabled. The free invitation template remains available.',code:'paid_ai_disabled',provider:'none'});
+
   const apiKey = process.env.OPENAI_API_KEY || "";
   if (!apiKey) {
     response.status(503).json({

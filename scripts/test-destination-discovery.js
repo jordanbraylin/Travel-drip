@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 import handler,{suggestDestinations,discoverDestination} from '../server/api/destination-discovery.js';
-import {destinationExcursions,destinationFacts,guideMatchesDestination} from '../server/api/_destination-experiences.js';
+import {destinationExcursions,destinationFacts,destinationRestaurants,guideMatchesDestination} from '../server/api/_destination-experiences.js';
 
 const source=await readFile(new URL('../discovery-studio.js',import.meta.url),'utf8');
 const context=vm.createContext({});vm.runInContext(source,context);
@@ -44,4 +44,13 @@ assert.equal(facts.length,3);assert.ok(facts.every(fact=>fact.text&&fact.sourceU
 assert.ok(facts.some(fact=>fact.text.includes('opened in 1950')));
 assert.deepEqual(destinationExcursions('Unknown',guides),[]);assert.deepEqual(destinationFacts([],[]),[]);
 assert.match(source,/Ideas to research, not bookable tours/);assert.match(source,/renderDiscoveryFacts/);
+const restaurants=destinationRestaurants('Tokyo, Japan',[
+  {id:'20',title:'Example Bistro',description:'Example Bistro is a restaurant in Tokyo, Japan. It opened in 1980.'},
+  {id:'21',title:'Wrong city',description:'A restaurant in Kyoto, Japan.'},
+  {id:'22',title:'Japanese cuisine',description:'The cuisine of Tokyo, Japan includes restaurants.'},
+  {id:'23',title:'Closed place',description:'A defunct restaurant in Tokyo, Japan.'},
+  {id:'24',title:'Global chain',description:'A restaurant chain based in Tokyo, Japan.'},
+  {id:'25',title:'Example restaurant attack',description:'An attack on a restaurant in Tokyo, Japan.'},
+  {id:'20',title:'Example Bistro',description:'Example Bistro is a restaurant in Tokyo, Japan.'}
+]);assert.equal(restaurants.length,1);assert.equal(restaurants[0].kind,'restaurant_idea');assert.equal(restaurants[0].category,'Restaurants');assert.match(source,/renderDiscoveryRestaurants/);
 console.log('Destination discovery passed: suggestions, deduplication, cache, provider failures, empty search, exact-cent budget, invalid amounts, keyboard and stale-response guards.');

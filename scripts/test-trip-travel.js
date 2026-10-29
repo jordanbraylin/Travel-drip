@@ -1,0 +1,38 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import vm from 'node:vm';
+import {tripTravelRecord} from '../server/api/_trip-travel-record.js';
+import handler from '../server/api/trip-travel.js';
+
+const base={tripId:'11111111-1111-4111-8111-111111111111',startsAt:'2026-11-01T12:00:00Z',endsAt:'2026-11-01T14:00:00Z',name:'Example Air',number:'123',from:'CLT',to:'JFK'};
+const flight=tripTravelRecord({...base,kind:'flight',user_id:'attacker',status:'confirmed',details:{admin:true},boardingAt:'2026-11-01T11:30:00Z',seat:'12A',gate:'B2'},'owner');
+assert.equal(flight.table,'flights');assert.equal(flight.record.user_id,'owner');assert.equal(flight.record.status,'saved');assert.equal(flight.record.details.admin,undefined);assert.equal(flight.record.details.seat,'12A');assert.equal(flight.record.details.boarding_time,'2026-11-01T11:30:00.000Z');
+const stay=tripTravelRecord({...base,kind:'stay',name:'Example Stay'},'owner');assert.equal(stay.table,'hotels');assert.equal(stay.record.visibility,'assigned_user');
+const ride=tripTravelRecord({...base,kind:'ride',name:'Example pickup'},'owner');assert.equal(ride.table,'transportation_records');assert.equal(ride.record.status,'planned');
+assert.throws(()=>tripTravelRecord({...base,kind:'flight',startsAt:'2026-02-30T12:00:00Z'},'owner'));
+for(const body of [{...base,kind:'invalid'},{...base,kind:'flight',name:''},{...base,kind:'flight',to:''},{...base,kind:'stay',startsAt:''},{...base,kind:'ride',startsAt:'invalid'},{...base,kind:'flight',endsAt:'2026-11-01T10:00:00Z'},{...base,kind:'flight',boardingAt:'2026-11-01T13:00:00Z'},{...base,kind:'stay',startsAt:'2026-11-01T12:00'}])assert.throws(()=>tripTravelRecord(body,'owner'));
+const res={code:200,setHeader(){},status(code){this.code=code;return this;},json(body){this.body=body;}};
+await handler({method:'POST',headers:{},body:base},res);assert.equal(res.code,401,'Unauthenticated writes must fail');
+await handler({method:'GET',headers:{}},res);assert.equal(res.code,405);
+
+const app=await readFile(new URL('../app.js',import.meta.url),'utf8');
+const upload=app.slice(app.indexOf('async function uploadTripDocument('),app.indexOf('async function openTripDocumentPreview('));
+let finishUpload,inserted,removed=false;
+const message={textContent:''},state={session:{user:{id:'original-user'}},activeTripId:'original-trip'};
+const client={storage:{from(){return {upload:()=>new Promise(resolve=>{finishUpload=resolve;}),remove:async()=>{removed=true;}};}},from(){return {insert:async record=>{inserted=record;return {error:null};}};}};
+state.supabase=client;
+let refreshes=0;
+const context=vm.createContext({state,crypto:{randomUUID:()=> 'test-id'},$:()=>message,loadAccountData:async()=>{refreshes++;},loadTripDocuments:async()=>{refreshes++;},URL,fetch:()=>{},AbortController,joyText:()=>{},workspaceButton:()=>{}});
+vm.runInContext(upload,context);
+const file={name:'boarding.pdf',type:'application/pdf',size:100};context.file=file;
+const saving=vm.runInContext('uploadTripDocument(file)',context);
+state.activeTripId='different-trip';state.session.user.id='different-user';finishUpload({error:null});assert.equal(await saving,true);
+assert.equal(inserted.trip_id,'original-trip');assert.equal(inserted.user_id,'original-user');assert.match(inserted.storage_path,/^original-user\/original-trip\//);assert.equal(inserted.visibility,'owner');assert.equal(refreshes,0,'Old upload must not refresh a new account or trip');
+assert.equal(await vm.runInContext("uploadTripDocument({name:'x.html',type:'text/html',size:1})",context),false);
+assert.equal(await vm.runInContext("uploadTripDocument({name:'large.pdf',type:'application/pdf',size:26214401})",context),false);
+state.supabase={...client,from(){return {insert:async()=>({error:new Error('metadata failure')})};}};
+const failing=vm.runInContext('uploadTripDocument(file)',context);finishUpload({error:null});assert.equal(await failing,false);assert.equal(removed,true,'Metadata failure must remove orphaned upload');
+assert.doesNotMatch(app.slice(app.indexOf('async function openTripDocumentPreview('),app.indexOf('async function handleReceiptUpload(')),/window\.open/);
+assert.match(app,/tripId !== state.activeTripId \|\| userId !== state.session\?\.user\?\.id/);
+const api=await readFile(new URL('../server/api/trip-travel.js',import.meta.url),'utf8');assert.match(api,/\['owner','admin','organizer'\]/);
+console.log('Trip travel passed: authenticated write gate, allowlisted fields, private stays, dates, boarding validation, upload ownership during trip/account switch, file limits, rollback, and in-app preview.');

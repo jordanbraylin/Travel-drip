@@ -25,7 +25,9 @@ assert.match(getOpenAiFailure({ error: { code: "rate_limit_exceeded" } }, 429).e
 
 const previousFetch = globalThis.fetch;
 const previousKey = process.env.OPENAI_API_KEY;
+const previousPaid = process.env.ALLOW_PAID_AI;
 try {
+  process.env.ALLOW_PAID_AI = "true";
   process.env.OPENAI_API_KEY = "test-only";
   let upstream = payload;
   let sentRequest;
@@ -67,6 +69,7 @@ try {
   assert.equal(exhausted.statusCode, 429);
   assert.equal(exhausted.body.code, "provider_quota_exhausted");
 } finally {
+  if(previousPaid===undefined)delete process.env.ALLOW_PAID_AI;else process.env.ALLOW_PAID_AI=previousPaid;
   globalThis.fetch = previousFetch;
   if (previousKey === undefined) delete process.env.OPENAI_API_KEY;
   else process.env.OPENAI_API_KEY = previousKey;

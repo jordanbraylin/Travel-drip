@@ -102,3 +102,40 @@ function renderDetailedTripItinerary(workspace,trip) {
   }
   select.addEventListener('change',()=>{for(const day of days.children)day.hidden=select.value!=='all'&&day.dataset.day!==select.value;});section.append(days);workspace.append(section);window.lucide?.createIcons();
 }
+
+function renderTripTravelTools(workspace,trip){
+  const section=document.createElement('section');section.className='trip-travel-tools';section.append(joyText('h3','Bring your plans together'));
+  const actions=document.createElement('div');actions.className='trip-workspace-actions';
+  const canManage=trip.owner_user_id===state.session?.user?.id||['owner','admin','organizer'].includes(trip.myRole);
+  if(canManage)actions.append(workspaceButton('Add flight, stay or ride',()=>openTripTravelForm(trip),true));
+  actions.append(workspaceButton('Upload travel document',()=>openTripDocumentUpload(trip)));section.append(actions);
+  const documents=state.activeTripId===trip.id?(state.accountData.records?.documents||[]).filter(row=>row.trip_id===trip.id):[];
+  const list=document.createElement('details');list.className='simple-disclosure';list.append(joyText('summary',`Travel documents (${documents.length})`));
+  if(state.accountData.moduleErrors?.documents)list.append(joyText('p','Documents could not be loaded. Refresh this trip to retry.'));
+  else if(!documents.length)list.append(joyText('p','No documents saved yet. Upload a boarding pass, stay confirmation, ride details, or activity ticket.'));
+  for(const doc of documents){const row=document.createElement('div');row.className='trip-document-row';row.append(joyText('span',doc.metadata?.filename||String(doc.document_type||'Travel document').replaceAll('_',' ')),workspaceButton('View document',()=>openTripDocumentPreview(doc.id)));list.append(row);}
+  section.append(list);workspace.append(section);
+}
+
+function openTripTravelForm(trip){
+  const userId=state.session?.user?.id;
+  joyDialog('Add your travel details',[]);
+  const dialog=document.getElementById('journeyDetailDialog'),content=dialog.querySelector('.joy-detail-lines');
+  content.append(joyText('p','Saved to this trip. These details do not book or confirm travel. Times use your device time zone; convert destination-local times before saving.'));
+  const form=document.createElement('form');form.className='trip-travel-form';
+  form.innerHTML='<label>Travel type<select name="kind"><option value="flight">Flight</option><option value="stay">Stay</option><option value="ride">Ride share / transportation</option></select></label><label><span data-name-label>Airline</span><input name="name" maxlength="120" required></label><label data-flight>Flight number<input name="number" maxlength="30"></label><label><span data-from-label>Departure airport</span><input name="from" maxlength="240"></label><label data-destination><span data-to-label>Arrival airport</span><input name="to" maxlength="240"></label><label><span data-start-label>Departure</span><input name="startsAt" type="datetime-local" required></label><label data-end><span data-end-label>Arrival</span><input name="endsAt" type="datetime-local"></label><label data-flight>Boarding time (optional)<input name="boardingAt" type="datetime-local"></label><label data-flight>Gate (optional)<input name="gate" maxlength="40"></label><label data-flight>Seat (optional)<input name="seat" maxlength="40"></label><label>Booking reference (optional)<input name="reference" maxlength="100"></label><label>Notes (optional)<textarea name="notes" maxlength="1500" rows="3"></textarea></label><p role="status"></p><button type="submit" class="primary-button">Save to trip</button>';
+  const kind=form.elements.kind;
+  const draw=()=>{const flight=kind.value==='flight',stay=kind.value==='stay';for(const field of form.querySelectorAll('[data-flight]')){field.hidden=!flight;field.querySelector('input').disabled=!flight;}form.elements.number.required=flight;form.querySelector('[data-name-label]').textContent=flight?'Airline':stay?'Name of stay':'Ride provider';form.querySelector('[data-from-label]').textContent=flight?'Departure airport':stay?'Address (optional)':'Pickup location';form.elements.from.required=!stay;form.querySelector("[data-to-label]").textContent=flight?"Arrival airport":"Drop-off location";form.querySelector('[data-destination]').hidden=stay;form.elements.to.disabled=stay;form.elements.to.required=!stay;form.querySelector('[data-start-label]').textContent=flight?'Departure':stay?'Check-in':'Pickup time';form.querySelector('[data-end-label]').textContent=stay?'Check-out (optional)':'Arrival (optional)';form.querySelector('[data-end]').hidden=kind.value==='ride';form.elements.endsAt.disabled=kind.value==='ride';};kind.addEventListener('change',draw);draw();
+  form.addEventListener('submit',async event=>{event.preventDefault();if(!form.reportValidity()||userId!==state.session?.user?.id||trip.id!==state.activeTripId)return;const button=form.querySelector('[type=submit]'),status=form.querySelector('[role=status]');button.disabled=true;status.textContent='Saving your travel details...';
+    try{const body=Object.fromEntries(new FormData(form));for(const key of ['startsAt','endsAt','boardingAt'])if(body[key])body[key]=new Date(body[key]).toISOString();const result=await apiRequest('/api/trip-travel',{method:'POST',body:JSON.stringify({...body,tripId:trip.id})});if(result.skipped||!result.record?.id)throw new Error('Travel details were not saved. Please retry.');if(userId!==state.session?.user?.id||trip.id!==state.activeTripId)return;dialog.close();await loadAccountData();}
+    catch(error){status.textContent=error.message;}finally{button.disabled=false;}
+  });content.append(form);
+}
+
+function openTripDocumentUpload(trip){
+  const userId=state.session?.user?.id;joyDialog('Upload a travel document',[]);
+  const dialog=document.getElementById('journeyDetailDialog'),content=dialog.querySelector('.joy-detail-lines');
+  content.append(joyText('p','Private to your account. PDF, JPG, PNG, HEIC or WEBP, up to 25 MB. Documents are saved as files; enter itinerary details separately.'));
+  const form=document.createElement('form');form.className='trip-travel-form';form.innerHTML='<label>Document type<select name="documentType"><option value="boarding_pass">Boarding pass</option><option value="flight_confirmation">Flight confirmation</option><option value="stay_confirmation">Stay confirmation</option><option value="ride_confirmation">Ride / transportation</option><option value="activity_ticket">Activity ticket</option><option value="travel_document">Other travel document</option></select></label><label>Choose a file<input name="document" type="file" accept="application/pdf,image/jpeg,image/png,image/heic,image/webp" required></label><p role="status" aria-live="polite"></p><button type="submit" class="primary-button">Upload privately</button>';
+  form.addEventListener('submit',async event=>{event.preventDefault();if(!form.reportValidity()||userId!==state.session?.user?.id||trip.id!==state.activeTripId)return;const button=form.querySelector('button'),status=form.querySelector('[role=status]');button.disabled=true;try{const saved=await uploadTripDocument(form.elements.document.files[0],form.elements.documentType.value,{message:status});if(saved&&userId===state.session?.user?.id&&trip.id===state.activeTripId){form.reset();status.textContent='Saved privately. Your file is available under Travel documents.';}}finally{button.disabled=false;}});content.append(form);
+}

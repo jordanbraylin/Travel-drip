@@ -24,6 +24,7 @@ import rsvp from "../server/api/rsvp.js";
 import schedule from "../server/api/schedule.js";
 import subscribe from "../server/api/subscribe.js";
 import travelSearch from "../server/api/travel-search.js";
+import tripTravel from "../server/api/trip-travel.js";
 import trips from "../server/api/trips.js";
 import walletReminders from "../server/api/wallet-reminders.js";
 import wallet from "../server/api/wallet.js";
@@ -57,6 +58,7 @@ const routes = Object.freeze({
   schedule,
   subscribe,
   "travel-search": travelSearch,
+  "trip-travel": tripTravel,
   trips,
   "wallet-reminders": walletReminders,
   wallet,

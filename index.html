@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="simple.css?v=6">
   <link rel="stylesheet" href="messaging.css?v=1">
   <link rel="stylesheet" href="planning-studio.css?v=2">
-  <link rel="stylesheet" href="trip-workspaces.css?v=4">
+  <link rel="stylesheet" href="trip-workspaces.css?v=5">
   <link rel="stylesheet" href="journey-dashboard.css?v=3">
   <link rel="stylesheet" href="photo-feed.css?v=3">
   <link rel="stylesheet" href="trip-joy.css?v=1">
@@ -872,7 +872,7 @@
           <section class="panel ai-travel-planner-panel" id="aiTravelPlanner">
             <div class="section-heading compact">
               <div>
-                <p class="eyebrow">AI Travel Planner</p>
+                <p class="eyebrow">Guided Trip Planner</p>
                 <h2>Plan a complete trip with a personal concierge</h2>
                 <p>The planner asks one question at a time, remembers your answers for this session, and turns them into a practical itinerary with estimates clearly labeled.</p>
               </div>
@@ -882,7 +882,7 @@
               <section class="ai-planner-chat" aria-live="polite">
                 <div class="ai-planner-transcript" id="aiPlannerTranscript" aria-label="AI planning conversation"></div>
                 <div class="ai-planner-message assistant">
-                  <strong>Travel-Drip AI</strong>
+                  <strong>Travel-Drip guide</strong>
                   <p id="aiPlannerQuestion">What type of trip are you planning?</p>
                 </div>
                 <div class="ai-planner-replies" id="aiPlannerReplies">
@@ -908,7 +908,7 @@
                   <div><span>Dates</span><strong>Flexible</strong></div>
                   <div><span>Interests</span><strong>Waiting</strong></div>
                 </div>
-                <label class="auth-check"><input id="aiPlannerLearnToggle" type="checkbox" checked> Let AI use saved preferences for this plan</label>
+                <label class="auth-check"><input id="aiPlannerLearnToggle" type="checkbox" checked> Use saved preferences for this plan</label>
                 <button class="ghost-button wide" type="button" id="aiPlannerDeleteMemoryButton">Delete planner memory</button>
               </aside>
             </div>
@@ -924,7 +924,7 @@
               </div>
               <div class="ai-trip-output-grid">
                 <article><span>Estimated cost</span><strong id="aiEstimatedCost">Budget not set</strong><small>Flights, hotel, food, rides, and activities estimated</small></article>
-                <article><span>Best travel window</span><strong id="aiTravelWindow">Flexible dates</strong><small>AI can optimize for price or weather</small></article>
+                <article><span>Travel window</span><strong id="aiTravelWindow">Flexible dates</strong><small>Choose dates that work for you</small></article>
                 <article><span>Travel style</span><strong id="aiTravelStyle">Not selected</strong><small>Savings, convenience, and fun</small></article>
                 <article><span>Trip mode</span><strong id="aiTripMode">Group-ready</strong><small>Invites, polls, wallet, and shared itinerary</small></article>
               </div>
@@ -937,17 +937,17 @@
                 <button class="ghost-button" type="button" id="aiExportButton">Export PDF</button>
                 <button class="ghost-button" type="button" id="aiCalendarButton">Add to Calendar</button>
               </div>
-              <section class="ai-external-research" aria-label="Live AI travel research">
+              <section class="ai-external-research" aria-label="Destination research">
                 <div class="section-heading compact">
                   <div>
-                    <p class="eyebrow">Live source research</p>
-                    <h3>Ask AI to search current travel sources</h3>
-                    <p>Research trips, activities, restaurants, hotels, and transportation with source links. Results are guidance, not booking confirmation.</p>
+                    <p class="eyebrow">Destination research</p>
+                    <h3>Discover a little more</h3>
+                    <p>Destination, excursion, and restaurant reference guides. Not live prices or booking confirmation.</p>
                   </div>
-                  <button class="primary-button" type="button" id="aiLiveResearchButton">Search live sources</button>
+                  <button class="primary-button" type="button" id="aiLiveResearchButton">Find destination guides</button>
                 </div>
-                <label class="ai-research-input">Optional research question
-                  <input id="aiPlannerResearchInput" type="search" placeholder="Best activities and private drivers near my destination">
+                <label class="ai-research-input">City and country (optional)
+                  <input id="aiPlannerResearchInput" type="search" placeholder="Paris, France">
                 </label>
                 <div id="aiPlannerExternalResearch" class="ai-external-research__results" aria-live="polite"></div>
               </section>
@@ -4652,12 +4652,12 @@
   <script defer src="planning-studio.js?v=1"></script>
   <script defer src="vendor/lucide.min.js?v=1"></script>
   <script defer src="journey-dashboard.js?v=3"></script>
-  <script defer src="trip-itinerary.js?v=1"></script>
-  <script defer src="trip-workspaces.js?v=7"></script>
+  <script defer src="trip-itinerary.js?v=2"></script>
+  <script defer src="trip-workspaces.js?v=8"></script>
   <script defer src="photo-feed.js?v=7"></script>
-  <script defer src="trip-joy.js?v=2"></script>
-  <script defer src="discovery-studio.js?v=4"></script>
+  <script defer src="trip-joy.js?v=3"></script>
+  <script defer src="discovery-studio.js?v=5"></script>
   <script defer src="planner-conversation.js?v=2"></script>
-  <script defer src="app.js?v=104"></script>
+  <script defer src="app.js?v=105"></script>
 </body>
 </html>

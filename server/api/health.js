@@ -55,14 +55,15 @@ export default function handler(_request, response) {
     flightAwareConfigured: Boolean(process.env.FLIGHTAWARE_API_KEY || process.env.FLIGHT_TRACKING_API_KEY),
     amadeusHotelsConfigured: Boolean(process.env.AMADEUS_CLIENT_ID && process.env.AMADEUS_CLIENT_SECRET),
     openAiConfigured: Boolean(process.env.OPENAI_API_KEY),
-    openAiModelConfigured: Boolean(process.env.OPENAI_MODEL)
+    openAiModelConfigured: Boolean(process.env.OPENAI_MODEL),
+    geminiFreeConfigured: process.env.GEMINI_FREE_TIER_CONFIRMED === 'true' && Boolean(process.env.GEMINI_API_KEY)
   };
   const requiredFeatures = {
     walletFunding: capabilityChecks.stripeSecretConfigured && capabilityChecks.stripeWebhookConfigured && requiredChecks.appBaseUrlConfigured,
     webSearch: true,
     flightTracking: optionalChecks.flightAwareConfigured,
     hotelAvailability: optionalChecks.amadeusHotelsConfigured,
-    aiResearch: optionalChecks.openAiConfigured && optionalChecks.openAiModelConfigured
+    aiResearch: optionalChecks.geminiFreeConfigured || process.env.ALLOW_PAID_AI === 'true' && optionalChecks.openAiConfigured && optionalChecks.openAiModelConfigured
   };
   const unavailableFeatures = Object.entries(requiredFeatures).filter(([, configured]) => !configured).map(([name]) => name);
   const coreReady = missingRequired.length === 0;
@@ -91,7 +92,10 @@ export default function handler(_request, response) {
     ...requiredChecks,
     ...capabilityChecks,
     ...optionalChecks,
-    invitationAiConfigured: Boolean(process.env.OPENAI_API_KEY && process.env.OPENAI_MODEL),
+    aiMode: process.env.ALLOW_PAID_AI === 'true' ? 'paid_provider' : optionalChecks.geminiFreeConfigured ? 'gemini_public_guides' : 'free_guides',
+    paidAiEnabled: process.env.ALLOW_PAID_AI === 'true',
+    freeGuidedPlanningAvailable: true,
+    invitationAiConfigured: Boolean(process.env.ALLOW_PAID_AI === 'true' && process.env.OPENAI_API_KEY && process.env.OPENAI_MODEL),
     walletFundingConfigured: Boolean(
       capabilityChecks.stripeSecretConfigured
         && capabilityChecks.stripeWebhookConfigured

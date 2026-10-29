@@ -54,8 +54,9 @@ record("hotel-availability", hotels.ok && hotels.body.live === true && Array.isA
 record("flight-provider-configured", Boolean(health.body.flightAwareConfigured), "A signed-in flight lookup is still required");
 record("wallet-funding-configured", Boolean(health.body.walletFundingConfigured), "A provider-confirmed payment journey is still required");
 if (process.argv.includes("--include-ai")) {
-  const ai = await post("/api/ai-planner", { query: "Reply briefly to confirm the connection." });
-  record("ai-response", ai.ok && Boolean(ai.body.text?.trim()), `HTTP ${ai.status}${ai.body.code ? `; ${ai.body.code}` : ""}`);
+  const ai = await post("/api/ai-planner", { answers:{destination:'Paris, France'} });
+  record("ai-response", ai.ok && ai.body.generated !== false && ai.body.provider === 'openai' && Boolean(ai.body.text?.trim()), `HTTP ${ai.status}; provider: ${ai.body.provider || 'unavailable'}${ai.body.code ? `; ${ai.body.code}` : ""}`);
+  if(ai.body.generated === false)record('free-guide-research',ai.ok && Boolean(ai.body.text?.trim()),'Free reference guides, not generative AI');
 }
 const blocked = checks.filter(({ status }) => status === "blocked");
 console.log(JSON.stringify({ site: base.origin, checkedAt: new Date().toISOString(), allProbesPassed: blocked.length === 0, authenticatedJourneyVerified: false, checks }, null, 2));

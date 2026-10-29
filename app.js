@@ -1862,7 +1862,7 @@ async function generateEventInviteTemplate() {
     await saveSyncedEvent("event_invite_template_generated", { eventType: context.eventType, source: "openai", title: context.title });
   } catch (_error) {
     renderEventInviteTemplate(localTemplate);
-    if (status) status.textContent = "AI provider unavailable; local event template preview generated. Add OPENAI_API_KEY in Vercel for live AI writing.";
+    if (status) status.textContent = "Free invitation template ready. This template was built without AI.";
     addAuditEntry("Local event invitation generated", `${context.eventTypeLabel} template preview created without claiming live AI.`);
     await saveSyncedEvent("event_invite_template_generated", { eventType: context.eventType, source: "local", title: context.title });
   } finally {
@@ -2377,6 +2377,7 @@ function renderAccountState(target = getTargetFromRoute()) {
 
 async function selectAccountTrip(tripId) {
   if (state.accountData.loading || !state.accountData.trips.some((trip) => trip.id === tripId)) return;
+  resetTripJoy();
   resetAccountData();
   state.activeTripId = tripId;
   sessionStorage.setItem("traveldripActiveTripId", tripId);
@@ -4072,7 +4073,7 @@ function renderLivePrivateDriverResults(results = []) {
 async function runLiveAiResearch() {
   const status = $("#aiPlannerStatus");
   const research = $("#aiPlannerExternalResearch");
-  if (status) status.textContent = "AI is researching current travel sources...";
+  if (status) status.textContent = "Finding destination guides...";
   if (research) research.innerHTML = `<p class="small">Searching current destinations, activities, restaurants, and transportation sources...</p>`;
   try {
     const response = await liveSearchApiRequest("/api/ai-planner", {
@@ -4088,13 +4089,13 @@ async function runLiveAiResearch() {
       research.innerHTML = `
         <div class="ai-external-research__header">
           <span class="eyebrow">${escapeHtml(response.sourceLabel || "Live AI research")}</span>
-          <strong>Current source-backed guidance</strong>
+          <strong>${response.generated === false ? "Destination reference guides" : "Source-backed guidance"}</strong>
         </div>
         <p>${escapeHtml(response.text || "No research summary was returned.")}</p>
         ${(response.citations || []).length ? `<div class="ai-research-sources"><strong>Sources</strong>${response.citations.map((citation) => `<a href="${escapeHtml(citation.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(citation.title)}</a>`).join("")}</div>` : `<small>No source links were returned. Verify recommendations before booking.</small>`}
       `;
     }
-    if (status) status.textContent = "Live AI research is ready. Source links are shown below the summary; verify availability before booking.";
+    if (status) status.textContent = response.generated === false ? "Free guides are ready. These are reference material, not AI-generated advice or live availability." : response.provider === 'gemini' ? "AI summary ready, based on public reference guides. Not live prices or availability." : "Live AI research is ready. Source links are shown below the summary; verify availability before booking.";
     await saveSyncedEvent("ai_live_research_checked", {
       query: $("#aiPlannerResearchInput")?.value.trim() || "",
       destination: state.aiPlanner.answers.destination,
@@ -4102,11 +4103,11 @@ async function runLiveAiResearch() {
       provider: response.provider,
       sourceLabel: response.sourceLabel,
       resultCount: response.citations?.length || 0,
-      live: true
+      live: response.live === true
     });
   } catch (error) {
     if (research) research.innerHTML = `<p class="small">${escapeHtml(error.message)} Local planning estimates remain available.</p>`;
-    if (status) status.textContent = "Live AI research is unavailable. Configure the AI provider in Vercel and try again.";
+    if (status) status.textContent = "Research is temporarily unavailable. Your guided planner remains available without AI credits.";
   }
 }
 
@@ -7580,6 +7581,7 @@ async function loadMemoryFiles() {
 
 async function loadTripDocuments() {
   const list = $("#savedDocumentsList");
+  const tripId = state.activeTripId, userId = state.session?.user?.id, client = state.supabase;
   if (!list) return;
   list.innerHTML = '<p class="small">Loading saved documents...</p>';
   if (!state.supabase || !state.session?.user || !state.activeTripId) {
@@ -7587,11 +7589,12 @@ async function loadTripDocuments() {
     if ($("#savedDocumentCount")) $("#savedDocumentCount").textContent = "0";
     return;
   }
-  const { data, error } = await state.supabase
+  const { data, error } = await client
     .from("documents")
     .select("id, storage_bucket, storage_path, document_type, visibility, metadata, created_at")
-    .eq("trip_id", state.activeTripId)
+    .eq("trip_id", tripId)
     .order("created_at", { ascending: false });
+  if (tripId !== state.activeTripId || userId !== state.session?.user?.id) return;
   if (error) {
     list.innerHTML = '<p class="small">Documents could not be loaded. Please refresh and retry.</p>';
     return;
@@ -7612,8 +7615,8 @@ async function loadTripDocuments() {
   `).join("");
 }
 
-async function uploadTripDocument(file, documentType = "travel_document") {
-  const message = $("#documentUploadMessage") || $("#transportMessage");
+async function uploadTripDocument(file, documentType = "travel_document", options = {}) {
+  const message = options.message || $("#documentUploadMessage") || $("#transportMessage");
   if (!file) return false;
   if (!state.supabase || !state.session?.user) {
     if (message) message.textContent = "Sign in before uploading a travel document.";
@@ -7629,20 +7632,22 @@ async function uploadTripDocument(file, documentType = "travel_document") {
     return false;
   }
   if (message) message.textContent = "Uploading document securely...";
+  // Capture ownership before awaiting storage so a trip switch cannot misfile the upload.
+  const client = state.supabase, userId = state.session.user.id, tripId = state.activeTripId;
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/-+/g, "-");
   const uniqueId = typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-  const storagePath = `${state.session.user.id}/${state.activeTripId}/${uniqueId}-${safeName}`;
+  const storagePath = `${userId}/${tripId}/${uniqueId}-${safeName}`;
   try {
-    const { error: uploadError } = await state.supabase.storage.from("trip-documents").upload(storagePath, file, {
+    const { error: uploadError } = await client.storage.from("trip-documents").upload(storagePath, file, {
       cacheControl: "3600",
       contentType: file.type,
       upsert: false
     });
     if (uploadError) throw uploadError;
-    const { error: metadataError } = await state.supabase.from("documents").insert({
-      trip_id: state.activeTripId,
-      user_id: state.session.user.id,
-      uploaded_by: state.session.user.id,
+    const { error: metadataError } = await client.from("documents").insert({
+      trip_id: tripId,
+      user_id: userId,
+      uploaded_by: userId,
       storage_bucket: "trip-documents",
       storage_path: storagePath,
       document_type: String(documentType || "travel_document").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, ""),
@@ -7650,17 +7655,51 @@ async function uploadTripDocument(file, documentType = "travel_document") {
       metadata: { filename: file.name, mimeType: file.type, size: file.size }
     });
     if (metadataError) {
-      await state.supabase.storage.from("trip-documents").remove([storagePath]);
+      await client.storage.from("trip-documents").remove([storagePath]);
       throw metadataError;
     }
     if (message) message.textContent = `${file.name} was uploaded privately and will remain available after refresh.`;
-    await loadTripDocuments();
-    await saveSyncedEvent("travel_document_uploaded", { documentType, filename: file.name });
+    if (tripId === state.activeTripId && userId === state.session?.user?.id) {
+      try { await loadTripDocuments(); await loadAccountData(); }
+      catch { if (message) message.textContent = "Document saved. Refresh this trip to see it in your itinerary."; }
+    }
     return true;
   } catch (error) {
     if (message) message.textContent = `Document upload failed: ${error.message}`;
     return false;
   }
+}
+
+async function openTripDocumentPreview(documentId) {
+  const client = state.supabase, userId = state.session?.user?.id, tripId = state.activeTripId;
+  if (!client || !userId || !tripId) return;
+  document.querySelector('#tripDocumentDialog')?.close();
+  const dialog = document.createElement('dialog'); dialog.id = 'tripDocumentDialog'; dialog.className = 'joy-dialog trip-document-dialog';
+  const title = joyText('h2', 'Travel document'); title.id = 'tripDocumentPreviewTitle'; dialog.setAttribute('aria-labelledby', title.id);
+  const status = joyText('p', 'Loading your private document...'); status.setAttribute('role', 'status');
+  dialog.append(title, workspaceButton('Close', () => dialog.close()), status); document.body.append(dialog); dialog.showModal();
+  const controller = new AbortController(); let blobUrl;
+  dialog.addEventListener('close', () => { controller.abort(); if (blobUrl) URL.revokeObjectURL(blobUrl); dialog.remove(); }, {once:true});
+  const current = () => dialog.open && userId === state.session?.user?.id && tripId === state.activeTripId;
+  try {
+    const {data:doc,error:readError} = await client.from('documents').select('id,storage_bucket,storage_path,metadata').eq('id',documentId).eq('trip_id',tripId).single();
+    if (!current()) { dialog.close(); return; }
+    if (readError || !doc || doc.storage_bucket !== 'trip-documents') throw new Error('This document is unavailable or you do not have permission to view it.');
+    const {data,error} = await client.storage.from('trip-documents').createSignedUrl(doc.storage_path, 300);
+    if (error || !data?.signedUrl) throw new Error('Your private document could not be opened. Please retry.');
+    const response = await fetch(data.signedUrl, {signal:controller.signal});
+    if (!response.ok) throw new Error('Document download failed. Please retry.');
+    const blob = await response.blob();
+    if (blob.size > 25 * 1024 * 1024) throw new Error('This document is too large to preview.');
+    if (!current()) { dialog.close(); return; }
+    const type = blob.type.split(';')[0].toLowerCase();
+    if (!['application/pdf','image/jpeg','image/png','image/webp','image/heic'].includes(type)) throw new Error('This file type cannot be previewed safely.');
+    blobUrl = URL.createObjectURL(blob); title.textContent = doc.metadata?.filename || 'Travel document'; status.textContent = 'Private document';
+    if (type === 'application/pdf') { const frame = document.createElement('iframe'); frame.src = blobUrl; frame.title = title.textContent; dialog.append(frame); }
+    else if (type !== 'image/heic') { const image = document.createElement('img'); image.src = blobUrl; image.alt = title.textContent; dialog.append(image); }
+    else status.textContent = 'This browser may not preview HEIC. Download the original file to view it.';
+    const download = joyText('a','Download original','ghost-button'); download.href = blobUrl; download.download = doc.metadata?.filename || 'travel-document'; dialog.append(download);
+  } catch (error) { if (current() && error.name !== 'AbortError') status.textContent = error.message; }
 }
 
 async function handleReceiptUpload(file) {
@@ -9918,18 +9957,7 @@ function wireLocalInteractions() {
   $("#savedDocumentsList")?.addEventListener("click", async (event) => {
     const button = event.target.closest("[data-open-document]");
     if (!button || !state.supabase) return;
-    const viewer = window.open("about:blank", "_blank");
-    if (viewer) viewer.opener = null;
-    const { data, error } = await state.supabase.storage
-      .from(button.dataset.documentBucket || "trip-documents")
-      .createSignedUrl(button.dataset.documentPath, 300);
-    if (error || !data?.signedUrl) {
-      viewer?.close();
-      $("#documentUploadMessage").textContent = "That document could not be opened. Refresh and try again.";
-      return;
-    }
-    if (viewer) viewer.location.href = data.signedUrl;
-    else location.href = data.signedUrl;
+    await openTripDocumentPreview(button.dataset.openDocument);
   });
   $("#policyAck")?.addEventListener("change", updatePolicyAcknowledgment);
   updateChecklistProgress();

@@ -32,6 +32,18 @@ html body.signed-in-shell .trip-plan-banner :is(h2,p,small) { color: #fff !impor
 .trip-agenda time { color: #9c2068; font-weight: 600; }
 .trip-agenda h4 { margin: 8px 0; font-size: 20px; }
 .trip-agenda p { margin: 0; }
+.trip-travel-tools { padding: 20px 0; border-bottom: 1px solid #d9e4e7; }
+.trip-travel-tools h3 { font-size: 20px; margin: 0 0 14px; }
+.trip-document-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #e1e7e9; }
+.trip-document-row span { min-width: 0; overflow-wrap: anywhere; }
+.trip-document-row button { flex-shrink: 0; }
+.trip-travel-form [hidden] { display: none !important; }
+.joy-dialog .trip-travel-form { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.trip-travel-form label:has(textarea),.trip-travel-form [role="status"] { grid-column: 1/-1; }
+@media (max-width:600px) { .joy-dialog .trip-travel-form { grid-template-columns: minmax(0,1fr); } .trip-document-row { flex-wrap: wrap; } }
+.trip-document-dialog iframe { width: 100%; height: 60vh; border: 1px solid #c2d0d5; margin: 16px 0; }
+.trip-document-dialog img { display: block; max-width: 100%; max-height: 60vh; object-fit: contain; margin: 16px auto; }
+.trip-document-dialog a { display: inline-flex; align-items: center; min-height: 44px; }
 .trip-activity-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 20px 0; }
 .trip-activity-form label { display: grid; gap: 6px; }
 .trip-activity-form [role="status"] { grid-column: 1/-1; }

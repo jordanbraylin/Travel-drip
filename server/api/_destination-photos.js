@@ -4,7 +4,7 @@ function photoText(value) {
 }
 export function allowedPhotoUrl(value) {try{const url=new URL(value);if(url.protocol!=='https:'||!['upload.wikimedia.org','thumb.wikimedia.org'].includes(url.hostname)||/\.svg$/i.test(url.pathname))return null;url.search='';return url.href;}catch{return null;}}
 export async function destinationPhotos(items) {
-  const ids=items.slice(0,6).map(item=>String(item.id)).filter(id=>/^\d+$/.test(id));if(!ids.length)return items;
+  const ids=items.slice(0,10).map(item=>String(item.id)).filter(id=>/^\d+$/.test(id));if(!ids.length)return items;
   try{
     const signal=AbortSignal.timeout(4500),headers={Accept:'application/json','User-Agent':'Travel-Drip/1.0 (https://travel-drip.com)'};
     const pagesUrl=new URL('https://en.wikipedia.org/w/api.php');pagesUrl.search=new URLSearchParams({action:'query',pageids:ids.join('|'),prop:'pageimages',piprop:'name',pilicense:'free',format:'json'}).toString();

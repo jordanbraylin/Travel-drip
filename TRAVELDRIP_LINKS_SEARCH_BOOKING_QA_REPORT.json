@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-29T18:09:11.540Z",
+  "generatedAt": "2026-10-29T21:43:16.118Z",
   "package": {
     "name": "traveldrip",
     "version": "1.0.0"
@@ -16,7 +16,7 @@
     "dateInputs": 17,
     "searchInputs": 13,
     "actionAttributeTypes": 86,
-    "apiRoutes": 30
+    "apiRoutes": 31
   },
   "linkAndRouteVerification": {
     "workingLocalTargets": 19,
@@ -730,6 +730,7 @@
       "schedule.js",
       "subscribe.js",
       "travel-search.js",
+      "trip-travel.js",
       "trips.js",
       "wallet-reminders.js",
       "wallet.js",

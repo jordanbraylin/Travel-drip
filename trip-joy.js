@@ -1,6 +1,6 @@
 function joyText(tag,text,className=''){const el=document.createElement(tag);el.textContent=text;el.className=className;return el;}
 function joyDate(value){const d=new Date(value);return value&&!Number.isNaN(d.getTime())?d.toLocaleString():'Not added';}
-function resetTripJoy(){document.querySelectorAll('#journeyDetailDialog,#joyEventDialog').forEach(d=>{d.close();d.remove();});}
+function resetTripJoy(){document.querySelectorAll('#journeyDetailDialog,#joyEventDialog,#tripDocumentDialog').forEach(d=>{d.close();d.remove();});}
 function joyDialog(title,lines,action){
   document.querySelector('#journeyDetailDialog')?.remove();const dialog=document.createElement('dialog');dialog.id='journeyDetailDialog';dialog.className='joy-dialog';dialog.setAttribute('aria-labelledby','joyDetailTitle');
   dialog.append(joyText('h2',title));dialog.querySelector('h2').id='joyDetailTitle';

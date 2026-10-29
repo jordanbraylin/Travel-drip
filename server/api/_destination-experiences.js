@@ -42,3 +42,15 @@ export function destinationFacts(about, excursions) {
   }
   return facts;
 }
+
+export function destinationRestaurants(destination, guides) {
+  const seen = new Set();
+  return guides.filter(guide => {
+    const title = String(guide.title || ''), text = String(guide.description || '');
+    const intro = [...new Intl.Segmenter('en', {granularity:'sentence'}).segment(text)].slice(0,2).map(part=>part.segment).join(' ');
+    if (!title || seen.has(title.toLowerCase()) || /^(lists? of|cuisine|tourism)|disambiguation|\b(attack|bombing|shooting|massacre|murder)\b/i.test(title)) return false;
+    if (!guideMatchesDestination(destination, guide) || !/\b(restaurant|bistro|café|cafe|steakhouse|pizzeria)\b/i.test(intro)) return false;
+    if (/\b(chain|closed|defunct|former restaurant|was a restaurant)\b/i.test(intro)) return false;
+    seen.add(title.toLowerCase()); return true;
+  }).slice(0,4).map(guide=>({...guide,category:'Restaurants',kind:'restaurant_idea'}));
+}

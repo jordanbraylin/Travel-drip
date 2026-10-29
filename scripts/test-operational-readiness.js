@@ -28,6 +28,7 @@ try {
   assert.equal(limited.body.primarySearchProvider, "wikipedia");
   assert.equal(limited.body.freeWebSearchConfigured, true);
   for (const name of providers) process.env[name] = "test-only";
+  process.env.ALLOW_PAID_AI = 'true';
   const configured = response();
   health({}, configured);
   assert.equal(configured.body.configurationReady, true);

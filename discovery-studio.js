@@ -35,6 +35,7 @@ function drawDestinationDiscovery(data){
   const controls=document.createElement('div');controls.className='discovery-actions';controls.append(workspaceButton('Plan this destination',()=>{openWorkspacePlanning();const input=document.querySelector('#letsPlanDestinationInput');if(input){input.value=data.destination;updateQuickPlanningSummary();}},true),workspaceButton('Find transportation',()=>navigateSafely('transportationPanel',{updateHistory:true})));host.append(controls);
   renderDiscoveryFacts(host,data);
   renderDiscoveryExcursions(host,data);
+  renderDiscoveryRestaurants(host,data);
   const grid=document.createElement('div');grid.className='destination-guide-grid';
   for(const [key,title,icon,tone]of [['about','Meet the destination','compass','aqua'],['activities','Things to do','map-pinned','pink'],['food','A taste of the place','utensils','yellow']]){
     const section=document.createElement('section');section.className=`destination-guide-section joy-tone-${tone}`;const heading=joyText('h3',title);const i=document.createElement('i');i.dataset.lucide=icon;heading.prepend(i);section.append(heading);
@@ -58,7 +59,15 @@ function renderDiscoveryExcursions(host,data){
   if(!items.length)section.append(joyText('p',data.excursionsUnavailable?'Excursion guides are temporarily unavailable. Search again to retry.':'No matching excursions found. Try a more specific city and country.'));else section.append(filters,grid);host.append(section);
 }
 function excursionVisitNotes(category){
+  if(category==='Restaurants')return ['Confirm current opening hours and whether reservations are needed.','Check the latest menu, prices, dietary options, and accessibility with the restaurant.','This is a reference guide, not live restaurant availability.'];
   return ({'Culture & history':['Check ticket or timed-entry requirements.','Confirm current exhibitions, photography rules, and step-free access.'],'Nature & outdoors':['Check opening hours, local weather, and path conditions.','Confirm accessible routes, water availability, and any entry fees.'],Neighborhoods:['Choose your walking route and check transit options.','Confirm opening hours for any shops, markets, or stops you want to visit.'],Landmarks:['Check official access rules and timed-entry requirements.','Confirm accessibility, security restrictions, and any closures.']})[category]||['Confirm access, opening hours, tickets, and accessibility before visiting.'];
+}
+function renderDiscoveryRestaurants(host,data){
+  const section=document.createElement('section');section.className='discovery-excursions';section.setAttribute('aria-label','Destination restaurant ideas');section.append(joyText('h3','A table worth discovering'),joyText('p','Notable restaurants to research. Check current hours, menus, and reservations before visiting.'));
+  const grid=document.createElement('div');grid.className='discovery-excursion-grid';
+  for(const item of data.restaurants||[])grid.append(createExcursionPhotoCard(item));
+  if(grid.children.length)section.append(grid);else section.append(joyText('p',data.restaurantsUnavailable?'Restaurant guides are temporarily unavailable. Search again to retry.':'No matching restaurant guides found. Try a more specific city and country.'));
+  host.append(section);
 }
 function excursionPhoto(photo,title,className=''){
   const frame=document.createElement('span');frame.className=`excursion-photo ${className}`;
@@ -75,7 +84,7 @@ function createExcursionPhotoCard(item){
 function openExcursionDetails(item){
   joyDialog(item.title,[]);const dialog=document.getElementById('journeyDetailDialog'),content=dialog.querySelector('.joy-detail-lines');content.classList.add('excursion-detail-content');content.append(excursionPhoto(item.photo,item.title,'excursion-detail-photo'));
   const tabs=document.createElement('div');tabs.className='excursion-detail-tabs';tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','Place information');const panel=document.createElement('div');panel.id='excursionInformationPanel';panel.className='excursion-information-panel';panel.setAttribute('role','tabpanel');panel.tabIndex=0;
-  const sections=[['Overview',[item.category,item.description,'Excursion idea, not a confirmed reservation.']],['Fun fact',[item.fact||'No sourced fact is available for this place yet.']],['Before you go',excursionVisitNotes(item.category)],['Photo & source',item.photo?[`Photo: ${item.photo.title}`,`By: ${item.photo.artist}`,`License: ${item.photo.license}`,item.photo.sourceUrl,item.photo.licenseUrl||'', 'Card preview cropped to fit.']:['No licensed photo is available for this place.']]];
+  const sections=[['Overview',[item.category,item.description,item.kind==='restaurant_idea'?'Restaurant guide, not a confirmed reservation.':'Excursion idea, not a confirmed reservation.']],['Fun fact',[item.fact||'No sourced fact is available for this place yet.']],['Before you go',excursionVisitNotes(item.category)],['Photo & source',item.photo?[`Photo: ${item.photo.title}`,`By: ${item.photo.artist}`,`License: ${item.photo.license}`,item.photo.sourceUrl,item.photo.licenseUrl||'', 'Card preview cropped to fit.']:['No licensed photo is available for this place.']]];
   const choose=index=>{for(const [i,button]of [...tabs.children].entries()){button.setAttribute('aria-selected',String(i===index));button.tabIndex=i===index?0:-1;}panel.setAttribute('aria-labelledby',`excursionInfoTab${index}`);panel.replaceChildren(...sections[index][1].filter(Boolean).map(line=>joyText('p',line)));if(index===0||index===1||index===3)panel.append(joyText('small',`Reference: Wikipedia contributors · CC BY-SA · ${item.sourceUrl}`));};
   sections.forEach(([label],index)=>{const button=workspaceButton(label,()=>choose(index));button.id=`excursionInfoTab${index}`;button.setAttribute('role','tab');button.setAttribute('aria-controls',panel.id);button.addEventListener('keydown',event=>{let next;if(event.key==='ArrowRight')next=(index+1)%sections.length;if(event.key==='ArrowLeft')next=(index+sections.length-1)%sections.length;if(event.key==='Home')next=0;if(event.key==='End')next=sections.length-1;if(next!==undefined){event.preventDefault();choose(next);tabs.children[next].focus();}});tabs.append(button);});content.append(tabs,panel);choose(0);
 }
