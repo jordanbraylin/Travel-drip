@@ -46,6 +46,9 @@ function renderTripJoy(container){
 }
 
 const joyEventTypes=[['birthday','Birthday','cake','pink'],['wedding','Wedding','heart','yellow'],['family_reunion','Get together','party-popper','aqua'],['special_event','Something special','sparkles','green']];
+function joyEventCategory(type){
+  return joyEventTypes.find(event=>event[0]===type)||[type,String(type||'Event').replaceAll('_',' ').replace(/^./,letter=>letter.toUpperCase()),'calendar-days','green'];
+}
 function renderJoyEvents(target){
   if(target!=='eventsPanel'||document.body.classList.contains('corporate-employee-mode'))return;
   const panel=document.querySelector('#eventsPanel');panel.classList.add('has-joy-events');panel.classList.remove('is-account-empty','is-account-live');
@@ -64,7 +67,7 @@ function renderJoyEvents(target){
   const events=(state.accountData.trips||[]).filter(t=>['birthday','wedding','family_reunion','anniversary','special_event','graduation_trip','conference','corporate_retreat','church_retreat','bachelor_bachelorette','business_event'].includes(t.trip_type));
   const message=joyText('p','','joy-event-status');message.setAttribute('role','status');hub.append(message);
   const list=document.createElement('div');list.className='joy-event-list';
-  for(const event of events){const card=document.createElement('article');card.className='joy-event-card';const type=joyEventTypes.find(t=>t[0]===event.trip_type)||joyEventTypes[3];card.classList.add(`joy-tone-${type[3]}`);card.append(joyText('span',type[1],'joy-event-category'),joyText('h3',event.title||'Untitled event'),joyText('p',tripWorkspaceDates(event)),joyText('p',event.destination||'Location to come'));
+  for(const event of events){const card=document.createElement('article');card.className='joy-event-card';const type=joyEventCategory(event.trip_type);card.classList.add(`joy-tone-${type[3]}`);card.append(joyText('span',type[1],'joy-event-category'),joyText('h3',event.title||'Untitled event'),joyText('p',tripWorkspaceDates(event)),joyText('p',event.destination||'Location to come'));
     card.append(workspaceButton('Open event',async e=>{const userId=state.session?.user?.id,button=e.currentTarget;button.disabled=true;try{await selectAccountTrip(event.id);if(userId!==state.session?.user?.id||state.accountData.activeTrip?.id!==event.id)return;joyDialog(event.title||'Your event',[tripWorkspaceDates(event),event.destination||'Location not added',event.settings?.eventDetails?.description||'No description added',`Status: ${event.status||'draft'}`],{label:'Invite guests',run:openTripInviteDialog});}catch(error){if(userId===state.session?.user?.id){const status=document.querySelector('.joy-event-status');if(status)status.textContent=error.message;}}finally{button.disabled=false;}},true));list.append(card);}
   if(!events.length)list.append(joyText('p','No celebrations saved yet. Pick an occasion and make it yours.'));hub.append(list);window.lucide?.createIcons();
 }

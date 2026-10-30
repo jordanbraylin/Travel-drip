@@ -5783,7 +5783,7 @@ async function loadConfig() {
       const confirmation = profileResult.error
         ? "Signed in successfully. Your dashboard is ready, but profile sync needs attention."
         : "Signed in successfully. Your saved dashboard is ready.";
-      enterAppPreview({ confirmation, forceDashboard: true });
+      enterAppPreview({ confirmation });
     }
   } else {
     setSyncStatus(state.config.supabaseUrl ? "Needs public key" : "Needs setup");
@@ -9333,12 +9333,18 @@ function wireLocalInteractions() {
     $("#invitationStatusMessage").textContent = "Invitation draft saved. Organizer can return later to send, edit, import guests, or generate a QR/link.";
     addAuditEntry("Invitation draft saved", "Organizer chose Save & Invite Later.");
     await saveSyncedEvent("trip_invitation_draft_saved", { status: "saved" });
+    state.accountData.showCreation = false;
+    renderAccountState();
+    navigateSafely("tripsPanel", { updateHistory: true });
   });
 
   $("#skipInvitesButton")?.addEventListener("click", async () => {
     $("#invitationStatusMessage").textContent = "Invitations skipped for now. Trip setup remains complete and invite tools stay available.";
     addAuditEntry("Invitations skipped", "Organizer skipped invitation setup.");
     await saveSyncedEvent("trip_invitations_skipped", { status: "skipped" });
+    state.accountData.showCreation = false;
+    renderAccountState();
+    navigateSafely("tripsPanel", { updateHistory: true });
   });
 
   $$("[data-reminder-type]").forEach((button) => {
@@ -10376,14 +10382,15 @@ function wireLocalInteractions() {
   });
   $("#newMessageForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
+    const form = event.currentTarget;
     const title = $("#newMessageTitleInput")?.value.trim() || "Trip chat";
     const firstMessage = $("#newMessageBodyInput")?.value.trim() || "";
-    const submit = event.currentTarget.querySelector("button[type='submit']");
+    const submit = form.querySelector("button[type='submit']");
     submit.disabled = true;
     try {
       const created = await createFirstTripChat(title, firstMessage);
       if (created) {
-        event.currentTarget.reset();
+        form.reset();
         $("#newMessageDialog")?.close();
       }
     } finally {
