@@ -33,7 +33,7 @@ function validStripeSignature(payload, header, secret) {
 
   const expected = createHmac("sha256", secret).update(`${timestamp}.${payload}`, "utf8").digest("hex");
   return signature.some((candidate) => {
-    if (!candidate || candidate.length !== expected.length) return false;
+    if (!/^[a-f0-9]{64}$/i.test(candidate || "")) return false;
     return timingSafeEqual(Buffer.from(expected, "utf8"), Buffer.from(candidate, "utf8"));
   });
 }

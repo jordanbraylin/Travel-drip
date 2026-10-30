@@ -87,7 +87,10 @@ function initializeSimpleExperience() {
     }
     return button;
   });
-  menu.replaceChildren(...destinations, ...[company, admin].filter(Boolean));
+  menu.replaceChildren(...destinations);
+  const accountPanel = account.querySelector('[data-settings-panel="account"]');
+  if (company) account.querySelector('[data-settings-panel="corporate"]')?.append(company);
+  if (accountPanel && admin) accountPanel.append(admin);
   menu.classList.add("simple-main-menu");
   const accountButton = document.querySelector(".profile-avatar-button");
   accountButton.dataset.target = "adminPanel";

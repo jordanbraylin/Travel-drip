@@ -8,6 +8,7 @@ import {
   writeAuditLog
 } from "./_security.js";
 import { randomUUID } from "node:crypto";
+import { walletFundingStatus } from './_wallet-funding.js';
 
 const ADMIN_ROLES = ["owner", "admin", "organizer", "finance_admin"];
 const MAX_CONTRIBUTION_CENTS = 500000;
@@ -149,7 +150,8 @@ async function getTripContext(supabase, user, tripId = "") {
 function accessPayload(context) {
   const isAdmin = ADMIN_ROLES.includes(context.role);
   const displayName = walletDisplayName(context);
-  const canContribute = isFundingTrip(context.trip) && context.wallet?.status === "active";
+  const funding = walletFundingStatus();
+  const canContribute = funding.available && isFundingTrip(context.trip) && context.wallet?.status === "active";
   const cardReady = Boolean(context.card?.provider_card_ref && context.card.card_status === "active");
   const financeRestricted = ["corporate_retreat", "business_event", "conference"].includes(context.trip.trip_type);
   const canViewFinancialDetails = isAdmin || !financeRestricted;
@@ -161,6 +163,8 @@ function accessPayload(context) {
     destination: context.trip.destination,
     role: context.role,
     canContribute,
+    fundingAvailable: funding.available,
+    fundingMessage: funding.message,
     canTapToPay: isAdmin && cardReady,
     canManageCard: isAdmin,
     providerRequired: !cardReady,
@@ -182,7 +186,7 @@ function accessPayload(context) {
     card: canViewFinancialDetails && context.card ? {
       id: context.card.id,
       status: context.card.card_status,
-      maskedLastFour: context.card.masked_last_four,
+      maskedLastFour: cardReady ? context.card.masked_last_four : null,
       tokenizationStatus: context.card.tokenization_status,
       provider: context.card.provider
     } : null
@@ -192,8 +196,8 @@ function accessPayload(context) {
 async function stripeCheckout(request, contribution, context, amountCents, currency) {
   const stripeSecret = String(process.env.STRIPE_SECRET_KEY || "").trim();
   const appUrl = configuredAppUrl(request);
-  if (!stripeSecret || !appUrl) {
-    const error = new Error("Stripe Checkout is not configured. Add STRIPE_SECRET_KEY and APP_BASE_URL before accepting funds.");
+  if (!walletFundingStatus().available || !stripeSecret || !appUrl) {
+    const error = new Error(walletFundingStatus().message || "Secure payment configuration is incomplete.");
     error.code = "payment_provider_required";
     throw error;
   }
@@ -233,6 +237,11 @@ async function stripeCheckout(request, contribution, context, amountCents, curre
 }
 
 async function createContributionCheckout(request, response, supabase, user, body) {
+  const funding = walletFundingStatus();
+  if (!funding.available) {
+    response.status(503).json({error:funding.message,code:'payment_provider_required'});
+    return;
+  }
   const context = await getTripContext(supabase, user, sanitizeText(body.tripId || body.trip_id, "", 80));
   if (!context || !context.wallet || !isFundingTrip(context.trip) || context.wallet.status !== "active") {
     const displayName = context ? walletDisplayName(context) : "shared trip wallet";
@@ -248,12 +257,25 @@ async function createContributionCheckout(request, response, supabase, user, bod
   const idempotencyKey = sanitizeText(body.idempotencyKey || body.idempotency_key, randomUUID(), 120);
   const currency = sanitizeText(context.wallet.currency, "USD", 12).toUpperCase();
 
-  const { data: existing } = await supabase
+  const { data: existing, error: existingError } = await supabase
     .from("trip_wallet_contributions")
-    .select("id, amount_cents, status, idempotency_key, metadata")
+    .select("id, user_id, amount_cents, currency, status, idempotency_key, metadata")
     .eq("trip_wallet_id", context.wallet.id)
+    .eq("user_id", user.id)
     .eq("idempotency_key", idempotencyKey)
     .maybeSingle();
+  if (existingError) {
+    response.status(503).json({error:'The original contribution could not be checked. Please retry; no new payment was started.'});
+    return;
+  }
+  if (existing && (existing.user_id !== user.id || existing.amount_cents !== amountCents || existing.currency?.toUpperCase() !== currency)) {
+    response.status(409).json({error:'This payment attempt belongs to different contribution details. Start a new contribution.'});
+    return;
+  }
+  if (existing && !['pending','processing'].includes(existing.status)) {
+    response.status(409).json({error:'This contribution has already been processed. Review recent activity before starting another.'});
+    return;
+  }
   if (existing?.metadata?.checkoutUrl) {
     response.status(200).json({ ...accessPayload(context), contribution: existing, checkoutUrl: existing.metadata.checkoutUrl });
     return;

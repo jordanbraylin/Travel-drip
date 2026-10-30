@@ -14,7 +14,8 @@ export async function searchTravelGuides({ query = "", destination = "", categor
   if (data.error) throw new Error("Destination guides could not be searched. Try a different place.");
   const results = Object.values(data.query?.pages || {}).sort((a, b) => a.index - b.index).filter((page) => {
     if (!page.title || !page.extract || /may refer to:/i.test(page.extract)) return false;
-    if (category === "flights") return /airport|aerodrome|airfield|airline|terminal/i.test(page.title);
+    if (["flights", "rideshare", "trains", "shuttle", "transport"].includes(category) && /\b(defunct|former|ceased|discontinued|historic|historical)\b|\b(?:18|19)\d{2}\s*[–-]\s*(?:18|19)\d{2}\b/i.test(`${page.title} ${page.extract.split(".")[0]}`)) return false;
+    if (category === "flights") return /airport|aerodrome|airfield|terminal/i.test(page.title);
     if (category === "trains") return /rail|station|metro|transit/i.test(`${page.title} ${page.extract.split(".")[0]}`);
     return true;
   }).map((page) => ({ id: String(page.pageid), title: page.title, description: String(page.extract).slice(0, 1800), sourceUrl: `https://en.wikipedia.org/?curid=${Number(page.pageid)}`, sourceLabel: "Wikipedia contributors", kind: "reference_guide" }));

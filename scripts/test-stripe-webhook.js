@@ -33,6 +33,10 @@ try {
   await handler({ method: "POST", headers: { "stripe-signature": `t=${oldTime},v1=${oldSignature}` }, body: payload }, expired);
   assert.equal(expired.statusCode, 400);
 
+  const malformed = response();
+  await handler({method:'POST',headers:{'stripe-signature':`t=${timestamp},v1=${'é'.repeat(64)}`},rawBody:payload},malformed);
+  assert.equal(malformed.statusCode,400,'Malformed signature must be rejected, not crash verification');
+
   const oversizedRequest = Readable.from([Buffer.alloc(1_048_577)]);
   oversizedRequest.method = "POST";
   oversizedRequest.headers = request.headers;

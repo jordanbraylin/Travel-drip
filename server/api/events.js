@@ -279,7 +279,7 @@ async function createEvent(response, supabase, user, body) {
       trip_wallet_id: tripWallet.id,
       trip_id: eventRecord.id,
       card_status: "provider_required",
-      masked_last_four: walletIdentifier.slice(-4),
+      masked_last_four: null,
       tokenization_status: "not_started",
       spend_controls: {
         availableBalanceOnly: true,

@@ -268,7 +268,7 @@ async function createTrip(response, supabase, user, body) {
         trip_wallet_id: wallet.id,
         trip_id: trip.id,
         card_status: "provider_required",
-        masked_last_four: walletIdentifier.slice(-4),
+        masked_last_four: null,
         tokenization_status: "not_started",
         spend_controls: {
           availableBalanceOnly: true,

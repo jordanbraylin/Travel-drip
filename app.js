@@ -1910,23 +1910,39 @@ async function saveEventInviteDraft() {
   await saveSyncedEvent("event_invite_draft_saved", { eventType: context.eventType, title: context.title, localDraft: true });
 }
 
+let sessionRefreshPromise = null;
 async function apiRequest(path, options = {}) {
   if (!state.session?.access_token || isFilePreview) return { skipped: true, reason: "No deployed authenticated API session" };
-  const response = await fetch(path, {
+  const userId = state.session.user?.id;
+  const request = () => fetch(path, {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${state.session.access_token}`,
-      ...(options.headers || {})
+      ...(options.headers || {}),
+      Authorization: `Bearer ${state.session.access_token}`
     }
   });
+  let response = await request();
+  if (response.status === 401 && state.supabase && state.session?.user?.id === userId) {
+    // Share a single refresh when several widgets encounter an expired token together.
+    if (!sessionRefreshPromise) sessionRefreshPromise = state.supabase.auth.refreshSession().finally(() => { sessionRefreshPromise = null; });
+    const refreshed = await sessionRefreshPromise;
+    if (!refreshed.error && refreshed.data?.session?.user?.id === userId && state.session?.user?.id === userId) {
+      state.session = refreshed.data.session;
+      response = await request();
+    }
+  }
+  if (state.session?.user?.id !== userId) throw new Error("Your account changed. Please retry this action.");
   let data = {};
   try {
     data = await response.json();
   } catch (_error) {
     data = {};
   }
-  if (!response.ok) throw new Error(data.error || `Request failed with ${response.status}`);
+  if (!response.ok) {
+    if (response.status === 401) setSyncStatus("Sign in again");
+    throw new Error(data.error || `Request failed with ${response.status}`);
+  }
   return data;
 }
 
@@ -2596,6 +2612,11 @@ function renderActiveTripAccountData() {
     select.disabled = !trips.length;
     select.value = activeTrip?.id || "";
   }
+  const budgetTitle = $("[data-widget='budget'] h3");
+  const budgetMeta = $("[data-widget='budget'] .widget-meta");
+  const budgetCents = Number(activeTrip?.budget_cents || 0);
+  if (budgetTitle) budgetTitle.textContent = budgetCents > 0 ? `${new Intl.NumberFormat(undefined, { style: "currency", currency: activeTrip.currency || "USD" }).format(budgetCents / 100)} trip budget` : "No budget set";
+  if (budgetMeta) budgetMeta.textContent = budgetCents > 0 ? "Planning budget, not a wallet balance" : "Add a budget in your trip details";
   if (!activeTrip) return;
   const travelerMetric = $("#travelerMetric");
   if (travelerMetric) travelerMetric.textContent = String(state.accountData.counts.members || 0);
@@ -3483,6 +3504,8 @@ function renderWalletAccess() {
   }
   if (fundsInput) fundsInput.disabled = !access.canContribute;
   if (fundsSubmit) fundsSubmit.disabled = !access.canContribute;
+  if (fundsSubmit) fundsSubmit.title = access.fundingAvailable === false ? access.fundingMessage || "Secure payment setup is incomplete." : "";
+  if ($("#walletMessage") && access.fundingAvailable === false) $("#walletMessage").textContent = access.fundingMessage || "Payments are temporarily unavailable. No money has been moved.";
   providerControlledButtons.forEach((selector) => {
     const button = $(selector);
     if (!button) return;
@@ -3502,6 +3525,8 @@ function renderWalletAccess() {
       message.textContent = access.message || "Wallet permissions could not be loaded. Refresh after signing in.";
     } else if (!state.session?.user && !isFilePreview) {
       message.textContent = `Sign in to load your trip role. Members can add their own funds to ${displayName}; only trip admins can use shared-card controls.`;
+    } else if (access.fundingAvailable === false) {
+      message.textContent = access.fundingMessage || "Payments are temporarily unavailable. No money has been moved.";
     } else if (access.canManageCard) {
       message.textContent = access.canTapToPay
         ? `${roleLabel} access confirmed. You can start an issuer-authorized tap-to-pay purchase from ${displayName}.`
@@ -5691,7 +5716,25 @@ async function loadConfig() {
       await loadAccountData();
     }
     loadWalletAccess();
-    state.supabase.auth.onAuthStateChange(async (event, session) => {
+    state.supabase.auth.onAuthStateChange((event, session) => {
+      const previousUserId = state.session?.user?.id;
+      // Supabase auth callbacks must not await other auth/database calls under its lock.
+      if (event === "TOKEN_REFRESHED" && session?.user?.id === previousUserId) {
+        state.session = session;
+        return;
+      }
+      if (event === "INITIAL_SESSION" && session?.user?.id === previousUserId) return;
+      if (event === "SIGNED_IN" && session?.user?.id === previousUserId) {
+        state.session = session;
+        return;
+      }
+      state.session = session;
+      if (!session) {
+        resetAccountData();
+        updateAuthUi();
+      }
+      window.setTimeout(async () => {
+      if (state.session !== session) return;
       if (session?.user && (state.registration.awaitingEmailVerification || !isEmailVerified(session.user))) {
         state.session = null;
         updateAuthUi();
@@ -5731,6 +5774,7 @@ async function loadConfig() {
         } else {
           ensureProfileForSession().catch(() => {});
         }
+      }, 0);
       }, 0);
     });
     setSyncStatus("Connected");
@@ -6685,7 +6729,10 @@ async function endGuestAccess() {
 }
 
 async function signOut() {
-  if (state.supabase) await state.supabase.auth.signOut();
+  if (state.supabase) {
+    const result = await state.supabase.auth.signOut().catch((error) => ({ error }));
+    if (result?.error) await state.supabase.auth.signOut({ scope: "local" }).catch(() => {});
+  }
   if (state.guestSessionToken) await endGuestAccess();
   if (state.corporateAccess.verified) clearCorporateAccess("Corporate and personal sessions ended.");
   rememberProtectedTarget(getTargetFromRoute());
@@ -11926,7 +11973,8 @@ async function enableNotifications() {
     applicationServerKey: urlBase64ToUint8Array(state.config.vapidPublicKey)
   });
 
-  await fetch("/api/subscribe", {
+  try {
+  const result = await apiRequest("/api/subscribe", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -11934,8 +11982,11 @@ async function enableNotifications() {
     },
     body: JSON.stringify({ subscription })
   });
-
+  if (result.skipped) throw new Error("Please sign in again before enabling notifications.");
   alert("Notifications are enabled for Travel-Drip.");
+  } catch (error) {
+    alert(`Notifications could not be saved: ${error.message}`);
+  }
 }
 
 async function sendAdminNotification(event) {
