@@ -46,7 +46,7 @@ function isFundingTrip(trip) {
 
 function walletDisplayName(context) {
   const savedName = context?.wallet?.settings?.displayName || context?.wallet?.settings?.depositLabel;
-  if (savedName) return sanitizeText(savedName, "Trip Wallet", 80);
+  if (savedName && !(savedName === "Trip Wallet" && context?.trip?.trip_type === "group_trip")) return sanitizeText(savedName, "Trip Wallet", 80);
   return context?.trip?.trip_type === "group_trip" ? "Friend Group Funds" : "Trip Wallet";
 }
 

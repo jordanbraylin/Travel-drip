@@ -9215,14 +9215,15 @@ function wireLocalInteractions() {
       }
     };
     try {
-      const result = await apiRequest("/api/events", {
+      const creationEndpoint = ["solo", "group", "cruise", "corporate"].includes(type) ? "/api/trips" : "/api/events";
+      const result = await apiRequest(creationEndpoint, {
         method: "POST",
         body: JSON.stringify(payload)
       });
       if (result.skipped) {
         throw new Error("Sign in on the deployed app before creating a trip.");
       } else {
-        $("#soloModeMessage").textContent = `${config.label} created and saved to Supabase: ${tripName}. Event modules, permissions, audit log, and wallet setup were initialized.`;
+        $("#soloModeMessage").textContent = `${config.label} created and saved: ${tripName}. Trip details, permissions, and available modules were initialized.`;
         clearQuickPlanningDraft();
         const createdTripId = result.event?.id || result.trip?.id || "";
         if (createdTripId) {

@@ -32,6 +32,7 @@ state.supabase.auth.refreshSession = async () => { throw new Error('must not ref
 assert.equal((await vm.runInContext('apiRequest("/api/trips")', context)).saved, true);
 assert.match(source, /event === "TOKEN_REFRESHED"/);
 assert.doesNotMatch(source, /onAuthStateChange\(async/);
+assert.match(source, /\["solo", "group", "cruise", "corporate"\]\.includes\(type\) \? "\/api\/trips" : "\/api\/events"/);
 const wallet = await readFile(new URL('../server/api/wallet.js', import.meta.url), 'utf8');
 assert.match(wallet, /maskedLastFour: cardReady \? context\.card\.masked_last_four : null/);
 for (const file of ['trips', 'events']) {
