@@ -2220,6 +2220,7 @@ function dashboardShouldShowBlankState() {
 }
 
 function resetAccountData() {
+  savedReceiptTotals.splice(0);
   resetDiscoveryStudio();
   resetTripJoy();
   resetPhotoFeed();
@@ -2664,8 +2665,14 @@ async function loadAccountData() {
   }
   state.accountData.loading = true;
   state.accountData.error = "";
+  const accountData = state.accountData;
+  const userId = state.session.user.id;
+  let loadedTripId = null;
+  const isCurrent = () => state.session?.user?.id === userId && state.accountData === accountData
+    && (loadedTripId === null || state.activeTripId === loadedTripId);
   try {
     const result = await apiRequest("/api/trips");
+    if (!isCurrent()) return state.accountData;
     const trips = Array.isArray(result.trips) ? result.trips.filter(Boolean) : [];
     const rememberedTrip = trips.find((trip) => trip.id === state.activeTripId);
     const activeTrip = rememberedTrip || trips[0] || null;
@@ -2674,9 +2681,11 @@ async function loadAccountData() {
     state.accountData.loaded = true;
     state.accountData.showCreation = false;
     state.activeTripId = activeTrip?.id || "";
+    loadedTripId = state.activeTripId;
     if (state.activeTripId) sessionStorage.setItem("traveldripActiveTripId", state.activeTripId);
     else sessionStorage.removeItem("traveldripActiveTripId");
     const moduleState = await loadAccountModuleData(state.activeTripId);
+    if (!isCurrent()) return state.accountData;
     state.accountData.moduleData = moduleState.moduleData;
     state.accountData.counts = moduleState.counts;
     state.accountData.records = moduleState.records;
@@ -2685,9 +2694,12 @@ async function loadAccountData() {
     renderActiveTripAccountData();
     renderLiveAccountDashboard();
     await loadTripChatData();
+    if (!isCurrent()) return state.accountData;
     await loadSavedReceiptTotals();
+    if (!isCurrent()) return state.accountData;
     await loadWalletAccess();
   } catch (error) {
+    if (!isCurrent()) return state.accountData;
     state.accountData.trips = [];
     state.accountData.activeTrip = null;
     state.accountData.loaded = true;
@@ -2698,9 +2710,11 @@ async function loadAccountData() {
     transportRecords.splice(0);
     travelSmartSearchRecords.splice(0);
     state.activeTripId = "";
+    loadedTripId = "";
     sessionStorage.removeItem("traveldripActiveTripId");
   } finally {
-    state.accountData.loading = false;
+    accountData.loading = false;
+    if (!isCurrent()) return state.accountData;
     renderAccountState();
     renderProfileSummary({
       full_name: $("#profileFullNameInput")?.value || "",
@@ -3555,7 +3569,14 @@ function syncWalletSummary(wallet) {
   if ($("#bankTotalCollected")) $("#bankTotalCollected").textContent = contributions;
 }
 
+let walletAccessRequestId = 0;
 async function loadWalletAccess() {
+  const requestId = ++walletAccessRequestId;
+  const userId = state.session?.user?.id;
+  const tripId = state.activeTripId || "";
+  const accountData = state.accountData;
+  const isCurrent = () => requestId === walletAccessRequestId && userId === state.session?.user?.id
+    && accountData === state.accountData && tripId === (state.activeTripId || "");
   state.walletAccess = { ...state.walletAccess, status: "loading", message: "" };
   renderWalletAccess();
   if (!state.session?.access_token || isFilePreview) {
@@ -3574,6 +3595,7 @@ async function loadWalletAccess() {
     const storedTripId = sessionStorage.getItem("traveldripActiveTripId") || "";
     const query = storedTripId ? `?tripId=${encodeURIComponent(storedTripId)}` : "";
     const result = await apiRequest(`/api/wallet${query}`);
+    if (!isCurrent()) return;
     if (result.skipped) throw new Error("Wallet permissions require a deployed authenticated session.");
     state.walletAccess = { ...result, status: "ready" };
     syncWalletSummary(result.wallet);
@@ -3583,6 +3605,7 @@ async function loadWalletAccess() {
       sessionStorage.setItem("traveldripActiveTripId", result.tripId);
     }
   } catch (error) {
+    if (!isCurrent()) return;
     state.walletAccess = {
       ...state.walletAccess,
       status: "error",
@@ -4728,15 +4751,17 @@ function getSplitMode() {
 async function loadSavedReceiptTotals() {
   savedReceiptTotals.splice(0);
   if (!state.supabase || !state.session?.user || !state.activeTripId || isFilePreview) return;
+  const userId = state.session.user.id;
+  const tripId = state.activeTripId;
   const { data, error } = await state.supabase
     .from("trip_events")
     .select("id, payload, created_at")
-    .eq("trip_id", state.activeTripId)
-    .eq("user_id", state.session.user.id)
+    .eq("trip_id", tripId)
+    .eq("user_id", userId)
     .eq("event_type", "receipt_total_saved")
     .order("created_at", { ascending: false })
     .limit(20);
-  if (error) return;
+  if (error || userId !== state.session?.user?.id || tripId !== state.activeTripId) return;
   (data || []).forEach((entry) => savedReceiptTotals.push({
     id: entry.id,
     ...(entry.payload || {}),
@@ -5766,10 +5791,10 @@ async function loadConfig() {
             const confirmation = error
               ? "Your account is verified, but your profile could not be confirmed as saved. Please retry profile sync from My Profile."
               : "Your information is confirmed saved. Your dashboard is ready — start planning your first trip.";
-            enterAppPreview({ confirmation, forceDashboard: true });
+            enterAppPreview({ confirmation });
           }).catch(() => {
             setAuthConfirmation("Your account is verified, but profile sync needs attention. Please retry from My Profile.");
-            enterAppPreview({ forceDashboard: true });
+            enterAppPreview();
           });
         } else {
           ensureProfileForSession().catch(() => {});
@@ -6203,7 +6228,7 @@ async function signIn(identifier, password) {
       ? "Signed in, but your profile could not be confirmed as saved. Please retry profile sync from My Profile."
       : "Your information is confirmed saved. Welcome back — your dashboard is ready to start planning.";
     queueGhlSync({ eventType: "user_login", tags: ["Trip Planning"] });
-    enterAppPreview({ confirmation, forceDashboard: true });
+    enterAppPreview({ confirmation });
     return true;
   } catch (error) {
     $("#authMessage").textContent = getAuthErrorMessage(error, "Sign-in failed. Please try again.");
@@ -11021,7 +11046,7 @@ function wireLocalInteractions() {
   $("#notifyButton")?.addEventListener("click", enableNotifications);
   $("#notifyForm")?.addEventListener("submit", sendAdminNotification);
   routeInteractionsWired = true;
-  renderRoute(getTargetFromRoute(), { replace: true });
+  if (!getInitialAuthMode()) renderRoute(getTargetFromRoute(), { replace: true });
 }
 
 function filterImportantInfo(event) {
@@ -11216,17 +11241,24 @@ async function createFirstTripChat(requestedTitle = "", firstMessage = "") {
     if ($("#newMessageDialogStatus")) $("#newMessageDialogStatus").textContent = "Create or join a trip before starting a conversation.";
     return false;
   }
+  const tripId = state.activeTripId;
+  const userId = state.session?.user?.id;
+  const isCurrent = () => userId === state.session?.user?.id && tripId === state.activeTripId;
   try {
     const title = requestedTitle.trim() || `${state.accountData.activeTrip?.title || "Trip"} chat`;
-    const result = await apiRequest("/api/chat", { method: "POST", body: JSON.stringify({ action: "create_room", tripId: state.activeTripId, title }) });
+    const result = await apiRequest("/api/chat", { method: "POST", body: JSON.stringify({ action: "create_room", tripId, title }) });
+    if (!isCurrent()) return false;
+    if (!result.room?.id) throw new Error("The conversation was not saved. Please try again.");
     state.chatData.selectedRoomId = result.room?.id || "";
     if (firstMessage.trim() && state.chatData.selectedRoomId) {
       await apiRequest("/api/chat", {
         method: "POST",
-        body: JSON.stringify({ action: "send_message", tripId: state.activeTripId, roomId: state.chatData.selectedRoomId, text: firstMessage.trim() })
+        body: JSON.stringify({ action: "send_message", tripId, roomId: result.room.id, text: firstMessage.trim() })
       });
     }
+    if (!isCurrent()) return false;
     await loadTripChatData();
+    if (!isCurrent()) return false;
     renderAccountState("socialHub");
     navigateSafely("socialHub", { updateHistory: true });
     if ($("#messageStatus")) $("#messageStatus").textContent = result.existing
@@ -11234,6 +11266,7 @@ async function createFirstTripChat(requestedTitle = "", firstMessage = "") {
       : (firstMessage.trim() ? "Trip conversation created and the first message was sent." : "Trip conversation created. Messages are private to active members.");
     return true;
   } catch (error) {
+    if (!isCurrent()) return false;
     showWorkflowMessage("Trip chat", error.message || "The conversation could not be created.");
     if ($("#newMessageDialogStatus")) $("#newMessageDialogStatus").textContent = error.message || "The conversation could not be created.";
     return false;

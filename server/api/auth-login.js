@@ -61,7 +61,8 @@ export default async function handler(request, response) {
         "Content-Type": "application/json",
         "apikey": publishableKey
       },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password }),
+      signal: AbortSignal.timeout(10000)
     });
   } catch (_error) {
     response.status(503).json({ error: "Account login is temporarily unavailable" });
