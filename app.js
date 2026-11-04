@@ -2978,6 +2978,10 @@ function updateCorporateOperationsPermissions() {
   const canManage = Boolean(permissions.canManageBookings);
   const canApprove = Boolean(permissions.canApprove);
   const canManageService = Boolean(permissions.canManageService);
+  const canViewFinance = isFilePreview
+    ? Boolean(permissions.canManageBookings || permissions.canApprove)
+    : permissions.canViewFinance === true;
+  $$('[data-corporate-finance-only]').forEach((item) => setVisibilityWithoutCssLeaks(item, canViewFinance));
   $$('[data-corporate-manager-only]').forEach((item) => item.toggleAttribute("hidden", !canManage));
   $$('[data-corporate-policy-admin-only]').forEach((item) => item.toggleAttribute("hidden", !permissions.canManagePolicy));
   $$("[data-corporate-booking-status], [data-corporate-provider-reference], [data-corporate-booking-action]").forEach((control) => {

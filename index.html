@@ -1994,13 +1994,13 @@
                   <p class="small corporate-operation-message" id="corporateBookingMessage">Requests are checked against the active policy. Travel-Drip never labels an item confirmed without a provider reference.</p>
                 </article>
 
-                <article class="corporate-operation-card corporate-policy-summary">
+                <article class="corporate-operation-card corporate-policy-summary" data-corporate-finance-only hidden>
                   <div class="corporate-operation-card__header">
                     <div>
                       <span class="corporate-operation-kicker">Active policy</span>
-                      <h4 id="corporatePolicyName">Global business travel</h4>
+                      <h4 id="corporatePolicyName">No policy assigned</h4>
                     </div>
-                    <span class="document-status" id="corporatePolicyStatus">Active</span>
+                    <span class="document-status" id="corporatePolicyStatus">Not assigned</span>
                   </div>
                   <dl class="corporate-policy-facts">
                     <div><dt>Flight cap</dt><dd id="corporatePolicyFlightCap">Not available</dd></div>
@@ -2042,7 +2042,7 @@
                   <div class="corporate-booking-list" id="corporateBookingList" aria-live="polite"></div>
                 </article>
 
-                <article class="corporate-operation-card corporate-approval-card" data-visible-roles="owner executive finance">
+                <article class="corporate-operation-card corporate-approval-card" data-visible-roles="owner executive finance" data-corporate-finance-only hidden>
                   <div class="corporate-operation-card__header">
                     <div>
                       <span class="corporate-operation-kicker">Approval queue</span>
@@ -4660,6 +4660,6 @@
   <script defer src="trip-joy.js?v=4"></script>
   <script defer src="discovery-studio.js?v=5"></script>
   <script defer src="planner-conversation.js?v=2"></script>
-  <script defer src="app.js?v=110"></script>
+  <script defer src="app.js?v=111"></script>
 </body>
 </html>

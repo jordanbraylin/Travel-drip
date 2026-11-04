@@ -17,6 +17,20 @@ const bookingTypes = new Set(["flight", "hotel", "rail", "car", "transportation"
 const caseTypes = new Set(["change", "cancellation", "disruption", "emergency", "accessibility", "billing", "other"]);
 const casePriorities = new Set(["normal", "high", "urgent", "critical"]);
 const bookingActions = new Set(["approve", "reject", "confirm", "ticket", "start", "complete", "cancel", "refund", "fail"]);
+const operationalBookingFields = ["id", "trip_id", "booking_type", "traveler_user_id", "attendee_id", "traveler_name", "title", "origin", "destination", "starts_at", "ends_at", "status", "provider_name", "provider_reference", "provider_status", "cancellation_deadline", "created_at", "updated_at"];
+const operationalCaseFields = ["id", "trip_id", "booking_id", "traveler_user_id", "created_by", "case_type", "priority", "status", "subject", "sla_due_at", "created_at", "updated_at"];
+
+function canViewCorporateFinance(role) {
+  return managerRoles.has(role) || approverRoles.has(role);
+}
+
+function operationalFields(record, fields) {
+  return Object.fromEntries(fields.filter((key) => Object.hasOwn(record, key)).map((key) => [key, record[key]]));
+}
+
+function visibleServiceCase(record, role) {
+  return canViewCorporateFinance(role) ? record : operationalFields(record, operationalCaseFields);
+}
 
 function cents(value) {
   const number = Number(value);
@@ -55,21 +69,24 @@ async function getCorporateContext(supabase, tripId, userId) {
   return { role: membership.role, trip };
 }
 
-async function listOperations(response, supabase, user, context, tripId) {
+export async function listOperations(response, supabase, user, context, tripId) {
   const canManage = managerRoles.has(context.role) || approverRoles.has(context.role) || serviceRoles.has(context.role);
-  let bookingsQuery = supabase.from("corporate_bookings").select("*").eq("trip_id", tripId).order("created_at", { ascending: false }).limit(200);
-  let casesQuery = supabase.from("corporate_service_cases").select("*").eq("trip_id", tripId).order("created_at", { ascending: false }).limit(100);
+  const canViewFinance = canViewCorporateFinance(context.role);
+  let bookingsQuery = supabase.from("corporate_bookings").select(canViewFinance ? "*" : operationalBookingFields.join(",")).eq("trip_id", tripId).order("created_at", { ascending: false }).limit(200);
+  let casesQuery = supabase.from("corporate_service_cases").select(canViewFinance ? "*" : operationalCaseFields.join(",")).eq("trip_id", tripId).order("created_at", { ascending: false }).limit(100);
   let attendeesQuery = supabase.from("corporate_attendees").select("id, user_id, travel_record_id, hotel_record_id, transportation_record_id, metadata").eq("trip_id", tripId).eq("access_status", "active").limit(500);
   if (!canManage) {
-    bookingsQuery = bookingsQuery.or(`traveler_user_id.eq.${user.id},created_by.eq.${user.id}`);
+    bookingsQuery = bookingsQuery.eq("traveler_user_id", user.id);
     casesQuery = casesQuery.or(`traveler_user_id.eq.${user.id},created_by.eq.${user.id}`);
     attendeesQuery = attendeesQuery.eq("user_id", user.id);
   }
 
   const [policyResult, bookingsResult, approvalsResult, casesResult, attendeesResult] = await Promise.all([
-    supabase.from("corporate_travel_policies").select("*").eq("trip_id", tripId).eq("status", "active").order("created_at", { ascending: false }).limit(1).maybeSingle(),
+    canViewFinance
+      ? supabase.from("corporate_travel_policies").select("*").eq("trip_id", tripId).eq("status", "active").order("created_at", { ascending: false }).limit(1).maybeSingle()
+      : Promise.resolve({ data: null, error: null }),
     bookingsQuery,
-    canManage
+    canViewFinance
       ? supabase.from("corporate_booking_approvals").select("*").eq("trip_id", tripId).order("created_at", { ascending: false }).limit(100)
       : Promise.resolve({ data: [], error: null }),
     casesQuery,
@@ -101,12 +118,13 @@ async function listOperations(response, supabase, user, context, tripId) {
       canManageBookings: managerRoles.has(context.role),
       canApprove: approverRoles.has(context.role),
       canManageService: serviceRoles.has(context.role),
+      canViewFinance,
       canManagePolicy: ["owner", "admin", "finance_admin"].includes(context.role)
     },
     policy: policyResult.data || null,
-    bookings,
+    bookings: canViewFinance ? bookings : bookings.map((booking) => operationalFields(booking, operationalBookingFields)),
     approvals: approvalsResult.data || [],
-    serviceCases: cases,
+    serviceCases: cases.map((serviceCase) => visibleServiceCase(serviceCase, context.role)),
     readiness
   });
 }
@@ -116,13 +134,18 @@ async function savePolicy(response, supabase, user, context, tripId, body) {
     response.status(403).json({ error: "Corporate policy administrator access required" });
     return;
   }
+  const flightCabin = sanitizeText(body.flightCabin || body.flight_cabin, "economy", 40).trim().toLowerCase();
+  if (!["economy", "premium_economy", "business", "first"].includes(flightCabin)) {
+    response.status(400).json({ error: "Choose a supported maximum cabin class." });
+    return;
+  }
   const record = {
     organization_id: context.trip.organization_id,
     trip_id: tripId,
     name: sanitizeText(body.name, "Corporate travel policy", 160),
     status: "active",
     currency: sanitizeText(body.currency, "USD", 12).toUpperCase(),
-    flight_cabin: sanitizeText(body.flightCabin || body.flight_cabin, "economy", 40),
+    flight_cabin: flightCabin,
     flight_cap_cents: cents(body.flightCapCents || body.flight_cap_cents),
     hotel_nightly_cap_cents: cents(body.hotelNightlyCapCents || body.hotel_nightly_cap_cents),
     ground_transport_cap_cents: cents(body.groundTransportCapCents || body.ground_transport_cap_cents),
@@ -172,11 +195,18 @@ async function createBooking(response, supabase, user, context, tripId, body) {
     response.status(400).json({ error: "travelerName and providerName are required" });
     return;
   }
+  const rawTotal = body.totalCents ?? body.total_cents;
+  if (rawTotal === undefined || rawTotal === null || String(rawTotal).trim() === ""
+    || !Number.isFinite(Number(rawTotal)) || Number(rawTotal) < 0 || !Number.isSafeInteger(Math.round(Number(rawTotal)))) {
+    response.status(400).json({ error: "Enter a valid non-negative booking amount in cents." });
+    return;
+  }
   const { data: policy } = await supabase.from("corporate_travel_policies").select("*").eq("trip_id", tripId).eq("status", "active").order("created_at", { ascending: false }).limit(1).maybeSingle();
   const normalized = {
     bookingType,
     providerName,
-    totalCents: cents(body.totalCents || body.total_cents),
+    totalCents: cents(rawTotal),
+    currency: sanitizeText(body.currency, "USD", 12).toUpperCase(),
     details: body.details && typeof body.details === "object" ? body.details : {}
   };
   const decision = evaluateCorporatePolicy(policy, normalized);
@@ -330,7 +360,7 @@ async function createServiceCase(response, supabase, user, context, tripId, body
     metadata: { caseId: data.id, caseType, priority }
   })));
   await writeAuditLog(supabase, { actorUserId: user.id, tripId, organizationId: context.trip.organization_id, action: "corporate.service_case.created", entityType: "corporate_service_case", entityId: data.id, metadata: { caseType, priority } });
-  response.status(201).json({ serviceCase: data });
+  response.status(201).json({ serviceCase: visibleServiceCase(data, context.role) });
 }
 
 async function updateBooking(response, supabase, user, context, tripId, body) {
@@ -431,7 +461,7 @@ async function updateServiceCase(response, supabase, user, context, tripId, body
     metadata: { caseId, status }
   }] : []);
   await writeAuditLog(supabase, { actorUserId: user.id, tripId, organizationId: context.trip.organization_id, action: `corporate.service_case.${status}`, entityType: "corporate_service_case", entityId: caseId });
-  response.status(200).json({ serviceCase: data });
+  response.status(200).json({ serviceCase: visibleServiceCase(data, context.role) });
 }
 
 export default async function handler(request, response) {

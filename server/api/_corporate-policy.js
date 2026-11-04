@@ -4,9 +4,10 @@ function cents(value) {
 }
 
 function includesIgnoreCase(values, candidate) {
-  if (!Array.isArray(values) || !values.length || !candidate) return true;
-  const normalized = String(candidate).toLowerCase();
-  return values.some((value) => String(value).toLowerCase() === normalized);
+  if (!Array.isArray(values) || !values.length) return true;
+  if (!candidate || !String(candidate).trim()) return false;
+  const normalized = String(candidate).trim().toLowerCase();
+  return values.some((value) => String(value).trim().toLowerCase() === normalized);
 }
 
 const bookingTransitions = {
@@ -31,13 +32,16 @@ export function evaluateCorporatePolicy(policy, booking) {
   const rules = policy.rules || {};
   const amount = cents(booking.totalCents);
   const details = booking.details || {};
+  if (policy.currency && booking.currency && String(policy.currency).toUpperCase() !== String(booking.currency).toUpperCase()) reasons.push("Booking currency requires policy review");
 
   if (booking.bookingType === "flight") {
     if (policy.flight_cap_cents > 0 && amount > policy.flight_cap_cents) reasons.push("Flight exceeds the approved fare cap");
     if (!includesIgnoreCase(policy.allowed_airlines, booking.providerName)) reasons.push("Airline is outside the preferred supplier list");
     const cabinOrder = ["economy", "premium_economy", "business", "first"];
-    const cabin = String(details.cabin || "economy");
-    if (cabinOrder.indexOf(cabin) > cabinOrder.indexOf(policy.flight_cabin || "economy")) reasons.push("Cabin class exceeds policy");
+    const cabin = String(details.cabin || "").trim().toLowerCase();
+    const maximum = String(policy.flight_cabin || "economy").trim().toLowerCase();
+    if (!cabinOrder.includes(cabin) || !cabinOrder.includes(maximum)) reasons.push("Cabin class requires policy review");
+    else if (cabinOrder.indexOf(cabin) > cabinOrder.indexOf(maximum)) reasons.push("Cabin class exceeds policy");
   }
 
   if (booking.bookingType === "hotel") {

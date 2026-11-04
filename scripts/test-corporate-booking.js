@@ -39,4 +39,13 @@ assert.equal(canTransitionCorporateBooking("confirmed", "ticket"), true);
 assert.equal(canTransitionCorporateBooking("ticketed", "refund"), true);
 assert.equal(canTransitionCorporateBooking("refunded", "confirm"), false);
 
-console.log("Corporate booking policy and lifecycle tests passed: 11 scenarios.");
+assert.equal(evaluateCorporatePolicy(policy, { bookingType: "flight", providerName: "Delta", totalCents: 100000, details: { cabin: "unknown" } }).status, "exception");
+assert.equal(evaluateCorporatePolicy(policy, { bookingType: "flight", providerName: "Delta", totalCents: 100000, details: {} }).status, "exception");
+assert.equal(evaluateCorporatePolicy({ ...policy, currency: "USD" }, { bookingType: "flight", currency: "EUR", providerName: "Delta", totalCents: 100000, details: { cabin: "economy" } }).status, "exception");
+assert.equal(evaluateCorporatePolicy({ ...policy, flight_cabin: "unknown" }, { bookingType: "flight", providerName: "Delta", totalCents: 100000, details: { cabin: "economy" } }).status, "exception");
+assert.equal(evaluateCorporatePolicy(policy, { bookingType: "flight", providerName: " Delta ", totalCents: 100000, details: { cabin: " ECONOMY " } }).status, "compliant");
+assert.equal(evaluateCorporatePolicy(policy, { bookingType: "hotel", providerName: "QA stay", totalCents: 10000, details: {} }).status, "exception");
+assert.equal(evaluateCorporatePolicy(policy, { bookingType: "hotel", providerName: "QA stay", totalCents: 10000, details: { category: "  " } }).status, "exception");
+assert.equal(evaluateCorporatePolicy({ ...policy, allowed_hotel_categories: [] }, { bookingType: "hotel", providerName: "QA stay", totalCents: 10000, details: {} }).status, "compliant");
+
+console.log("Corporate booking policy and lifecycle tests passed, including invalid cabins, missing restricted categories and normalized provider values.");
