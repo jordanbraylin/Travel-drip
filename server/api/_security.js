@@ -74,7 +74,21 @@ export async function requireAuthenticatedUser(request, response) {
     return { user: null, supabase: null };
   }
 
+  if (requiresSecondFactor(data.user, token)) {
+    response.status(403).json({ error: "Verify your authenticator code before continuing.", code: "mfa_required" });
+    return { user: null, supabase: null };
+  }
+
   return { user: data.user, supabase };
+}
+
+// Call only after Auth has validated the token. Decoding alone never authenticates it.
+export function requiresSecondFactor(user, validatedToken) {
+  if (!user.factors?.some(factor => factor.status === "verified")) return false;
+  try {
+    const claims = JSON.parse(Buffer.from(validatedToken.split(".")[1], "base64url").toString("utf8"));
+    return claims.aal !== "aal2";
+  } catch (_error) { return true; }
 }
 
 export async function requireTripRole(supabase, tripId, userId, allowedRoles = []) {

@@ -7,6 +7,8 @@ const output = resolve(root, "public");
 const staticFiles = [
   "admin.html",
   "app.js",
+  "auth-workflows.js",
+  "auth-workflows.css",
   "usability.js",
   "trip-management.js",
   "live-weather.js",

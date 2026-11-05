@@ -5681,6 +5681,21 @@ async function saveProfileDetails() {
   }
 }
 
+const accountWorkflows = window.TravelDripAuthWorkflows.create({
+  getClient: () => state.supabase,
+  getSession: () => state.session,
+  getConfig: () => state.config,
+  message: text => { if ($("#authMessage")) $("#authMessage").textContent = text; },
+  onRecoveryFinished: () => {
+    state.session = null;
+    resetAccountData();
+    history.replaceState(null, "", "/login");
+    setAuthMode("signin");
+    updateAuthUi();
+  },
+  onMfaVerified: () => window.location.reload()
+});
+
 async function loadConfig() {
   const publicConfig = window.TRAVELDRIP_PUBLIC_CONFIG || {};
 
@@ -5738,7 +5753,8 @@ async function loadConfig() {
         $("#authMessage").textContent = getAuthErrorMessage(error, "Travel-Drip could not restore your session. Please sign in again.");
       }
     }
-    if (state.session?.access_token) {
+    if (state.session?.user && !accountWorkflows.isRecovery()) await accountWorkflows.checkMfa();
+    if (state.session?.access_token && !accountWorkflows.isBlocked()) {
       scopeBrowserStateToAuthenticatedUser(state.session.user.id);
       if (state.guestSessionToken) await linkCorporateAccessToPersonalAccount().catch(() => {});
       else await loadCorporatePortalFromSession().catch(() => {});
@@ -5746,6 +5762,19 @@ async function loadConfig() {
     }
     loadWalletAccess();
     state.supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        state.session = session;
+        window.setTimeout(() => {
+          if (state.session !== session) return;
+          setAuthMode("signin");
+          accountWorkflows.recovery();
+        }, 0);
+        return;
+      }
+      if (accountWorkflows.isRecovery()) {
+        state.session = session;
+        return;
+      }
       const previousUserId = state.session?.user?.id;
       // Supabase auth callbacks must not await other auth/database calls under its lock.
       if (event === "TOKEN_REFRESHED" && session?.user?.id === previousUserId) {
@@ -5775,6 +5804,11 @@ async function loadConfig() {
         return;
       }
       state.session = session;
+      if (session?.user && await accountWorkflows.checkMfa()) {
+        setAuthMode("signin");
+        updateAuthUi();
+        return;
+      }
       if (session?.access_token) {
         scopeBrowserStateToAuthenticatedUser(session.user.id);
         if (state.guestSessionToken) await linkCorporateAccessToPersonalAccount().catch(() => {});
@@ -5807,7 +5841,10 @@ async function loadConfig() {
       }, 0);
     });
     setSyncStatus("Connected");
-    if (state.session?.user && ["/login", "/register"].includes(normalizeAppPath(location.pathname))) {
+    if (accountWorkflows.isRecovery()) {
+      setAuthMode("signin");
+      accountWorkflows.recovery();
+    } else if (!accountWorkflows.isBlocked() && state.session?.user && ["/login", "/register"].includes(normalizeAppPath(location.pathname))) {
       const profileResult = await ensureProfileForSession().catch((error) => ({ error }));
       const confirmation = profileResult.error
         ? "Signed in successfully. Your dashboard is ready, but profile sync needs attention."
@@ -5820,7 +5857,7 @@ async function loadConfig() {
 }
 
 function updateAuthUi() {
-  const signedIn = Boolean(state.session?.user);
+  const signedIn = Boolean(state.session?.user) && !accountWorkflows.isBlocked();
   const appAccess = signedIn;
   const openAuthButton = $("#openAuthButton");
   const openSignupButton = $("#openSignupButton");
@@ -6218,6 +6255,11 @@ async function signIn(identifier, password) {
     }
 
     state.session = data.session || state.session;
+    if (await accountWorkflows.checkMfa()) {
+      setAuthMode("signin");
+      updateAuthUi();
+      return false;
+    }
     if (state.guestSessionToken) {
       await linkCorporateAccessToPersonalAccount().catch((linkError) => {
         if ($("#authMessage")) $("#authMessage").textContent = linkError.message;
@@ -6356,17 +6398,7 @@ async function signInWithOAuth(provider) {
     return;
   }
 
-  try {
-    const { error } = await state.supabase.auth.signInWithOAuth({
-      provider,
-      options: getAuthOptions()
-    });
-    $("#authMessage").textContent = error
-      ? getAuthErrorMessage(error, "Social sign-in could not start.")
-      : `Redirecting to ${provider === "google" ? "Google" : "Apple"} sign-in...`;
-  } catch (error) {
-    $("#authMessage").textContent = getAuthErrorMessage(error, "Social sign-in could not start.");
-  }
+  await accountWorkflows.oauth(provider);
 }
 
 function formatPortalMoney(cents = 0, currency = "USD") {
@@ -10673,8 +10705,8 @@ function wireLocalInteractions() {
   });
   $("#guestLogoutButton")?.addEventListener("click", endGuestAccess);
   $("#guestReportButton")?.addEventListener("click", () => {
-    $("#authMessage").textContent = "Unauthorized access report prepared for the company event organizer.";
-    showWorkflowMessage("Report unauthorized access", "Guest session risk report logged without exposing employee ID values.");
+    $("#authMessage").textContent = "Contact your event organizer to report unauthorized access. No report has been submitted by this button.";
+    showWorkflowMessage("Report unauthorized access", "Contact your event organizer. No report has been submitted.");
   });
   $("#corporateEmployeeInviteList")?.addEventListener("click", async (event) => {
     const copyButton = event.target.closest("[data-copy-corporate-access]");
@@ -11014,17 +11046,7 @@ function wireLocalInteractions() {
   });
   $$("[data-auth-workflow]").forEach((button) => {
     button.addEventListener("click", () => {
-      const workflow = button.dataset.authWorkflow;
-      const messages = {
-        "Forgot Password": "Password reset opens a secure email recovery flow when Supabase auth is fully configured.",
-        "Verify Email": "Email verification status is checked after registration and before live account sync.",
-        "Two-Factor Authentication": "Two-factor setup appears after sign-in when production auth requires an extra verification step.",
-        "Terms of Service": "Terms of Service opens the Travel-Drip usage, payment, content, and account rules in the legal policy area.",
-        "Privacy Policy": "Privacy Policy opens the Travel-Drip privacy, security, and data protection guidance in Admin."
-      };
-      const detail = messages[workflow] || "Authentication workflow opened.";
-      $("#authMessage").textContent = detail;
-      showWorkflowMessage(workflow, detail);
+      accountWorkflows.run(button.dataset.authWorkflow);
     });
   });
   window.addEventListener("hashchange", () => {
@@ -12067,6 +12089,11 @@ async function init() {
   wireConnectivityStatus();
   await registerServiceWorker();
   await loadConfig();
+  if (accountWorkflows.isBlocked()) {
+    updateAuthUi();
+    hideLoader();
+    return;
+  }
   await loadProfileDetails();
   await loadTrustedContacts();
   updateAuthUi();
