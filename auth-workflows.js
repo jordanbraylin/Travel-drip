@@ -113,16 +113,42 @@
         message('Password updated. Sign in with your new password.');
       });
     }
-    function legal(kind) {
+    async function legal(kind) {
       const title = kind === 'Terms of Service' ? 'Terms of Service' : 'Privacy Policy';
       const view = open(title, 'Read the current Travel-Drip policy below. Closing this window does not accept it.');
       view.submit.hidden = true;
-      const frame = document.createElement('iframe');
-      frame.title = title;
-      frame.src = title === 'Terms of Service' ? '/terms.html' : '/privacy.html';
-      frame.setAttribute('sandbox', 'allow-same-origin');
-      view.fields.append(frame);
       view.form.addEventListener('submit', event => event.preventDefault());
+      view.status.textContent = 'Loading document…';
+      try {
+        const response = await fetch(title === 'Terms of Service' ? '/terms.html' : '/privacy.html', { signal: AbortSignal.timeout(10000) });
+        if (!response.ok) throw new Error('The policy could not be loaded. Please try again before accepting it.');
+        const parsed = new DOMParser().parseFromString(await response.text(), 'text/html');
+        const main = parsed.querySelector('main');
+        if (!main) throw new Error('The policy document is unavailable. Please try again.');
+        if (!view.dialog.open) return;
+        const article = document.createElement('article');
+        article.className = 'auth-policy-document';
+        const copy = node => {
+          if (node.nodeType === 3) return document.createTextNode(node.textContent);
+          if (node.nodeType !== 1 || node.classList.contains('back')) return null;
+          if (node.tagName === 'A') {
+            const path = node.getAttribute('href');
+            if (!['terms.html', 'privacy.html'].includes(path)) return null;
+            const button = document.createElement('button');
+            button.type = 'button'; button.className = 'text-button'; button.textContent = node.textContent;
+            button.addEventListener('click', () => legal(path === 'terms.html' ? 'Terms of Service' : 'Privacy Policy'));
+            return button;
+          }
+          // Render only policy text and known structural tags, never scripts or source attributes.
+          if (!['H1', 'H2', 'H3', 'P', 'STRONG', 'EM', 'UL', 'OL', 'LI'].includes(node.tagName)) return null;
+          const element = document.createElement(node.tagName.toLowerCase());
+          for (const child of node.childNodes) { const clean = copy(child); if (clean) element.append(clean); }
+          return element;
+        };
+        for (const node of main.childNodes) { const clean = copy(node); if (clean) article.append(clean); }
+        view.fields.append(article);
+        view.status.textContent = '';
+      } catch (error) { view.status.textContent = error.message || 'The policy could not be loaded. Please try again.'; }
     }
     async function oauth(provider) {
       if (!['google', 'apple'].includes(provider)) return;

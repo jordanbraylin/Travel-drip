@@ -24,7 +24,7 @@ class Element {
   reportValidity() { return true; }
   focus() {}
 }
-let current, session = null, calls = [], feedback = '', enabled = false, requestError = null, release;
+let current, session = null, calls = [], feedback = '', enabled = false, requestError = null, release, policyPath;
 const auth = {
   async resetPasswordForEmail(email, options) { calls.push(['reset', email, options]); if (release) await release; return { error: requestError }; },
   async resend(body) { calls.push(['resend', body]); return { error: requestError }; },
@@ -38,8 +38,12 @@ const auth = {
   }
 };
 const context = vm.createContext({ window: {}, location: { search: '', hash: '', origin: 'https://travel-drip.com' }, URL, URLSearchParams, AbortSignal,
-  document: { createElement: tag => new Element(tag), body: { append: node => { current = node; } } },
-  fetch: async () => ({ ok: true, json: async () => ({ external: { google: enabled } }) })
+  document: { createElement: tag => new Element(tag), createTextNode: textContent => ({ textContent }), body: { append: node => { current = node; } } },
+  DOMParser: class { parseFromString(text) { return { querySelector: () => ({ childNodes: [
+    { nodeType: 1, tagName: 'H1', classList: { contains: () => false }, childNodes: [{ nodeType: 3, textContent: text }] },
+    { nodeType: 1, tagName: 'SCRIPT', classList: { contains: () => false }, childNodes: [] }
+  ] }) }; } },
+  fetch: async path => { policyPath = String(path); return { ok: true, text: async () => 'Current policy document', json: async () => ({ external: { google: enabled } }) }; }
 });
 vm.runInContext(source, context);
 let recovered = 0, mfaVerified = 0;
@@ -69,11 +73,12 @@ requestError = null;
 await view().form.fire('submit');
 assert.equal(calls.at(-1)[1].type, 'signup');
 assert.equal(calls.at(-1)[1].options.emailRedirectTo, 'https://travel-drip.com/login?verified=true');
-flow.run('Terms of Service');
-assert.equal(view().fields.children[0].src, '/terms.html');
-flow.run('Privacy Policy');
-assert.equal(view().fields.children[0].src, '/privacy.html');
-assert.equal(view().fields.children[0].sandbox, 'allow-same-origin');
+await flow.run('Terms of Service');
+assert.equal(policyPath, '/terms.html');
+assert.equal(view().fields.children[0].children.length, 1, 'Policy scripts are discarded');
+assert.equal(view().fields.children[0].children[0].children[0].textContent, 'Current policy document');
+await flow.run('Privacy Policy');
+assert.equal(policyPath, '/privacy.html');
 await flow.oauth('google');
 assert.match(feedback, /not connected yet/);
 assert.equal(calls.some(item => item[0] === 'oauth'), false, 'Disabled provider must not redirect away');

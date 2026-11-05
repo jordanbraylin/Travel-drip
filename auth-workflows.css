@@ -5,6 +5,7 @@
 .auth-workflow-fields { display: grid; gap: 16px; }
 .auth-workflow-fields label { display: grid; gap: 8px; font-weight: 600; }
 .auth-workflow-fields input { width: 100%; box-sizing: border-box; padding: 12px; min-height: 48px; border: 1px solid #b8ccd3; border-radius: 10px; font: inherit; }
-.auth-workflow-fields iframe { width: 100%; height: min(55dvh, 540px); border: 1px solid #dce9ee; border-radius: 10px; }
+.auth-policy-document { max-height: 55dvh; padding: 16px; overflow: auto; border: 1px solid #dce9ee; border-radius: 10px; line-height: 1.6; }
+.auth-workflow-dialog .auth-policy-document p, .auth-workflow-dialog .auth-policy-document h2 { margin: 12px 0; }
 .auth-workflow-dialog .dialog-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 12px; }
 .auth-workflow-dialog [role="status"] { overflow-wrap: anywhere; }
