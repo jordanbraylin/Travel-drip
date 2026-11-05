@@ -58,4 +58,7 @@ for(const total of [undefined,null,'',-1,'bad',Infinity,Number.MAX_SAFE_INTEGER*
   assert.equal(res.code,400);
 }
 assert.equal(dbCalls,0,'Invalid costs must never become zero-cost compliant bookings');
+const app=await readFile(new URL('../app.js',import.meta.url),'utf8');
+assert.match(app,/No support request has been sent/);
+assert.doesNotMatch(app,/Organizer support request prepared/);
 console.log('Corporate privacy passed: employee assignment, team-lead redaction, admin finance preservation, no confidential queries for employees, restrictive migration.');

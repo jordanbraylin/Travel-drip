@@ -10662,8 +10662,9 @@ function wireLocalInteractions() {
     $("#fundsForm")?.requestSubmit();
   });
   $("#guestHelpButton")?.addEventListener("click", () => {
-    $("#authMessage").textContent = "Help request opens organizer support without revealing whether the code or employee record exists.";
-    showWorkflowMessage("Guest access help", "Organizer support request prepared with safe, non-sensitive context.");
+    const message = "Contact the organizer who sent your invitation. Ask them to confirm your event code and employee or attendee ID. No support request has been sent.";
+    $("#authMessage").textContent = message;
+    showWorkflowMessage("Company event access help", message);
   });
   $("#guestReverifyButton")?.addEventListener("click", () => {
     setVisibilityWithoutCssLeaks($("#guestPortalPanel"), false);
