@@ -2,40 +2,40 @@
 #memoriesPanel .photo-feed-layout{grid-template-columns:minmax(0,1fr) 220px;align-items:start;gap:28px;max-width:1240px;margin-inline:auto}
 #memoriesPanel>.photo-feed-heading{min-height:0;background:none!important;padding:8px 0 22px!important;border-bottom:1px solid #d9ccad!important;overflow:visible;align-items:center}
 #memoriesPanel>.photo-feed-heading::after,#memoriesPanel .photo-cover-image,#memoriesPanel .photo-cover-label{display:none}
-#memoriesPanel .photo-cover-copy{color:#203442;max-width:calc(100% - 58px)}
-#memoriesPanel .photo-cover-copy h2{font-family:Georgia,serif;color:#183f45!important;font-size:clamp(28px,3vw,40px);margin:6px 0;letter-spacing:-.025em}
+#memoriesPanel .photo-cover-copy{color:#482d40;max-width:calc(100% - 58px)}
+#memoriesPanel .photo-cover-copy h2{font-family:Georgia,serif;color:#59213f!important;font-size:clamp(28px,3vw,40px);margin:6px 0;letter-spacing:-.025em}
 #memoriesPanel .photo-cover-copy .eyebrow{color:#8a652e!important;letter-spacing:.14em}
-#memoriesPanel .photo-cover-copy>p:last-child{color:#54636a;margin:8px 0 0}
+#memoriesPanel .photo-cover-copy>p:last-child{color:#76616d;margin:8px 0 0}
 #memoriesPanel .photo-feed-heading #photoFeedRefresh{top:12px;right:0;border:1px solid #d9ccad}
-#memoriesPanel .memory-passport{--passport-ink:#193f49;--passport-paper:#fffaf0;--passport-gold:#d3ae67;background:#173e49;border-radius:12px 20px 20px 12px;padding:14px 14px 12px;color:#fff7e3;box-shadow:0 18px 40px #14353b24,inset 0 0 0 1px #42616a;isolation:isolate;min-width:0}
+#memoriesPanel .memory-passport{--passport-ink:#48243b;--passport-paper:#fffaf0;--passport-gold:#d3ae67;background:#59213f;border-radius:12px 20px 20px 12px;padding:14px 14px 12px;color:#fff7e3;box-shadow:0 18px 40px #59213f24,inset 0 0 0 1px #8c536f;isolation:isolate;min-width:0}
 #memoriesPanel .passport-topline{display:flex;justify-content:space-between;gap:16px;font-size:9px;letter-spacing:.16em;padding:4px 8px 14px;color:#e1c68e;line-height:1.5}
 #memoriesPanel .passport-edition{font-family:Georgia,serif;font-style:italic;letter-spacing:0;font-size:12px}
 #memoriesPanel .passport-spread{display:grid;grid-template-columns:minmax(140px,.72fr) minmax(0,1.5fr);position:relative;box-shadow:0 2px 0 #d3c8b0,0 5px 0 #eee3cc,0 8px 0 #bbae94;border-radius:3px 12px 12px 3px;background:#fffaf0;margin-bottom:12px}
 #memoriesPanel .passport-inside{color:var(--passport-ink);padding:30px 20px 22px;background:radial-gradient(ellipse at center,#fffdf4,#f3ebd8);border-radius:3px 0 0 3px;border-right:1px solid #bead8d;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;text-align:center}
 #memoriesPanel .passport-inside::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent 78%,#987e4b22 94%,#69533336)}
 #memoriesPanel .passport-kicker{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#8a723c;margin:0 0 16px}
-#memoriesPanel .passport-inside h3{font-family:Georgia,serif;font-size:clamp(24px,2.4vw,36px);font-weight:400;line-height:1.15;margin:0;color:#193f49}
+#memoriesPanel .passport-inside h3{font-family:Georgia,serif;font-size:clamp(24px,2.4vw,36px);font-weight:400;line-height:1.15;margin:0;color:#48243b}
 #memoriesPanel .passport-inside h3 span{display:block;font-size:28px;color:#a77935;margin-top:15px}
 #memoriesPanel .passport-emblem{font-size:70px;line-height:1;margin:15px 0 10px;color:#b89151;opacity:.7}
-#memoriesPanel .passport-inside-copy{font-family:Georgia,serif;font-style:italic;font-size:17px;line-height:1.5;color:#49616a;margin:8px 0 28px}
+#memoriesPanel .passport-inside-copy{font-family:Georgia,serif;font-style:italic;font-size:17px;line-height:1.5;color:#775a6b;margin:8px 0 28px}
 #memoriesPanel .passport-stamp{border:2px solid #ad4364;outline:1px solid #ad4364;outline-offset:-6px;border-radius:50%;width:min(155px,100%);aspect-ratio:1;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:15px;gap:9px;transform:rotate(-9deg);color:#a23c5f;opacity:.9}
 #memoriesPanel .passport-stamp>span{font-size:8px;letter-spacing:.08em;line-height:1.5}
 #memoriesPanel .passport-stamp strong{font-size:clamp(14px,1.4vw,20px);line-height:1.2;overflow-wrap:anywhere;max-width:100%}
-#memoriesPanel .passport-stamp.is-unstamped{border-style:dashed;outline:0;color:#7b867c;border-color:#a7af9d}
-#memoriesPanel .passport-note{font-family:Georgia,serif;font-style:italic;line-height:1.5;font-size:14px;color:#62736b;margin:28px 0 16px;overflow-wrap:anywhere}
-#memoriesPanel .passport-tally{margin-top:auto;padding-top:18px;border-top:1px solid #cbbb964f;font-size:10px;line-height:1.7;color:#647068;letter-spacing:.03em}
+#memoriesPanel .passport-stamp.is-unstamped{border-style:dashed;outline:0;color:#8b7682;border-color:#b7a2af}
+#memoriesPanel .passport-note{font-family:Georgia,serif;font-style:italic;line-height:1.5;font-size:14px;color:#806673;margin:28px 0 16px;overflow-wrap:anywhere}
+#memoriesPanel .passport-tally{margin-top:auto;padding-top:18px;border-top:1px solid #cbbb964f;font-size:10px;line-height:1.7;color:#796775;letter-spacing:.03em}
 #memoriesPanel .passport-paper{min-width:0;position:relative;background:linear-gradient(90deg,#d0b98a33,#fffaf0 6%,#fffdf7 94%,#f4e7c9);border-radius:0 12px 12px 0;perspective:1800px;perspective-origin:0 50%;touch-action:pan-y pinch-zoom;outline-offset:5px;min-height:500px}
 #memoriesPanel .passport-paper:focus-visible{outline:3px solid #dba953}
 #memoriesPanel .passport-paper #photoFeedList{padding:22px 16px 28px;position:relative;z-index:1;min-width:0}
-#memoriesPanel .passport-paper .photo-post{background:none;border:0;box-shadow:none;margin:0;border-radius:0;color:#243e46;overflow:visible}
+#memoriesPanel .passport-paper .photo-post{background:none;border:0;box-shadow:none;margin:0;border-radius:0;color:#482d40;overflow:visible}
 #memoriesPanel .passport-paper .photo-post>header{padding:0 0 14px;gap:8px;align-items:center}
 #memoriesPanel .passport-paper .photo-post>header strong{font-size:14px}
 #memoriesPanel .passport-paper .photo-post>header small{font-size:10px;line-height:1.6}
-#memoriesPanel .passport-paper .photo-avatar{width:32px;height:32px;flex:0 0 32px;font-size:11px;background:#e4eee8;border-color:#789b92;color:#244f4a}
-#memoriesPanel .passport-paper .photo-post>img,#memoriesPanel .passport-paper .photo-post>video{display:block;box-sizing:border-box;width:100%;max-height:330px;object-fit:contain;background:#eee8da;border:8px solid #fff;border-bottom-width:20px;box-shadow:0 3px 9px #31433325;border-radius:1px;transform:rotate(-1.2deg)}
+#memoriesPanel .passport-paper .photo-avatar{width:32px;height:32px;flex:0 0 32px;font-size:11px;background:#f5e2ec;border-color:#c67c9f;color:#822952}
+#memoriesPanel .passport-paper .photo-post>img,#memoriesPanel .passport-paper .photo-post>video{display:block;box-sizing:border-box;width:100%;max-height:330px;object-fit:contain;background:#eee8da;border:8px solid #fff;border-bottom-width:20px;box-shadow:0 3px 9px #59314225;border-radius:1px;transform:rotate(-1.2deg)}
 #memoriesPanel .passport-paper .photo-post-actions{padding:18px 0 8px;gap:8px;flex-wrap:wrap}
 #memoriesPanel .passport-paper .photo-post-actions button{font-size:12px;min-height:44px;padding:7px 6px;gap:5px}
-#memoriesPanel .passport-paper .photo-caption{padding:8px 2px;font-family:Georgia,serif;font-size:17px;line-height:1.65;color:#364c4d;margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+#memoriesPanel .passport-paper .photo-caption{padding:8px 2px;font-family:Georgia,serif;font-size:17px;line-height:1.65;color:#624350;margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
 #memoriesPanel .passport-paper .photo-tags{padding:10px 0;gap:8px;flex-wrap:wrap}
 #memoriesPanel .passport-paper .photo-comments{padding:14px 0}
 #memoriesPanel .passport-paper .photo-post-title{padding:0;font-family:Georgia,serif}
@@ -45,8 +45,8 @@
 #memoriesPanel .passport-leaf-front,#memoriesPanel .passport-leaf-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;background:#fffaf0;border-radius:0 12px 12px 0;box-sizing:border-box}
 #memoriesPanel .passport-leaf-front{padding:22px 16px 28px;background:linear-gradient(90deg,#c8ad7d22,#fffaf0 8%)}
 #memoriesPanel .passport-leaf-back{transform:rotateY(180deg);background:repeating-linear-gradient(0deg,transparent 0 27px,#b9ab8c19 27px 28px),linear-gradient(90deg,#f1e5cc,#fffaf0);display:grid;place-items:center;box-shadow:inset -18px 0 28px #a9956d30}
-#memoriesPanel .passport-leaf-back span{padding:20px;border:2px solid #2b6c682b;border-radius:50%;white-space:pre-line;color:#2b6c684d;font-size:11px;letter-spacing:.2em;text-align:center;transform:rotate(-18deg)}
-#memoriesPanel .passport-video-placeholder{height:220px;background:#ebe4d5;display:grid;place-items:center;color:#6f7f77}
+#memoriesPanel .passport-leaf-back span{padding:20px;border:2px solid #8e3b622b;border-radius:50%;white-space:pre-line;color:#8e3b624d;font-size:11px;letter-spacing:.2em;text-align:center;transform:rotate(-18deg)}
+#memoriesPanel .passport-video-placeholder{height:220px;background:#ebe4d5;display:grid;place-items:center;color:#8a707f}
 #memoriesPanel .passport-navigation{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 2px 0}
 #memoriesPanel .passport-navigation button{min-height:44px;padding:8px 12px;background:#ffffff0a;border:1px solid #bba46a6b;border-radius:30px;color:#ffe8b9;display:flex;align-items:center;gap:8px;font:inherit;font-size:12px}
 #memoriesPanel .passport-navigation button:disabled{opacity:.35;cursor:default}
@@ -54,8 +54,8 @@
 #memoriesPanel .passport-hint{text-align:center;font-family:Georgia,serif;font-style:italic;font-size:13px;color:#ead3a6;margin:12px 0 2px;line-height:1.6}
 #memoriesPanel .passport-hint span{display:block;font-family:inherit;font-size:11px;opacity:.75}
 #memoriesPanel .passport-is-empty .passport-paper{display:grid;align-items:center}
-#memoriesPanel #photoExperienceDialog{width:min(520px,calc(100vw - 32px));max-height:90dvh;overflow:auto;padding:24px;border:1px solid #d3c4a7;border-radius:16px;background:#fffaf0;color:#193f49;box-sizing:border-box}
-#photoExperienceDialog::backdrop{background:#142d3d99}
+#memoriesPanel #photoExperienceDialog{width:min(520px,calc(100vw - 32px));max-height:90dvh;overflow:auto;padding:24px;border:1px solid #d3c4a7;border-radius:16px;background:#fffaf0;color:#48243b;box-sizing:border-box}
+#photoExperienceDialog::backdrop{background:#3a182d99}
 #photoExperienceDialog form,#photoExperienceDialog label{display:grid;gap:12px}
 #photoExperienceDialog input,#photoExperienceDialog textarea{box-sizing:border-box;width:100%;font:inherit;padding:12px;border:1px solid #bcae93;border-radius:8px;background:#fff}
 #memoriesPanel .passport-spread{grid-template-rows:640px}
@@ -73,3 +73,7 @@
 @media(max-width:1200px){#memoriesPanel .photo-feed-layout{grid-template-columns:minmax(0,1fr)}#memoriesPanel .photo-feed-aside{order:1}}
 @media(max-width:700px){#memoriesPanel .memory-passport{padding:10px 8px}#memoriesPanel .passport-spread{grid-template-columns:minmax(0,1fr)}#memoriesPanel .passport-inside{display:grid;grid-template-columns:1fr 90px;gap:8px;text-align:left;align-items:center;padding:18px;border:0;border-bottom:1px solid #bead8d;border-radius:3px 10px 0 0}#memoriesPanel .passport-kicker{margin:0;font-size:8px}#memoriesPanel .passport-inside h3{grid-column:1;grid-row:2;font-size:26px}#memoriesPanel .passport-inside h3 br{display:none}#memoriesPanel .passport-inside h3 span{display:inline;margin-left:8px;font-size:20px}#memoriesPanel .passport-emblem,#memoriesPanel .passport-inside-copy,#memoriesPanel .passport-note{display:none}#memoriesPanel .passport-stamp{grid-column:2;grid-row:1/4;width:90px;padding:10px;gap:5px}#memoriesPanel .passport-stamp strong{font-size:12px}#memoriesPanel .passport-stamp>span{font-size:6px}#memoriesPanel .passport-tally{grid-row:3;padding:0;border:0;font-size:9px}#memoriesPanel .passport-paper{min-height:390px;border-radius:0 0 10px 3px}#memoriesPanel .passport-paper #photoFeedList,#memoriesPanel .passport-leaf-front{padding:18px 14px}#memoriesPanel .passport-paper .photo-post>img,#memoriesPanel .passport-paper .photo-post>video{max-height:360px}#memoriesPanel .passport-edition{display:none}#memoriesPanel .passport-paper .photo-post-actions{gap:4px}#memoriesPanel .passport-navigation button{padding:8px 10px;font-size:11px}#memoriesPanel .passport-hint{font-size:12px}}
 @media(prefers-reduced-motion:reduce){#memoriesPanel .passport-turning-leaf{display:none!important}#memoriesPanel .passport-paper .photo-post>img{transform:none}}
+/* Carry the burgundy and rose palette through the surrounding photo controls. */
+#memoriesPanel .photo-feed-aside{border-top-color:#b52472}
+#memoriesPanel .photo-feed-heading #photoFeedRefresh,#memoriesPanel .passport-paper .photo-tags button{color:#a51160}
+#memoriesPanel .photo-feed-tabs button[data-photo-filter=mine][aria-pressed=true]{background:#f9e5f0;color:#8c285a;border-color:#b52472}
