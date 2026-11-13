@@ -38,14 +38,15 @@ export async function handlePhotoFeed(request, response, db, user) {
     if (!title || title.length > 120 || !text || text.length > 4000 || !['private','members','friends'].includes(body.visibility)) {
       response.status(400).json({error:'Add a title (up to 120 characters), a story (up to 4,000 characters), and a sharing choice.'}); return;
     }
-    const saved = checked(await db.from('media').insert({trip_id:tripId,user_id:user.id,storage_path:`${user.id}/journal/${randomUUID()}`,media_type:'text/plain',caption:text,visibility:body.visibility,metadata:{postKind:'blog',title,tags:photoTags(String(body.tags || '').slice(0,330)).join(' ')}}).select('id').single());
+    if (body.location !== undefined && (typeof body.location !== 'string' || body.location.trim().length > 100)) { response.status(400).json({error:'Use a location of up to 100 characters.'}); return; }
+    const saved = checked(await db.from('media').insert({trip_id:tripId,user_id:user.id,storage_path:`${user.id}/journal/${randomUUID()}`,media_type:'text/plain',caption:text,visibility:body.visibility,metadata:{postKind:'blog',title,location:String(body.location || '').trim(),tags:photoTags(String(body.tags || '').slice(0,330)).join(' ')}}).select('id').single());
     response.status(201).json({saved:true,id:saved.id}); return;
   }
   const friends = await appFriendIds(db,user.id);
   const postId = request.method === 'GET' ? url.searchParams.get('postId') : body.postId;
   let post;
   if (postId) {
-    post = checked(await db.from('media').select('id, trip_id, user_id, visibility, storage_path, media_type').eq('id', postId).maybeSingle());
+    post = checked(await db.from('media').select('id, trip_id, user_id, visibility, storage_path, media_type, metadata').eq('id', postId).maybeSingle());
     if (!post || !canReadPhoto(post, user.id, friends, await requireTripRole(db,post.trip_id,user.id))) { response.status(404).json({ error: 'Post not found.' }); return; }
   }
   if (request.method === 'GET' && post) {
@@ -85,11 +86,21 @@ export async function handlePhotoFeed(request, response, db, user) {
         checked(likes); checked(comments); checked(mine);
         likeCount = likes.count || 0; commentCount = comments.count || 0; liked = Boolean(mine.data);
       }
-      return { id:p.id, author:names.get(p.user_id) || 'Trip friend', own:p.user_id === user.id, postKind:isBlog ? 'blog' : p.media_type?.startsWith('video/') ? 'vlog' : 'photo', title:String(p.metadata?.title || '').slice(0,120), caption:p.caption || '', tags:photoTags(p.metadata?.tags), visibility:['members','friends'].includes(p.visibility) ? p.visibility : 'private', createdAt:p.created_at, mediaType:p.media_type, mediaUrl:signed.data?.signedUrl || null, likeCount, commentCount, liked };
+      return { id:p.id, author:names.get(p.user_id) || 'Trip friend', own:p.user_id === user.id, postKind:isBlog ? 'blog' : p.media_type?.startsWith('video/') ? 'vlog' : 'photo', title:String(p.metadata?.title || '').slice(0,120), caption:p.caption || '', location:String(p.metadata?.location || '').slice(0,100), tags:photoTags(p.metadata?.tags), visibility:['members','friends'].includes(p.visibility) ? p.visibility : 'private', createdAt:p.created_at, mediaType:p.media_type, mediaUrl:signed.data?.signedUrl || null, likeCount, commentCount, liked };
     }));
     response.status(200).json({ posts, engagementReady, nextOffset:rows.length > 12 ? offset + 12 : null }); return;
   }
   if (!post) { response.status(400).json({ error:'Choose a post.' }); return; }
+  if (body.action === 'edit_experience') {
+    if (post.user_id !== user.id) { response.status(403).json({error:'Only the author can edit this experience.'}); return; }
+    const maxLength = post.media_type === 'text/plain' ? 4000 : 2000;
+    if (typeof body.text !== 'string' || body.text.trim().length > maxLength || (post.media_type === 'text/plain' && !body.text.trim()) || typeof body.location !== 'string' || body.location.trim().length > 100) {
+      response.status(400).json({error:`Use an experience of up to ${maxLength} characters and a location of up to 100 characters.`}); return;
+    }
+    const saved = checked(await db.from('media').update({caption:body.text.trim(),metadata:{...post.metadata,location:body.location.trim()}}).eq('id',post.id).eq('user_id',user.id).select('id').maybeSingle());
+    if (!saved) { response.status(404).json({error:'This memory is no longer available.'}); return; }
+    response.status(200).json({saved:true}); return;
+  }
   if(body.action==='share'){
     if(post.user_id!==user.id){response.status(403).json({error:'Only the author can change who sees this post.'});return;}
     if(!['private','members','friends'].includes(body.visibility)){response.status(400).json({error:'Choose a sharing audience.'});return;}

@@ -1,11 +1,14 @@
 let photoFeedState = { key:'', generation:0, posts:[], nextOffset:null, loading:false, ready:false, filter:'all' };
+let photoPassport;
 
 function resetPhotoFeed() {
+  photoPassport?.reset();
   photoFeedState = { key:'', generation:photoFeedState.generation + 1, posts:[], nextOffset:null, loading:false, ready:false, filter:'all' };
   document.querySelector('#photoFeedList')?.replaceChildren();
   document.querySelector('#photoComposer')?.reset();
   setPhotoComposerKind('photo');
   document.querySelector('#photoReportDialog')?.close();
+  document.querySelector('#photoExperienceDialog')?.close();
   document.querySelector('#appFriendsDialog')?.close();
   document.querySelector('#appFriendRequestForm')?.reset();
   document.querySelector('#appFriendsList')?.replaceChildren();
@@ -32,7 +35,7 @@ function setPhotoComposerKind(kind) {
   document.querySelector('#photoFileLabel').textContent = kind === 'vlog' ? 'Video (up to 3 minutes, 100 MB)' : 'Photos or videos';
   document.querySelector('#photoTitleField').hidden = kind === 'photo';
   document.querySelector('#photoPostTitle').required = kind !== 'photo';
-  document.querySelector('#photoCaptionLabel').textContent = kind === 'blog' ? 'Your story' : 'Caption';
+  document.querySelector('#photoCaptionLabel').textContent = kind === 'blog' ? 'Your story' : 'About your experience';
   const caption = document.querySelector('#photoCaption'); caption.maxLength = kind === 'blog' ? 4000 : 2000; caption.rows = kind === 'blog' ? 6 : 2; caption.required = kind === 'blog';
 }
 
@@ -52,10 +55,11 @@ function initializePhotoFeed() {
   const panel = document.querySelector('#memoriesPanel');
   if (!panel || document.querySelector('#photoFeedList')) return;
   panel.replaceChildren();
-  panel.innerHTML = `<div class="photo-feed-heading"><img class="photo-cover-image" src="icons/planning-coast.jpg" alt=""><div class="photo-cover-copy"><p class="eyebrow">Your people. Your adventures.</p><h2>Trip moments</h2><p>Big adventures. Little moments. All yours.</p></div><span class="photo-cover-label">A little Santorini inspiration</span><button type="button" id="photoFeedRefresh" title="Refresh posts" aria-label="Refresh posts"><i data-lucide="refresh-cw"></i></button></div>
+  panel.innerHTML = `<div class="photo-feed-heading"><div class="photo-cover-copy"><p class="eyebrow">Places collected. Stories kept.</p><h2>Your memory passport</h2><p>A little book of everywhere you have been, and everything you felt.</p></div><button type="button" id="photoFeedRefresh" title="Refresh posts" aria-label="Refresh posts"><i data-lucide="refresh-cw"></i></button></div>
     <div class="photo-feed-layout"><div class="photo-feed-column">
     <details class="photo-composer-toggle"><summary><i data-lucide="image-plus"></i>Share a moment<i data-lucide="chevron-down"></i></summary><form id="photoComposer" class="photo-composer" data-kind="photo"><div class="photo-kind-picker" role="group" aria-label="Post type"><button type="button" data-photo-kind="photo" aria-pressed="true"><i data-lucide="image"></i>Photo</button><button type="button" data-photo-kind="blog" aria-pressed="false"><i data-lucide="notebook-pen"></i>Blog</button><button type="button" data-photo-kind="vlog" aria-pressed="false"><i data-lucide="video"></i>Video blog</button></div><label id="photoTitleField" hidden>Title<input id="photoPostTitle" maxlength="120" placeholder="Give your story a title"></label><label id="photoCaptionLabel" for="photoCaption">Caption</label><textarea id="photoCaption" maxlength="2000" rows="2" placeholder="What made today memorable?"></textarea>
     <label for="photoTags">Hashtags</label><input id="photoTags" maxlength="330" placeholder="#BeachDay #TripTogether">
+    <label for="photoLocation">Location stamp (optional)</label><input id="photoLocation" maxlength="100" placeholder="Where was this memory made?" autocomplete="off">
     <div class="photo-compose-options"><label>Who can see this?<select id="photoVisibility"><option value="private">Only me</option><option value="members">Friends in this trip</option><option value="friends">App friends</option></select></label><label id="photoFileField"><span id="photoFileLabel">Photos or videos</span><input id="photoFiles" type="file" accept="image/jpeg,image/png,image/webp,image/heic,video/mp4,video/quicktime,video/webm" multiple required></label></div>
     <div class="photo-compose-footer"><span id="photoTripName"></span><button type="submit" class="primary-button" id="photoPublish"><i data-lucide="image-plus"></i>Post moment</button></div></form></details>
     <div class="photo-feed-tabs" role="group" aria-label="Filter posts"><button type="button" data-photo-filter="all" aria-pressed="true"><i data-lucide="images"></i>Trip feed</button><button type="button" data-photo-filter="mine" aria-pressed="false"><i data-lucide="camera"></i>My posts</button></div>
@@ -71,13 +75,14 @@ function initializePhotoFeed() {
     const kind = form.dataset.kind || 'photo';
     const title = document.querySelector('#photoPostTitle').value.trim();
     const text = document.querySelector('#photoCaption').value.trim();
+    const location = document.querySelector('#photoLocation').value.trim();
     const files = Array.from(document.querySelector('#photoFiles').files);
     button.disabled = true;
     document.querySelectorAll('[data-photo-kind]').forEach(b=>{b.disabled=true;});
     try {
       if (kind === 'blog') {
         photoStatus('Saving your story...');
-        const result = await apiRequest('/api/photo-feed',{method:'POST',body:JSON.stringify({action:'create_blog',tripId:state.activeTripId,title,text,tags:document.querySelector('#photoTags').value,visibility:document.querySelector('#photoVisibility').value})});
+        const result = await apiRequest('/api/photo-feed',{method:'POST',body:JSON.stringify({action:'create_blog',tripId:state.activeTripId,title,text,location,tags:document.querySelector('#photoTags').value,visibility:document.querySelector('#photoVisibility').value})});
         if (!result.saved || !result.id) throw new Error('Your story was not saved. Please try again.');
         if (key !== photoFeedKey() || generation !== photoFeedState.generation) return;
         document.querySelector('#photoCaption').value = ''; document.querySelector('#photoPostTitle').value = '';
@@ -85,7 +90,7 @@ function initializePhotoFeed() {
       } else {
         if (kind === 'vlog') { photoStatus('Checking your video...'); await validateShortVlog(files[0]); }
         if (key !== photoFeedKey() || generation !== photoFeedState.generation) return;
-        const result = await uploadMemoryFiles(files, kind === 'vlog' ? 'photo-feed-vlog' : 'photo-feed',{title});
+        const result = await uploadMemoryFiles(files, kind === 'vlog' ? 'photo-feed-vlog' : 'photo-feed',{title,location});
         if (key === photoFeedKey() && generation === photoFeedState.generation && result?.savedCount) document.querySelector('#photoFiles').value = '';
       }
     } catch (error) { if (key === photoFeedKey() && generation === photoFeedState.generation) photoStatus(error.message); }
@@ -110,6 +115,11 @@ function initializePhotoFeed() {
   panel.insertAdjacentHTML('beforeend','<dialog id="appFriendsDialog" aria-labelledby="appFriendsTitle"><h3 id="appFriendsTitle">Your app friends</h3><form id="appFriendRequestForm"><label>Travel-Drip username<input name="username" required maxlength="33" placeholder="@username" autocomplete="off"></label><button type="submit" class="primary-button">Send friend request</button></form><p id="appFriendsStatus" role="status"></p><div id="appFriendsList"></div><button type="button" id="closeAppFriends">Done</button></dialog>');
   panel.querySelector('#closeAppFriends').addEventListener('click',()=>panel.querySelector('#appFriendsDialog').close());
   panel.querySelector('#appFriendRequestForm').addEventListener('submit',async event=>{event.preventDefault();const form=event.currentTarget;const button=form.querySelector('button');button.disabled=true;try{await changeAppFriend({action:'request',username:new FormData(form).get('username')});}finally{button.disabled=false;}});
+  panel.querySelector('.photo-cover-copy .eyebrow').textContent = 'Places collected. Stories kept.';
+  panel.querySelector('.photo-cover-copy h2').textContent = 'Your memory passport';
+  panel.querySelector('.photo-cover-copy>p:last-child').textContent = 'A little book of everywhere you have been, and everything you felt.';
+  panel.querySelector('#photoCaptionLabel').textContent = 'About your experience';
+  photoPassport = window.TravelDripPassport.mount(document.querySelector('#photoFeedList'));
   photoIcons(panel);
 }
 
@@ -175,7 +185,7 @@ function drawPhotoPosts() {
     list.append(empty);
   }
   for (const post of posts) {
-    const article = document.createElement('article'); article.className = 'photo-post';
+    const article = document.createElement('article'); article.className = 'photo-post'; article.dataset.postId = post.id;
     const header = document.createElement('header');
     const avatar = document.createElement('span'); avatar.className = 'photo-avatar'; avatar.textContent = (post.author || 'T').split(/\s+/).map(n=>n[0]).slice(0,2).join(''); avatar.setAttribute('aria-hidden','true');
     const identity = document.createElement('div'); const name = document.createElement('strong'); name.textContent = post.author;
@@ -215,6 +225,7 @@ function drawPhotoPosts() {
     comment.querySelector('span').textContent = `${post.commentCount} comment${post.commentCount === 1 ? '' : 's'}`; comment.setAttribute('aria-expanded','false'); comment.disabled = !photoFeedState.ready;
     actions.append(like,comment); article.append(actions);
     const share=photoAction('share-2',post.own?'Share post':'Sharing details',()=>openPhotoShare(post));share.querySelector('span').textContent='Share';actions.append(share);
+    if (post.own) { const edit = photoAction('notebook-pen','Edit experience',()=>openPhotoExperience(post)); edit.querySelector('span').textContent='My experience'; actions.append(edit); }
     if (post.caption) {
       const caption = document.createElement('p'); caption.className = 'photo-caption'; caption.textContent = post.postKind === 'blog' ? post.caption.slice(0,400) : post.caption;
       if (post.postKind === 'blog') article.insertBefore(caption,actions); else article.append(caption);
@@ -230,7 +241,31 @@ function drawPhotoPosts() {
   }
   if (!posts.length && photoFeedState.posts.length) { const p = document.createElement('p'); p.textContent = 'No matching moments in the loaded posts.'; list.append(p); }
   document.querySelector('#photoFeedMore').hidden = photoFeedState.nextOffset === null;
+  photoPassport?.render(posts);
   photoIcons(list);
+}
+
+function openPhotoExperience(post) {
+  document.querySelector('#photoExperienceDialog')?.remove();
+  const key = photoFeedKey(), generation = photoFeedState.generation;
+  const dialog = document.createElement('dialog'); dialog.id = 'photoExperienceDialog'; dialog.setAttribute('aria-labelledby','photoExperienceTitle');
+  dialog.innerHTML = '<form><h3 id="photoExperienceTitle">A little about this moment</h3><label>Location stamp<input name="location" maxlength="100" placeholder="City, landmark, or destination"></label><label>About your experience<textarea name="experience" rows="5" placeholder="What did you love? What will you remember?"></textarea></label><p>Your existing sharing choice stays the same.</p><p role="status" aria-live="polite"></p><div class="photo-dialog-actions"><button type="button">Cancel</button><button type="submit" class="primary-button">Save experience</button></div></form>';
+  document.querySelector('#memoriesPanel').append(dialog);
+  const form = dialog.querySelector('form'), caption = form.elements.experience, location = form.elements.location;
+  caption.maxLength = post.postKind === 'blog' ? 4000 : 2000; caption.required = post.postKind === 'blog'; caption.value = post.caption || ''; location.value = post.location || '';
+  dialog.addEventListener('close',()=>{form.reset();dialog.remove();},{once:true});
+  form.querySelector('[type="button"]').addEventListener('click',()=>dialog.close());
+  form.addEventListener('submit',async event=>{
+    event.preventDefault(); const button = form.querySelector('[type="submit"]'); if(button.disabled)return; button.disabled = true;
+    const text = caption.value.trim(), place = location.value.trim();
+    try {
+      if(await savePhotoAction(post,'edit_experience',{text,location:place}) && key === photoFeedKey() && generation === photoFeedState.generation) {
+        post.caption = text; post.location = place; dialog.close(); drawPhotoPosts(); photoStatus('Your experience and location stamp are saved.');
+      }
+    } catch(error) { if (key === photoFeedKey() && generation === photoFeedState.generation) form.querySelector('[role="status"]').textContent = error.message; }
+    finally { button.disabled = false; }
+  });
+  dialog.showModal();
 }
 
 async function loadPhotoComments(post, host, offset = 0) {

@@ -7902,7 +7902,7 @@ async function uploadMemoryFiles(files, action, postDetails = {}) {
         media_type: file.type,
         caption: isFeed ? caption : file.name,
         visibility: visibilityValue,
-        metadata: { filename: file.name, mimeType: file.type, size: file.size, uploadAction: action, tags, title: isFeed ? String(postDetails.title || '').slice(0,120) : '', postKind: action === 'photo-feed-vlog' ? 'vlog' : 'photo' }
+        metadata: { filename: file.name, mimeType: file.type, size: file.size, uploadAction: action, tags, location: isFeed ? String(postDetails.location || '').trim().slice(0,100) : '', title: isFeed ? String(postDetails.title || '').slice(0,120) : '', postKind: action === 'photo-feed-vlog' ? 'vlog' : 'photo' }
       });
       if (metadataError) {
         await uploadClient.storage.from("travel-memories").remove([storagePath]);

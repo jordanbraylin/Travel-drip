@@ -40,6 +40,17 @@ assert.equal((await request({action:'report',reason:'invalid'})).code,400);
 await request({action:'report',reason:'Privacy concern'});assert.equal(rows.photo_reports.length,1);
 assert.equal((await request({action:'remove'})).code,400,'Friends cannot delete another author\'s post');
 assert.equal((await request({action:'share',visibility:'friends'})).code,403,'Only the author can widen an audience');
+assert.equal((await request({action:'edit_experience',text:'Changed',location:'Paris'})).code,403,'Friends cannot edit the author experience');
+rows.media[0].metadata = {tags:'#Keep',title:'My existing title'};
+assert.equal((await request({action:'edit_experience',text:'A wonderful walk.',location:'  Paris  '},'owner')).body.saved,true);
+assert.equal(rows.media[0].caption,'A wonderful walk.');
+assert.equal(rows.media[0].metadata.location,'Paris');
+assert.equal(rows.media[0].metadata.tags,'#Keep');
+assert.equal(rows.media[0].metadata.title,'My existing title');
+assert.equal(rows.media[0].visibility,'members','Editing must not widen the audience');
+for (const invalid of [{text:'x'.repeat(2001)},{location:'x'.repeat(101)},{location:{city:'Paris'}},{text:null}]) {
+  assert.equal((await request({action:'edit_experience',text:'A memory',location:'Paris',...invalid},'owner')).code,400);
+}
 assert.equal((await request({action:'share',visibility:'public'},'owner')).code,400);
 assert.equal((await request({action:'share',visibility:'private'},'owner')).body.saved,true);
 assert.equal(rows.media[0].visibility,'private');
@@ -57,6 +68,7 @@ assert.deepEqual(signedPaths,['owner/photo.png'],'Only authorized media receive 
 assert.equal('storage_path' in feedResponse.body.posts[0],false);
 assert.equal('reports' in feedResponse.body.posts[0],false);
 assert.equal(feedResponse.body.engagementReady,true);
+assert.equal(feedResponse.body.posts[0].location,'Paris');
 assert.equal(canReadPhoto({user_id:'owner',visibility:'friends'},'friend',[],true),false,'Trip membership is not app friendship');
 assert.equal(canReadPhoto({user_id:'owner',visibility:'friends'},'friend',['owner'],false),true);
 assert.equal(canReadPhoto({user_id:'owner',visibility:'private'},'friend',['owner'],true),false);

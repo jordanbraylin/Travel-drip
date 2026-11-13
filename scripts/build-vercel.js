@@ -22,6 +22,8 @@ const staticFiles = [
   "journey-dashboard.js",
   "journey-dashboard.css",
   "photo-feed.js",
+  "passport-book.js",
+  "passport-book.css",
   "photo-feed.css",
   "trip-joy.js",
   "trip-joy.css",
