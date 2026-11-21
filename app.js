@@ -1963,8 +1963,18 @@ async function liveSearchApiRequest(path, options = {}) {
   } catch (_error) {
     data = {};
   }
-  if (!response.ok) throw new Error(data.error || `Request failed with ${response.status}`);
+  if (!response.ok) throw Object.assign(new Error(data.error || `Request failed with ${response.status}`), { status: response.status, code: data.code });
   return data;
+}
+
+async function searchTravelWithGuides(body) {
+  const request = (payload) => liveSearchApiRequest("/api/travel-search", { method: "POST", body: JSON.stringify(payload) });
+  try { return await request(body); }
+  catch (error) {
+    if (body.provider !== "live" || error.status !== 503 || !["provider_not_configured", "live_transport_not_connected"].includes(error.code)) throw error;
+    const result = await request({ ...body, provider: "in_app" });
+    return { ...result, fallbackReason: "live_search_not_connected" };
+  }
 }
 
 function renderInviteQrCode(url) {
@@ -3837,10 +3847,7 @@ async function searchLiveTravelPlaces({ category, query = "", destination = "", 
   if (target === "travel") renderLiveTravelResults([]);
   if (target === "privateDriver") renderLivePrivateDriverResults([]);
   try {
-    const result = await liveSearchApiRequest("/api/travel-search", {
-      method: "POST",
-      body: JSON.stringify({ category, q: query, destination, limit: 8, provider: "live" })
-    });
+    const result = await searchTravelWithGuides({ category, q: query, destination, limit: 8, provider: "live" });
     if (!isCurrentInAppSearch(target, requestId)) return result;
     if (result.skipped) throw new Error(result.reason || "Open the deployed app to use live provider search.");
     if (result.provider === "google_places") {
@@ -3850,7 +3857,7 @@ async function searchLiveTravelPlaces({ category, query = "", destination = "", 
     }
     if (result.provider === "in_app") {
       renderInAppTravelResults(target, result);
-      liveSearchMessage(target, result.results?.length ? "Destination guides updated. These are reference information, not live fares or bookings." : "No guides found. Try a city and country.", result.results?.length ? "success" : "empty");
+      liveSearchMessage(target, `${result.fallbackReason ? "Live search is not connected. Showing destination guides instead. " : ""}${result.results?.length ? "Destination guides updated. These are reference information, not live fares or bookings." : "No guides found. Try a city and country."}`, result.results?.length ? "success" : "empty");
       return result;
     }
     if (result.provider === "duckduckgo") {

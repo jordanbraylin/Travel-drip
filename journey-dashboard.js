@@ -85,7 +85,7 @@ function renderJourneyDashboard(target) {
   const form = document.createElement("form"); form.className = "journey-search";
   const label = document.createElement("label"); label.textContent = "Destination or station";
   const input = document.createElement("input"); input.name = "destination"; input.type = "search"; input.placeholder = "Where are you going?"; input.required = true; input.maxLength = 160; input.value = previousQuery;
-  const submit = document.createElement("button"); submit.type = "submit"; submit.className = "primary-button"; submit.textContent = "Search live"; submit.prepend(journeyIcon("search"));
+  const submit = document.createElement("button"); submit.type = "submit"; submit.className = "primary-button"; submit.textContent = "Search guides"; submit.prepend(journeyIcon("search"));
   label.append(input); form.append(label, submit); workspace.append(form);
   const tabs = document.createElement("div"); tabs.className = "journey-modes"; tabs.setAttribute("role", "group"); tabs.setAttribute("aria-label", "Transportation type");
   for (const [key, title, icon] of [["flights", "Flights", "plane"], ["trains", "Trains", "train-front"], ["rideshare", "Ride share", "car-front"], ["shuttle", "Shuttle", "bus-front"], ["discover", "Discover", "compass"]]) {
@@ -99,22 +99,23 @@ function renderJourneyDashboard(target) {
   const host = panel.querySelector(resultsHost);
   if (host && host.parentElement !== panel) panel.append(host);
   if (host) { host.replaceChildren(); host.hidden = true; }
-  const search = async (query = "", destination = input.value.trim(), provider = "live") => {
+  const search = async (query = "", destination = input.value.trim(), provider = "in_app") => {
     if (!destination && !query) { input.reportValidity(); input.focus(); return; }
     const token = beginInAppSearch(`journey-${target}`);
     status.textContent = provider === "live" ? "Checking live search..." : "Updating destination guides..."; submit.disabled = true;
     if (host) { host.replaceChildren(); host.hidden = true; }
     try {
-      const result = await liveSearchApiRequest("/api/travel-search", { method: "POST", body: JSON.stringify({ category: journeyMode === "discover" ? getActiveExploreCategory() : journeyMode, destination, q: query, provider }) });
+      const result = await searchTravelWithGuides({ category: journeyMode === "discover" ? getActiveExploreCategory() : journeyMode, destination, q: query, provider });
       if (!isCurrentInAppSearch(`journey-${target}`, token) || !workspace.isConnected || document.body.dataset.activeRoute !== target) return;
       if (result.skipped || !Array.isArray(result.results)) throw new Error("Guides could not be loaded. Please try again.");
       renderInAppTravelResults(target === "transportationPanel" ? "transportation" : target === "exploreDrops" ? "explore" : "travel", result);
-      status.textContent = result.live ? `${result.results.length} current place results. No booking has been confirmed.` : `${result.results.length} guides updated. No fare or booking has been confirmed.`;
+      status.textContent = result.live ? `${result.results.length} current place results. No booking has been confirmed.` : `${result.fallbackReason ? "Live search is not connected. " : ""}${result.results.length ? `${result.results.length} reference guides found. Not live fares, timetables, or booking availability.` : "No guides found. Try a city and country or a broader search."}`;
     } catch (error) { if (isCurrentInAppSearch(`journey-${target}`, token)) status.textContent = error.message; }
     finally { submit.disabled = false; }
   };
   form.addEventListener("submit", (event) => { event.preventDefault(); search(); });
   form.append(workspaceButton("Browse guides", () => search("", input.value.trim(), "in_app")));
+  if (journeyMode === "discover") form.append(workspaceButton("Check live places", () => search("", input.value.trim(), "live")));
   const title = document.createElement("h3"); title.textContent = "Your next move"; workspace.append(title);
   const records = getJourneyRecords(journeyMode).sort((a, b) => String(a.departs_at || a.pickup_at || "").localeCompare(String(b.departs_at || b.pickup_at || "")));
   const next = records.find((row) => new Date(row.departs_at || row.pickup_at).getTime() >= Date.now()) || records[0];
