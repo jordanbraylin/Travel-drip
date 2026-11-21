@@ -83,3 +83,12 @@ html body.app-routed.signed-in-shell[data-active-route="walletPanel"] #walletPan
   .journey-contributions > div { display: grid; grid-template-columns: minmax(0,1fr); gap: 8px; }
   html body.app-routed.signed-in-shell[data-active-route="walletPanel"] #walletPanel.journey-wallet .wallet-smart-actions { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
 }
+.journey-cost-comparison{background:#fff;border:1px solid #eadce5;border-radius:14px;padding:20px;margin-bottom:24px}
+.journey-cost-route,.journey-quote-entry{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;align-items:end}
+.journey-cost-route label,.journey-quote-entry label{display:grid;gap:6px;min-width:0}
+.journey-cost-comparison :is(input,select){width:100%;min-width:0;box-sizing:border-box;padding:12px;border:1px solid #cedcdd;border-radius:8px;background:#fff;font:inherit}
+.journey-cost-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.journey-cost-options article{min-width:0;overflow-wrap:anywhere}
+.journey-cost-options summary{padding:10px 0;cursor:pointer}
+.journey-quote-entry{grid-template-columns:1fr}
+@media(max-width:600px){.journey-cost-route{grid-template-columns:1fr}.journey-cost-comparison{padding:14px}}

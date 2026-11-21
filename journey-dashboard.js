@@ -1,5 +1,6 @@
 const journeySearches = new Map();
 let journeyMode = "flights";
+const journeyComparisons = new Map();
 
 function beginInAppSearch(target) {
   const next = (journeySearches.get(target) || 0) + 1;
@@ -8,6 +9,7 @@ function beginInAppSearch(target) {
 }
 function isCurrentInAppSearch(target, requestId) { return journeySearches.get(target) === requestId; }
 function resetJourneyWorkspace() {
+  journeyComparisons.clear();
   for (const [target, requestId] of journeySearches) journeySearches.set(target, requestId + 1);
   journeyMode = "flights";
   document.querySelectorAll(".journey-dashboard").forEach((workspace) => workspace.replaceChildren());
@@ -82,6 +84,7 @@ function renderJourneyDashboard(target) {
   workspace.replaceChildren();
   const header = workspaceHeading(target === "exploreDrops" ? "Find travel" : "Transportation", "Your next move, all in one place.");
   workspace.append(header);
+  renderJourneyCostComparison(workspace, target);
   const form = document.createElement("form"); form.className = "journey-search";
   const label = document.createElement("label"); label.textContent = "Destination or station";
   const input = document.createElement("input"); input.name = "destination"; input.type = "search"; input.placeholder = "Where are you going?"; input.required = true; input.maxLength = 160; input.value = previousQuery;
@@ -180,4 +183,69 @@ function renderJourneyWallet() {
   const lastFour = valid ? String(access.card?.maskedLastFour || "") : "";
   document.querySelector("#journeyCardNumber").textContent = /^\d{4}$/.test(lastFour) ? `Card ending ${lastFour}` : valid ? access.wallet.displayName || "Trip funds" : "Your trip wallet";
   document.querySelector("#journeyCardStatus").textContent = valid && access.card ? String(access.card.status || "Card status unavailable").replaceAll("_", " ") : "No payment card issued";
+}
+
+function transportQuoteTotal(amount, basis, travelers, currency) {
+  if (!Number.isInteger(travelers) || travelers < 1 || travelers > 50) throw new Error('Choose between 1 and 50 travelers.');
+  if (!['person','group'].includes(basis)) throw new Error('Choose a price per person or for the group.');
+  if (!Intl.supportedValuesOf('currency').includes(currency)) throw new Error('Enter a supported three-letter currency code.');
+  const digits=new Intl.NumberFormat('en',{style:'currency',currency}).resolvedOptions().maximumFractionDigits;
+  const text=String(amount).trim();
+  if (!/^\d+(?:\.\d+)?$/.test(text) || (text.split('.')[1]?.length || 0)>digits) throw new Error(`Enter a valid amount with at most ${digits} decimal places.`);
+  const units=Math.round(Number(text)*10**digits);
+  if(!Number.isSafeInteger(units)||units<0||units>1000000000)throw new Error('Enter a valid quoted price.');
+  return {totalUnits:units*(basis==='person'?travelers:1),scale:10**digits};
+}
+
+function renderJourneyCostComparison(host,target) {
+  const saved=journeyComparisons.get(target)||{route:null,quotes:[],draft:{}};
+  journeyComparisons.set(target,saved);
+  const section=document.createElement('section');section.className='journey-cost-comparison';section.setAttribute('aria-label','Route price comparison');
+  const heading=document.createElement('h3');heading.textContent='Compare the cost of your journey';
+  const note=document.createElement('p');note.textContent='Choose your route and date. Live pricing is not connected. Add prices you have received to compare them here; no sample prices are shown.';
+  const form=document.createElement('form');form.className='journey-cost-route';
+  const fields={};
+  for(const [name,label,type,placeholder] of [['from','From','text','City, airport, or station'],['to','To','text','Destination city or station'],['date','Travel date','date',''],['travelers','Travelers','number','Number of people'],['currency','Currency','text','USD, EUR, GBP…']]){
+    const wrap=document.createElement('label');wrap.textContent=label;
+    const input=document.createElement('input');input.name=name;input.type=type;input.required=true;input.placeholder=placeholder;
+    if(type==='text')input.maxLength=name==='currency'?3:160;
+    if(name==='travelers'){input.min='1';input.max='50';input.step='1';}
+    if(name==='currency'){input.pattern='[A-Za-z]{3}';input.autocapitalize='characters';}
+    input.value=saved.draft[name]||'';fields[name]=input;wrap.append(input);form.append(wrap);
+  }
+  const submit=document.createElement('button');submit.type='submit';submit.className='primary-button';submit.textContent='Compare costs';form.append(submit);
+  const status=document.createElement('p');status.setAttribute('role','status');
+  const results=document.createElement('div');results.className='journey-cost-results';
+  const money=(value,currency)=>new Intl.NumberFormat(undefined,{style:'currency',currency}).format(value);
+  function draw(){
+    results.replaceChildren();if(!saved.route)return;
+    const {from,to,date,travelers,currency}=saved.route;
+    const title=document.createElement('h4');title.textContent=`${from} → ${to} · ${date} · ${travelers} traveler${travelers===1?'':'s'}`;results.append(title);
+    const disclaimer=document.createElement('p');disclaimer.textContent='User-entered prices for this route and date. Check taxes, luggage, transfers, and cancellation terms with each provider. These are not live quotes or confirmed bookings.';results.append(disclaimer);
+    const list=document.createElement('div');list.className='journey-cost-options';
+    const ranked=[...saved.quotes].sort((a,b)=>a.totalUnits-b.totalUnits);
+    const best=ranked.length>1?ranked[0].totalUnits:null;
+    for(const mode of ['Flight','Train','Bus / coach','Ride share / taxi','Private transfer','Cruise / ferry']){
+      const row=document.createElement('article');row.className='journey-guide';const name=document.createElement('h4');name.textContent=mode;row.append(name);
+      const quotes=saved.quotes.filter(x=>x.mode===mode).sort((a,b)=>a.totalUnits-b.totalUnits);
+      if(!quotes.length){const empty=document.createElement('p');empty.textContent='Price unavailable — no live pricing connection or entered quote.';row.append(empty);}
+      for(const quote of quotes){const text=document.createElement('p');text.textContent=`${quote.provider}: ${money(quote.totalUnits/quote.scale,currency)} total · ${money(quote.totalUnits/quote.scale/travelers,currency)} per person${best!==null&&quote.totalUnits===best?' · Lowest entered total':''}`;const remove=workspaceButton('Remove quote',()=>{saved.quotes=saved.quotes.filter(x=>x!==quote);draw();});row.append(text,remove);}
+      const detail=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Add a price';detail.append(summary);
+      const quoteForm=document.createElement('form');quoteForm.className='journey-quote-entry';
+      const providerLabel=document.createElement('label');providerLabel.textContent='Provider';const provider=document.createElement('input');provider.required=true;provider.maxLength=100;provider.placeholder='Airline or transport company';providerLabel.append(provider);
+      const priceLabel=document.createElement('label');priceLabel.textContent=`Quoted amount (${currency})`;const amount=document.createElement('input');amount.type='number';amount.required=true;amount.min='0';amount.step='any';priceLabel.append(amount);
+      const basisLabel=document.createElement('label');basisLabel.textContent='Price applies to';const basis=document.createElement('select');for(const [value,label]of [['person','One person'],['group','Entire group']]){const option=document.createElement('option');option.value=value;option.textContent=label;basis.append(option);}basisLabel.append(basis);
+      const add=document.createElement('button');add.type='submit';add.textContent='Add to comparison';const error=document.createElement('p');error.setAttribute('role','status');quoteForm.append(providerLabel,priceLabel,basisLabel,add,error);
+      quoteForm.addEventListener('submit',event=>{event.preventDefault();try{const totals=transportQuoteTotal(amount.value,basis.value,travelers,currency);if(!provider.value.trim())throw new Error('Enter a provider name.');saved.quotes.push({mode,provider:provider.value.trim(),...totals});draw();}catch(e){error.textContent=e.message;}});
+      detail.append(quoteForm);row.append(detail);list.append(row);
+    }
+    results.append(list);
+  }
+  form.addEventListener('input',()=>{for(const [key,input]of Object.entries(fields))saved.draft[key]=input.value;saved.route=null;saved.quotes=[];results.replaceChildren();status.textContent='Compare again to use the updated route, date, travelers, or currency.';});
+  form.addEventListener('submit',event=>{event.preventDefault();try{
+    const from=fields.from.value.trim(),to=fields.to.value.trim(),date=fields.date.value,travelers=Number(fields.travelers.value),currency=fields.currency.value.toUpperCase();
+    if(!from||!to||from.toLowerCase()===to.toLowerCase())throw new Error('Enter different starting and destination points.');
+    transportQuoteTotal('0','group',travelers,currency);saved.route={from,to,date,travelers,currency};status.textContent='Route ready. Add provider prices below to compare costs.';draw();
+  }catch(e){status.textContent=e.message;}});
+  section.append(heading,note,form,status,results);host.append(section);draw();
 }
