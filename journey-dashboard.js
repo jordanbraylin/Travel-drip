@@ -31,7 +31,7 @@ function renderInAppTravelResults(target, result) {
   if (!container) return;
   container.replaceChildren(); container.hidden = false;
   const live = result.provider === "google_places" && result.live === true;
-  const heading = document.createElement("h3"); heading.textContent = live ? "Live places" : "Destination & transport guides";
+  const heading = document.createElement("h3"); heading.textContent = live ? "Live places" : result.provider === "openstreetmap" ? "Places to explore" : "Destination & transport guides";
   heading.tabIndex = -1;
   const note = document.createElement("p"); note.textContent = live ? `Checked ${new Date(result.fetchedAt).toLocaleString()}. Current place details from Google Places. Fares and booking availability are not included.` : `Updated ${new Date(result.fetchedAt).toLocaleString()}. Reference guides, not live prices, timetables, or booking availability.`;
   container.append(heading, note);
@@ -51,7 +51,7 @@ function renderInAppTravelResults(target, result) {
     }
     const source = document.createElement("details");
     const summary = document.createElement("summary"); summary.textContent = "Source & license";
-    const credit = document.createElement("p"); credit.textContent = `${item.title} by Wikipedia contributors. ${item.sourceUrl} · Text excerpt under CC BY-SA: https://creativecommons.org/licenses/by-sa/4.0/`;
+    const credit = document.createElement("p"); credit.textContent = `${item.title} · ${item.sourceLabel || "Wikipedia contributors"}. ${item.sourceUrl} · ${item.license || "CC BY-SA"}: ${item.licenseUrl || "https://creativecommons.org/licenses/by-sa/4.0/"}`;
     source.append(summary, credit); article.prepend(title, text); article.append(source); container.append(article);
   }
   if (!result.results?.length) { const empty = document.createElement("p"); empty.textContent = "No guides found. Try a city and country or a station name."; container.append(empty); }
@@ -109,7 +109,7 @@ function renderJourneyDashboard(target) {
       if (!isCurrentInAppSearch(`journey-${target}`, token) || !workspace.isConnected || document.body.dataset.activeRoute !== target) return;
       if (result.skipped || !Array.isArray(result.results)) throw new Error("Guides could not be loaded. Please try again.");
       renderInAppTravelResults(target === "transportationPanel" ? "transportation" : target === "exploreDrops" ? "explore" : "travel", result);
-      status.textContent = result.live ? `${result.results.length} current place results. No booking has been confirmed.` : `${result.fallbackReason ? "Live search is not connected. " : ""}${result.results.length ? `${result.results.length} reference guides found. Not live fares, timetables, or booking availability.` : "No guides found. Try a city and country or a broader search."}`;
+      status.textContent = result.live ? `${result.results.length} current place results. No booking has been confirmed.` : `${result.fallbackReason ? "Live search is not connected. " : ""}${result.results.length ? `${result.results.length} ${result.provider === "openstreetmap" ? "map listings" : "reference guides"} found. Not live fares, timetables, or booking availability.` : "No guides found. Try a city and country or a broader search."}`;
     } catch (error) { if (isCurrentInAppSearch(`journey-${target}`, token)) status.textContent = error.message; }
     finally { submit.disabled = false; }
   };

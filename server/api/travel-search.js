@@ -1,3 +1,4 @@
+import {searchOpenPlaces,supportsOpenPlaces} from './_open-places.js';
 import {
   applySecurityHeaders,
   getRequestBody,
@@ -135,7 +136,13 @@ export default async function handler(request, response) {
   // Older clients also receive inline results; never redirect searches to another website.
   const automatic = requestedProvider === "auto" || requestedProvider === "duckduckgo";
   const provider = automatic ? (googleConfigured && !transport ? "google_places" : "in_app") : requestedProvider;
-  if (provider === "in_app") {
+  if ((automatic || provider === "openstreetmap") && !googleConfigured && destination && supportsOpenPlaces(category)) {
+    try {
+      const listings = await searchOpenPlaces({destination,category,query});
+      if(listings.results.length) { response.status(200).json(listings); return; }
+    } catch { /* Public community services have no SLA; retain the reference-guide fallback. */ }
+  }
+  if (provider === "in_app" || provider === "openstreetmap") {
     try { response.status(200).json(await searchTravelGuides({ query, destination, category })); }
     catch (error) { response.status(error.status || 502).json({ error: error.message || "Travel guides are unavailable." }); }
     return;

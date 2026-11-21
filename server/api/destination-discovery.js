@@ -1,3 +1,4 @@
+import {searchOpenPlaces} from './_open-places.js';
 import {applySecurityHeaders,getRequestBody,methodNotAllowed} from './_security.js';
 import {searchTravelGuides} from './_travel-guides.js';
 import {destinationExcursions,destinationFacts,destinationRestaurants,guideMatchesDestination} from './_destination-experiences.js';
@@ -38,7 +39,10 @@ export async function discoverDestination(query){
   payload.excursions=illustrated.filter(item=>item.kind==='excursion_idea');
   payload.restaurantsUnavailable=results[5].status==='rejected';
   payload.excursionsUnavailable=[1,3,4].every(index=>results[index].status==='rejected');
-  if(results.every(result=>result.status==='rejected'))throw new Error('Destination guides are temporarily unavailable. Please try again.');
+  const listings=await Promise.allSettled(['food','activities'].map(category=>searchOpenPlaces({destination:q,category})));
+  payload.placeListings=listings.flatMap(result=>result.status==='fulfilled'?result.value.results:[]);
+  payload.placeListingsSource='OpenStreetMap contributors via Photon';
+  if(results.every(result=>result.status==='rejected')&&!payload.placeListings.length)throw new Error('Destination guides and place listings are temporarily unavailable. Please try again.');
   return remember(key,payload,600000);
 }
 export default async function handler(req,res){applySecurityHeaders(res);if(!['GET','POST'].includes(req.method))return methodNotAllowed(res,'GET, POST');const ip=String(req.headers['x-forwarded-for']||'unknown').split(',')[0],now=Date.now();let rate=rates.get(ip);if(!rate||rate.until<now){rate={count:0,until:now+60000};if(rates.size>=500)rates.delete(rates.keys().next().value);rates.set(ip,rate);}if(++rate.count>60)return res.status(429).json({error:'Please pause briefly before searching again.'});try{if(req.method==='GET'){const url=new URL(req.url,'https://travel-drip.com');return res.status(200).json({suggestions:await suggestDestinations(url.searchParams.get('q'))});}res.status(200).json(await discoverDestination(getRequestBody(req).destination));}catch(error){res.status(error.status||503).json({error:error.message});}}

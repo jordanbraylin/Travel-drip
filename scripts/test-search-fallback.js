@@ -17,7 +17,7 @@ let result=await search();assert.equal(result.provider,'google_places');assert.e
 for(const errorCode of ['provider_not_configured','live_transport_not_connected']){
   calls.length=0;failure={status:503,code:errorCode};result=await search();
   assert.equal(result.provider,'in_app');assert.equal(result.liveAvailability,false);assert.equal(result.fallbackReason,'live_search_not_connected');
-  assert.equal(calls.length,2);assert.equal(calls[1].body.provider,'in_app');assert.equal(calls[1].body.destination,'Paris, France');assert.equal(calls[1].body.q,'restaurants');
+  assert.equal(calls.length,2);assert.equal(calls[1].body.provider,'auto');assert.equal(calls[1].body.destination,'Paris, France');assert.equal(calls[1].body.q,'restaurants');
 }
 for(const error of [{status:401,code:'unauthorized'},{status:400,code:'missing_query'},{status:429,code:'rate_limit'},{status:502,code:'provider_error'},{status:503,code:'unexpected_failure'}]){
   calls.length=0;failure=error;await assert.rejects(search(),e=>e.status===error.status&&e.code===error.code);assert.equal(calls.length,1,'Do not mask unrelated errors or retry rate limits');

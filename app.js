@@ -1972,7 +1972,7 @@ async function searchTravelWithGuides(body) {
   try { return await request(body); }
   catch (error) {
     if (body.provider !== "live" || error.status !== 503 || !["provider_not_configured", "live_transport_not_connected"].includes(error.code)) throw error;
-    const result = await request({ ...body, provider: "in_app" });
+    const result = await request({ ...body, provider: "auto" });
     return { ...result, fallbackReason: "live_search_not_connected" };
   }
 }
@@ -3826,9 +3826,9 @@ async function searchLiveTravelPlaces({ category, query = "", destination = "", 
       liveSearchMessage(target, `${result.results?.length || 0} current place results. Booking availability is not included.`, "success");
       return result;
     }
-    if (result.provider === "in_app") {
+    if (["in_app", "openstreetmap"].includes(result.provider)) {
       renderInAppTravelResults(target, result);
-      liveSearchMessage(target, `${result.fallbackReason ? "Live search is not connected. Showing destination guides instead. " : ""}${result.results?.length ? "Destination guides updated. These are reference information, not live fares or bookings." : "No guides found. Try a city and country."}`, result.results?.length ? "success" : "empty");
+      liveSearchMessage(target, `${result.fallbackReason ? "Live search is not connected. Showing destination guides instead. " : ""}${result.results?.length ? (result.provider === "openstreetmap" ? "Map listings found. Verify venue details before visiting; no live prices or bookings." : "Destination guides updated. These are reference information, not live fares or bookings.") : "No guides found. Try a city and country."}`, result.results?.length ? "success" : "empty");
       return result;
     }
     const results = result.results || [];
