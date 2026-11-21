@@ -85,7 +85,7 @@ function renderJourneyDashboard(target) {
   const form = document.createElement("form"); form.className = "journey-search";
   const label = document.createElement("label"); label.textContent = "Destination or station";
   const input = document.createElement("input"); input.name = "destination"; input.type = "search"; input.placeholder = "Where are you going?"; input.required = true; input.maxLength = 160; input.value = previousQuery;
-  const submit = document.createElement("button"); submit.type = "submit"; submit.className = "primary-button"; submit.textContent = "Search guides"; submit.prepend(journeyIcon("search"));
+  const submit = document.createElement("button"); submit.type = "submit"; submit.className = "primary-button"; submit.textContent = "Search"; submit.prepend(journeyIcon("search"));
   label.append(input); form.append(label, submit); workspace.append(form);
   const tabs = document.createElement("div"); tabs.className = "journey-modes"; tabs.setAttribute("role", "group"); tabs.setAttribute("aria-label", "Transportation type");
   for (const [key, title, icon] of [["flights", "Flights", "plane"], ["trains", "Trains", "train-front"], ["rideshare", "Ride share", "car-front"], ["shuttle", "Shuttle", "bus-front"], ["discover", "Discover", "compass"]]) {
@@ -99,10 +99,10 @@ function renderJourneyDashboard(target) {
   const host = panel.querySelector(resultsHost);
   if (host && host.parentElement !== panel) panel.append(host);
   if (host) { host.replaceChildren(); host.hidden = true; }
-  const search = async (query = "", destination = input.value.trim(), provider = "in_app") => {
+  const search = async (query = "", destination = input.value.trim(), provider = "auto") => {
     if (!destination && !query) { input.reportValidity(); input.focus(); return; }
     const token = beginInAppSearch(`journey-${target}`);
-    status.textContent = provider === "live" ? "Checking live search..." : "Updating destination guides..."; submit.disabled = true;
+    status.textContent = provider === "live" ? "Checking Google Places..." : "Searching destinations..."; submit.disabled = true;
     if (host) { host.replaceChildren(); host.hidden = true; }
     try {
       const result = await searchTravelWithGuides({ category: journeyMode === "discover" ? getActiveExploreCategory() : journeyMode, destination, q: query, provider });

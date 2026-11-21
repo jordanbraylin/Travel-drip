@@ -40,13 +40,8 @@ for (const path of ["/api/trips", "/api/wallet", "/api/chat", "/api/schedule", "
 }
 const places = await post("/api/travel-search", { query: "restaurants", destination: "New York", category: "food", limit: 1 });
 const validAiSearch = places.body.provider === "openai" && Boolean(places.body.text?.trim()) && Array.isArray(places.body.citations) && places.body.citations.length > 0;
-let validFreeSearch = false;
-try {
-  const url = new URL(places.body.searchUrl);
-  validFreeSearch = places.body.provider === "duckduckgo" && places.body.free === true && places.body.searchMode === "external_results"
-    && url.origin === "https://duckduckgo.com" && url.pathname === "/" && Boolean(url.searchParams.get("q"));
-} catch { /* A provider-backed response does not have an external search URL. */ }
-record("primary-web-search", places.ok && (validFreeSearch || (places.body.live === true && (validAiSearch || Array.isArray(places.body.results)))), `HTTP ${places.status}${validFreeSearch ? "; free external DuckDuckGo results" : places.body.code ? `; ${places.body.code}` : ""}`);
+const validGuides = places.body.provider === "in_app" && places.body.searchMode === "in_app_guides" && Array.isArray(places.body.results) && places.body.results.length > 0 && places.body.liveAvailability === false;
+record("primary-web-search", places.ok && (validGuides || (places.body.live === true && (validAiSearch || Array.isArray(places.body.results)))), `HTTP ${places.status}${validGuides ? "; inline reference guides, not live inventory" : places.body.code ? `; ${places.body.code}` : ""}`);
 const nextWeek = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
 const followingDay = new Date(Date.now() + 8 * 86400000).toISOString().slice(0, 10);
 const hotels = await post("/api/hotel-availability", { cityCode: "NYC", checkInDate: nextWeek, checkOutDate: followingDay, adults: 1 });

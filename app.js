@@ -3781,35 +3781,6 @@ function liveSearchMessage(target, message, tone = "") {
   element.dataset.tone = tone;
 }
 
-function renderFreeWebSearchResults(target, result) {
-  const selector = { explore: "#exploreLiveResultsGrid", travel: "#travelLiveResults", privateDriver: "#privateDriverLiveList" }[target];
-  const container = $(selector);
-  if (!container) return;
-  const searchUrl = new URL(result.searchUrl);
-  if (searchUrl.origin !== "https://duckduckgo.com" || searchUrl.pathname !== "/") throw new Error("Invalid free search link.");
-  const article = document.createElement("article");
-  article.className = "live-ai-search-answer";
-  const heading = document.createElement("h3");
-  heading.textContent = "DuckDuckGo search";
-  const query = document.createElement("p");
-  query.textContent = result.query;
-  const link = document.createElement("a");
-  link.className = "primary-button";
-  link.href = searchUrl.href;
-  link.target = "_blank";
-  link.rel = "noopener noreferrer";
-  link.textContent = "View results on DuckDuckGo";
-  article.append(heading, query, link);
-  container.replaceChildren(article);
-  container.hidden = false;
-  if (target === "explore") {
-    state.liveSearch.exploreResults = [];
-    if ($("#exploreEmptyState")) $("#exploreEmptyState").hidden = true;
-  }
-  if (target === "travel") state.liveSearch.travelResults = [];
-  if (target === "privateDriver") state.liveSearch.privateDriverResults = [];
-}
-
 function renderLiveAiSearchResults(target, result) {
   const selector = { explore: "#exploreLiveResultsGrid", travel: "#travelLiveResults", privateDriver: "#privateDriverLiveList" }[target];
   const container = $(selector);
@@ -3858,12 +3829,6 @@ async function searchLiveTravelPlaces({ category, query = "", destination = "", 
     if (result.provider === "in_app") {
       renderInAppTravelResults(target, result);
       liveSearchMessage(target, `${result.fallbackReason ? "Live search is not connected. Showing destination guides instead. " : ""}${result.results?.length ? "Destination guides updated. These are reference information, not live fares or bookings." : "No guides found. Try a city and country."}`, result.results?.length ? "success" : "empty");
-      return result;
-    }
-    if (result.provider === "duckduckgo") {
-      renderFreeWebSearchResults(target, result);
-      liveSearchMessage(target, "DuckDuckGo search ready.", "success");
-      await saveSyncedEvent("free_web_search_requested", { category, query, destination, target, provider: result.provider, searchMode: result.searchMode, live: false });
       return result;
     }
     const results = result.results || [];
@@ -10772,7 +10737,7 @@ function wireLocalInteractions() {
     const query = event.target.value.trim();
     renderRoute("exploreDrops", { updateHistory: true });
     if ($("#exploreSearchInput")) $("#exploreSearchInput").value = query;
-    $("#exploreStatusMessage").textContent = query ? `DuckDuckGo search: ${query}` : "Explore opened from global search.";
+    $("#exploreStatusMessage").textContent = query ? `Destination search: ${query}` : "Explore opened from global search.";
     if (query) searchLiveTravelPlaces({ category: "trending", query, destination: state.accountData.activeTrip?.destination || "", target: "explore" });
     addAuditEntry("Global search opened", query || "Explore opened without a search term.");
   });

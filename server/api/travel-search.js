@@ -129,7 +129,12 @@ export default async function handler(request, response) {
   const category = normalizeCategory(body.category);
   const destination = sanitizeText(body.destination, "", 160);
   const query = sanitizeText(body.q || body.query, "", 180);
-  const provider = sanitizeText(body.provider, "duckduckgo", 32);
+  const requestedProvider = sanitizeText(body.provider, "auto", 32);
+  const transport = ["flights", "trains", "rideshare", "shuttle"].includes(category);
+  const googleConfigured = Boolean(process.env.GOOGLE_PLACES_API_KEY || process.env.GOOGLE_MAPS_API_KEY);
+  // Older clients also receive inline results; never redirect searches to another website.
+  const automatic = requestedProvider === "auto" || requestedProvider === "duckduckgo";
+  const provider = automatic ? (googleConfigured && !transport ? "google_places" : "in_app") : requestedProvider;
   if (provider === "in_app") {
     try { response.status(200).json(await searchTravelGuides({ query, destination, category })); }
     catch (error) { response.status(error.status || 502).json({ error: error.message || "Travel guides are unavailable." }); }
@@ -141,27 +146,6 @@ export default async function handler(request, response) {
   }
   if (provider === "live" && ["flights", "trains", "rideshare", "shuttle"].includes(category)) {
     response.status(503).json({ error: "Live fares, ride quotes, and departure times are not connected yet. Browse destination guides for reference information instead.", code: "live_transport_not_connected", provider: "live" });
-    return;
-  }
-  if (request.method === "GET" || provider === "duckduckgo") {
-    const textQuery = [query || categoryQueries[category], destination].filter(Boolean).join(" in ");
-    const searchUrl = new URL("https://duckduckgo.com/");
-    searchUrl.searchParams.set("q", textQuery);
-    if (request.method === "GET") {
-      response.setHeader("Location", searchUrl.href);
-      response.status(302).end();
-      return;
-    }
-    response.status(200).json({
-      provider: "duckduckgo",
-      sourceLabel: "DuckDuckGo free web search",
-      searchMode: "external_results",
-      free: true,
-      live: false,
-      query: textQuery,
-      searchUrl: searchUrl.href,
-      results: []
-    });
     return;
   }
   if (provider === "openai") {
