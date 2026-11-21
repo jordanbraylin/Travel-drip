@@ -55,7 +55,8 @@ record("flight-provider-configured", Boolean(health.body.flightAwareConfigured),
 record("wallet-funding-configured", Boolean(health.body.walletFundingConfigured), "A provider-confirmed payment journey is still required");
 if (process.argv.includes("--include-ai")) {
   const ai = await post("/api/ai-planner", { answers:{destination:'Paris, France'} });
-  record("ai-response", ai.ok && ai.body.generated !== false && ai.body.provider === 'openai' && Boolean(ai.body.text?.trim()), `HTTP ${ai.status}; provider: ${ai.body.provider || 'unavailable'}${ai.body.code ? `; ${ai.body.code}` : ""}`);
+  const generatedAi=(ai.body.provider==='gemini'&&ai.body.generated===true&&ai.body.aiStatus==='ready')||(ai.body.provider==='openai'&&ai.body.generated!==false);
+  record("ai-response", ai.ok && generatedAi && Boolean(ai.body.text?.trim()), `HTTP ${ai.status}; provider: ${ai.body.provider || 'unavailable'}${ai.body.aiErrorCode ? `; ${ai.body.aiErrorCode}` : ai.body.code ? `; ${ai.body.code}` : ""}`);
   if(ai.body.generated === false)record('free-guide-research',ai.ok && Boolean(ai.body.text?.trim()),'Free reference guides, not generative AI');
 }
 const blocked = checks.filter(({ status }) => status === "blocked");
