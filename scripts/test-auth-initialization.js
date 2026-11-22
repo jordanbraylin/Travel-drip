@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';import vm from 'node:vm';import {readFile} from 'node:fs/promises';
+const source=await readFile(new URL('../app.js',import.meta.url),'utf8');
+const route=source.slice(source.indexOf('function renderRoute('),source.indexOf('  const requestedCorporatePath',source.indexOf('function renderRoute(')))+'\n}';
+let redirects=0,remembered;
+const context=vm.createContext({state:{session:null,authInitializing:true},location:{pathname:'/account/profile'},history:{state:{}},routeDefinitions:{adminPanel:{}},travelTileDestinations:{},isCorporateEmployeeMode:()=>false,rememberProtectedTarget:t=>remembered=t,setAuthMode:()=>redirects++,$:()=>null});
+vm.runInContext(route,context);
+vm.runInContext('renderRoute("adminPanel")',context);assert.equal(redirects,0);assert.equal(remembered,'adminPanel');
+context.state.authInitializing=false;vm.runInContext('renderRoute("adminPanel")',context);assert.equal(redirects,1,'Anonymous access still redirects after restoration completes');
+const auth=source.slice(source.indexOf('function updateAuthUi() {'),source.indexOf('  const signedIn =',source.indexOf('function updateAuthUi() {')))+'\nthrow new Error("Auth UI continued");\n}';
+context.state.authInitializing=true;vm.runInContext(auth,context);assert.doesNotThrow(()=>vm.runInContext('updateAuthUi()',context));
+context.state.authInitializing=false;assert.throws(()=>vm.runInContext('updateAuthUi()',context),/Auth UI continued/);
+console.log('Auth initialization passed: protected URL remains intact during restoration; anonymous redirect remains enforced after restoration.');

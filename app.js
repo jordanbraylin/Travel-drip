@@ -1,6 +1,7 @@
 const state = {
   supabase: null,
   session: null,
+  authInitializing: true,
   pendingWalletPayment: null,
   pendingSecureAction: null,
   pendingDocumentType: "travel_document",
@@ -5829,6 +5830,7 @@ async function loadConfig() {
 }
 
 function updateAuthUi() {
+  if (state.authInitializing === true) return;
   const signedIn = Boolean(state.session?.user) && !accountWorkflows.isBlocked();
   const appAccess = signedIn;
   const openAuthButton = $("#openAuthButton");
@@ -7460,6 +7462,8 @@ function renderRoute(target = getTargetFromRoute(), { updateHistory = false, rep
     : "";
   if (!state.session?.user && location.pathname !== "/admin.html") {
     rememberProtectedTarget(resolvedTarget);
+    // Wait for persisted-session restoration before replacing a protected URL with /login.
+    if (state.authInitializing === true) return;
     setAuthMode("signin");
     if ($("#authMessage")) $("#authMessage").textContent = "Sign in to continue to that Travel-Drip page.";
     return;
@@ -12061,6 +12065,7 @@ async function init() {
   wireConnectivityStatus();
   await registerServiceWorker();
   await loadConfig();
+  state.authInitializing = false;
   if (accountWorkflows.isBlocked()) {
     updateAuthUi();
     hideLoader();
@@ -12076,6 +12081,8 @@ async function init() {
 
 init().catch((error) => {
   console.error(error);
+  state.authInitializing = false;
+  updateAuthUi();
   setSyncStatus("Error");
   hideLoader();
 });
