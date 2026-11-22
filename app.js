@@ -1023,7 +1023,10 @@ const exploreCategories = {
 });
 
 function hideLoader() {
-  window.setTimeout(() => $("#loader")?.classList.add("done"), 450);
+  window.setTimeout(() => {
+    document.body.classList.remove("auth-initializing");
+    $("#loader")?.classList.add("done");
+  }, 450);
 }
 
 function escapeHtml(text) {

@@ -20931,3 +20931,6 @@ body.app-routed main :where(.trip-tab-bar button, .tabs .tab, .message-tabs butt
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Keep unfinished route panels out of view and the accessibility tree while restoring access. */
+body.auth-initializing > :not(#loader):not(script) { display: none !important; }
