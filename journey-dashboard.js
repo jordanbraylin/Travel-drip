@@ -265,13 +265,18 @@ function renderJourneyCostComparison(host,target) {
   save.disabled=!userId||!tripId;
   section.append(heading,note,form,save,status,results);host.append(section);draw();
   if(!userId||!tripId)status.textContent='Select a saved trip to save and restore your comparison.';
-  else if(!saved.loaded&&!saved.loading){
-    const revision=saved.revision;saved.loading=true;
-    apiRequest(`/api/transport-comparisons?tripId=${encodeURIComponent(tripId)}`).then(result=>{
-      if(!sameAccount()||!section.isConnected||result.skipped)return;
+  else if(!saved.loaded){
+    const revision=saved.revision;
+    // Each rendered view observes the same request; replacing a panel must not lose hydration.
+    const loading=saved.loading ||= apiRequest(`/api/transport-comparisons?tripId=${encodeURIComponent(tripId)}`);
+    loading.then(result=>{
+      if(!sameAccount()||result.skipped)return;
       saved.loaded=true;
       if(revision!==saved.revision)return;
-      if(result.comparison){saved.route=result.comparison.route;saved.quotes=result.comparison.quotes;saved.draft={...saved.route};for(const [name,input]of Object.entries(fields))input.value=saved.draft[name]||'';draw();status.textContent='Your saved comparison is ready. Prices were entered by you, not confirmed by a provider.';}
-    }).catch(()=>{if(section.isConnected&&sameAccount())status.textContent='Saved comparison could not be loaded. Retry before replacing any saved prices.';}).finally(()=>{saved.loading=false;});
+      if(result.comparison){
+        saved.route=result.comparison.route;saved.quotes=result.comparison.quotes;saved.draft={...saved.route};
+        if(section.isConnected){for(const [name,input]of Object.entries(fields))input.value=saved.draft[name]||'';draw();status.textContent='Your saved comparison is ready. Prices were entered by you, not confirmed by a provider.';}
+      }
+    }).catch(()=>{if(section.isConnected&&sameAccount())status.textContent='Saved comparison could not be loaded. Retry before replacing any saved prices.';}).finally(()=>{if(saved.loading===loading)saved.loading=null;});
   }
 }
