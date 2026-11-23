@@ -64,7 +64,8 @@
     }
   ],
   "crons": [
-    { "path": "/api/wallet-reminders", "schedule": "0 13 * * *" }
+    { "path": "/api/wallet-reminders", "schedule": "0 13 * * *" },
+    { "path": "/api/search-maintenance", "schedule": "15 13 * * *" }
   ],
   "rewrites": [
     { "source": "/admin", "destination": "/admin.html" },

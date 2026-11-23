@@ -198,8 +198,12 @@ function transportQuoteTotal(amount, basis, travelers, currency) {
 }
 
 function renderJourneyCostComparison(host,target) {
-  const saved=journeyComparisons.get(target)||{route:null,quotes:[],draft:{}};
-  journeyComparisons.set(target,saved);
+  const userId=state.session?.user?.id,tripId=state.activeTripId;
+  const comparisonKey=`${userId||'anonymous'}:${tripId||'no-trip'}`;
+  const saved=journeyComparisons.get(comparisonKey)||{route:null,quotes:[],draft:{},revision:0,loaded:false};
+  journeyComparisons.set(comparisonKey,saved);
+  const sameAccount=()=>userId===state.session?.user?.id&&tripId===state.activeTripId;
+  const changed=()=>{saved.revision++;status.textContent='Comparison changed. Choose Save comparison to keep it with this trip.';};
   const section=document.createElement('section');section.className='journey-cost-comparison';section.setAttribute('aria-label','Route price comparison');
   const heading=document.createElement('h3');heading.textContent='Compare the cost of your journey';
   const note=document.createElement('p');note.textContent='Choose your route and date. Live pricing is not connected. Add prices you have received to compare them here; no sample prices are shown.';
@@ -229,23 +233,45 @@ function renderJourneyCostComparison(host,target) {
       const row=document.createElement('article');row.className='journey-guide';const name=document.createElement('h4');name.textContent=mode;row.append(name);
       const quotes=saved.quotes.filter(x=>x.mode===mode).sort((a,b)=>a.totalUnits-b.totalUnits);
       if(!quotes.length){const empty=document.createElement('p');empty.textContent='Price unavailable — no live pricing connection or entered quote.';row.append(empty);}
-      for(const quote of quotes){const text=document.createElement('p');text.textContent=`${quote.provider}: ${money(quote.totalUnits/quote.scale,currency)} total · ${money(quote.totalUnits/quote.scale/travelers,currency)} per person${best!==null&&quote.totalUnits===best?' · Lowest entered total':''}`;const remove=workspaceButton('Remove quote',()=>{saved.quotes=saved.quotes.filter(x=>x!==quote);draw();});row.append(text,remove);}
+      for(const quote of quotes){const text=document.createElement('p');text.textContent=`${quote.provider}: ${money(quote.totalUnits/quote.scale,currency)} total · ${money(quote.totalUnits/quote.scale/travelers,currency)} per person${best!==null&&quote.totalUnits===best?' · Lowest entered total':''}`;const remove=workspaceButton('Remove quote',()=>{saved.quotes=saved.quotes.filter(x=>x!==quote);changed();draw();});row.append(text,remove);}
       const detail=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Add a price';detail.append(summary);
       const quoteForm=document.createElement('form');quoteForm.className='journey-quote-entry';
       const providerLabel=document.createElement('label');providerLabel.textContent='Provider';const provider=document.createElement('input');provider.required=true;provider.maxLength=100;provider.placeholder='Airline or transport company';providerLabel.append(provider);
       const priceLabel=document.createElement('label');priceLabel.textContent=`Quoted amount (${currency})`;const amount=document.createElement('input');amount.type='number';amount.required=true;amount.min='0';amount.step='any';priceLabel.append(amount);
       const basisLabel=document.createElement('label');basisLabel.textContent='Price applies to';const basis=document.createElement('select');for(const [value,label]of [['person','One person'],['group','Entire group']]){const option=document.createElement('option');option.value=value;option.textContent=label;basis.append(option);}basisLabel.append(basis);
       const add=document.createElement('button');add.type='submit';add.textContent='Add to comparison';const error=document.createElement('p');error.setAttribute('role','status');quoteForm.append(providerLabel,priceLabel,basisLabel,add,error);
-      quoteForm.addEventListener('submit',event=>{event.preventDefault();try{const totals=transportQuoteTotal(amount.value,basis.value,travelers,currency);if(!provider.value.trim())throw new Error('Enter a provider name.');saved.quotes.push({mode,provider:provider.value.trim(),...totals});draw();}catch(e){error.textContent=e.message;}});
+      quoteForm.addEventListener('submit',event=>{event.preventDefault();try{const totals=transportQuoteTotal(amount.value,basis.value,travelers,currency);if(!provider.value.trim())throw new Error('Enter a provider name.');saved.quotes.push({mode,provider:provider.value.trim(),...totals});changed();draw();}catch(e){error.textContent=e.message;}});
       detail.append(quoteForm);row.append(detail);list.append(row);
     }
     results.append(list);
   }
-  form.addEventListener('input',()=>{for(const [key,input]of Object.entries(fields))saved.draft[key]=input.value;saved.route=null;saved.quotes=[];results.replaceChildren();status.textContent='Compare again to use the updated route, date, travelers, or currency.';});
+  form.addEventListener('input',()=>{for(const [key,input]of Object.entries(fields))saved.draft[key]=input.value;saved.revision++;saved.route=null;saved.quotes=[];results.replaceChildren();status.textContent='Compare again to use the updated route, date, travelers, or currency.';});
   form.addEventListener('submit',event=>{event.preventDefault();try{
     const from=fields.from.value.trim(),to=fields.to.value.trim(),date=fields.date.value,travelers=Number(fields.travelers.value),currency=fields.currency.value.toUpperCase();
     if(!from||!to||from.toLowerCase()===to.toLowerCase())throw new Error('Enter different starting and destination points.');
-    transportQuoteTotal('0','group',travelers,currency);saved.route={from,to,date,travelers,currency};status.textContent='Route ready. Add provider prices below to compare costs.';draw();
+    transportQuoteTotal('0','group',travelers,currency);saved.revision++;saved.route={from,to,date,travelers,currency};status.textContent='Route ready. Add provider prices below to compare costs.';draw();
   }catch(e){status.textContent=e.message;}});
-  section.append(heading,note,form,status,results);host.append(section);draw();
+  const save=workspaceButton('Save comparison',async()=>{
+    if(!userId||!tripId||!saved.route||!sameAccount()){status.textContent='Select a saved trip and compare a route first.';return;}
+    const revision=saved.revision;
+    save.disabled=true;status.textContent='Saving your private comparison…';
+    try{
+      const result=await apiRequest('/api/transport-comparisons',{method:'PUT',body:JSON.stringify({tripId,comparison:{route:saved.route,quotes:saved.quotes}})});
+      if(!result.saved)throw new Error('Comparison was not saved. Sign in and try again.');
+      if(section.isConnected&&sameAccount())status.textContent=saved.revision===revision?'Comparison saved privately to this trip.':'Earlier comparison saved. Save again to include your latest changes.';
+    }catch(error){if(section.isConnected&&sameAccount())status.textContent=error.message;}
+    finally{save.disabled=false;}
+  });
+  save.disabled=!userId||!tripId;
+  section.append(heading,note,form,save,status,results);host.append(section);draw();
+  if(!userId||!tripId)status.textContent='Select a saved trip to save and restore your comparison.';
+  else if(!saved.loaded&&!saved.loading){
+    const revision=saved.revision;saved.loading=true;
+    apiRequest(`/api/transport-comparisons?tripId=${encodeURIComponent(tripId)}`).then(result=>{
+      if(!sameAccount()||!section.isConnected||result.skipped)return;
+      saved.loaded=true;
+      if(revision!==saved.revision)return;
+      if(result.comparison){saved.route=result.comparison.route;saved.quotes=result.comparison.quotes;saved.draft={...saved.route};for(const [name,input]of Object.entries(fields))input.value=saved.draft[name]||'';draw();status.textContent='Your saved comparison is ready. Prices were entered by you, not confirmed by a provider.';}
+    }).catch(()=>{if(section.isConnected&&sameAccount())status.textContent='Saved comparison could not be loaded. Retry before replacing any saved prices.';}).finally(()=>{saved.loading=false;});
+  }
 }

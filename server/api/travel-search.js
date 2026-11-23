@@ -1,3 +1,4 @@
+import {takeSearchSlot} from './_search-store.js';
 import {searchOpenPlaces,supportsOpenPlaces} from './_open-places.js';
 import {
   applySecurityHeaders,
@@ -9,10 +10,6 @@ import aiPlanner from "./ai-planner.js";
 import { searchTravelGuides } from "./_travel-guides.js";
 
 const googlePlacesUrl = "https://places.googleapis.com/v1/places:searchText";
-const requestWindow = new Map();
-const MAX_REQUESTS_PER_WINDOW = 20;
-const WINDOW_MS = 60_000;
-
 const categoryQueries = {
   trending: "popular travel experiences",
   food: "restaurants and dining",
@@ -35,24 +32,6 @@ const categoryQueries = {
   shuttle: "public transport",
   trips: "tourist attractions and travel destinations"
 };
-
-function getClientKey(request) {
-  const forwarded = request.headers["x-forwarded-for"] || request.headers["x-real-ip"] || "unknown";
-  return String(forwarded).split(",")[0].trim().slice(0, 80) || "unknown";
-}
-
-function allowRequest(request) {
-  const now = Date.now();
-  const key = getClientKey(request);
-  const current = requestWindow.get(key) || { startedAt: now, count: 0 };
-  if (now - current.startedAt > WINDOW_MS) {
-    requestWindow.set(key, { startedAt: now, count: 1 });
-    return true;
-  }
-  current.count += 1;
-  requestWindow.set(key, current);
-  return current.count <= MAX_REQUESTS_PER_WINDOW;
-}
 
 function normalizeCategory(value) {
   const category = sanitizeText(value, "trending", 60).toLowerCase().replace(/[^a-z0-9]+/g, "_");
@@ -121,10 +100,7 @@ export default async function handler(request, response) {
     return;
   }
 
-  if (!allowRequest(request)) {
-    response.status(429).json({ error: "Search rate limit reached. Try again in a minute." });
-    return;
-  }
+  if (!await takeSearchSlot(request,response,'travel-search',20)) return;
 
   const body = request.method === "GET" ? request.query || {} : getRequestBody(request);
   const category = normalizeCategory(body.category);

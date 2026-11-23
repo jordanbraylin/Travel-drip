@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import handler,{cleanComparison,comparisonRequest} from '../server/api/transport-comparisons.js';
+const route={from:'Paris',to:'Lyon',date:'2026-12-10',travelers:2,currency:'EUR'};
+const quote={mode:'Train',provider:'User quote',scale:100,totalUnits:8000};
+const doc=cleanComparison({route,quotes:[quote],user_id:'attacker'});assert.equal(doc.user_id,undefined);assert.equal(doc.quotes[0].totalUnits,8000);
+for(const value of [{route:{...route,date:'2026-02-30'},quotes:[]},{route:{...route,currency:'ZZZ'},quotes:[]},{route,quotes:[{...quote,scale:1}]},{route,quotes:[{...quote,totalUnits:-1}]},{route,quotes:Array(51).fill(quote)}])assert.throws(()=>cleanComparison(value));
+const response=()=>({setHeader(){},status(n){this.code=n;return this;},json(b){this.body=b;}});
+let result=response();await handler({method:'GET',headers:{}},result);assert.equal(result.code,401);
+let allowed=true,written,filters=[];
+const db={from(table){const q={select(){return this;},eq(k,v){filters.push([k,v]);return this;},maybeSingle:async()=>table==='trip_members'?{data:allowed?{role:'member',status:'active'}:null}:{data:{document:doc,updated_at:'now'}},upsert:async value=>{written=value;return {error:null};}};return q;}};
+const tripId='11111111-1111-4111-8111-111111111111';
+result=response();await comparisonRequest({method:'PUT',body:{tripId,comparison:doc,user_id:'attacker'}},result,db,{id:'actual-user'});assert.equal(result.code,200);assert.equal(written.user_id,'actual-user');assert.equal(written.trip_id,tripId);
+filters=[];result=response();await comparisonRequest({method:'GET',url:`/?tripId=${tripId}`},result,db,{id:'actual-user'});assert.equal(result.code,200);assert.ok(filters.some(([k,v])=>k==='user_id'&&v==='actual-user'));
+allowed=false;result=response();await comparisonRequest({method:'GET',url:`/?tripId=${tripId}`},result,db,{id:'wrong-user'});assert.equal(result.code,403);
+console.log('Comparison storage passed: authenticated access, trip membership, owner-scoped reads/writes, rejected forged owner, bounded quotes and currency/date validation.');

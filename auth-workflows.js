@@ -150,6 +150,25 @@
         view.status.textContent = '';
       } catch (error) { view.status.textContent = error.message || 'The policy could not be loaded. Please try again.'; }
     }
+    let providerRefresh;
+    function refreshProviders() {
+      if (providerRefresh) return providerRefresh;
+      providerRefresh=(async()=>{
+        let available={};
+        try {
+          const config=getConfig();
+          const response=await fetch(new URL('/auth/v1/settings',config.supabaseUrl),{headers:{apikey:config.supabaseAnonKey},signal:AbortSignal.timeout(8000)});
+          if(response.ok)available=(await response.json()).external||{};
+        }catch { /* Email sign-in remains available if provider discovery fails. */ }
+        document.querySelectorAll('[data-oauth-provider]').forEach(button=>{
+          const provider=button.dataset.oauthProvider,label=provider==='google'?'Google':'Apple';
+          button.disabled=available[provider]!==true;
+          button.textContent=button.disabled?`${label} sign-in unavailable`:`Continue with ${label}`;
+          button.title=button.disabled?'Please use email or username sign-in.':'';
+        });
+      })();
+      return providerRefresh;
+    }
     async function oauth(provider) {
       if (!['google', 'apple'].includes(provider)) return;
       const label = provider === 'google' ? 'Google' : 'Apple';
@@ -248,7 +267,7 @@
       })().finally(() => { mfaCheck = null; });
       return mfaCheck;
     }
-    return { run, oauth, recovery, checkMfa, isRecovery: () => recoveryActive, isBlocked: () => recoveryActive || mfaRequired };
+    return { run, oauth, refreshProviders, recovery, checkMfa, isRecovery: () => recoveryActive, isBlocked: () => recoveryActive || mfaRequired };
   }
   window.TravelDripAuthWorkflows = { create };
 })();

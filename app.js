@@ -5836,6 +5836,7 @@ function updateAuthUi() {
   if (state.authInitializing === true) return;
   const signedIn = Boolean(state.session?.user) && !accountWorkflows.isBlocked();
   const appAccess = signedIn;
+  if (!signedIn) accountWorkflows.refreshProviders?.();
   const openAuthButton = $("#openAuthButton");
   const openSignupButton = $("#openSignupButton");
   const signOutButton = $("#signOutButton");

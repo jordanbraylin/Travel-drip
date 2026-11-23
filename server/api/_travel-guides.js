@@ -1,6 +1,7 @@
+import {cachedPublicResult} from './_search-store.js';
 const cache = new Map();
 
-export async function searchTravelGuides({ query = "", destination = "", category = "trending" }) {
+async function fetchTravelGuides({ query = "", destination = "", category = "trending" }) {
   const terms = { rideshare: "taxi transport", flights: "airport", trains: "railway station", shuttle: "public transport", transport: "public transport", food: "cuisine", activities: "tourist attractions", trending: "travel" };
   const search = [destination, query || terms[category] || category.replaceAll("_", " ")].filter(Boolean).join(" ").trim().slice(0, 300);
   if (!search || (!query && !destination)) throw Object.assign(new Error("Enter a destination or something you'd like to find."), { status: 400 });
@@ -24,3 +25,5 @@ export async function searchTravelGuides({ query = "", destination = "", categor
   cache.set(search, { value, until: Date.now() + 600000 });
   return value;
 }
+
+export async function searchTravelGuides(args){return cachedPublicResult('reference-guides',JSON.stringify(args),600,()=>fetchTravelGuides(args));}

@@ -25,7 +25,7 @@ try {
   assert.equal(limited.body.ready, false);
   assert.equal(limited.body.readinessStatus, "limited");
   assert.deepEqual(limited.body.unavailableFeatures, ["walletFunding", "flightTracking", "hotelAvailability", "aiResearch"]);
-  assert.equal(limited.body.primarySearchProvider, "wikipedia");
+  assert.equal(limited.body.primarySearchProvider, "openstreetmap_and_wikipedia");
   assert.equal(limited.body.freeWebSearchConfigured, true);
   for (const name of providers) process.env[name] = "test-only";
   process.env.ALLOW_PAID_AI = 'true';

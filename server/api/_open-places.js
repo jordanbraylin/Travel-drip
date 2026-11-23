@@ -1,24 +1,27 @@
+import {cachedPublicResult,takeProviderSlot} from './_search-store.js';
 const cache=new Map(),pending=new Map();
 const tags={food:'amenity:restaurant',activities:'tourism:museum',trending:'tourism:attraction',outdoor:'leisure:park',hotels:'tourism:hotel'};
 export function supportsOpenPlaces(category){return Boolean(tags[category]);}
-async function photon(params){
+async function fetchPhoton(params){
   const url=new URL('https://photon.komoot.io/api/');url.search=new URLSearchParams({...params,lang:'en'});
+  await takeProviderSlot('photon');
   const r=await fetch(url,{headers:{Accept:'application/json','User-Agent':'Travel-Drip/1.0 (https://travel-drip.com)'},signal:AbortSignal.timeout(8000)});
   if(!r.ok)throw new Error('Place listings are temporarily unavailable.');
   const data=await r.json();if(!Array.isArray(data.features))throw new Error('Place listings are temporarily unavailable.');return data.features;
 }
+export async function photonPublicLookup(params){return cachedPublicResult('photon-public',JSON.stringify(params),3600,()=>fetchPhoton(params));}
 export async function searchOpenPlaces({destination='',category='trending',query=''}={}){
   destination=String(destination).trim().slice(0,160);query=String(query).trim().slice(0,180);
   if(!destination||!supportsOpenPlaces(category))throw new Error('Choose a destination and supported place category.');
   const key=JSON.stringify([destination.toLowerCase(),category,query.toLowerCase()]);
   const saved=cache.get(key);if(saved?.until>Date.now())return saved.value;if(pending.has(key))return pending.get(key);
   const task=(async()=>{
-    const locations=await photon({q:destination,limit:'3'});
+    const locations=await photonPublicLookup({q:destination,limit:'3'});
     const city=locations.find(x=>['city','town','village','municipality','province','state','island'].includes(x.properties?.osm_value));
     const [lon,lat]=city?.geometry?.coordinates||[];if(!Number.isFinite(lon)||!Number.isFinite(lat))throw new Error('Destination could not be resolved.');
     const [tag,tagValue]=tags[category].split(':');
     const bbox=[Math.max(-180,lon-.12),Math.max(-90,lat-.08),Math.min(180,lon+.12),Math.min(90,lat+.08)].join(',');
-    const features=await photon({q:query||tagValue,limit:'8',osm_tag:tags[category],bbox,lat:String(lat),lon:String(lon)});
+    const features=await photonPublicLookup({q:query||tagValue,limit:'8',osm_tag:tags[category],bbox,lat:String(lat),lon:String(lon)});
     const seen=new Set();
     const results=features.filter(x=>x.properties?.name&&x.properties.osm_key===tag&&x.properties.osm_value===tagValue).flatMap(x=>{
       const p=x.properties,type={N:'node',W:'way',R:'relation'}[p.osm_type];

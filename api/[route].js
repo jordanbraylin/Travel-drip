@@ -1,3 +1,5 @@
+import searchMaintenance from '../server/api/search-maintenance.js';
+import transportComparisons from '../server/api/transport-comparisons.js';
 import adminStatus from "../server/api/admin-status.js";
 import authLogin from "../server/api/auth-login.js";
 import aiInvitation from "../server/api/ai-invitation.js";
@@ -59,6 +61,8 @@ const routes = Object.freeze({
   subscribe,
   "travel-search": travelSearch,
   "trip-travel": tripTravel,
+  "transport-comparisons": transportComparisons,
+  "search-maintenance": searchMaintenance,
   trips,
   "wallet-reminders": walletReminders,
   wallet,
