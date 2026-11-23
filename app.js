@@ -5884,7 +5884,7 @@ function updateAuthUi() {
 }
 
 function setAuthenticatedShellVisible(visible) {
-  [$(".sidebar"), $(".topbar"), $(".mobile-nav"), $("#globalDestinationHeader")].forEach((element) => {
+  [$(".sidebar"), $(".topbar"), $(".mobile-nav"), $("#globalDestinationHeader"), $("main > .trip-tab-bar")].forEach((element) => {
     if (!element) return;
     element.hidden = !visible;
     element.setAttribute("aria-hidden", String(!visible));

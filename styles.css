@@ -1108,6 +1108,7 @@ body.auth-screen .shell {
   display: block;
 }
 
+body.auth-screen main > .trip-tab-bar,
 body.auth-screen .sidebar,
 body.auth-screen .topbar,
 body.auth-screen .mobile-nav,

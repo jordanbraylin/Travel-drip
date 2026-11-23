@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-const original=globalThis.fetch,oldUrl=process.env.SUPABASE_URL,oldKey=process.env.SUPABASE_SERVICE_ROLE_KEY;
+const original=globalThis.fetch,oldUrl=process.env.SUPABASE_URL,oldKey=process.env.SUPABASE_SERVICE_ROLE_KEY,oldEnv=process.env.VERCEL_ENV;
 process.env.SUPABASE_URL='https://test.supabase.co';process.env.SUPABASE_SERVICE_ROLE_KEY='test-only';
 let count=0,stored,produced=0,fail=false;
 try{
@@ -14,5 +14,6 @@ try{
  const a=await one.cachedPublicResult('test','public-query',60,async()=>{produced++;return {results:['public guide']};});
  const b=await two.cachedPublicResult('test','public-query',60,async()=>{produced++;return {results:[]};});assert.deepEqual(a,b);assert.equal(produced,1,'A separate server instance reuses the database cache');
  fail=true;response=res();assert.equal(await one.takeSearchSlot(req,response,'test',2),false);assert.equal(response.code,503,'Database protection failure must not silently bypass limits');
+ delete process.env.SUPABASE_SERVICE_ROLE_KEY;process.env.VERCEL_ENV='production';response=res();assert.equal(await one.takeSearchSlot(req,response,'test',2),false);assert.equal(response.code,503);await assert.rejects(()=>one.takeProviderSlot('test'),/protection is unavailable/);
  console.log('Shared search store passed: cross-instance counter/cache calls, hashed client identity, rate rejection and fail-closed behavior.');
-}finally{globalThis.fetch=original;for(const [key,value]of [['SUPABASE_URL',oldUrl],['SUPABASE_SERVICE_ROLE_KEY',oldKey]])if(value===undefined)delete process.env[key];else process.env[key]=value;}
+}finally{globalThis.fetch=original;for(const [key,value]of [['SUPABASE_URL',oldUrl],['SUPABASE_SERVICE_ROLE_KEY',oldKey],['VERCEL_ENV',oldEnv]])if(value===undefined)delete process.env[key];else process.env[key]=value;}
