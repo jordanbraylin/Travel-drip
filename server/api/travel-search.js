@@ -8,6 +8,7 @@ import {
 } from "./_security.js";
 import aiPlanner from "./ai-planner.js";
 import { searchTravelGuides } from "./_travel-guides.js";
+import { withAffiliate, AFFILIATE_DISCLOSURE } from "./_affiliate.js";
 
 const googlePlacesUrl = "https://places.googleapis.com/v1/places:searchText";
 const categoryQueries = {
@@ -53,6 +54,7 @@ function mapPlace(place, category, destination) {
   const title = place.displayName?.text || "Travel place";
   const location = place.formattedAddress || destination || "Location available from provider";
   const mapsUrl = place.googleMapsUri || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${title}, ${location}`)}`;
+  const bookLink = withAffiliate(place.websiteUri || mapsUrl);
   const typeLabel = (place.primaryTypeDisplayName?.text || place.types?.[0] || categoryQueries[category])
     .replaceAll("_", " ");
   const openStatus = place.currentOpeningHours?.openNow === true
@@ -84,11 +86,12 @@ function mapPlace(place, category, destination) {
     source: "google_places",
     sourceLabel: "Google Places",
     providerUrl: place.websiteUri || mapsUrl,
+    ...(bookLink.affiliate ? { affiliate: true, affiliateDisclosure: AFFILIATE_DISCLOSURE } : {}),
     actions: {
       details: mapsUrl,
       directions: mapsUrl,
       website: place.websiteUri || mapsUrl,
-      book: place.websiteUri || mapsUrl
+      book: bookLink.url
     }
   };
 }

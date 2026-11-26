@@ -939,7 +939,7 @@ const invitationConfigs = {
 
 const authCarouselSlides = [
   {
-    quote: "Plan together. Travel better.",
+    quote: "Good Trips. Better People.",
     src: "https://images.unsplash.com/photo-1527631746610-bca00a040d60?q=80&w=1400&auto=format&fit=crop",
     alt: "Friends walking together during a city trip"
   },
