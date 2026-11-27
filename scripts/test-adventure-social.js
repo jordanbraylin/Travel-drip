@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const source=fs.readFileSync('adventure-social.js','utf8');
+const start=source.indexOf('function adventureTripModel('),end=source.indexOf('function adventureOpenDiscovery(',start);
+const context=vm.createContext({});vm.runInContext(source.slice(start,end),context);
+const model=(trip,counts,records,now)=>context.adventureTripModel(trip,counts,records,now);
+let result=model({starts_on:'2026-12-11'},{members:3},{schedule_items:[{title:'Later',starts_at:'2026-12-11T15:00:00Z'},{title:'First',starts_at:'2026-12-11T09:00:00Z'},{title:'Date pending'}]},new Date(2026,10,27));
+assert.equal(result.count,3);assert.equal(result.countdown,'14 days to go');assert.equal(result.timeline[0].title,'First');assert.equal(result.timeline[2].title,'Date pending');
+result=model(null,{}, {},new Date(2026,10,27));assert.equal(result.count,0);assert.equal(result.countdown,'Dates to dream about');assert.equal(result.timeline.length,0,'Empty accounts must not gain sample itinerary data');
+result=model({starts_on:'2026-11-27'},{},{schedule_items:Array.from({length:8},(_,i)=>({title:'Item '+i,starts_at:'2026-12-11T09:00:00Z'}))},new Date(2026,10,27));assert.equal(result.countdown,'Adventure starts today');assert.equal(result.timeline.length,3);
+assert.match(source,/state\.session\?\.user/);assert.match(source,/resetAdventureDashboard/);assert.match(source,/saved on this device/);
+for(const file of ['adventure-social.js','adventure-social.css','vendor/adventure-nunito-400.ttf','vendor/adventure-nunito-700.ttf','vendor/adventure-nunito-900.ttf',...['barcelona','food','beach','culture','outdoors'].map(x=>'icons/adventure-'+x+'.jpg')])assert.ok(fs.existsSync(file),file);
+console.log('Adventure dashboard passed: actual counts, date countdown, ordered saved itinerary, empty-account truthfulness and bundled assets.');

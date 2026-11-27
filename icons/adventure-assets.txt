@@ -1,0 +1,9 @@
+Adventure Social design assets
+Photos: Unsplash, downloaded from existing public inspiration source URLs on 2026-11-27.
+Barcelona: AI-generated destination illustration created for this design, matching the approved mockup. It is not a verified travel photograph.
+Beach: https://images.unsplash.com/photo-1507525428034-b723cf961d3e
+Culture: https://images.unsplash.com/photo-1533105079780-92b9be482077
+Outdoors: https://images.unsplash.com/photo-1527004013197-933c4bb611b3
+Dining: https://images.unsplash.com/photo-1414235077428-338989a2e8c0
+Photography is destination/category inspiration; it is not a user upload or booked itinerary.
+Nunito font: Google Fonts, SIL Open Font License; see vendor/adventure-nunito-LICENSE.txt.

@@ -1,5 +1,15 @@
-const CACHE_NAME = "traveldrip-v251";
+const CACHE_NAME = "traveldrip-v252";
 const APP_SHELL = [
+  "/adventure-social.css?v=1",
+  "/adventure-social.js?v=1",
+  "/vendor/adventure-nunito-400.ttf",
+  "/vendor/adventure-nunito-700.ttf",
+  "/vendor/adventure-nunito-900.ttf",
+  "/icons/adventure-barcelona.jpg",
+  "/icons/adventure-food.jpg",
+  "/icons/adventure-beach.jpg",
+  "/icons/adventure-culture.jpg",
+  "/icons/adventure-outdoors.jpg",
   "/",
   "/index.html",
   "/login.html",
@@ -10,7 +20,7 @@ const APP_SHELL = [
   "/offline.html",
   "/styles.css?v=126",
   "/navigation.css?v=93",
-  "/app.js?v=121",
+  "/app.js?v=122",
   "/passport-book.js?v=1",
   "/passport-book.css?v=2",
   "/auth-workflows.js?v=3",

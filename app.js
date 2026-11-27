@@ -2234,6 +2234,7 @@ function dashboardShouldShowBlankState() {
 }
 
 function resetAccountData() {
+  resetAdventureDashboard();
   savedReceiptTotals.splice(0);
   resetDiscoveryStudio();
   resetTripJoy();
@@ -2400,6 +2401,7 @@ function renderAccountState(target = getTargetFromRoute()) {
   renderJoyEvents(target);
   if (target === "letsPlan") renderPlanningStudio();
   renderPlanningPlay(target);
+  renderAdventureDashboard(target);
   if (target === "socialHub") {
     renderTripChatData();
     void loadMessagingContacts();
@@ -7914,6 +7916,7 @@ async function uploadMemoryFiles(files, action, postDetails = {}) {
 function wireLocalInteractions() {
   moveTransportationWorkspace();
   initializeSimpleExperience();
+  initializeAdventureSocial();
   $("#destinationInfoButton")?.addEventListener("click", () => joyDialog($("#livePlanTitle").textContent, ["#livePlanDescription", "#livePlanFunFact", "#livePlanTip", "#livePlanSeason", "#livePlanGreeting"].map(selector => $(selector)?.textContent).filter(Boolean)));
   initializeConciergeLayout();
   initializeWalletSplitter();

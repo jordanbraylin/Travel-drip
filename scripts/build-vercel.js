@@ -5,6 +5,8 @@ const root = resolve(import.meta.dirname, "..");
 const output = resolve(root, "public");
 
 const staticFiles = [
+  "adventure-social.css",
+  "adventure-social.js",
   "admin.html",
   "app.js",
   "auth-workflows.js",
