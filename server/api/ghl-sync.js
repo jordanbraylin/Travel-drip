@@ -133,17 +133,22 @@ function buildContact(user, input, config) {
 
 async function writeSyncLog(supabase, userId, status, input, error = "") {
   if (!supabase) return;
-  await supabase.from("ghl_sync_logs").insert({
-    user_id: userId,
-    event_type: sanitizeText(input.eventType || "manual_sync", "manual_sync", 80),
-    status,
-    error_message: error ? sanitizeText(error, "", 500) : null,
-    metadata: {
-      tripType: sanitizeText(input.tripType, "", 60),
-      destination: sanitizeText(input.destination, "", 120),
-      syncedAt: new Date().toISOString()
-    }
-  }).catch(() => {});
+  try {
+    // The Supabase query builder resolves to { error } and has no .catch(); await it instead.
+    await supabase.from("ghl_sync_logs").insert({
+      user_id: userId,
+      event_type: sanitizeText(input.eventType || "manual_sync", "manual_sync", 80),
+      status,
+      error_message: error ? sanitizeText(error, "", 500) : null,
+      metadata: {
+        tripType: sanitizeText(input.tripType, "", 60),
+        destination: sanitizeText(input.destination, "", 120),
+        syncedAt: new Date().toISOString()
+      }
+    });
+  } catch {
+    // Logging must never block CRM sync or registration.
+  }
 }
 
 export default async function handler(request, response) {

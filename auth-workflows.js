@@ -165,6 +165,7 @@
           button.disabled=available[provider]!==true;
           button.textContent=button.disabled?`${label} sign-in unavailable`:`Continue with ${label}`;
           button.title=button.disabled?'Please use email or username sign-in.':'';
+          button.hidden=button.disabled; // Do not show dead buttons to new visitors.
         });
       })();
       return providerRefresh;

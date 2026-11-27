@@ -4,7 +4,51 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#de1760">
-  <meta name="description" content="Travel-Drip helps travelers plan solo trips, group trips, corporate retreats, budgets, memories, and live updates.">
+  <meta name="description" content="Find a destination, save it, plan the days, invite friends, split the budget and share the memories. Travel-Drip turns travel inspiration into a trip your group can join.">
+  <link rel="canonical" href="https://www.travel-drip.com/">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Travel-Drip">
+  <meta property="og:title" content="Travel-Drip: Good Trips. Better People.">
+  <meta property="og:description" content="Find it. Plan it. Split it. Share it. Turn travel inspiration into a trip your friends can join.">
+  <meta property="og:url" content="https://www.travel-drip.com/">
+  <meta property="og:image" content="https://www.travel-drip.com/icons/app-icon-1024.png">
+  <meta property="og:image:alt" content="Travel-Drip logo">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Travel-Drip: Good Trips. Better People.">
+  <meta name="twitter:description" content="Find it. Plan it. Split it. Share it. Turn travel inspiration into a trip your friends can join.">
+  <meta name="twitter:image" content="https://www.travel-drip.com/icons/app-icon-1024.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://www.travel-drip.com/#org",
+        "name": "Travel-Drip",
+        "url": "https://www.travel-drip.com/",
+        "logo": "https://www.travel-drip.com/icons/app-icon-1024.png",
+        "slogan": "Good Trips. Better People."
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.travel-drip.com/#website",
+        "url": "https://www.travel-drip.com/",
+        "name": "Travel-Drip",
+        "publisher": { "@id": "https://www.travel-drip.com/#org" }
+      },
+      {
+        "@type": "WebApplication",
+        "name": "Travel-Drip",
+        "url": "https://www.travel-drip.com/",
+        "applicationCategory": "TravelApplication",
+        "operatingSystem": "Any (web, installable PWA)",
+        "description": "Plan solo trips, group trips, events and corporate retreats with shared itineraries, budgets, polls, split bills and trip memories.",
+        "publisher": { "@id": "https://www.travel-drip.com/#org" }
+      }
+    ]
+  }
+  </script>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -26,7 +70,7 @@
   <link rel="stylesheet" href="discovery-studio.css?v=3">
   <link rel="stylesheet" href="planner-conversation.css?v=2">
   <link rel="stylesheet" href="auth-workflows.css?v=2">
-  <title>Travel-Drip</title>
+  <title>Travel-Drip | Plan Group Trips, Split Costs, Share Memories</title>
   <link rel="stylesheet" href="adventure-social.css?v=1">
 </head>
 <body class="auth-initializing">
@@ -34,7 +78,7 @@
     <div class="loader-card">
       <img class="loader-logo" src="icons/traveldrip-logo-stacked.svg" alt="Travel-Drip">
       <h1>Travel-Drip</h1>
-      <p>Syncing your group trip...</p>
+      <p>Loading your trips&hellip;</p>
       <div class="loader-bar"><span></span></div>
     </div>
   </div>
@@ -46,7 +90,7 @@
           <source media="(max-width: 720px)" srcset="icons/traveldrip-logo-icon.svg">
           <img class="brand-logo sidebar-wordmark" src="icons/traveldrip-logo-white.svg" alt="Travel-Drip">
         </picture>
-        <span class="brand-copy"><strong>Travel-Drip</strong><small>Plan together. Travel better.</small></span>
+        <span class="brand-copy"><strong>Travel-Drip</strong><small>Good Trips. Better People.</small></span>
       </a>
       <nav class="nav grouped-nav" aria-label="Travel-Drip navigation">
         <details class="nav-group" data-consumer-nav open>
@@ -196,10 +240,11 @@
           <section class="auth-carousel" aria-label="Travel inspiration carousel">
             <img id="authCarouselImage" src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?q=80&w=1400&auto=format&fit=crop" alt="Friends walking together during a city trip" fetchpriority="high">
             <div class="auth-carousel-overlay">
-              <p class="auth-pill">Social travel for every kind of trip</p>
-              <h1>Plan unforgettable trips, events, and shared memories.</h1>
-              <p id="authCopy">Plan unforgettable vacations, destination weddings, birthdays, corporate retreats, cruises, and group adventures, all in one place. Organize itineraries, invite friends and family, manage shared budgets, store tickets and boarding passes, receive real-time travel updates, and relive every memory together.</p>
-              <blockquote id="authQuote">Plan together. Travel better.</blockquote>
+              <p class="auth-pill">Social travel planning for friends, families and teams</p>
+              <h1>Find it. Plan it. Split it. Share it.</h1>
+              <p id="authCopy">Turn travel inspiration into a trip your friends can join. Save places, build the itinerary together, vote on plans, split costs, keep tickets in one place and share the memories afterward. Free to start.</p>
+              <blockquote id="authQuote">Good Trips. Better People.</blockquote>
+              <p class="auth-browse"><a href="/destinations/" style="color:inherit;text-decoration:underline">Browse destination guides</a></p>
               <div class="auth-travel-tags" aria-label="Supported travel styles">
                 <span>Solo trips</span><span>Group memories</span><span>Corporate retreats</span><span>Food finds</span><span>Beach escapes</span>
               </div>
@@ -208,9 +253,9 @@
 
           <div class="auth-card" aria-live="polite">
             <div>
-              <p class="eyebrow">Live account</p>
+              <p class="eyebrow">Free to start</p>
               <h2 id="authTitle">Welcome to Travel-Drip</h2>
-              <p class="auth-sync-note">Sign in to keep your trips, events, plans, memories, and travel companions seamlessly synced across all of your devices, so you're always ready for your next adventure.</p>
+              <p class="auth-sync-note">Sign in to sync your trips, plans, memories and travel companions across all your devices.</p>
             </div>
             <div class="auth-switch" role="tablist" aria-label="Account access">
               <button class="active" type="button" id="formLoginButton" role="tab" aria-controls="authForm" aria-selected="true">Sign in</button>
@@ -228,8 +273,8 @@
               </div>
               <button class="primary-button" type="submit">Sign In</button>
               <div class="social-signin" aria-label="Optional social sign in">
-                <button type="button" data-oauth-provider="google" disabled>Checking Google sign-in…</button>
-                <button type="button" data-oauth-provider="apple" disabled>Checking Apple sign-in…</button>
+                <button type="button" data-oauth-provider="google" disabled hidden>Continue with Google</button>
+                <button type="button" data-oauth-provider="apple" disabled hidden>Continue with Apple</button>
               </div>
             </form>
             <form class="auth-form" id="signupForm" hidden>
@@ -1925,7 +1970,7 @@
                 <div><strong>Hidden in Corporate Mode</strong><span>Solo vacations, friends trips, bachelor trips, public invitations, personal group wallets, vacation deals, consumer social sharing, unapproved booking options, and leisure budget tools.</span></div>
                 <div><strong>Corporate language</strong><span>Team Members, Corporate Event, Company Wallet, Travel Policy, Per Diem, Assigned Travel, Approvals, and Reconciliation replace casual trip-planning labels.</span></div>
                 <div><strong>Workspace boundary</strong><span>Personal trips require switching to Personal Travel. Corporate data never appears in the personal workspace.</span></div>
-                <div><strong>Backend requirement</strong><span>UI hiding is not enough. Supabase RLS and APIs must enforce organization, role, employee, trip, event, department, and cost-center scope.</span></div>
+                <div><strong>Backend requirement</strong><span>Access is enforced on the server for organization, role, employee, trip, event, department, and cost-center scope.</span></div>
               </div>
             </section>
 
@@ -4269,7 +4314,7 @@
             <p class="small" id="securityAuditMessage">Security audit checks auth controls, role restrictions, sensitive-notification copy, wallet PIN gates, API hardening, file links, and financial privacy messaging.</p>
           </section>
 
-          <section class="panel backend-readiness-panel" id="backendReadiness" data-route-support="adminPanel">
+          <section class="panel backend-readiness-panel" id="backendReadiness" data-route-support="adminPanel" data-dev-panel>
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Backend Scalability</p>
@@ -4311,7 +4356,7 @@
                 <p class="eyebrow">Copyright Policy</p>
                 <h2>Respecting owned content, creator rights, and Travel-Drip assets</h2>
               </div>
-              <span class="compliance-badge">Policy draft</span>
+              <span class="compliance-badge">Content &amp; copyright</span>
             </div>
             <div class="policy-summary-grid">
               <article><span>Travel-Drip content</span><strong>Protected</strong><small>Brand, interface copy, designs, icons, and app materials.</small></article>
@@ -4343,7 +4388,8 @@
               <div><strong>3. Action</strong><span>Content may be removed, restored, or escalated if the uploader provides valid permission or a counter-notice.</span></div>
               <div><strong>4. Repeat misuse</strong><span>Accounts that repeatedly upload infringing content may lose upload access or be removed from Travel-Drip.</span></div>
             </div>
-            <p class="small">This mock policy is product copy for the Travel-Drip prototype and should be reviewed by a qualified attorney before production launch.</p>
+            <!-- LEGAL TODO: have a qualified attorney review this policy before public launch. -->
+            <p class="small">Questions about content rights or a takedown request? Use Help &amp; Support in the app and include the content location and your contact details.</p>
           </section>
 
           <section class="panel">
@@ -4390,7 +4436,7 @@
             <p>No route calculation available.</p>
           </section>
 
-          <section class="panel navigation-audit-panel" data-route-support="adminPanel">
+          <section class="panel navigation-audit-panel" data-route-support="adminPanel" data-dev-panel>
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Navigation QA</p>
@@ -4407,7 +4453,7 @@
             <p class="small" id="navigationStatusMessage">Navigation audit checks buttons, links, tab targets, modal triggers, role-restricted actions, and fallback workflow messaging.</p>
           </section>
 
-          <section class="panel go-live-panel" id="goLiveReadiness" data-route-support="adminPanel">
+          <section class="panel go-live-panel" id="goLiveReadiness" data-route-support="adminPanel" data-dev-panel>
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Production Readiness</p>
@@ -4664,7 +4710,7 @@
   <script defer src="trip-joy.js?v=4"></script>
   <script defer src="discovery-studio.js?v=6"></script>
   <script defer src="planner-conversation.js?v=2"></script>
-  <script defer src="auth-workflows.js?v=3"></script>
+  <script defer src="auth-workflows.js?v=4"></script>
   <script defer src="adventure-social.js?v=1"></script>
   <script defer src="app.js?v=122"></script>
 </body>

@@ -1,5 +1,6 @@
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { buildDestinationPages, buildSitemap } from "./build-destinations.js";
 
 const root = resolve(import.meta.dirname, "..");
 const output = resolve(root, "public");
@@ -57,7 +58,9 @@ for (const file of staticFiles) {
   if (file === "index.html") {
     // Root-relative deployment assets also work when a nested route is refreshed.
     const html = await readFile(resolve(root, file), "utf8");
-    await writeFile(resolve(output, file), html.replace("<head>", '<head>\n  <base href="/">'));
+    // Internal readiness/QA panels (marked data-dev-panel) are for local previews only.
+    const publicHtml = html.replace(/<section\b[^>]*\bdata-dev-panel\b[^>]*>[\s\S]*?<\/section>\s*/g, "");
+    await writeFile(resolve(output, file), publicHtml.replace("<head>", '<head>\n  <base href="/">'));
   } else {
     await cp(resolve(root, file), resolve(output, file));
   }
@@ -68,6 +71,9 @@ for (const directory of staticDirectories) {
     recursive: true,
   });
 }
+
+const destinationPaths = await buildDestinationPages(output);
+await writeFile(resolve(output, "sitemap.xml"), buildSitemap(destinationPaths));
 
 console.log(
   `Prepared Vercel static output with ${staticFiles.length} files and ${staticDirectories.length} asset directories.`,
