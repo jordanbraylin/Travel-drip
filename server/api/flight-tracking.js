@@ -1,3 +1,4 @@
+import {takeSearchSlot} from './_search-store.js';
 import {
   applySecurityHeaders,
   getRequestBody,
@@ -7,27 +8,6 @@ import {
 } from "./_security.js";
 
 const aeroApiUrl = "https://aeroapi.flightaware.com/aeroapi";
-const requestWindow = new Map();
-const MAX_REQUESTS_PER_WINDOW = 12;
-const WINDOW_MS = 60_000;
-
-function getClientKey(request) {
-  const forwarded = request.headers["x-forwarded-for"] || request.headers["x-real-ip"] || "unknown";
-  return String(forwarded).split(",")[0].trim().slice(0, 80) || "unknown";
-}
-
-function allowRequest(request) {
-  const now = Date.now();
-  const key = getClientKey(request);
-  const current = requestWindow.get(key) || { startedAt: now, count: 0 };
-  if (now - current.startedAt > WINDOW_MS) {
-    requestWindow.set(key, { startedAt: now, count: 1 });
-    return true;
-  }
-  current.count += 1;
-  requestWindow.set(key, current);
-  return current.count <= MAX_REQUESTS_PER_WINDOW;
-}
 
 function cleanIdent(value) {
   return sanitizeText(value, "", 40).replace(/[^a-z0-9@*? -]/gi, "").trim();
@@ -103,10 +83,7 @@ export default async function handler(request, response) {
     return;
   }
 
-  if (!allowRequest(request)) {
-    response.status(429).json({ error: "Flight tracking rate limit reached. Try again in a minute." });
-    return;
-  }
+  if (!await takeSearchSlot(request,response,'flight-tracking',12)) return;
 
   const { user } = await requireAuthenticatedUser(request, response);
   if (!user) return;

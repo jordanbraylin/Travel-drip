@@ -213,3 +213,41 @@ body.adventure-social[data-travel-theme=cruise]{--ad-pink:#234878;--ad-pink-dark
 body.adventure-social[data-travel-theme=festival]{--ad-pink:#8739b7;--ad-pink-dark:#63238b}
 
 html body.adventure-social.signed-in-shell .adventure-more #dashboardWidgets [data-widget]{background:#fff9ee!important;color:var(--ad-ink)!important;border-color:var(--ad-line)!important}
+/* Confirmed-trip countdown, public inspiration and private Dream Trips. */
+html body.adventure-social .experience-rotation-controls{position:absolute;right:12px;top:12px;display:flex;gap:6px;z-index:3}
+html body.adventure-social.signed-in-shell .experience-small{min-height:34px!important;font-size:12px!important;padding:6px 9px!important;background:#fffef8e8!important;border:1px solid #fff9!important;border-radius:10px!important}
+html body.adventure-social .experience-small svg{width:15px;height:15px;flex-basis:15px}
+html body.adventure-social .experience-live-countdown{font-size:16px;font-weight:900;color:#fff;padding-right:10px}
+html body.adventure-social.signed-in-shell .experience-photo-credit{position:absolute;bottom:5px;left:20px;font-size:10px!important;min-height:24px!important;padding:2px 5px!important;background:#23192eaa!important;color:#fff!important;border:0!important}
+html body.adventure-social.signed-in-shell .experience-plan-banner{position:relative;isolation:isolate;overflow:hidden;border-radius:20px!important;min-height:245px;background:#392132;color:#fff;margin:0 0 22px;padding:28px 30px;display:flex;align-items:center}
+html body.adventure-social .experience-plan-banner>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+html body.adventure-social .experience-plan-banner::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#251b2ee8,#251b2e55)}
+html body.adventure-social.signed-in-shell .experience-plan-banner h2{color:white!important;font-size:30px!important;max-width:680px;margin:8px 0 10px!important}
+html body.adventure-social.signed-in-shell .experience-plan-banner p{color:white!important;max-width:640px;font-size:16px!important;line-height:1.5!important;margin:0 0 16px!important}
+html body.adventure-social .experience-banner-label{font-size:13px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:#ffe69a}
+html body.adventure-social .experience-banner-actions{display:flex;flex-wrap:wrap;gap:10px}
+html body.adventure-social.signed-in-shell .dream-trip-workspace{margin:24px 0!important;padding:24px!important;border:1px solid var(--ad-line)!important;border-radius:20px!important;background:#fff9ec!important}
+html body.adventure-social.signed-in-shell .dream-trip-workspace>h2{font-size:28px!important;margin:0 0 10px!important}
+html body.adventure-social .dream-trip-workspace summary{font-weight:800;padding:12px 0;cursor:pointer}
+html body.adventure-social .dream-trip-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:14px 0}
+html body.adventure-social .dream-trip-form>label{display:flex;flex-direction:column;gap:6px;min-width:0}
+html body.adventure-social .dream-trip-form>label:has(input[type=checkbox]){flex-direction:row;align-items:center;flex-wrap:wrap}
+html body.adventure-social .dream-trip-form :is(input:not([type=checkbox]),textarea){width:100%;box-sizing:border-box;min-height:44px;padding:10px}
+html body.adventure-social .dream-trip-form textarea{min-height:90px}
+html body.adventure-social .dream-trip-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px;margin-top:15px}
+html body.adventure-social .dream-trip-list>article{padding:18px;border:1px solid var(--ad-line);border-radius:16px;background:white}
+html body.adventure-social .dream-trip-list article h3{margin:0 0 10px}
+html body.adventure-social .dream-trip-list article button{margin:6px 6px 0 0}
+html body.adventure-social.signed-in-shell .dream-tracking-unavailable{font-size:14px!important;color:#705035;background:#fff0c9;border-radius:10px;padding:12px}
+html body.adventure-social.signed-in-shell .experience-location-button{margin-top:12px;align-self:start}
+html body.adventure-social .experience-location-status{font-size:14px;color:var(--ad-muted)}
+html body.adventure-social .journey-cost-route .location-suggestion-host{position:relative}
+html body.adventure-social .journey-cost-route .location-suggestions{min-width:260px;max-width:min(500px,90vw);z-index:55}
+html body.adventure-social.signed-in-shell #adventureDashboard .adventure-welcome{padding-right:290px!important}
+html body.adventure-social.signed-in-shell #tripAlertsButton{background:#fff5d2!important;border-color:#f0cc77!important}
+html body.adventure-social .experience-alert-dialog{width:min(540px,calc(100vw - 30px));max-height:85dvh;overflow:auto;box-sizing:border-box;padding:24px;border:1px solid var(--ad-line);border-radius:20px;color:var(--ad-ink);background:var(--ad-cream)}
+html body.adventure-social .experience-alert-dialog form{display:grid;gap:14px;margin:18px 0}
+html body.adventure-social .experience-alert-dialog label{display:flex;align-items:center;gap:12px;justify-content:space-between}
+html body.adventure-social .experience-alert-dialog>button{margin:6px 8px 6px 0}
+@media(max-width:1080px){html body.adventure-social.signed-in-shell #adventureDashboard .adventure-welcome{padding-right:0!important}html body.adventure-social.signed-in-shell #tripAlertsButton{font-size:0!important;width:42px!important;height:42px!important;padding:8px!important;min-height:42px!important;gap:0!important}html body.adventure-social.signed-in-shell #adventureMobileBrand{font-size:20px!important}html body.adventure-social.signed-in-shell #letsPlanButton{font-size:13px!important;padding:8px 10px!important}}
+@media(max-width:600px){html body.adventure-social .dream-trip-form{grid-template-columns:1fr}html body.adventure-social.signed-in-shell .experience-plan-banner{padding:60px 20px 24px;min-height:250px}html body.adventure-social.signed-in-shell .experience-plan-banner h2{font-size:26px!important}html body.adventure-social .adventure-trip-cover .experience-rotation-controls{top:50px}html body.adventure-social .experience-banner-actions button{width:100%!important}html body.adventure-social.signed-in-shell .dream-trip-workspace{padding:18px!important}}

@@ -44,6 +44,7 @@ export function createSupabaseAdminClient() {
   if (!config.url || !config.serviceRoleKey) {
     return { client: null, error: "Supabase server environment variables are not configured" };
   }
+  try {
   return {
     client: createClient(config.url, config.serviceRoleKey, {
       auth: {
@@ -53,6 +54,7 @@ export function createSupabaseAdminClient() {
     }),
     error: null
   };
+  } catch { return {client:null,error:"Supabase server configuration is invalid"}; }
 }
 
 export async function requireAuthenticatedUser(request, response) {

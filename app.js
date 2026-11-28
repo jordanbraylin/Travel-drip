@@ -2235,6 +2235,8 @@ function dashboardShouldShowBlankState() {
 
 function resetAccountData() {
   resetAdventureDashboard();
+  resetTripExperiences();
+  clearTimeout(tripRefreshTimer);
   savedReceiptTotals.splice(0);
   resetDiscoveryStudio();
   resetTripJoy();
@@ -2402,6 +2404,7 @@ function renderAccountState(target = getTargetFromRoute()) {
   if (target === "letsPlan") renderPlanningStudio();
   renderPlanningPlay(target);
   renderAdventureDashboard(target);
+  renderTripExperiences(target);
   if (target === "socialHub") {
     renderTripChatData();
     void loadMessagingContacts();
@@ -7065,6 +7068,8 @@ const routeAliases = {
 const sectionRouteIds = Object.keys(routeDefinitions);
 let routeMountRegistry = null;
 let routeInteractionsWired = false;
+let tripRefreshTimer;
+function scheduleTripRefresh(userId){clearTimeout(tripRefreshTimer);tripRefreshTimer=setTimeout(()=>{if(state.session?.user?.id===userId)void loadAccountData();},600);}
 
 function getRouteComponentById(id) {
   const mounted = document.getElementById(id);
@@ -11876,7 +11881,8 @@ function subscribeToLiveData() {
         table: "trip_events",
         filter: `trip_id=eq.${tripId}`
       }, ({ new: event }) => {
-        if (event.user_id === state.session.user.id) return;
+        if (state.session?.user?.id!==userId || state.activeTripId!==tripId || event.user_id === userId) return;
+        if(event.event_type === "trip_updated")scheduleTripRefresh(userId);
         if (event.event_type === "message") {
           const conversation = event.payload.conversation || "Trip chat";
           appendMessage("Traveler", event.payload.text);
@@ -11887,7 +11893,8 @@ function subscribeToLiveData() {
           loadWalletAccess();
         }
       })
-      .subscribe((status) => setSyncStatus(status === "SUBSCRIBED" ? "Live" : "Connected"));
+      .on("postgres_changes", {event:"UPDATE",schema:"public",table:"trips",filter:`owner_user_id=eq.${userId}`},()=>{if(state.session?.user?.id===userId)scheduleTripRefresh(userId);})
+      .subscribe((status) => {if(state.session?.user?.id===userId)setSyncStatus(status === "SUBSCRIBED" ? "Live" : "Connected");});
   }
 
   if (window.walletNotificationUserId !== userId) {
@@ -11901,6 +11908,7 @@ function subscribeToLiveData() {
         table: "notifications",
         filter: `user_id=eq.${userId}`
       }, ({ new: notification }) => {
+        if (state.session?.user?.id!==userId) return;
         if (["wallet_deposit_confirmed", "wallet_payment_request", "wallet_payment_due"].includes(notification.notification_type)) {
           showWalletNotification(notification);
           loadWalletAccess();

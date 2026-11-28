@@ -1,8 +1,8 @@
+import {takeSearchSlot} from './_search-store.js';
 import { applySecurityHeaders, getRequestBody, methodNotAllowed, sanitizeText } from "./_security.js";
 
 const locations = new Map();
 const forecasts = new Map();
-const requests = new Map();
 const pending = new Map();
 const userAgent = "Travel-Drip/1.0 (https://travel-drip.com)";
 
@@ -89,10 +89,7 @@ export async function getCurrentWeather(body) {
 export default async function handler(request, response) {
   applySecurityHeaders(response);
   if (request.method !== "POST") return methodNotAllowed(response, "POST");
-  const ip = String(request.headers["x-forwarded-for"] || "unknown").split(",")[0];
-  const entry = requests.get(ip);
-  if (entry && entry.until > Date.now() && entry.count >= 30) return response.status(429).json({ error: "Too many weather requests. Please wait a minute." });
-  remember(requests, ip, entry?.until > Date.now() ? { ...entry, count: entry.count + 1 } : { count: 1, until: Date.now() + 60000 });
+  if(!await takeSearchSlot(request,response,'weather',30))return;
   try { response.status(200).json(await getCurrentWeather(getRequestBody(request))); }
   catch (error) { response.status(error.status || 502).json({ error: error.message || "Weather is temporarily unavailable." }); }
 }

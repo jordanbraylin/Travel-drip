@@ -1,3 +1,6 @@
+import dreamTrips from '../server/api/dream-trips.js';
+import locationSuggestions from '../server/api/location-suggestions.js';
+import destinationGallery from '../server/api/destination-gallery.js';
 import searchMaintenance from '../server/api/search-maintenance.js';
 import transportComparisons from '../server/api/transport-comparisons.js';
 import adminStatus from "../server/api/admin-status.js";
@@ -34,6 +37,9 @@ import weather from "../server/api/weather.js";
 import { applySecurityHeaders } from "../server/api/_security.js";
 
 const routes = Object.freeze({
+  "dream-trips":dreamTrips,
+  "location-suggestions":locationSuggestions,
+  "destination-gallery":destinationGallery,
   "admin-status": adminStatus,
   "auth-login": authLogin,
   "ai-invitation": aiInvitation,
