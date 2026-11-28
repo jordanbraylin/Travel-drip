@@ -1,9 +1,9 @@
-const CACHE_NAME = "traveldrip-v264";
+const CACHE_NAME = "traveldrip-v265";
 const APP_SHELL = [
   "/vendor/adventure-fredoka-600.ttf",
   "/trip-experiences.js?v=6",
   "/adventure-social.css?v=10",
-  "/coastal-journal.css?v=2",
+  "/coastal-journal.css?v=3",
   "/icons/coastal-lisbon-hero.jpg",
   "/icons/coastal-lisbon-tram.jpg",
   "/icons/coastal-sailing.jpg",
@@ -34,7 +34,7 @@ const APP_SHELL = [
   "/offline.html",
   "/styles.css?v=126",
   "/navigation.css?v=93",
-  "/app.js?v=125",
+  "/app.js?v=126",
   "/passport-book.js?v=1",
   "/passport-book.css?v=2",
   "/auth-workflows.js?v=4",

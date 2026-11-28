@@ -940,8 +940,8 @@ const invitationConfigs = {
 const authCarouselSlides = [
   {
     quote: "Good Trips. Better People.",
-    src: "https://images.unsplash.com/photo-1527631746610-bca00a040d60?q=80&w=1400&auto=format&fit=crop",
-    alt: "Friends walking together during a city trip"
+    src: "icons/coastal-lisbon-hero.jpg",
+    alt: "Lisbon rooftops at sunset destination inspiration"
   },
   {
     quote: "Where trips become memories.",
