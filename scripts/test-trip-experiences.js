@@ -8,3 +8,9 @@ for(const value of [{destination:''},{destination:'Paris',budget:-1},{destinatio
 const labels=locationLabels([{properties:{name:'JFK Airport',city:'New York',country:'USA'},geometry:{coordinates:[-73,40]}},{properties:{name:'JFK Airport',city:'New York',country:'USA'},geometry:{coordinates:[-73,40]}}]);assert.equal(labels.length,1);assert.match(labels[0].label,/JFK Airport/);
 const res={setHeader(){},status(s){this.code=s;return this;},json(b){this.body=b;}};await handler({method:'GET',headers:{}},res);assert.equal(res.code,401);
 console.log('Trip experiences passed: confirmed/draft/cancelled filtering, date/hour/minute countdowns, saved departure time, dream validation, location suggestions and anonymous denial.');
+const {dreamRequest}=await import('../server/api/dream-trips.js');
+const rows=[{id:'11111111-1111-1111-1111-111111111111',user_id:'other-user',trip_type:'dream_trip',status:'saved',destination:'Private destination'}];
+const db={from(){return {filters:[],eq(k,v){this.filters.push([k,v]);return this;},update(v){this.updates=v;return this;},insert(v){this.inserted=v;return this;},select(){return this;},async maybeSingle(){if(this.inserted){rows.push(this.inserted);return {data:this.inserted};}const row=rows.find(r=>this.filters.every(([k,v])=>r[k]===v));if(row&&this.updates)Object.assign(row,this.updates);return {data:row||null};}};}};
+const result=()=>({status(n){this.code=n;return this;},json(b){this.body=b;}});
+let rr=result();await dreamRequest({method:'POST',body:{id:rows[0].id,dream:{destination:'Changed'}}},rr,db,{id:'current-user'});assert.equal(rr.code,404);assert.equal(rows[0].destination,'Private destination','An authenticated user cannot update another owner\'s dream');
+rr=result();await dreamRequest({method:'POST',body:{dream:{destination:'Paris',user_id:'other-user'}}},rr,db,{id:'current-user'});assert.equal(rr.code,200);assert.equal(rows.at(-1).user_id,'current-user','Server assigns dream ownership');

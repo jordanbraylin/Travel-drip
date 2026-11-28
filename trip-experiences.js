@@ -106,3 +106,12 @@ function renderTripExperiences(target){
  if(target==='dashboardHome'){updateHomeExperienceBanner();const trip=state.accountData.activeTrip;if(trip?.owner_user_id===state.session.user.id){const more=document.querySelector('.adventure-more-grid');more?.append(adventureButton('Trip plan status','check-circle',()=>openTripPlanStatus(trip)));}}
  if(!experienceTimer){let lastMinute=-1;experienceTimer=setInterval(()=>{if(document.hidden)return;const minute=Math.floor(Date.now()/60000);if(minute!==lastMinute){lastMinute=minute;for(const el of document.querySelectorAll('[data-countdown-trip]')){const trip=(state.accountData.trips||[]).find(t=>t.id===el.dataset.countdownTrip);if(trip)el.textContent=departureCountdown(trip,state.accountData.records?.flights||[]);}}if(experiencePaused||document.documentElement.dataset.reduceMotion==='true'||matchMedia('(prefers-reduced-motion: reduce)').matches)return;experienceTick++;updateExperienceBanners();},12000);}
 }
+
+// Minimal operational diagnostics: deliberately exclude all raw error details and identifiers.
+function reportExperienceError(kind){
+ const route=location.pathname.split('/')[1]||'login';const allowed=['dashboard','planning','itinerary','explore','travel','transportation','wallet','chat','memories','events','account','login','register'];
+ if(!/^https?:$/.test(location.protocol))return;
+ fetch('/api/client-events',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind,route:allowed.includes(route)?route:'other'}),keepalive:true}).catch(()=>{});
+}
+window.addEventListener('error',()=>reportExperienceError('runtime'));
+window.addEventListener('unhandledrejection',()=>reportExperienceError('promise'));

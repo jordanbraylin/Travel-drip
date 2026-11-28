@@ -1,3 +1,4 @@
+import clientEvents from '../server/api/client-events.js';
 import dreamTrips from '../server/api/dream-trips.js';
 import locationSuggestions from '../server/api/location-suggestions.js';
 import destinationGallery from '../server/api/destination-gallery.js';
@@ -37,6 +38,7 @@ import weather from "../server/api/weather.js";
 import { applySecurityHeaders } from "../server/api/_security.js";
 
 const routes = Object.freeze({
+  "client-events":clientEvents,
   "dream-trips":dreamTrips,
   "location-suggestions":locationSuggestions,
   "destination-gallery":destinationGallery,
