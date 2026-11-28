@@ -257,3 +257,18 @@ html body.adventure-social.signed-in-shell.app-routed #itineraryAlerts>.experien
 html body.adventure-social.signed-in-shell.app-routed #aiTravelPlanner>.dream-trip-workspace{display:block!important}
 html body.adventure-social .experience-activity-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 html body.adventure-social.signed-in-shell .experience-activity-links .adventure-button{min-height:44px!important;background:#fff6!important;border:1px solid #fffa!important;color:#fff!important;font-size:13px!important}
+/* Match the approved palette in the original travel, wallet and concierge components too. */
+html body.adventure-social.app-routed.signed-in-shell:is([data-active-route=exploreDrops],[data-active-route=transportationPanel],[data-active-route=rideShareHub],[data-active-route=walletPanel]){background:var(--ad-cream)!important;color:var(--ad-ink)!important}
+html body.adventure-social.app-routed.signed-in-shell :is(#walletPanel,#transportationPanel,#rideShareHub,#letsPlan,#itineraryAlerts,#eventsPanel,#socialHub,#adminPanel,#memoriesPanel,#aiTravelPlanner,#tripsPanel) .primary-button{background:var(--ad-pink)!important;border-color:var(--ad-pink)!important;color:#fff!important}
+html body.adventure-social.app-routed.signed-in-shell .journey-modes button[aria-pressed=true]{background:var(--ad-pink)!important;border-color:var(--ad-pink)!important;color:#fff!important}
+html body.adventure-social.app-routed.signed-in-shell .journey-tools button{background:#fff0dc!important;border-color:var(--ad-line)!important;color:var(--ad-ink)!important;border-radius:18px!important}
+html body.adventure-social .journey-tools svg,html body.adventure-social .journey-next>svg{color:var(--ad-pink)!important;stroke:var(--ad-pink)!important;background:#ffe9ef!important}
+html body.adventure-social .journey-next{border-color:var(--ad-line)!important;border-radius:18px!important}
+html body.adventure-social .journey-provider-note{background:#fff5d7!important;border-color:#e5bd5d!important;border-radius:12px!important;color:var(--ad-ink)!important}
+html body.adventure-social .journey-guide summary{color:var(--ad-pink-dark)!important}
+html body.adventure-social.app-routed.signed-in-shell #walletPanel.journey-wallet #journeyWalletCard{background:linear-gradient(120deg,#ca1856,#642544)!important;border-radius:20px!important;box-shadow:none!important}
+html body.adventure-social.app-routed.signed-in-shell[data-active-route=walletPanel] #walletPanel.journey-wallet .wallet-balance-hero{border-color:var(--ad-line)!important;border-radius:18px!important;color:var(--ad-ink)!important}
+html body.adventure-social.app-routed.signed-in-shell #walletPanel.journey-wallet .wallet-balance-hero>button{background:var(--ad-pink)!important;border-radius:12px!important}
+html body.adventure-social.app-routed.signed-in-shell #aiTravelPlanner .concierge-answer button{color:var(--ad-pink-dark)!important;border-color:#ebb8cd!important;border-radius:10px!important}
+html body.adventure-social .concierge-question-number{background:#ffe9ef!important;color:var(--ad-pink-dark)!important}
+html body.adventure-social.signed-in-shell #letsPlanDialog .planning-step-indicator li.complete{color:var(--ad-pink-dark)!important;border-color:var(--ad-pink)!important}
