@@ -1,9 +1,9 @@
-const CACHE_NAME = "traveldrip-v265";
+const CACHE_NAME = "traveldrip-v266";
 const APP_SHELL = [
   "/vendor/adventure-fredoka-600.ttf",
   "/trip-experiences.js?v=6",
   "/adventure-social.css?v=10",
-  "/coastal-journal.css?v=3",
+  "/coastal-journal.css?v=4",
   "/icons/coastal-lisbon-hero.jpg",
   "/icons/coastal-lisbon-tram.jpg",
   "/icons/coastal-sailing.jpg",

@@ -186,3 +186,5 @@ html body.adventure-social :is(.auth-sync-note,.auth-install-tip){background:#f3
 html body.adventure-social.auth-screen #authPanel .auth-check input[type=checkbox]{width:18px!important;height:18px!important;min-height:18px!important;max-height:18px!important;margin:0!important;padding:0!important;accent-color:#b65335}
 html body.adventure-social.auth-screen #authPanel .auth-check{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important}
 html body.adventure-social .profile-photo-avatar{background-color:#f2e3d4!important;border-color:#d8baa2!important;color:#1e3045!important}
+html body.adventure-social .pwa-install-mini{background:#f3e9de!important;color:#655749!important;border-color:#e1d3c4!important}
+html body.adventure-social .pwa-install-mini button{background:#fffaf5!important;color:#1e3045!important;border-color:#d9c8b6!important}
