@@ -255,3 +255,5 @@ html body.adventure-social.signed-in-shell.app-routed #letsPlan[data-studio-read
 html body.adventure-social.signed-in-shell.app-routed #letsPlan[data-studio-ready]>.dream-trip-workspace{display:block!important}
 html body.adventure-social.signed-in-shell.app-routed #itineraryAlerts>.experience-plan-banner,html body.adventure-social.signed-in-shell.app-routed #aiTravelPlanner>.experience-plan-banner{display:flex!important}
 html body.adventure-social.signed-in-shell.app-routed #aiTravelPlanner>.dream-trip-workspace{display:block!important}
+html body.adventure-social .experience-activity-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+html body.adventure-social.signed-in-shell .experience-activity-links .adventure-button{min-height:44px!important;background:#fff6!important;border:1px solid #fffa!important;color:#fff!important;font-size:13px!important}

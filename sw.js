@@ -1,7 +1,7 @@
-const CACHE_NAME = "traveldrip-v255";
+const CACHE_NAME = "traveldrip-v256";
 const APP_SHELL = [
-  "/trip-experiences.js?v=2",
-  "/adventure-social.css?v=4",
+  "/trip-experiences.js?v=3",
+  "/adventure-social.css?v=5",
   "/adventure-social.js?v=1",
   "/vendor/adventure-nunito-400.ttf",
   "/vendor/adventure-nunito-700.ttf",

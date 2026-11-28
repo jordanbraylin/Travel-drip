@@ -14,3 +14,5 @@ const db={from(){return {filters:[],eq(k,v){this.filters.push([k,v]);return this
 const result=()=>({status(n){this.code=n;return this;},json(b){this.body=b;}});
 let rr=result();await dreamRequest({method:'POST',body:{id:rows[0].id,dream:{destination:'Changed'}}},rr,db,{id:'current-user'});assert.equal(rr.code,404);assert.equal(rows[0].destination,'Private destination','An authenticated user cannot update another owner\'s dream');
 rr=result();await dreamRequest({method:'POST',body:{dream:{destination:'Paris',user_id:'other-user'}}},rr,db,{id:'current-user'});assert.equal(rr.code,200);assert.equal(rows.at(-1).user_id,'current-user','Server assigns dream ownership');
+
+const security=await import('../server/api/_security.js');const beforeUrl=process.env.SUPABASE_URL,beforeKey=process.env.SUPABASE_SERVICE_ROLE_KEY;process.env.SUPABASE_URL='invalid';process.env.SUPABASE_SERVICE_ROLE_KEY='test-only';assert.equal(security.createSupabaseAdminClient().client,null);for(const [key,value]of [['SUPABASE_URL',beforeUrl],['SUPABASE_SERVICE_ROLE_KEY',beforeKey]])if(value===undefined)delete process.env[key];else process.env[key]=value;
