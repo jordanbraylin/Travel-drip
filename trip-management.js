@@ -13,6 +13,7 @@ function openTripRemoval(trip) {
 }
 
 function appendRemovedTripsControl(container) {
+  if (!container?.closest("#adminPanel") || container.querySelector(".removed-trips")) return;
   const details = document.createElement("details");
   details.className = "simple-disclosure removed-trips";
   const summary = document.createElement("summary");
@@ -42,7 +43,8 @@ function appendRemovedTripsControl(container) {
             try {
               await apiRequest("/api/trips", { method: "PATCH", body: JSON.stringify({ tripId: trip.id, action: "restore" }) });
               await loadAccountData();
-              renderRoute("tripsPanel");
+              renderRoute("adminPanel");
+              selectAccountSettings("data");
             } catch (error) { list.textContent = error.message; }
           });
           row.append(restore);

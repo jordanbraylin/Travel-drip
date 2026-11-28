@@ -10,7 +10,7 @@ function departureCountdown(trip,flights=[],now=new Date()){
  const start=real?Date.parse(real.departs_at):Date.parse(`${trip.starts_on}T00:00:00`);if(!Number.isFinite(start))return 'Dates to dream about';
  const minutes=Math.max(0,Math.floor((start-now.getTime())/60000));return `${Math.floor(minutes/1440)}d ${Math.floor(minutes/60)%24}h ${minutes%60}m to go`;
 }
-function publicInspiration(index=experienceTick){const places=[livePlanDestinations.find(p=>p.city==='Barcelona'),...livePlanDestinations.filter(p=>p.city!=='Barcelona')].filter(Boolean);return places[index%places.length];}
+function publicInspiration(index=experienceTick){const places=[livePlanDestinations.find(p=>p.city==='Lisbon'),...livePlanDestinations.filter(p=>p.city!=='Lisbon')].filter(Boolean);return places[index%places.length];}
 function rotationButtons(host){
  const controls=adventureElement('div','','experience-rotation-controls');
  const pause=adventureButton(experiencePaused?'Play':'Pause','pause',()=>{experiencePaused=!experiencePaused;pause.textContent=experiencePaused?'Play':'Pause';pause.setAttribute('aria-pressed',String(experiencePaused));},'experience-small');pause.setAttribute('aria-label','Pause or resume destination photographs');pause.setAttribute('aria-pressed',String(experiencePaused));
@@ -28,6 +28,7 @@ function openTripPlanStatus(trip){
  form.addEventListener('submit',async e=>{e.preventDefault();save.disabled=true;try{await apiRequest('/api/trips',{method:'PATCH',body:JSON.stringify({tripId:trip.id,status:select.value})});if(owner!==state.session?.user?.id)return;await loadAccountData();dialog.close();renderTripExperiences(getTargetFromRoute());}catch(error){status.textContent=error.message;save.disabled=false;}});
 }
 function updateHomeExperienceBanner(){
+ if(document.querySelector('.coastal-scenic')){updateCoastalScenic();return;}
  const host=document.querySelector('#adventureDashboard .adventure-trip-cover');if(!host||!document.body.classList.contains('adventure-home'))return;
  const upcoming=confirmedUpcomingTrips(state.accountData.trips||[]),trip=upcoming[Math.floor(experienceTick/3)%Math.max(1,upcoming.length)];
  const photo=host.querySelector('img');let item,caption;
@@ -102,8 +103,10 @@ async function openTripAlertCenter(){
 }
 function renderTripExperiences(target){
  if(!state.session?.user)return;attachTransportLocations();renderPlanningInspiration(target);renderDreamTripWorkspace(target);
- let alerts=document.getElementById('tripAlertsButton');if(!alerts){alerts=adventureButton('Trip alerts','bell',openTripAlertCenter,'experience-alert-button');alerts.id='tripAlertsButton';document.querySelector('.topbar')?.append(alerts);}
- if(target==='dashboardHome'){updateHomeExperienceBanner();const trip=state.accountData.activeTrip;if(trip?.owner_user_id===state.session.user.id){const more=document.querySelector('.adventure-more-grid');if(more&&!more.querySelector('[data-trip-plan-status]')){const statusButton=adventureButton('Trip plan status','check-circle',()=>openTripPlanStatus(trip));statusButton.dataset.tripPlanStatus='';more.append(statusButton);}}}
+ let alerts=document.getElementById('tripAlertsButton');if(!alerts){alerts=adventureButton('Trip alerts','bell',openTripAlertCenter,'experience-alert-button');alerts.id='tripAlertsButton';const messages=getRouteComponentById('socialHub');messages?.querySelector('.notifications-widget')?.append(alerts);}
+ if(target==='adminPanel'){const root=getRouteComponentById('adminPanel');const data=root?.querySelector('[data-settings-panel=data]');if(data)appendRemovedTripsControl(data);}
+ if(target==='socialHub'){const button=document.getElementById('messageAlertPreferencesButton');if(button)button.onclick=openTripAlertCenter;}
+ if(target==='dashboardHome'||target==='tripsPanel'){if(target==='dashboardHome')updateHomeExperienceBanner();const trip=state.accountData.activeTrip;if(trip?.owner_user_id===state.session.user.id){const more=getRouteComponentById('tripsPanel')?.querySelector('.adventure-more-grid');if(more&&!more.querySelector('[data-trip-plan-status]')){const statusButton=adventureButton('Trip plan status','check-circle',()=>openTripPlanStatus(trip));statusButton.dataset.tripPlanStatus='';more.append(statusButton);}}}
  if(!experienceTimer){let lastMinute=-1;experienceTimer=setInterval(()=>{if(document.hidden)return;const minute=Math.floor(Date.now()/60000);if(minute!==lastMinute){lastMinute=minute;for(const el of document.querySelectorAll('[data-countdown-trip]')){const trip=(state.accountData.trips||[]).find(t=>t.id===el.dataset.countdownTrip);if(trip)el.textContent=departureCountdown(trip,state.accountData.records?.flights||[]);}}if(experiencePaused||document.documentElement.dataset.reduceMotion==='true'||matchMedia('(prefers-reduced-motion: reduce)').matches)return;experienceTick++;updateExperienceBanners();},12000);}
 }
 

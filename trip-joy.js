@@ -23,7 +23,7 @@ function tripJoyModels(trip,records={}){
   ];
 }
 function renderTripJoy(container){
-  const trips=state.session?.user?state.accountData.trips||[]:[];const trip=state.accountData.activeTrip;container.replaceChildren();
+  const trips=state.session?.user?state.accountData.trips||[]:[];const trip=state.accountData.activeTrip;const preservedWidgets=container.querySelector('#dashboardWidgets');if(preservedWidgets)container.before(preservedWidgets);container.replaceChildren();
   const hero=document.createElement('div');hero.className='joy-trip-hero';const image=document.createElement('img');const photo=tripWorkspacePhoto(trip);image.src=photo.src;image.alt=photo.alt;
   const copy=document.createElement('div');copy.append(joyText('p','YOUR NEXT GREAT STORY','eyebrow'),joyText('h2',trip?.title||'My trips'),joyText('p',trip?`${trip.destination||'Destination to come'} · ${tripWorkspaceDates(trip)}`:'A world of possibilities. A plan that is yours.'));
   copy.append(workspaceButton("Let's plan",openWorkspacePlanning,true));hero.append(image,copy,joyText('small','Destination inspiration'));container.append(hero);
@@ -38,11 +38,11 @@ function renderTripJoy(container){
   for(const model of models){
     const button=document.createElement('button');button.type='button';button.className=`joy-flip-widget joy-tone-${model.tone}`;button.setAttribute('aria-label',`${model.title}: ${model.summary}. Open details`);
     const inner=document.createElement('span');inner.className='joy-flip-inner';
-    const front=document.createElement('span');front.className='joy-widget-front';front.setAttribute('aria-hidden','true');front.innerHTML=`<i data-lucide="${model.icon}"></i>`;front.append(joyText('strong',model.title),joyText('span',model.summary),joyText('small','View details'));
+    const front=document.createElement('span');front.className='joy-widget-front';front.setAttribute('aria-hidden','true');front.innerHTML=`<i data-lucide="${model.icon}"></i>`;front.prepend(coastalWidgetPhoto(model.title));front.append(joyText('strong',model.title),joyText('span',model.summary),joyText('small','View details'));
     const back=document.createElement('span');back.className='joy-widget-back';back.setAttribute('aria-hidden','true');back.append(joyText('strong',model.title),joyText('span',model.lines.slice(0,3).join(' · ')),joyText('small','Open full details'));
     inner.append(front,back);button.append(inner);button.addEventListener('click',()=>joyDialog(model.title,model.lines,{label:!trip?'Plan a trip':model.route==='importantInfo'?'Open trip documents':'Open workspace',run:()=>trip?navigateSafely(model.route,{updateHistory:true}):openWorkspacePlanning()}));grid.append(button);
   }
-  container.append(grid);appendRemovedTripsControl(container);window.lucide?.createIcons();
+  container.append(grid);renderCoastalTripTools(container);window.lucide?.createIcons();
 }
 
 const joyEventTypes=[['birthday','Birthday','cake','pink'],['wedding','Wedding','heart','yellow'],['family_reunion','Get together','party-popper','aqua'],['special_event','Something special','sparkles','green']];

@@ -72,6 +72,7 @@
   <link rel="stylesheet" href="auth-workflows.css?v=2">
   <title>Travel-Drip | Plan Group Trips, Split Costs, Share Memories</title>
   <link rel="stylesheet" href="adventure-social.css?v=9">
+  <link rel="stylesheet" href="coastal-journal.css?v=1">
 </head>
 <body class="auth-initializing">
   <div class="loader" id="loader" aria-live="polite">
@@ -625,16 +626,7 @@
             <div class="widget-meta"><span>0 saved trips</span><span>Live account data only</span></div>
             <button class="primary-button" type="button" data-target="tripsPanel">Create Trip</button>
           </article>
-          <article class="travel-widget ai-widget is-large smart-widget--wide" data-widget="ai" data-widget-scope="solo group cruise corporate">
-            <div class="widget-toolbar"><span>AI Trip Manager</span><button type="button" data-widget-pin="ai">Pin</button><button type="button" data-widget-hide="ai">Hide</button></div>
-            <div class="ai-reminder-list">
-              <div><strong>Today</strong><span>No saved trip tasks yet.</span></div>
-              <div><strong>Suggestion</strong><span>Ask AI to research a destination when you are ready.</span></div>
-              <div><strong>Weather</strong><span>Weather appears after you add a destination or run live search.</span></div>
-              <div><strong>Budget</strong><span>Budget guidance starts blank until you enter trip details.</span></div>
-            </div>
-            <button class="primary-button" type="button" id="askAiWidgetButton" data-target="aiTravelPlanner">Ask AI</button>
-          </article>
+
           <article class="travel-widget budget-widget smart-widget--medium" data-widget="budget" data-widget-scope="solo group cruise corporate" data-finance-widget>
             <div class="widget-toolbar"><span>Budget Snapshot</span><button type="button" data-widget-pin="budget">Pin</button><button type="button" data-widget-hide="budget">Hide</button></div>
             <h3>No budget set</h3>
@@ -663,16 +655,7 @@
             </div>
             <button class="ghost-button" type="button" data-target="memoriesPanel">Open album</button>
           </article>
-          <article class="travel-widget notifications-widget smart-widget--medium" data-widget="notifications" data-widget-scope="group corporate">
-            <div class="widget-toolbar"><span>Notifications</span><button type="button" data-widget-pin="notifications">Pin</button><button type="button" data-widget-hide="notifications">Hide</button></div>
-            <div class="notification-mini-list" id="notificationMiniList">
-              <span>No travel alerts yet</span>
-              <span>No wallet reminders yet</span>
-              <span>No unread messages yet</span>
-              <span>No activity votes yet</span>
-            </div>
-            <button class="ghost-button" type="button" data-target="itineraryAlerts">View All</button>
-          </article>
+
           <article class="travel-widget cruise-widget" data-widget="cruise" data-widget-scope="cruise">
             <div class="widget-toolbar"><span>Cruise</span><button type="button" data-widget-pin="cruise">Pin</button><button type="button" data-widget-hide="cruise">Hide</button></div>
             <h3>No cruise saved</h3>
@@ -1004,6 +987,16 @@
           </section>
 
           <section class="panel explore-panel" id="exploreDrops">
+<article class="coastal-relocated-widget coastal-ai-widget travel-widget ai-widget is-large smart-widget--wide" data-widget="ai" data-widget-scope="solo group cruise corporate">
+            <div class="widget-toolbar"><span>AI Trip Manager</span><button type="button" data-widget-pin="ai">Pin</button><button type="button" data-widget-hide="ai">Hide</button></div>
+            <div class="ai-reminder-list">
+              <div><strong>Today</strong><span>No saved trip tasks yet.</span></div>
+              <div><strong>Suggestion</strong><span>Ask AI to research a destination when you are ready.</span></div>
+              <div><strong>Weather</strong><span>Weather appears after you add a destination or run live search.</span></div>
+              <div><strong>Budget</strong><span>Budget guidance starts blank until you enter trip details.</span></div>
+            </div>
+            <button class="primary-button" type="button" id="askAiWidgetButton" data-target="aiTravelPlanner">Ask AI</button>
+          </article>
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Explore</p>
@@ -1434,6 +1427,16 @@
           </section>
 
           <section class="panel social-hub" id="socialHub">
+<article class="coastal-relocated-widget coastal-notifications-widget travel-widget notifications-widget smart-widget--medium" data-widget="notifications" data-widget-scope="solo group cruise corporate">
+            <div class="widget-toolbar"><span>Notifications</span><button type="button" data-widget-pin="notifications">Pin</button><button type="button" data-widget-hide="notifications">Hide</button></div>
+            <div class="notification-mini-list" id="notificationMiniList">
+              <span>No travel alerts yet</span>
+              <span>No wallet reminders yet</span>
+              <span>No unread messages yet</span>
+              <span>No activity votes yet</span>
+            </div>
+            <button class="ghost-button" type="button" id="messageAlertPreferencesButton">View All</button>
+          </article>
             <div class="section-heading compact">
               <div>
                 <p class="eyebrow">Your trip feed</p>
@@ -2516,7 +2519,7 @@
 
           </section>
 
-          <section class="panel" data-route-support="tripsPanel">
+          <section class="panel coastal-ai-builder" data-route-support="exploreDrops">
             <h2>AI itinerary builder</h2>
             <p id="builderCopy">Balanced pace with one anchor activity each day.</p>
             <div class="tabs" role="tablist" aria-label="Itinerary days">
@@ -4697,7 +4700,7 @@
   <script src="public-config.js?v=3"></script>
   <script src="vendor/qrcode.js?v=1"></script>
   <script defer src="usability.js?v=4"></script>
-  <script defer src="trip-management.js?v=1"></script>
+  <script defer src="trip-management.js?v=2"></script>
   <script defer src="live-weather.js?v=1"></script>
   <script defer src="messaging-contacts.js?v=1"></script>
   <script defer src="planning-studio.js?v=1"></script>
@@ -4707,12 +4710,12 @@
   <script defer src="trip-workspaces.js?v=8"></script>
   <script defer src="passport-book.js?v=1"></script>
   <script defer src="photo-feed.js?v=8"></script>
-  <script defer src="trip-joy.js?v=4"></script>
-  <script defer src="discovery-studio.js?v=7"></script>
+  <script defer src="trip-joy.js?v=5"></script>
+  <script defer src="discovery-studio.js?v=8"></script>
   <script defer src="planner-conversation.js?v=2"></script>
   <script defer src="auth-workflows.js?v=4"></script>
-  <script defer src="trip-experiences.js?v=4"></script>
-  <script defer src="adventure-social.js?v=2"></script>
+  <script defer src="trip-experiences.js?v=5"></script>
+  <script defer src="adventure-social.js?v=3"></script>
   <script defer src="app.js?v=124"></script>
 </body>
 </html>

@@ -8,6 +8,7 @@ const output = resolve(root, "public");
 const staticFiles = [
   "trip-experiences.js",
   "adventure-social.css",
+  "coastal-journal.css",
   "adventure-social.js",
   "admin.html",
   "app.js",

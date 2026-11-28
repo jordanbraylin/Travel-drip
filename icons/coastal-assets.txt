@@ -1,0 +1,19 @@
+Coastal Journal assets — November 28, 2026
+
+Built-in ImageGen generated public destination/editorial illustrations (not user portraits, bookings, or uploaded memories):
+coastal-lisbon-hero.jpg — Lisbon Alfama rooftops and Tagus at peach sunset, panoramic scenic route banner.
+coastal-lisbon-tram.jpg — yellow Lisbon tram, blue azulejos and bougainvillea.
+coastal-pastries.jpg — Portuguese custard tarts on blue and white ceramics.
+coastal-sailing.jpg — white sailboat near Belem on blue water.
+coastal-friends.jpg — four adult friends enjoying a Mediterranean cafe holiday.
+coastal-camel.jpg — travelers riding camels over golden dunes at sunset.
+Tool: built-in image_gen. Source PNGs retained in the user's Codex generated_images folder. JPEG derivatives bundled here; public illustrations only.
+
+Unsplash editorial travel photographs, bundled optimized derivatives under the Unsplash license:
+coastal-flight.jpg — https://images.unsplash.com/photo-1436491865332-7a61a109cc05
+coastal-stay.jpg — https://images.unsplash.com/photo-1566073771259-6a8506099945
+coastal-cruise.jpg — https://images.unsplash.com/photo-1548574505-5e239809ee19
+coastal-transport.jpg — https://images.unsplash.com/photo-1449965408869-eaa3f722e40d
+License: https://unsplash.com/license
+
+Typography: Georgia / Times New Roman system serif; Arial / Helvetica system sans serif. No remote font requests.

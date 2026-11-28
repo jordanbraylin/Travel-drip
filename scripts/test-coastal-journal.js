@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const source=fs.readFileSync('adventure-social.js','utf8');
+const avatarCode=source.slice(source.indexOf('function coastalMemberBubble('),source.indexOf('function updateCoastalScenic('));
+const signed=[];const requests=[];let profiles=[];let bubbleOutput=[];
+function element(tag,text='',className=''){return {tag,textContent:text,className,children:[],append(...nodes){this.children.push(...nodes);},setAttribute(key,value){this[key]=value;},replaceChildren(...nodes){this.children=nodes;}};}
+const group={replaceChildren(...items){bubbleOutput=items;}};
+const host={isConnected:true,querySelector:()=>group};
+const context=vm.createContext({state:{session:{user:{id:'me',user_metadata:{full_name:'Jordan'}}},activeTripId:'trip-1',supabase:{from(table){requests.push(table);return {select(){return {in:async()=>({data:profiles})};}}},storage:{from:()=>({createSignedUrl:async path=>{signed.push(path);return {data:{signedUrl:'signed:'+path}};}})}}},document:{getElementById:()=>null},window:{lucide:{createIcons(){}}},adventureElement:element,adventurePhoto:(src,alt)=>({src,alt}),adventureIcon:name=>({icon:name})});
+vm.runInContext(avatarCode,context);
+let bubble=context.coastalMemberBubble({user_id:'me'},0);assert.equal(bubble.textContent,'J');assert.equal(bubble['aria-label'],'Jordan');
+bubble=context.coastalMemberBubble({user_id:'other'},1);assert.equal(bubble['aria-label'],'Trip member 2');assert.equal(bubble.children[0].icon,'user-round');
+profiles=[{id:'other',full_name:'Private Friend',avatar_storage_path:'other/private.jpg',avatar_visibility:'private'}];
+await context.hydrateCoastalMembers(host,[{user_id:'other'}],'me','trip-1');assert.equal(signed.length,0,'Private portraits must never be requested');assert.equal(bubbleOutput[0].textContent,'PF');
+profiles=[{id:'other',full_name:'Trip Friend',avatar_storage_path:'other/shared.jpg',avatar_visibility:'trip_members'}];
+await context.hydrateCoastalMembers(host,[{user_id:'other'}],'me','trip-1');assert.deepEqual(signed,['other/shared.jpg']);assert.equal(bubbleOutput[0].children[0].src,'signed:other/shared.jpg');
+context.state.activeTripId='another-trip';signed.length=0;
+await context.hydrateCoastalMembers(host,[{user_id:'other'}],'me','trip-1');assert.equal(signed.length,0,'A stale trip response must not hydrate another trip');
+assert.ok(requests.every(x=>x==='profiles'));
+for(const name of ['lisbon-hero','lisbon-tram','pastries','sailing','friends','camel','flight','stay','cruise','transport'])assert.ok(fs.statSync(`icons/coastal-${name}.jpg`).size>1000);
+const html=fs.readFileSync('index.html','utf8');assert.match(html,/coastal-journal\.css/);assert.match(html,/coastal-ai-builder" data-route-support="exploreDrops"/);
+console.log('Coastal journal passed: account-specific people, privacy-respecting portraits, stale-trip isolation, discovery routing and bundled assets.');
