@@ -1,9 +1,9 @@
-const CACHE_NAME = "traveldrip-v266";
+const CACHE_NAME = "traveldrip-v267";
 const APP_SHELL = [
   "/vendor/adventure-fredoka-600.ttf",
   "/trip-experiences.js?v=6",
   "/adventure-social.css?v=10",
-  "/coastal-journal.css?v=4",
+  "/coastal-journal.css?v=5",
   "/icons/coastal-lisbon-hero.jpg",
   "/icons/coastal-lisbon-tram.jpg",
   "/icons/coastal-sailing.jpg",
@@ -15,7 +15,7 @@ const APP_SHELL = [
   "/icons/coastal-cruise.jpg",
   "/icons/coastal-transport.jpg",
 
-  "/adventure-social.js?v=4",
+  "/adventure-social.js?v=5",
   "/vendor/adventure-nunito-400.ttf",
   "/vendor/adventure-nunito-700.ttf",
   "/vendor/adventure-nunito-900.ttf",
@@ -41,7 +41,7 @@ const APP_SHELL = [
   "/auth-workflows.css?v=2",
   "/planner-conversation.js?v=2",
   "/planner-conversation.css?v=2",
-  "/photo-feed.js?v=8",
+  "/photo-feed.js?v=9",
   "/photo-feed.css?v=3",
   "/trip-joy.js?v=5",
   "/trip-joy.css?v=1",

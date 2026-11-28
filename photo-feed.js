@@ -120,6 +120,19 @@ function initializePhotoFeed() {
   panel.querySelector('.photo-cover-copy>p:last-child').textContent = 'A little book of everywhere you have been, and everything you felt.';
   panel.querySelector('#photoCaptionLabel').textContent = 'About your experience';
   photoPassport = window.TravelDripPassport.mount(document.querySelector('#photoFeedList'));
+  // Keep the passport and its publishing tools beside one another instead of
+  // stacking the entire composer above the book.
+  const column=panel.querySelector('.photo-feed-column'), aside=panel.querySelector('.photo-feed-aside');
+  column.id='memoryPassportWorkspace';aside.id='memorySharingWorkspace';
+  column.setAttribute('aria-label','Browse memory passport');aside.setAttribute('aria-label','Share memories and connect with friends');
+  aside.prepend(panel.querySelector('.photo-composer-toggle'));
+  const toolbar=document.createElement('div');toolbar.className='memory-browse-toolbar';const search=document.createElement('div');search.className='memory-browse-search';search.append(panel.querySelector('label[for=photoTagSearch]'),panel.querySelector('#photoTagSearch'));toolbar.append(panel.querySelector('.photo-feed-tabs'),search);column.prepend(toolbar);
+  const views=document.createElement('nav');views.className='memory-workspace-views';views.setAttribute('aria-label','Memories workspace');
+  const setView=view=>{panel.dataset.memoryView=view;views.querySelectorAll('button').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.memoryWorkspace===view)));if(view==='sharing')panel.querySelector('.photo-composer-toggle').open=true;};
+  for(const [view,label,id]of [['passport','My passport','memoryPassportWorkspace'],['sharing','Share & friends','memorySharingWorkspace']]){const button=document.createElement('button');button.type='button';button.textContent=label;button.dataset.memoryWorkspace=view;button.setAttribute('aria-controls',id);button.addEventListener('click',()=>setView(view));views.append(button);}
+  panel.querySelector('.photo-feed-layout').before(views);setView('passport');
+  panel.querySelector('.photo-composer-toggle').addEventListener('toggle',event=>{if(event.currentTarget.open)setView('sharing');});
+
   photoIcons(panel);
 }
 

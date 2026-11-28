@@ -37,7 +37,7 @@ function adventureOpenDiscovery(category) {
 }
 function adventureOpenMemories() {
   navigateSafely('memoriesPanel',{updateHistory:true});
-  const toggle=document.querySelector('.photo-composer-toggle');if(toggle)toggle.open=true;
+  const toggle=document.querySelector('.photo-composer-toggle');if(toggle){toggle.open=true;document.getElementById('memoriesPanel').dataset.memoryView='sharing';document.querySelectorAll('[data-memory-workspace]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.memoryWorkspace==='sharing')));}
   document.getElementById('photoCaption')?.focus();
 }
 function adventureOpenPoll() {

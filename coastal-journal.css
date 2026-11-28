@@ -188,3 +188,78 @@ html body.adventure-social.auth-screen #authPanel .auth-check{display:flex!impor
 html body.adventure-social .profile-photo-avatar{background-color:#f2e3d4!important;border-color:#d8baa2!important;color:#1e3045!important}
 html body.adventure-social .pwa-install-mini{background:#f3e9de!important;color:#655749!important;border-color:#e1d3c4!important}
 html body.adventure-social .pwa-install-mini button{background:#fffaf5!important;color:#1e3045!important;border-color:#d9c8b6!important}
+/* Memories: a horizontal passport desk with a dedicated sharing studio. */
+html body.adventure-social.signed-in-shell #memoriesPanel>.photo-feed-heading{padding:0 54px 16px 0!important;min-height:0!important;margin:0 0 16px!important;border-bottom:1px solid #e2d8ce!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-cover-copy{max-width:100%;color:#1e3045}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-cover-copy h2{color:#1e3045!important;font-size:32px!important;margin:3px 0 6px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-cover-copy .eyebrow{color:#9b4d33!important;font-size:11px!important;margin:0!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-cover-copy>p:last-child{font-size:14px!important;color:#706356!important;margin:0!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-feed-layout{display:grid!important;grid-template-columns:minmax(0,1fr) 300px!important;max-width:none!important;gap:22px!important;align-items:start!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-feed-tabs{margin:0 0 12px!important;padding:0!important;gap:8px;border:0!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-feed-tabs button{flex:0 1 auto!important;max-width:none!important;padding:10px 16px!important;border:1px solid #e0d3c6!important;border-radius:10px!important;background:#fbf8f4!important;color:#655c53!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-feed-tabs button[aria-pressed=true]{background:#f2dfcd!important;color:#82422d!important;border-color:#cfaa8e!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-feed-aside{order:0!important;min-width:0;padding:16px!important;margin:0!important;border:1px solid #e1d5ca!important;border-radius:16px!important;background:#f6eee5!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-feed-aside>svg{display:none!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-feed-aside>h3{display:block!important;font-size:24px!important;margin:20px 0 6px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-feed-aside>p:not(.photo-privacy-note){display:block!important;font-size:14px!important;margin:0 0 16px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-feed-aside>label{font-size:14px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-feed-aside>button{width:100%!important;margin-top:12px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-privacy-note{font-size:12px!important;line-height:1.6!important;border-top:1px solid #ddcdbd!important;padding-top:14px!important;margin:16px 0 0!important;color:#756657!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-composer-toggle>summary{background:#fffaf4!important;border:1px solid #d4bda7!important;color:#85432b!important;font-size:16px!important;padding:12px!important;min-height:48px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-composer-toggle>summary svg{color:#a35438!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-composer{padding:14px!important;background:#fffaf5!important;border:1px solid #e0cdbb!important;gap:8px}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-composer label{font-size:13px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-kind-picker{display:flex!important;gap:4px!important;flex-wrap:wrap}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-kind-picker button{padding:7px!important;font-size:12px!important;flex:1 1 auto!important;background:#f7ede2!important;color:#614b3c!important;border-color:#d5bda7!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-kind-picker button[aria-pressed=true]{background:#1e334b!important;color:#fff!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-compose-options{grid-template-columns:minmax(0,1fr)!important;gap:12px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-compose-footer{flex-direction:column!important;align-items:stretch!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .photo-compose-footer button{width:100%!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .memory-passport{--passport-ink:#24374a;--passport-paper:#fffbf3;--passport-gold:#c8aa7e;background:#24374a!important;padding:12px!important;box-shadow:0 9px 24px #1e30451a,inset 0 0 0 1px #6e7a84!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .passport-spread{grid-template-columns:minmax(150px,.65fr) minmax(0,1.35fr)!important;grid-template-rows:470px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .passport-inside{padding:22px 15px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .passport-inside h3{font-size:26px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .passport-emblem{display:none!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .passport-inside-copy{font-size:15px!important;margin:12px 0 18px!important;color:#736450!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .passport-kicker{font-size:8px!important;margin-bottom:12px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .passport-stamp{width:110px!important;color:#9a5238!important;border-color:#a66b4e!important;outline-color:#a66b4e!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .passport-note{font-size:12px!important;margin:16px 0 10px!important;color:#77664f!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .passport-tally{font-size:10px!important;color:#77664f!important;padding-top:10px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .passport-paper{height:100%!important;min-height:0!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .passport-paper #photoFeedList{padding:16px 14px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .passport-paper .photo-post>img,html body.adventure-social.signed-in-shell #memoriesPanel .passport-paper .photo-post>video{max-height:240px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .passport-navigation{padding-top:8px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .passport-navigation button{color:#fff1da!important;border-color:#8b806b!important;background:#ffffff08!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .passport-hint{margin-top:8px!important;font-size:12px!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .passport-hint span{display:inline;margin-left:5px}
+html body.adventure-social.signed-in-shell #memoriesPanel #photoFeedRefresh{color:#9b4d33!important;top:0!important}
+html body.adventure-social.signed-in-shell #memoriesPanel .memory-workspace-views{display:none!important}
+@media(max-width:1100px) and (min-width:851px){html body.adventure-social.signed-in-shell #memoriesPanel .photo-feed-layout{grid-template-columns:minmax(0,1fr) 270px!important;gap:16px!important}}
+@media(max-width:850px){
+ html body.adventure-social.signed-in-shell #memoriesPanel .photo-feed-layout{display:block!important}
+ html body.adventure-social.signed-in-shell #memoriesPanel .memory-workspace-views{display:flex!important;gap:8px;margin:0 0 14px}
+ html body.adventure-social.signed-in-shell #memoriesPanel .memory-workspace-views button{flex:1;padding:10px 12px!important;border:1px solid #d9c6b3!important;background:#fffaf4!important;color:#6b5747!important}
+ html body.adventure-social.signed-in-shell #memoriesPanel .memory-workspace-views button[aria-pressed=true]{background:#1e334b!important;color:#fff!important;border-color:#1e334b!important}
+ html body.adventure-social.signed-in-shell #memoriesPanel[data-memory-view=passport] .photo-feed-aside,html body.adventure-social.signed-in-shell #memoriesPanel[data-memory-view=sharing] .photo-feed-column{display:none!important}
+ html body.adventure-social.signed-in-shell #memoriesPanel .photo-cover-copy h2{font-size:28px!important}
+ html body.adventure-social.signed-in-shell #memoriesPanel .photo-cover-copy>p:last-child{font-size:13px!important}
+}
+@media(max-width:600px){
+ html body.adventure-social.signed-in-shell #memoriesPanel>.photo-feed-heading{padding-bottom:12px!important;margin-bottom:12px!important}
+ html body.adventure-social.signed-in-shell #memoriesPanel .passport-spread{display:flex!important;flex-direction:column!important;grid-template-rows:none!important}
+ html body.adventure-social.signed-in-shell #memoriesPanel .passport-inside{display:flex!important;flex-direction:row!important;justify-content:space-between!important;align-items:center!important;gap:12px!important;padding:10px 14px!important;min-height:78px;overflow:hidden}
+ html body.adventure-social.signed-in-shell #memoriesPanel .passport-inside :is(.passport-kicker,h3,.passport-inside-copy,.passport-note){display:none!important}
+ html body.adventure-social.signed-in-shell #memoriesPanel .passport-stamp{width:64px!important;height:64px!important;aspect-ratio:1;gap:3px!important;padding:8px!important;flex:0 0 64px!important}
+ html body.adventure-social.signed-in-shell #memoriesPanel .passport-stamp strong{font-size:10px!important}
+ html body.adventure-social.signed-in-shell #memoriesPanel .passport-stamp>span{font-size:5px!important}
+ html body.adventure-social.signed-in-shell #memoriesPanel .passport-tally{margin:0!important;padding:0!important;border:0!important;max-width:150px;text-align:right}
+ html body.adventure-social.signed-in-shell #memoriesPanel .passport-paper{height:clamp(320px,46dvh,430px)!important;flex:0 0 auto}
+ html body.adventure-social.signed-in-shell #memoriesPanel .passport-paper .photo-post>img,html body.adventure-social.signed-in-shell #memoriesPanel .passport-paper .photo-post>video{max-height:220px!important}
+ html body.adventure-social.signed-in-shell #memoriesPanel .passport-topline{font-size:7px!important;padding:2px 3px 8px!important}
+}
+html body.adventure-social.signed-in-shell #memoriesPanel .memory-browse-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+html body.adventure-social.signed-in-shell #memoriesPanel .memory-browse-toolbar .photo-feed-tabs{margin:0!important;flex:0 0 auto}
+html body.adventure-social.signed-in-shell #memoriesPanel .memory-browse-search{flex:1 1 180px;max-width:300px;min-width:0}
+html body.adventure-social.signed-in-shell #memoriesPanel .memory-browse-search label{position:absolute!important;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+html body.adventure-social.signed-in-shell #memoriesPanel .memory-browse-search input{height:44px;font-size:14px!important;padding:9px 12px!important}
+@media(max-width:600px){html body.adventure-social.signed-in-shell #memoriesPanel .memory-browse-search{max-width:none}html body.adventure-social.signed-in-shell #memoriesPanel .memory-browse-toolbar{gap:8px}html body.adventure-social.signed-in-shell #memoriesPanel .photo-feed-tabs button{font-size:14px!important;padding:8px 10px!important}}
