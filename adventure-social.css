@@ -277,3 +277,46 @@ html body.adventure-social.app-routed.signed-in-shell #walletPanel #journeyContr
 html body.adventure-social.app-routed.signed-in-shell[data-active-route=walletPanel] #walletPanel.journey-wallet .wallet-smart-actions button{border-radius:18px!important;border-color:var(--ad-line)!important;background:#fffefa!important;color:var(--ad-ink)!important}
 html body.adventure-social.app-routed.signed-in-shell #walletPanel.journey-wallet .wallet-smart-actions button svg{width:24px!important;height:24px!important;min-width:24px!important;min-height:24px!important;color:var(--ad-pink)!important;stroke:var(--ad-pink)!important;background:#ffe9ef!important;opacity:1!important;transform:none!important}
 html body.adventure-social.app-routed.signed-in-shell #walletPanel #walletInlineSplitter,html body.adventure-social.app-routed.signed-in-shell #walletPanel #journeyWalletContributions{border:1px solid var(--ad-line)!important;border-radius:18px!important;background:#fff!important;padding:20px!important}
+/* Reference-accurate refinement: measured Look 04 palette and compact phone composition. */
+@font-face{font-family:Adventure Fredoka;src:url('vendor/adventure-fredoka-600.ttf') format('truetype');font-display:swap;font-weight:600}
+html body.adventure-social{--ad-pink:#ec1266;--ad-pink-dark:#c50650;--ad-ink:#190b1e;--ad-cream:#fffdfc;--ad-yellow:#fde695;--ad-apricot:#fdc593;--ad-line:#d8cfd9;--ad-muted:#675b6a;--sea:var(--ad-pink);--aqua:#ffe28b;--reef:#ffb883;--pink:var(--ad-pink);--sun:#ffd338;--palm:#fdc593;--violet:#6b286d;--ink:var(--ad-ink);--paper:var(--ad-cream);--panel:#fffdfc;--muted:var(--ad-muted);--travel-gradient:linear-gradient(110deg,#f20b68,#e51c60);--sunset-gradient:linear-gradient(120deg,#ffd29d,#fdc593);--ai-gradient:linear-gradient(120deg,#ffd29d,#fde695);--tropical-gradient:linear-gradient(120deg,#fde695,#fdc593)}
+html body.adventure-social.signed-in-shell :is(.adventure-welcome h1,.adventure-discovery h2,.adventure-next h2,.adventure-panel h2,.adventure-trip-cover h2){font-family:Adventure Fredoka,Adventure Nunito,system-ui,sans-serif!important;font-weight:600!important;letter-spacing:-.025em!important}
+html body.adventure-social.signed-in-shell .adventure-welcome h1{font-size:clamp(30px,2.8vw,40px)!important;line-height:1.06!important}
+html body.adventure-social.signed-in-shell .adventure-next{background:linear-gradient(120deg,#ffed9f,#ffe28b)!important;border-color:#ffd04e!important}
+html body.adventure-social.signed-in-shell .adventure-voting{background:linear-gradient(120deg,#ffcf9b,#fdc08e)!important;border-color:#ffc08d!important}
+html body.adventure-social.signed-in-shell .adventure-panel:not(.adventure-voting){border:1px solid #58485b!important;background:#fffdfc!important}
+html body.adventure-social.signed-in-shell .adventure-next .adventure-button{border:1px solid #332337!important;background:#fffdfc!important;font-size:18px!important;min-height:56px!important}
+html body.adventure-social.signed-in-shell :is(#letsPlanButton,.adventure-pink,.simple-main-menu>button.active){background:linear-gradient(110deg,#f20b68,#e51c60)!important;color:#fff!important;border-color:transparent!important}
+html body.adventure-social.signed-in-shell .simple-main-menu>button,.adventure-social .simple-main-menu>button>span{font-size:18px!important;color:var(--ad-ink)!important}
+html body.adventure-social.signed-in-shell .simple-main-menu>button.active>span{color:#fff!important}
+html body.adventure-social.signed-in-shell .adventure-trip-cover{border-color:#ded0dc!important}
+html body.adventure-social .adventure-tile-label{background:#fff0b6;font-weight:900;border-radius:22px;font-size:17px;padding:6px 10px}
+html body.adventure-social .adventure-save{border-radius:13px!important;top:9px!important;right:9px!important}
+html body.adventure-social .adventure-heading-mobile,html body.adventure-social .adventure-label-mobile{display:none}
+html body.adventure-social.signed-in-shell .adventure-sun{display:flex;align-items:center;gap:18px;transform:none;font-size:initial!important}
+html body.adventure-social .adventure-sun>svg:first-child{width:46px;height:46px;stroke:#f4bb00;stroke-width:2.5}
+html body.adventure-social .adventure-sun>svg:last-child{width:41px;height:41px;stroke:var(--ad-pink);fill:var(--ad-pink);transform:rotate(10deg)}
+html body.adventure-social .adventure-nav-tools{border-top:1px solid var(--ad-line);margin-top:12px;padding-top:8px}
+html body.adventure-social .adventure-nav-tools>summary{font-weight:700;font-size:14px!important;color:var(--ad-muted);padding:10px 14px;cursor:pointer}
+html body.adventure-social.signed-in-shell .adventure-nav-tools>button{display:flex!important;align-items:center;gap:12px;min-height:48px!important;width:100%!important;text-align:left!important;padding:10px 14px!important;color:var(--ad-ink)!important;background:transparent!important;border:0!important}
+html body.adventure-social .adventure-nav-tools>button svg{width:23px;height:23px;flex:0 0 23px}
+html body.adventure-social .adventure-nav-tools:not([open])>button{display:none!important}
+@media(max-width:1200px){html body.adventure-social .adventure-sun>svg:last-child{display:none}}
+@media(max-width:600px){
+ html body.adventure-social .adventure-heading-desktop,html body.adventure-social .adventure-label-desktop{display:none}
+ html body.adventure-social .adventure-heading-mobile,html body.adventure-social .adventure-label-mobile{display:inline}
+ html body.adventure-social.signed-in-shell .adventure-welcome h1{font-size:31px!important;max-width:260px!important;line-height:1.04!important}
+ html body.adventure-social.signed-in-shell .adventure-next{padding:0!important;min-height:56px!important;border:1px solid #ffce50!important}
+ html body.adventure-social.signed-in-shell .adventure-next h2,html body.adventure-social.signed-in-shell .adventure-next>button:nth-of-type(1),html body.adventure-social.signed-in-shell .adventure-next>button:nth-of-type(3){display:none!important}
+ html body.adventure-social.signed-in-shell .adventure-next>button:nth-of-type(2){margin:0!important;border:0!important;background:transparent!important;min-height:56px!important;font-size:17px!important}
+ html body.adventure-social .adventure-discovery-grid{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - 12px)/2);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:2px}
+ html body.adventure-social .adventure-discovery-tile{scroll-snap-align:start}
+ html body.adventure-social .adventure-discovery-grid::-webkit-scrollbar{display:none}
+ html body.adventure-social .adventure-memories{order:-1}
+ html body.adventure-social.signed-in-shell .adventure-trip-cover p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+ html body.adventure-social .adventure-sun>svg:first-child{width:38px;height:38px}
+ html body.adventure-social.signed-in-shell .adventure-panel h2{font-size:23px!important}
+ html body.adventure-social .adventure-memory-collage{height:100px;min-height:100px}
+}
+
+html body.adventure-social.signed-in-shell .simple-main-menu>button>span{font-size:18px!important}

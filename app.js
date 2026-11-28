@@ -7926,6 +7926,7 @@ function wireLocalInteractions() {
   initializeConciergeLayout();
   initializeWalletSplitter();
   initializeJourneyWallet();
+  finalizeAdventureNavigation();
   initializeTripManagement();
   initializeLiveWeather();
   initializeMessagingContacts();

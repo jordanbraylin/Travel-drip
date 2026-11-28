@@ -1,9 +1,9 @@
 /* Adventure Social: presentation over the existing authenticated trip workspaces. */
 const adventureCategories = [
-  {id:'food', title:'Food walks', image:'icons/adventure-food.jpg', alt:'A beautifully prepared restaurant meal'},
-  {id:'beaches', title:'Beach days', image:'icons/adventure-beach.jpg', alt:'A sunny beach and blue sea'},
-  {id:'activities', title:'Local culture', image:'icons/adventure-culture.jpg', alt:'Colorful architecture beside the Mediterranean'},
-  {id:'outdoor', title:'Outdoor adventures', image:'icons/adventure-outdoors.jpg', alt:'Mountains and open-air travel inspiration'}
+  {id:'food', title:'Food walks', image:'icons/adventure-food-reference.jpg', alt:'A beautifully prepared restaurant meal'},
+  {id:'beaches', title:'Beach days', image:'icons/adventure-beach-reference.jpg', alt:'A sunny beach and blue sea'},
+  {id:'activities', title:'Local culture', image:'icons/adventure-culture-reference.jpg', alt:'Colorful architecture beside the Mediterranean'},
+  {id:'outdoor', title:'Outdoor adventures', image:'icons/adventure-outdoors-reference.jpg', alt:'Mountains and open-air travel inspiration'}
 ];
 function adventureElement(tag, text, className='') {
   const el=document.createElement(tag); if(text)el.textContent=text; if(className)el.className=className; return el;
@@ -69,6 +69,14 @@ function initializeAdventureSocial() {
 function preserveAdventureWidgets(host) {
   for(const id of ['incomingTripInvitationList','dashboardWidgets','dashboardHome']){const el=document.getElementById(id);if(el&&host?.contains(el))host.before(el);}
 }
+function finalizeAdventureNavigation(){
+ const menu=document.querySelector('.simple-main-menu');if(!menu)return;
+ const tools=document.createElement('details');tools.className='adventure-nav-tools';tools.dataset.consumerNav='';tools.append(adventureElement('summary','Trip tools'));
+ for(const [selector,label,icon]of [[':scope > [data-target="transportationPanel"]','Transportation','car'],[':scope > [data-main-nav-id="itinerary"]','Trip plan','calendar-days']]){
+  const button=menu.querySelector(selector);if(button){button.replaceChildren(adventureIcon(icon),adventureElement('span',label));tools.append(button);}
+ }
+ if(tools.children.length>1)menu.append(tools);
+}
 function resetAdventureDashboard() { const host=document.getElementById('adventureDashboard');preserveAdventureWidgets(host);host?.replaceChildren(); }
 function renderAdventureDashboard(target) {
   const eligible=target==='dashboardHome'&&Boolean(state.session?.user)&&!document.body.classList.contains('corporate-employee-mode');
@@ -84,8 +92,8 @@ function renderAdventureDashboard(target) {
   const model=adventureTripModel(trip,counts,records),photo=tripWorkspacePhoto(trip);
   if(/barcelona/i.test(trip?.destination||'')){photo.src='icons/adventure-barcelona.jpg';photo.alt='Barcelona destination illustration';}
   const header=adventureElement('header','','adventure-welcome');
-  const title=adventureElement('div');title.append(adventureElement('h1','More adventures. Better together.'),adventureElement('p','Your next great story starts here.'));
-  header.append(title,adventureElement('span','☀','adventure-sun'));host.append(header);
+  const title=adventureElement('div');const headline=adventureElement('h1');headline.append(adventureElement('span','More adventures. Better together.','adventure-heading-desktop'),adventureElement('span','Good plans. Great people.','adventure-heading-mobile'));title.append(headline,adventureElement('p','Your next great story starts here.'));
+  const decoration=adventureElement('span','','adventure-sun');decoration.setAttribute('aria-hidden','true');decoration.append(adventureIcon('sun'),adventureIcon('plane'));header.append(title,decoration);host.append(header);
   const invitations=document.getElementById('incomingTripInvitationList');if(invitations)host.append(invitations);
   const row=adventureElement('div','','adventure-top-grid');
   const cover=adventureElement('article','','adventure-trip-cover');
@@ -101,7 +109,7 @@ function renderAdventureDashboard(target) {
   coverCopy.append(footer);cover.append(coverCopy);row.append(cover);
   const steps=adventureElement('aside','','adventure-next');steps.append(adventureElement('h2',"What's the plan?"));
   for(const [label,icon,action]of [['Invite a friend','users-round',()=>trip?openTripInviteDialog():openWorkspacePlanning()],['Add a flight or stay','plane',()=>trip?navigateSafely('rideShareHub',{updateHistory:true}):openWorkspacePlanning()],['Build our itinerary','map-pin',()=>trip?navigateSafely('itineraryAlerts',{updateHistory:true}):openWorkspacePlanning()]]){
-    const b=adventureButton(label,icon,action);b.append(adventureIcon('chevron-right'));steps.append(b);
+    const b=adventureButton(label,icon,action);if(label==='Add a flight or stay'){const text=b.childNodes[1];const group=adventureElement('span');group.append(adventureElement('span',label,'adventure-label-desktop'),adventureElement('span','Add travel details','adventure-label-mobile'));b.replaceChild(group,text);}b.append(adventureIcon('chevron-right'));steps.append(b);
   }
   row.append(steps);host.append(row);
   if(state.accountData.error){const error=adventureElement('p','Your saved trips could not be loaded. Refresh to try again.','adventure-notice');error.setAttribute('role','status');host.append(error);}
@@ -131,10 +139,10 @@ function renderAdventureDashboard(target) {
   const collage=adventureElement('div','','adventure-memory-collage');
   const posts=typeof photoFeedState!=='undefined'&&photoFeedState.key===`${userId}:${tripId}`?photoFeedState.posts.filter(p=>p.mediaUrl&&p.mediaType?.startsWith('image/')).slice(0,3):[];
   if(posts.length)for(const post of posts)collage.append(adventurePhoto(post.mediaUrl,post.caption||'Saved travel photo'));
-  else{collage.classList.add('is-inspiration');collage.append(adventurePhoto('icons/adventure-beach.jpg','Beach inspiration'),adventurePhoto('icons/adventure-food.jpg','Dining inspiration'),adventurePhoto('icons/adventure-culture.jpg','Architecture inspiration'));}
+  else{collage.classList.add('is-inspiration');collage.append(adventurePhoto('icons/adventure-beach-reference.jpg','Beach inspiration'),adventurePhoto('icons/adventure-food-reference.jpg','Dining inspiration'),adventurePhoto('icons/adventure-culture-reference.jpg','Architecture inspiration'));}
   memories.append(collage,adventureElement('p',posts.length?'Your shared travel moments.':'Inspiration today. Your own memories tomorrow.','adventure-memory-note'),adventureButton('Add a moment','camera',()=>trip?adventureOpenMemories():openWorkspacePlanning(),'adventure-pink'));bottom.append(memories);host.append(bottom);
   const extras=adventureElement('details','','adventure-more');const summary=adventureElement('summary','More for your trip');extras.append(summary);
-  const more=adventureElement('div','','adventure-more-grid');for(const [label,icon,target]of [['Weather & travel','cloud-sun','rideShareHub'],['Transportation','car','transportationPanel'],['Trip documents','tickets-plane','importantInfo'],['Wallet & splitting','wallet','walletPanel'],['Messages','messages-square','socialHub'],['Events','calendar-heart','eventsPanel']])more.append(adventureButton(label,icon,()=>navigateSafely(target,{updateHistory:true})));extras.append(more);
+  const more=adventureElement('div','','adventure-more-grid');for(const [label,icon,target]of [['Build our itinerary','calendar-days','itineraryAlerts'],['Weather & travel','cloud-sun','rideShareHub'],['Transportation','car','transportationPanel'],['Trip documents','tickets-plane','importantInfo'],['Wallet & splitting','wallet','walletPanel'],['Messages','messages-square','socialHub'],['Events','calendar-heart','eventsPanel']])more.append(adventureButton(label,icon,()=>navigateSafely(target,{updateHistory:true})));more.append(adventureButton('Invite a friend','users-round',()=>trip?openTripInviteDialog():openWorkspacePlanning()));extras.append(more);
   for(const id of ['dashboardHome','dashboardWidgets']){const existing=document.getElementById(id);if(existing)extras.append(existing);}
   host.append(extras);
   window.lucide?.createIcons({root:host});

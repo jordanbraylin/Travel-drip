@@ -7,3 +7,8 @@ Outdoors: https://images.unsplash.com/photo-1527004013197-933c4bb611b3
 Dining: https://images.unsplash.com/photo-1414235077428-338989a2e8c0
 Photography is destination/category inspiration; it is not a user upload or booked itinerary.
 Nunito font: Google Fonts, SIL Open Font License; see vendor/adventure-nunito-LICENSE.txt.
+2026-11-28 reference refinement: adventure-food-reference.jpg, adventure-beach-reference.jpg,
+adventure-culture-reference.jpg and adventure-outdoors-reference.jpg are AI-generated photographic
+illustrations recreating the approved Look 04 discovery tiles. They illustrate categories and are
+not user uploads, verified venue photographs, booked activities or live availability.
+Headline font: Fredoka, SIL Open Font License, vendor/adventure-fredoka-LICENSE.txt.
