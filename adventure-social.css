@@ -320,3 +320,5 @@ html body.adventure-social .adventure-nav-tools:not([open])>button{display:none!
 }
 
 html body.adventure-social.signed-in-shell .simple-main-menu>button>span{font-size:18px!important}
+
+html body.adventure-social.signed-in-shell .simple-main-menu .adventure-nav-tools>summary{color:var(--ad-muted)!important;background:transparent!important;text-shadow:none!important}
