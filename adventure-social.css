@@ -286,7 +286,7 @@ html body.adventure-social.signed-in-shell .adventure-next{background:linear-gra
 html body.adventure-social.signed-in-shell .adventure-voting{background:linear-gradient(120deg,#ffcf9b,#fdc08e)!important;border-color:#ffc08d!important}
 html body.adventure-social.signed-in-shell .adventure-panel:not(.adventure-voting){border:1px solid #58485b!important;background:#fffdfc!important}
 html body.adventure-social.signed-in-shell .adventure-next .adventure-button{border:1px solid #332337!important;background:#fffdfc!important;font-size:18px!important;min-height:56px!important}
-html body.adventure-social.signed-in-shell :is(#letsPlanButton,.adventure-pink,.simple-main-menu>button.active){background:linear-gradient(110deg,#f20b68,#e51c60)!important;color:#fff!important;border-color:transparent!important}
+html body.adventure-social.signed-in-shell #letsPlanButton,html body.adventure-social.signed-in-shell .adventure-pink,html body.adventure-social.signed-in-shell .simple-main-menu>button.active{background:linear-gradient(110deg,#f20b68,#e51c60)!important;color:#fff!important;border-color:transparent!important}
 html body.adventure-social.signed-in-shell .simple-main-menu>button,.adventure-social .simple-main-menu>button>span{font-size:18px!important;color:var(--ad-ink)!important}
 html body.adventure-social.signed-in-shell .simple-main-menu>button.active>span{color:#fff!important}
 html body.adventure-social.signed-in-shell .adventure-trip-cover{border-color:#ded0dc!important}
