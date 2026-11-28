@@ -4233,6 +4233,8 @@ function syncCorporateEmployeeRouteVisibility(employeeMode) {
   }
 }
 
+function setWidgetStatus(message){const status=getRouteComponentById("widgetStatusMessage");if(status)status.textContent=message;}
+
 function updateDashboardWidgets() {
   const tripType = $("#dashboardTripType")?.value || state.dashboardTripType || "group";
   state.dashboardTripType = tripType;
@@ -4290,9 +4292,9 @@ function updateDashboardWidgets() {
       ? "Corporate admin dashboard: employee logistics plus budget, approvals, attendance, reports, and audit widgets are visible."
       : "Corporate employee dashboard: assigned flights, hotel, transportation, event schedule, approved activities, per diem, card status, policies, and announcements are visible."
   };
-  $("#widgetStatusMessage").textContent = isCorporateMode
+  setWidgetStatus(isCorporateMode
     ? `${labels.corporate} Personal leisure trips and consumer wallet prompts are hidden.`
-    : labels[tripType] || labels.group;
+    : labels[tripType] || labels.group);
   if ($("#corporateModeMessage")) {
     $("#corporateModeMessage").textContent = isCorporateMode
       ? "Corporate Mode is active. Personal leisure trips, public invites, vacation deals, and consumer wallet prompts are hidden from this workspace."
@@ -8006,14 +8008,11 @@ function wireLocalInteractions() {
     });
   });
 
-  $("#generateItineraryRefreshButton")?.addEventListener("click", async () => {
-    const activeDay = Number($("[data-day].active")?.dataset.day || 0);
-    const nextDay = (activeDay + 1) % plans.length;
-    $$("[data-day]").forEach((button) => button.classList.toggle("active", Number(button.dataset.day) === nextDay));
-    renderPlan(nextDay);
-    if ($("#builderCopy")) $("#builderCopy").textContent += " Refreshed from your current planning context.";
-    addAuditEntry("Itinerary refreshed", "A new itinerary variation was generated from the current planning context.");
-    await saveSyncedEvent("itinerary_refreshed", { source: "builder", providerBacked: false });
+  $("#generateItineraryRefreshButton")?.addEventListener("click", () => {
+    navigateSafely("aiTravelPlanner", { updateHistory: true });
+    const destination=state.accountData.activeTrip?.destination;
+    const input=document.getElementById("aiPlannerResearchInput");
+    if(input&&destination)input.value=`Help me build an itinerary for ${destination}.`;
   });
 
   $$(".chip").forEach((button) => {
@@ -10001,7 +10000,7 @@ function wireLocalInteractions() {
       if (!widget) return;
       widget.dataset.userHidden = "true";
       updateDashboardWidgets();
-      $("#widgetStatusMessage").textContent = `${button.dataset.widgetHide} widget hidden. Use Reset layout to restore hidden widgets.`;
+      setWidgetStatus(`${button.dataset.widgetHide} widget hidden. Use Reset layout to restore hidden widgets.`);
     });
   });
   $$("[data-widget-pin]").forEach((button) => {
@@ -10009,7 +10008,7 @@ function wireLocalInteractions() {
       const widget = $(`[data-widget="${button.dataset.widgetPin}"]`);
       if (!widget) return;
       widget.classList.toggle("is-pinned");
-      $("#widgetStatusMessage").textContent = `${button.dataset.widgetPin} widget ${widget.classList.contains("is-pinned") ? "pinned" : "unpinned"}.`;
+      setWidgetStatus(`${button.dataset.widgetPin} widget ${widget.classList.contains("is-pinned") ? "pinned" : "unpinned"}.`);
     });
   });
   $("#resetWidgetsButton")?.addEventListener("click", () => {
@@ -10018,11 +10017,11 @@ function wireLocalInteractions() {
       widget.classList.remove("is-pinned");
     });
     updateDashboardWidgets();
-    $("#widgetStatusMessage").textContent = "Dashboard layout reset to the default widget set.";
+    setWidgetStatus("Dashboard layout reset to the default widget set.");
   });
   $("#askAiWidgetButton")?.addEventListener("click", () => {
     navigateSafely("aiTravelPlanner", { updateHistory: true });
-    $("#widgetStatusMessage").textContent = "AI Trip Manager opened with reminders, weather, budget, flight, and activity context.";
+    setWidgetStatus("AI Trip Manager opened with reminders, weather, budget, flight, and activity context.");
     addAuditEntry("AI widget opened", "Dashboard Ask AI action opened travel assistant context.");
   });
   $("#infoSearch")?.addEventListener("input", filterImportantInfo);

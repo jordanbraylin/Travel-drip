@@ -172,3 +172,12 @@ html body.adventure-social.auth-screen .auth-carousel-overlay{background:linear-
 html body.adventure-social .auth-travel-tags>span,html body.adventure-social .auth-pill{background:#f8e6d6ed!important;color:#753a26!important;border-color:#e6cbb6!important}
 html body.adventure-social .auth-link-button{color:#1e3045!important}
 html body.adventure-social .auth-start-button{background:#b65335!important;color:#fff!important}
+html body.adventure-social.signed-in-shell .topbar::before,html body.adventure-social.signed-in-shell .topbar::after{display:none!important;background:none!important}
+html body.adventure-social.signed-in-shell .topbar>.top-actions{background:transparent!important;box-shadow:none!important;border:0!important}
+html body.adventure-social.signed-in-shell #exploreDrops .destination-discovery .coastal-ai-widget,html body.adventure-social.signed-in-shell #exploreDrops .destination-discovery #coastalAiItineraryBuilder{display:block!important}
+html body.adventure-social .coastal-interest-save svg{color:#1e3045!important;stroke:#1e3045!important;fill:none}
+html body.adventure-social .coastal-interest-save[aria-pressed=true] svg{fill:#b65335!important;stroke:#b65335!important}
+html body.adventure-social.signed-in-shell #socialHub .contact-initials{background:#f2dfce!important;color:#783e29!important}
+html body.adventure-social.signed-in-shell #socialHub :is(.messages-hub,.inbox-conversations,.messaging-address-book,.chat-workspace){background:#fcf9f5!important;border-color:#e2d8ce!important}
+html body.adventure-social.signed-in-shell #socialHub .conversation-card.active{background:#f5e5d6!important;color:#1e3045!important;border-color:#d9b69a!important}
+html body.adventure-social.signed-in-shell #socialHub #chatForm button{background:#1e334b!important;color:#fff!important}

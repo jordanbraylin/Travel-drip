@@ -103,7 +103,7 @@ async function openTripAlertCenter(){
 }
 function renderTripExperiences(target){
  if(!state.session?.user)return;attachTransportLocations();renderPlanningInspiration(target);renderDreamTripWorkspace(target);
- let alerts=document.getElementById('tripAlertsButton');if(!alerts){alerts=adventureButton('Trip alerts','bell',openTripAlertCenter,'experience-alert-button');alerts.id='tripAlertsButton';const messages=getRouteComponentById('socialHub');messages?.querySelector('.notifications-widget')?.append(alerts);}
+ let alerts=getRouteComponentById('socialHub')?.querySelector('#tripAlertsButton');if(!alerts){alerts=adventureButton('Trip alerts','bell',openTripAlertCenter,'experience-alert-button');alerts.id='tripAlertsButton';const messages=getRouteComponentById('socialHub');messages?.querySelector('.notifications-widget')?.append(alerts);}
  if(target==='adminPanel'){const root=getRouteComponentById('adminPanel');const data=root?.querySelector('[data-settings-panel=data]');if(data)appendRemovedTripsControl(data);}
  if(target==='socialHub'){const button=document.getElementById('messageAlertPreferencesButton');if(button)button.onclick=openTripAlertCenter;}
  if(target==='dashboardHome'||target==='tripsPanel'){if(target==='dashboardHome')updateHomeExperienceBanner();const trip=state.accountData.activeTrip;if(trip?.owner_user_id===state.session.user.id){const more=getRouteComponentById('tripsPanel')?.querySelector('.adventure-more-grid');if(more&&!more.querySelector('[data-trip-plan-status]')){const statusButton=adventureButton('Trip plan status','check-circle',()=>openTripPlanStatus(trip));statusButton.dataset.tripPlanStatus='';more.append(statusButton);}}}

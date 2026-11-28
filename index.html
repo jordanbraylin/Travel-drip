@@ -72,7 +72,7 @@
   <link rel="stylesheet" href="auth-workflows.css?v=2">
   <title>Travel-Drip | Plan Group Trips, Split Costs, Share Memories</title>
   <link rel="stylesheet" href="adventure-social.css?v=10">
-  <link rel="stylesheet" href="coastal-journal.css?v=1">
+  <link rel="stylesheet" href="coastal-journal.css?v=2">
 </head>
 <body class="auth-initializing">
   <div class="loader" id="loader" aria-live="polite">
@@ -987,6 +987,17 @@
           </section>
 
           <section class="panel explore-panel" id="exploreDrops">
+<section class="panel coastal-ai-builder" id="coastalAiItineraryBuilder">
+            <h2>AI itinerary builder</h2>
+            <p id="builderCopy">Balanced pace with one anchor activity each day.</p>
+            <div class="tabs" role="tablist" aria-label="Itinerary days">
+              <button class="tab active" type="button" data-day="0">Day 1</button>
+              <button class="tab" type="button" data-day="1">No day selected</button>
+              <button class="tab" type="button" data-day="2">Day 3</button>
+            </div>
+            <div class="itinerary" id="itinerary"></div>
+            <button class="primary-button wide" type="button" id="generateItineraryRefreshButton">Build with AI</button>
+          </section>
 <article class="coastal-relocated-widget coastal-ai-widget travel-widget ai-widget is-large smart-widget--wide" data-widget="ai" data-widget-scope="solo group cruise corporate">
             <div class="widget-toolbar"><span>AI Trip Manager</span><button type="button" data-widget-pin="ai">Pin</button><button type="button" data-widget-hide="ai">Hide</button></div>
             <div class="ai-reminder-list">
@@ -2519,17 +2530,7 @@
 
           </section>
 
-          <section class="panel coastal-ai-builder" data-route-support="exploreDrops">
-            <h2>AI itinerary builder</h2>
-            <p id="builderCopy">Balanced pace with one anchor activity each day.</p>
-            <div class="tabs" role="tablist" aria-label="Itinerary days">
-              <button class="tab active" type="button" data-day="0">Day 1</button>
-              <button class="tab" type="button" data-day="1">No day selected</button>
-              <button class="tab" type="button" data-day="2">Day 3</button>
-            </div>
-            <div class="itinerary" id="itinerary"></div>
-            <button class="primary-button wide" type="button" id="generateItineraryRefreshButton">Generate refresh</button>
-          </section>
+
 
           <section class="panel" id="walletPanel">
             <div class="section-heading compact">
@@ -4711,11 +4712,11 @@
   <script defer src="passport-book.js?v=1"></script>
   <script defer src="photo-feed.js?v=8"></script>
   <script defer src="trip-joy.js?v=5"></script>
-  <script defer src="discovery-studio.js?v=8"></script>
+  <script defer src="discovery-studio.js?v=9"></script>
   <script defer src="planner-conversation.js?v=2"></script>
   <script defer src="auth-workflows.js?v=4"></script>
-  <script defer src="trip-experiences.js?v=5"></script>
-  <script defer src="adventure-social.js?v=3"></script>
-  <script defer src="app.js?v=124"></script>
+  <script defer src="trip-experiences.js?v=6"></script>
+  <script defer src="adventure-social.js?v=4"></script>
+  <script defer src="app.js?v=125"></script>
 </body>
 </html>

@@ -20,6 +20,8 @@ function renderDestinationDiscovery(){
     host.querySelector('form').addEventListener('submit',event=>{event.preventDefault();loadDestinationDiscovery(host.querySelector('input').value);});
   }
   renderCoastalDiscoveryInvitations(host);
+  for(const selector of ['.coastal-ai-widget','#coastalAiItineraryBuilder']){const tool=panel.querySelector(selector);if(tool&&!host.contains(tool))host.append(tool);}
+  window.lucide?.createIcons({root:host});
   if(discoveryPlace)host.querySelector('input').value=discoveryPlace;
   if(discoveryResult&&!host.querySelector('#destinationDiscoveryResults').children.length)drawDestinationDiscovery(discoveryResult);
 }

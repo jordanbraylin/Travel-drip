@@ -1,9 +1,9 @@
-const CACHE_NAME = "traveldrip-v263";
+const CACHE_NAME = "traveldrip-v264";
 const APP_SHELL = [
   "/vendor/adventure-fredoka-600.ttf",
-  "/trip-experiences.js?v=5",
+  "/trip-experiences.js?v=6",
   "/adventure-social.css?v=10",
-  "/coastal-journal.css?v=1",
+  "/coastal-journal.css?v=2",
   "/icons/coastal-lisbon-hero.jpg",
   "/icons/coastal-lisbon-tram.jpg",
   "/icons/coastal-sailing.jpg",
@@ -15,7 +15,7 @@ const APP_SHELL = [
   "/icons/coastal-cruise.jpg",
   "/icons/coastal-transport.jpg",
 
-  "/adventure-social.js?v=3",
+  "/adventure-social.js?v=4",
   "/vendor/adventure-nunito-400.ttf",
   "/vendor/adventure-nunito-700.ttf",
   "/vendor/adventure-nunito-900.ttf",
@@ -34,7 +34,7 @@ const APP_SHELL = [
   "/offline.html",
   "/styles.css?v=126",
   "/navigation.css?v=93",
-  "/app.js?v=124",
+  "/app.js?v=125",
   "/passport-book.js?v=1",
   "/passport-book.css?v=2",
   "/auth-workflows.js?v=4",
@@ -48,7 +48,7 @@ const APP_SHELL = [
   "/trip-itinerary.js?v=2",
   "/trip-workspaces.js?v=8",
   "/journey-dashboard.js?v=9",
-  "/discovery-studio.js?v=8",
+  "/discovery-studio.js?v=9",
   "/discovery-studio.css?v=3",
   "/journey-dashboard.css?v=4",
   "/vendor/lucide.min.js?v=1",

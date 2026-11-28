@@ -19,5 +19,5 @@ context.state.activeTripId='another-trip';signed.length=0;
 await context.hydrateCoastalMembers(host,[{user_id:'other'}],'me','trip-1');assert.equal(signed.length,0,'A stale trip response must not hydrate another trip');
 assert.ok(requests.every(x=>x==='profiles'));
 for(const name of ['lisbon-hero','lisbon-tram','pastries','sailing','friends','camel','flight','stay','cruise','transport'])assert.ok(fs.statSync(`icons/coastal-${name}.jpg`).size>1000);
-const html=fs.readFileSync('index.html','utf8');assert.match(html,/coastal-journal\.css/);assert.match(html,/coastal-ai-builder" data-route-support="exploreDrops"/);
+const html=fs.readFileSync('index.html','utf8');assert.match(html,/coastal-journal\.css/);assert.match(html,/coastal-ai-builder" id="coastalAiItineraryBuilder"/);
 console.log('Coastal journal passed: account-specific people, privacy-respecting portraits, stale-trip isolation, discovery routing and bundled assets.');
